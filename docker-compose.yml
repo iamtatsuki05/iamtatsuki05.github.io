@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - app-node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_BASE_PATH: ""
+      SITE_URL: "http://localhost:3000"
+      INCLUDE_DRAFTS: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "bun install && bun dev -H 0.0.0.0 -p 3000"
+
+  preview:
+    build: .
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - app-node_modules:/app/node_modules
+    ports:
+      - "3001:3000"
+    environment:
+      NEXT_PUBLIC_BASE_PATH: ""
+      SITE_URL: "http://localhost:3001"
+      INCLUDE_DRAFTS: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    command: sh -c "bun install && bun run build && bun run start"
+
+volumes:
+  app-node_modules:
+
