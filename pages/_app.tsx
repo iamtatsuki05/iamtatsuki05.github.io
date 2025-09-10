@@ -11,21 +11,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className="min-h-screen flex flex-col">
         <Head>
-          {/* 共通アイコン設定（pages ルーター用） */}
-          {/* SVG（対応ブラウザ） */}
-          <link
-            rel="icon"
-            type="image/svg+xml"
-            href={withVersion(withBasePath('/favicon.svg'))!}
-          />
-          {/* PNG フォールバック */}
           <link
             rel="icon"
             type="image/png"
             sizes="32x32"
             href={withVersion(withBasePath('/favicon-32x32.png'))!}
           />
-          {/* ICO も参照（レガシー互換・一部 UA の優先解決向け） */}
           <link
             rel="icon"
             type="image/x-icon"
@@ -38,7 +29,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             sizes="16x16"
             href={withVersion(withBasePath('/favicon-16x16.png'))!}
           />
-          {/* Apple Touch Icon */}
           <link
             rel="apple-touch-icon"
             href={withVersion(withBasePath('/apple-touch-icon.png'))!}
