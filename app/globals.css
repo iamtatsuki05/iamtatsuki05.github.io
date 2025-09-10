@@ -48,7 +48,7 @@ body {
 a { @apply text-blue-600 dark:text-blue-400 underline-offset-2 hover:underline; }
 
 .prose pre {
-  @apply overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700; 
+  @apply overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700;
 }
 
 /* Code copy button (injected at runtime) */
@@ -90,3 +90,19 @@ a { @apply text-blue-600 dark:text-blue-400 underline-offset-2 hover:underline; 
 }
 .prose details[open] > summary { @apply border-b border-gray-200 dark:border-gray-800; }
 .prose details > *:not(summary) { @apply px-3 py-2; }
+
+/* --- Link preview card (OG) --- */
+.og-card { @apply grid gap-4 no-underline p-3; grid-template-columns: 180px 1fr; align-items: start; }
+.og-card:hover { @apply bg-gray-50 dark:bg-gray-800; }
+.og-card--noimg { grid-template-columns: 1fr; }
+.og-card__thumb { @apply w-[180px] rounded-md border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800; }
+.og-card__thumb img { @apply block w-full; height: auto; object-fit: contain; }
+.og-card__body { @apply min-w-0; }
+.og-card__site { @apply text-[11px] tracking-wide text-gray-500 dark:text-gray-400; }
+.og-card__title { @apply text-[15px] font-medium leading-snug mt-0.5 text-gray-900 dark:text-gray-100 line-clamp-2; }
+.og-card__desc { @apply text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2; }
+.og-card__url { @apply text-xs text-gray-500 dark:text-gray-400 mt-2; word-break: break-all; }
+
+/* --- Embeds (center only) --- */
+.prose .rse-embed { display: flex; justify-content: center; }
+.prose .rse-embed > * { margin-left: auto !important; margin-right: auto !important; }
