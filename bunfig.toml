@@ -1,0 +1,4 @@
+[test]
+# Bun のテストで DOM を使うための事前読み込み
+preload = ["./tests/setup-bun.ts"]
+
