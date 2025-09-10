@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "bun@1.1.24",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && bun run gen:sitemap",
+    "dev": "bun scripts/ensure-favicon.ts && next dev",
+    "build": "bun scripts/ensure-favicon.ts && next build && bun run gen:sitemap",
     "start": "serve out -p 3000",
     "lint": "next lint",
     "gen:sitemap": "bun scripts/generate-sitemap.ts",
