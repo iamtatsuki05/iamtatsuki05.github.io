@@ -5,6 +5,10 @@ import { afterEach } from 'vitest';
 afterEach(() => cleanup());
 import { vi } from 'vitest';
 
+// Disable network OG fetches during tests
+// @ts-ignore
+process.env.OG_DISABLE_FETCH = 'true';
+
 // next/link mock (anchor passthrough)
 vi.mock('next/link', () => {
   const Link = ({ href, children, ...rest }: any) =>

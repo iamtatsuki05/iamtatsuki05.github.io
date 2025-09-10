@@ -12,6 +12,7 @@ import rehypeStringify from 'rehype-stringify';
 import rehypeRaw from 'rehype-raw';
 import GithubSlugger from 'github-slugger';
 import type { Root as MdastRoot } from 'mdast';
+import remarkLinkCard from './remark-link-card';
 
 export type ParsedMarkdown<T> = {
   frontmatter: T;
@@ -47,6 +48,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
   const file = await unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(remarkLinkCard)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw) // enable raw HTML like <details><summary>
     .use(rehypeSlug)

@@ -297,7 +297,8 @@ GPT に箇条書きでページルーティングや技術スタックを伝え�
 
 ### Codexに依頼
 Codex を導入し、以下の記事を参考に設定したうえで、要件定義の結果を渡して開発を進めました。
-- https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
+
+https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
 ### 生成物へのフィードバック
 実際に動かして「気になった点」を簡潔に指摘し、改善を繰り返しました。

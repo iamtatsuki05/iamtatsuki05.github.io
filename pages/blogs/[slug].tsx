@@ -4,6 +4,7 @@ import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
+import { EmbedsClient } from '@/components/site/EmbedsClient';
 
 type Props = {
   slug: string;
@@ -58,6 +59,7 @@ export default function BlogPost({ title, date, updated, html, summary, headerIm
       ) : null}
       <div dangerouslySetInnerHTML={{ __html: html }} />
       <CodeCopyClient />
+      <EmbedsClient />
     </article>
   );
 }
