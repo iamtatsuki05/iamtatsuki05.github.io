@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 export const dynamic = 'force-static';
+import { BASE_PATH } from '@/lib/url';
 
 export default function robots(): MetadataRoute.Robots {
   const site =
@@ -7,8 +8,11 @@ export default function robots(): MetadataRoute.Robots {
     (process.env.NODE_ENV === 'development'
       ? 'http://localhost:3000'
       : 'https://iamtatsuki05.github.io');
+  const trimmed = site.replace(/\/$/, '');
+  const need = BASE_PATH || '';
+  const originWithBase = need && !trimmed.endsWith(need) ? `${trimmed}${need}` : trimmed;
   return {
     rules: [{ userAgent: '*', allow: '/' }],
-    sitemap: `${site}/sitemap.xml`,
+    sitemap: `${originWithBase}/sitemap.xml`,
   };
 }
