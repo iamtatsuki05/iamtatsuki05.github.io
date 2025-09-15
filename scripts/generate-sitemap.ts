@@ -9,6 +9,16 @@ const site =
     ? 'http://localhost:3000'
     : 'https://iamtatsuki05.github.io');
 
+function normalizeBasePath(input?: string | null): string {
+  const raw = (input ?? '').trim();
+  if (!raw || raw === '/') return '';
+  const stripped = raw.replace(/^\/+|\/+$/g, '');
+  return `/${stripped}`;
+}
+const BASE_PATH = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
+const trimmed = site.replace(/\/$/, '');
+const siteWithBase = BASE_PATH && !trimmed.endsWith(BASE_PATH) ? `${trimmed}${BASE_PATH}` : trimmed;
+
 function escapeXml(s: string) {
   return s
     .replace(/&/g, '&amp;')
@@ -24,15 +34,15 @@ async function generateSitemap() {
   const blogUrls = files
     .filter((f) => f.endsWith('.md'))
     .map((f) => f.replace(/\.md$/, ''))
-    .map((slug) => `${site}/blogs/${slug}/`);
+    .map((slug) => `${siteWithBase}/blogs/${slug}/`);
 
   const staticUrls = [
-    `${site}/`,
-    `${site}/ja/`,
-    `${site}/en/`,
-    `${site}/links/`,
-    `${site}/publications/`,
-    `${site}/blogs/`,
+    `${siteWithBase}/`,
+    `${siteWithBase}/ja/`,
+    `${siteWithBase}/en/`,
+    `${siteWithBase}/links/`,
+    `${siteWithBase}/publications/`,
+    `${siteWithBase}/blogs/`,
   ];
 
   const urls = [...staticUrls, ...blogUrls]
@@ -46,7 +56,7 @@ async function generateSitemap() {
 }
 
 async function generateRobots() {
-  const robots = `User-agent: *\nAllow: /\nSitemap: ${site}/sitemap.xml\n`;
+  const robots = `User-agent: *\nAllow: /\nSitemap: ${siteWithBase}/sitemap.xml\n`;
   await writeFile(path.join(process.cwd(), 'out', 'robots.txt'), robots);
   console.log('robots.txt generated');
 }
