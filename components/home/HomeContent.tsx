@@ -22,6 +22,9 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
           width={80}
           height={80}
           className="rounded-full border border-gray-200 dark:border-gray-700"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         <div>
           <h1 className="text-3xl font-bold mb-1">{dict.title}</h1>

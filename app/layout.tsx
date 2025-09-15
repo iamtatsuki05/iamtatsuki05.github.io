@@ -30,6 +30,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja" suppressHydrationWarning>
+      <head>
+        {/* 主要外部オリジンの接続最適化 */}
+        <link rel="preconnect" href="https://cdn.simpleicons.org" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.simpleicons.org" />
+        <link rel="dns-prefetch" href="https://platform.twitter.com" />
+        <link rel="dns-prefetch" href="https://www.instagram.com" />
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        {/* LCP想定画像の先読み（トップのアバター） */}
+        <link
+          rel="preload"
+          as="image"
+          href={withVersion(withBasePath('/images/icon.jpeg'))}
+          fetchPriority="high"
+        />
+      </head>
       <body suppressHydrationWarning className={`${inter.className} min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Header />

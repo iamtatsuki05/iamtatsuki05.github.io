@@ -16,14 +16,29 @@ export function ExternalIcon({ src, alt, size = 48, className = '' }: Props) {
       <picture>
         <source media="(prefers-color-scheme: dark)" srcSet={dark} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={light} alt={alt} width={size} height={size} className={`mx-auto ${className}`} />
+        <img
+          src={light}
+          alt={alt}
+          width={size}
+          height={size}
+          className={`mx-auto ${className}`}
+          loading="lazy"
+          decoding="async"
+        />
       </picture>
     );
   }
   // Fallback: use same src and invert in dark mode
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} width={size} height={size} className={`mx-auto dark:invert ${className}`} />
+    <img
+      src={src}
+      alt={alt}
+      width={size}
+      height={size}
+      className={`mx-auto dark:invert ${className}`}
+      loading="lazy"
+      decoding="async"
+    />
   );
 }
-

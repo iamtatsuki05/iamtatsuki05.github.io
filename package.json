@@ -9,6 +9,7 @@
     "start": "serve out -p 3000",
     "lint": "next lint",
     "gen:sitemap": "bun scripts/generate-sitemap.ts",
+    "optimize:images": "bun scripts/optimize-images.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -54,5 +55,19 @@
     "typescript": "5.9.2",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4"
+  },
+  "browserslist": {
+    "production": [
+      "last 2 Chrome versions",
+      "last 2 Safari versions",
+      "last 2 Firefox versions",
+      "not dead",
+      "not ie > 0"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
