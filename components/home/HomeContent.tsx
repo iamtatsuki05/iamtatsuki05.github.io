@@ -97,11 +97,17 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
           <h2 className="text-2xl font-semibold">{dict.latest_blog}</h2>
           <Link href="/blogs/" className="text-sm underline">{dict.cta_more}</Link>
         </div>
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2" data-testid="home-latest-blog-list">
           {latest.map((p) => (
-            <li key={p.slug} className="card p-4">
+            <li key={p.slug} className="card p-4" data-testid="home-latest-blog-card">
               <h3 className="font-medium mb-1">
-                <Link href={`/blogs/${p.slug}/`} className="underline-offset-2 hover:underline">{p.title}</Link>
+                <Link
+                  href={`/blogs/${p.slug}/`}
+                  className="underline-offset-2 hover:underline"
+                  data-testid="home-latest-blog-link"
+                >
+                  {p.title}
+                </Link>
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{p.summary}</p>
               <p className="text-xs mt-2 opacity-70">{formatDate(p.date, locale === 'ja' ? 'ja' : 'en')}</p>

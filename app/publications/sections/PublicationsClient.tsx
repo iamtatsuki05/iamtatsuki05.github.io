@@ -189,6 +189,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                 return (
                   <li
                     key={i.slug}
+                    data-testid="publication-card"
                     className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
                     {...clickableProps}
                   >

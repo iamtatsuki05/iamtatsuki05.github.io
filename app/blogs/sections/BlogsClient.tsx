@@ -133,9 +133,9 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
       <section>
         <h2 className="text-xl font-semibold mb-2">{t('latest')}</h2>
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
           {latest.map((p) => (
-            <li key={p.slug} className="card overflow-hidden">
+            <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -167,9 +167,9 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         {items.length === 0 ? (
           <p className="opacity-70">{t('noResult')}</p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="space-y-2" data-testid="blog-all-list">
             {items.map((p) => (
-              <li key={p.slug} className="card p-3 gap-3 items-start sm:flex">
+              <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
                   <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
