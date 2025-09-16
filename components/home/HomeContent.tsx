@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n';
 import { dictionaries } from '@/lib/i18n';
@@ -13,6 +14,30 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
   const latest = (await getLatestPosts(3)).items;
   const pubs = (await getAllPublications()).slice(0, 3);
   const links = (await getLinks()).slice(0, 6);
+
+  const renderAffiliation = (text: string): ReactNode => {
+    const nodes: ReactNode[] = [];
+    const pattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    let key = 0;
+    while ((match = pattern.exec(text))) {
+      const [full, label, url] = match;
+      if (match.index > lastIndex) {
+        nodes.push(text.slice(lastIndex, match.index));
+      }
+      nodes.push(
+        <a key={`affiliation-link-${key++}`} href={url} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:no-underline">
+          {label}
+        </a>,
+      );
+      lastIndex = match.index + full.length;
+    }
+    if (lastIndex < text.length) {
+      nodes.push(text.slice(lastIndex));
+    }
+    return nodes.length ? nodes : text;
+  };
   return (
     <div className="space-y-10">
       <section className="flex items-center gap-4">
@@ -30,7 +55,7 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
           <h1 className="text-3xl font-bold mb-1">{dict.title}</h1>
           <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line">{dict.intro}</p>
           {dict.affiliation ? (
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{dict.affiliation}</p>
+            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{renderAffiliation(dict.affiliation)}</p>
           ) : null}
           <p className="mt-2">
             <a
