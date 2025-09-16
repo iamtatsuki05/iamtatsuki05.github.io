@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type KeyboardEvent } from 'react';
 import Fuse from 'fuse.js';
 import { withBasePath } from '@/lib/url';
 
@@ -95,6 +95,19 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     return (locale === 'ja' ? ja : en)[key];
   };
 
+  const openInNewTab = (url?: string) => {
+    if (!url || typeof window === 'undefined') return;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleKey = (event: KeyboardEvent<HTMLLIElement>, url?: string) => {
+    if (!url) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openInNewTab(url);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <input
@@ -163,8 +176,23 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           <section key={type} className="space-y-3">
             <h2 className="text-xl font-semibold">{t(type)}</h2>
             <ul className="space-y-3">
-              {arr.map((i) => (
-                <li key={i.slug} className="card p-3 gap-3 items-start sm:flex">
+              {arr.map((i) => {
+                const primaryLink = i.links[0]?.url;
+                const clickableProps = primaryLink
+                  ? {
+                      role: 'link' as const,
+                      tabIndex: 0,
+                      onClick: () => openInNewTab(primaryLink),
+                      onKeyDown: (event: KeyboardEvent<HTMLLIElement>) => handleKey(event, primaryLink),
+                    }
+                  : {};
+                return (
+                  <li
+                    key={i.slug}
+                    data-testid="publication-card"
+                    className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
+                    {...clickableProps}
+                  >
                   {i.headerImage ? (
                     <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -196,14 +224,22 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     ) : null}
                     <div className="mt-1 space-x-2 text-sm">
                       {i.links.map((l) => (
-                        <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="underline">
+                        <a
+                          key={l.url}
+                          href={l.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="underline"
+                          onClick={(event) => event.stopPropagation()}
+                        >
                           {l.kind}
                         </a>
                       ))}
                     </div>
                   </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </section>
         );

@@ -14,6 +14,7 @@ import GithubSlugger from 'github-slugger';
 import type { Root as MdastRoot } from 'mdast';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';
+import rehypeExternalLinks from './rehype-external-links';
 
 export type ParsedMarkdown<T> = {
   frontmatter: T;
@@ -54,6 +55,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
     .use(rehypeRaw) // enable raw HTML like <details><summary>
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
+    .use(rehypeExternalLinks)
     .use(rehypeImgDefaults)
     .use(rehypePrism)
     .use(rehypeStringify)

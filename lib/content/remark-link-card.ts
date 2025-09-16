@@ -298,6 +298,15 @@ export default function remarkLinkCard(options?: Options) {
     if (targets.length === 0) return;
 
     const cache = await readCache(cacheFile);
+    let cacheChanged = false;
+    const updateCache = (url: string, data: OGData) => {
+      const prev = cache[url];
+      const same = prev && JSON.stringify(prev) === JSON.stringify(data);
+      if (!same) {
+        cache[url] = data;
+        cacheChanged = true;
+      }
+    };
     const outNodes: { html: string; parent: any; index: number; url: string }[] = [];
 
     const providerOf = (u: string) => {
@@ -369,7 +378,7 @@ export default function remarkLinkCard(options?: Options) {
       } else {
         const fetched = await fetchOG(t.url);
         if (fetched) {
-          cache[t.url] = fetched;
+          updateCache(t.url, fetched);
           og = fetched;
         } else if (cached) {
           // フェッチ失敗時は古いキャッシュで代替
@@ -383,7 +392,11 @@ export default function remarkLinkCard(options?: Options) {
       }
     }
     // Write back cache best-effort
-    try { await writeCache(cacheFile, cache); } catch {}
+    if (cacheChanged) {
+      try {
+        await writeCache(cacheFile, cache);
+      } catch {}
+    }
 
     // Replace nodes
     for (const n of outNodes) {
