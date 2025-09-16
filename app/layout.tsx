@@ -3,14 +3,33 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { withBasePath, withVersion } from '@/lib/url';
+import { absoluteUrl, buildPageMetadata, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
+const baseMetadata = buildPageMetadata({
+  title: siteConfig.defaultTitle.ja,
+  description: siteConfig.description.ja,
+  locale: 'ja',
+  path: '/',
+  languageAlternates: {
+    'ja-JP': '/ja/',
+    'en-US': '/en/',
+    'x-default': '/',
+  },
+});
+
 export const metadata: Metadata = {
-  title: 'Tatsuki Okada - Personal Site',
-  description: 'Portfolio, links, publications, and blog',
+  ...baseMetadata,
+  metadataBase: new URL(absoluteUrl('/')),
+  alternates: {
+    ...baseMetadata.alternates,
+    types: {
+      'application/rss+xml': absoluteUrl('/rss.xml'),
+    },
+  },
   icons: {
     icon: [
       { url: withVersion(withBasePath('/favicon.ico'))!, type: 'image/x-icon' },
@@ -21,6 +40,8 @@ export const metadata: Metadata = {
     shortcut: withVersion(withBasePath('/favicon-32x32.png')),
     apple: withVersion(withBasePath('/apple-touch-icon.png')),
   },
+  category: 'technology',
+  applicationName: siteConfig.siteName.ja,
 };
 
 export default function RootLayout({

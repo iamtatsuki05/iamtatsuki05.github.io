@@ -5,6 +5,7 @@ import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { EmbedsClient } from '@/components/site/EmbedsClient';
+import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
 
 type Params = { slug: string };
 
@@ -17,16 +18,27 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return {};
-  const md: Metadata = {
+
+  const publishedTime = toIsoString(post.date);
+  const modifiedTime = toIsoString(post.updated) || publishedTime;
+  const description = post.summary || `${post.title} に関する記事です。`;
+  const images = [post.headerImage, post.thumbnail].filter((src): src is string => Boolean(src));
+  return buildPageMetadata({
     title: post.title,
-    description: post.summary || undefined,
-    openGraph: {
-      title: post.title,
-      description: post.summary || undefined,
-      type: 'article',
+    description,
+    locale: 'ja',
+    path: `/blogs/${slug}/`,
+    type: 'article',
+    images,
+    keywords: post.tags,
+    languageAlternates: {
+      'ja-JP': `/blogs/${slug}/`,
+      'x-default': `/blogs/${slug}/`,
     },
-  };
-  return md;
+    publishedTime,
+    modifiedTime,
+    tags: post.tags,
+  });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<Params> }) {
@@ -34,10 +46,21 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
-  const { title, date, updated, html, summary, headerImage, headerAlt } = post;
+  const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags } = post;
+  const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
+  const articleJsonLd = buildArticleJsonLd({
+    title,
+    description: summary || `${title} に関する記事です。`,
+    path: `/blogs/${slug}/`,
+    image: images[0],
+    datePublished: toIsoString(date) ?? date,
+    dateModified: toIsoString(updated) ?? toIsoString(date) ?? date,
+    tags,
+  });
 
   return (
     <article className="prose dark:prose-invert max-w-none">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       {headerImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -61,4 +84,11 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
       <EmbedsClient />
     </article>
   );
+}
+
+function toIsoString(input?: string | null) {
+  if (!input) return undefined;
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString();
 }

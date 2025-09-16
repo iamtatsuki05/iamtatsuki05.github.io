@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import clsx from 'clsx';
 import type { Locale } from '@/lib/i18n';
 import { dictionaries } from '@/lib/i18n';
 import { getLatestPosts } from '@/lib/content/blog';
@@ -14,6 +15,10 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
   const latest = (await getLatestPosts(3)).items;
   const pubs = (await getAllPublications()).slice(0, 4);
   const links = (await getLinks()).slice(0, 6);
+  const mobileLinkLimit = 3;
+  const aliasLine = dict.alias;
+  const handleLine = dict.handle;
+  const secondaryLinks = links.slice(mobileLinkLimit);
 
   const renderAffiliation = (text: string): ReactNode => {
     const nodes: ReactNode[] = [];
@@ -27,7 +32,13 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
         nodes.push(text.slice(lastIndex, match.index));
       }
       nodes.push(
-        <a key={`affiliation-link-${key++}`} href={url} target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:no-underline">
+        <a
+          key={`affiliation-link-${key++}`}
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2 hover:no-underline"
+        >
           {label}
         </a>,
       );
@@ -38,26 +49,43 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
     }
     return nodes.length ? nodes : text;
   };
+
+  const renderLinkItem = (key: string, title: string, url: string, iconUrl?: string, className?: string) => (
+    <li key={key} className={clsx('text-center', className)}>
+      <a href={url} target="_blank" rel="noreferrer" className="inline-block">
+        {iconUrl ? (
+          <ExternalIcon src={iconUrl} alt={title} size={40} />
+        ) : (
+          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 text-sm">
+            {title.slice(0, 1)}
+          </span>
+        )}
+      </a>
+      <div className="text-xs mt-1 truncate">{title}</div>
+    </li>
+  );
+
   return (
     <div className="space-y-10">
-      <section className="flex items-center gap-4">
+      <section className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <img
           src={withBasePath('/images/icon.jpeg')}
           alt="My Avatar"
-          width={80}
-          height={80}
-          className="rounded-full border border-gray-200 dark:border-gray-700"
+          width={144}
+          height={144}
+          className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-gray-200 dark:border-gray-700 object-cover shadow-sm"
           loading="eager"
           decoding="async"
           fetchPriority="high"
         />
-        <div>
-          <h1 className="text-3xl font-bold mb-1">{dict.title}</h1>
-          <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line">{dict.intro}</p>
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold mb-2">{dict.title}</h1>
+          <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{aliasLine}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300 mt-0">{handleLine}</p>
           {dict.affiliation ? (
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">{renderAffiliation(dict.affiliation)}</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mt-0">{renderAffiliation(dict.affiliation)}</p>
           ) : null}
-          <p className="mt-2">
+          <p className="text-sm mt-0">
             <a
               href="mailto:tatsukio0522@gmail.com"
               className="underline underline-offset-2 hover:no-underline"
@@ -70,26 +98,37 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
       </section>
 
       <section>
+        <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed bg-white/70 dark:bg-gray-900/70 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+          {dict.intro}
+        </p>
+      </section>
+
+      <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-2xl font-semibold">🔗 Links</h2>
           <Link href="/links/" className="text-sm underline">{dict.cta_more}</Link>
         </div>
         <ul className="grid grid-cols-3 sm:grid-cols-6 gap-4">
-          {links.map((l) => (
-            <li key={l.url} className="text-center">
-              <a href={l.url} target="_blank" rel="noreferrer" className="inline-block">
-                {l.iconUrl ? (
-                  <ExternalIcon src={l.iconUrl} alt={l.title} size={40} />
-                ) : (
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 text-sm">
-                    {l.title.slice(0,1)}
-                  </span>
-                )}
-              </a>
-              <div className="text-xs mt-1 truncate">{l.title}</div>
-            </li>
-          ))}
+          {links.map((l, index) =>
+            renderLinkItem(
+              `primary-${l.url}`,
+              l.title,
+              l.url,
+              l.iconUrl,
+              index >= mobileLinkLimit ? 'hidden sm:block' : undefined,
+            ),
+          )}
         </ul>
+        {secondaryLinks.length ? (
+          <details className="sm:hidden mt-4">
+            <summary className="text-sm underline cursor-pointer">{dict.cta_more}</summary>
+            <ul className="grid grid-cols-3 gap-4 mt-3">
+              {secondaryLinks.map((l) =>
+                renderLinkItem(`mobile-${l.url}`, l.title, l.url, l.iconUrl),
+              )}
+            </ul>
+          </details>
+        ) : null}
       </section>
 
       <section>
