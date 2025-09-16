@@ -38,23 +38,27 @@ bun run start                 # :3000 で out/ を配信
 ├── .dockerignore
 ├── .github
 ├── .gitignore
+├── compose.yml
 ├── Dockerfile
 ├── README.md
-├── README_JS.md
+├── README_JA.md
 ├── app
 ├── components
+├── cypre
 ├── content
 │   ├── blogs
 │   └── publications
 ├── data
 │   └── links.yaml
-├── docker-compose.yml
 ├── lib
+├── locales
 ├── pages
 ├── public
 │   └── images
 ├── scripts
 │   └── generate-sitemap.ts
+├── tests
+├── types
 ├── package.json
 ├── tailwind.config.ts
 └── tsconfig.json
