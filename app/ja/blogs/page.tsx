@@ -1,5 +1,19 @@
+import type { Metadata } from 'next';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'ブログ記事一覧',
+  description: '岡田 龍樹による自然言語処理や機械学習に関するブログ記事の一覧です。',
+  locale: 'ja',
+  path: '/ja/blogs/',
+  languageAlternates: {
+    'ja-JP': '/ja/blogs/',
+    'en-US': '/en/blogs/',
+    'x-default': '/blogs/',
+  },
+});
 
 export default async function BlogJa() {
   const posts = await getAllPosts();

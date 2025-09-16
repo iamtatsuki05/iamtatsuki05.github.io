@@ -1,5 +1,19 @@
+import type { Metadata } from 'next';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
+import { buildPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Blog Posts',
+  description: 'Browse blog posts by Tatsuki Okada about natural language processing, machine learning, and development.',
+  locale: 'en',
+  path: '/en/blogs/',
+  languageAlternates: {
+    'ja-JP': '/ja/blogs/',
+    'en-US': '/en/blogs/',
+    'x-default': '/blogs/',
+  },
+});
 
 export default async function BlogEn() {
   const posts = await getAllPosts();
