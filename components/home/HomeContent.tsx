@@ -12,7 +12,7 @@ import { formatDate } from '@/lib/date';
 export default async function HomeContent({ locale }: { locale: Locale }) {
   const dict = dictionaries[locale];
   const latest = (await getLatestPosts(3)).items;
-  const pubs = (await getAllPublications()).slice(0, 3);
+  const pubs = (await getAllPublications()).slice(0, 4);
   const links = (await getLinks()).slice(0, 6);
 
   const renderAffiliation = (text: string): ReactNode => {
@@ -117,10 +117,25 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
         </div>
         <ul className="grid gap-3 sm:grid-cols-2">
           {pubs.map((p) => (
-            <li key={p.slug} className="card p-4">
-              <h3 className="font-medium mb-1">{p.title}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{p.venue || p.publisher}</p>
-              <p className="text-xs mt-2 opacity-70">{p.publishedAt?.slice(0, 10)}</p>
+            <li key={p.slug} className="h-full">
+              {p.links?.[0]?.url ? (
+                <a
+                  href={p.links[0].url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="card flex h-full flex-col p-4 hover:border-gray-300 dark:hover:border-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+                >
+                  <h3 className="font-medium mb-1">{p.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 flex-1">{p.venue || p.publisher}</p>
+                  <p className="text-xs mt-2 opacity-70">{p.publishedAt?.slice(0, 10)}</p>
+                </a>
+              ) : (
+                <div className="card flex h-full flex-col p-4">
+                  <h3 className="font-medium mb-1">{p.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 flex-1">{p.venue || p.publisher}</p>
+                  <p className="text-xs mt-2 opacity-70">{p.publishedAt?.slice(0, 10)}</p>
+                </div>
+              )}
             </li>
           ))}
         </ul>
