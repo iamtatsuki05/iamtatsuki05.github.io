@@ -8,12 +8,12 @@ export const siteConfig = {
   owner: 'Tatsuki Okada',
   aliases: ['岡田 龍樹', 'Tatsuki Okada', 'iamtatsuki05', 'iam_tatsuki05'],
   siteName: {
-    ja: '岡田 龍樹',
-    en: 'Tatsuki Okada',
+    ja: '岡田 龍樹 | Tatsuki Okada',
+    en: 'Tatsuki Okada | 岡田 龍樹',
   } satisfies Record<Locale, string>,
   defaultTitle: {
-    ja: '岡田 龍樹 | NLP・機械学習エンジニア',
-    en: 'Tatsuki Okada | NLP & Machine Learning Engineer',
+    ja: '岡田 龍樹(Tatsuki Okada) | NLP・機械学習エンジニア',
+    en: 'Tatsuki Okada(岡田 龍樹) | NLP & Machine Learning Engineer',
   } satisfies Record<Locale, string>,
   description: {
     ja: '自然言語処理・機械学習・ソフトウェア開発に取り組むエンジニア、岡田 龍樹のポートフォリオサイト。最新のブログ、研究成果、制作物、活動記録をまとめています。',
