@@ -7,7 +7,7 @@ import { getLatestPosts } from '@/lib/content/blog';
 import { getAllPublications } from '@/lib/content/publication';
 import { getLinks } from '@/lib/data/links';
 import { ExternalIcon } from '@/components/ui/ExternalIcon';
-import { withBasePath } from '@/lib/url';
+import { withBasePath, withVersion } from '@/lib/url';
 import { formatDate } from '@/lib/date';
 
 export default async function HomeContent({ locale }: { locale: Locale }) {
@@ -65,11 +65,13 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
     </li>
   );
 
+  const avatarSrc = withVersion(withBasePath('/images/icon.jpeg'));
+
   return (
     <div className="space-y-10">
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <img
-          src={withBasePath('/images/icon.jpeg')}
+          src={avatarSrc}
           alt="My Avatar"
           width={144}
           height={144}
