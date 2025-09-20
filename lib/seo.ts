@@ -36,7 +36,7 @@ export const siteConfig = {
     url: 'http://www.lang.ise.shibaura-it.ac.jp/',
   },
   twitterHandle: '@iam_tatsuki05',
-  defaultOgImage: '/images/icon.jpeg',
+  defaultOgImage: '/favicon.ico',
 } as const;
 
 type Alternates = Record<string, string>;

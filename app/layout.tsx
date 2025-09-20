@@ -35,7 +35,6 @@ export const metadata: Metadata = {
       { url: withVersion(withBasePath('/favicon.ico'))!, type: 'image/x-icon' },
       { url: withVersion(withBasePath('/favicon-32x32.png'))!, type: 'image/png', sizes: '32x32' },
       { url: withVersion(withBasePath('/favicon-16x16.png'))!, type: 'image/png', sizes: '16x16' },
-      { url: withVersion(withBasePath('/images/icon.jpeg'))!, type: 'image/jpeg' },
     ],
     shortcut: withVersion(withBasePath('/favicon-32x32.png')),
     apple: withVersion(withBasePath('/apple-touch-icon.png')),
@@ -62,7 +61,7 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
-          href={withVersion(withBasePath('/images/icon.jpeg'))}
+          href={withVersion(withBasePath('/favicon.ico'))}
           fetchPriority="high"
         />
       </head>

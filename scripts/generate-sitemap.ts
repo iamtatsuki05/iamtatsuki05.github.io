@@ -119,12 +119,12 @@ async function main() {
     await copyFile(publicIco, icoPath);
     console.log('copied public/favicon.ico');
   } catch {
-    // 2) 指定の JPEG を /favicon.ico としてコピー
+    // 2) public/images 配下の favicon.ico を /favicon.ico としてコピー
     try {
-      const jpeg = path.join(pubDir, 'images', 'icon.jpeg');
-      await stat(jpeg);
-      await copyFile(jpeg, icoPath);
-      console.log('copied public/images/icon.jpeg to out/favicon.ico');
+      const fallbackIco = path.join(pubDir, 'images', 'favicon.ico');
+      await stat(fallbackIco);
+      await copyFile(fallbackIco, icoPath);
+      console.log('copied public/images/favicon.ico to out/favicon.ico');
     } catch {
       // 3) フォールバック: PNG から簡易 ICO を生成
       const candidates = [
