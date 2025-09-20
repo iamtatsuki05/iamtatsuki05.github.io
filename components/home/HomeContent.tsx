@@ -65,7 +65,7 @@ export default async function HomeContent({ locale }: { locale: Locale }) {
     </li>
   );
 
-  const avatarSrc = withVersion(withBasePath('/images/icon.jpeg'));
+  const avatarSrc = withVersion(withBasePath('/favicon.ico'));
 
   return (
     <div className="space-y-10">

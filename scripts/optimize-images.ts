@@ -33,20 +33,25 @@ async function optimizeOne(srcPath: string, outDir: string, baseName: string) {
 }
 
 async function main() {
-  const pub = path.join(process.cwd(), 'public', 'images');
-  const src = path.join(pub, 'icon.jpeg');
+  const publicDir = path.join(process.cwd(), 'public');
+  const imagesDir = path.join(publicDir, 'images');
+  const src = path.join(publicDir, 'favicon.ico');
   try {
     await fs.access(src);
   } catch {
     console.error('source not found:', src);
     process.exit(1);
   }
-  await optimizeOne(src, pub, 'icon');
-  console.log('Optimized images written to public/images/icon-160.webp and -320.webp');
+  const ext = path.extname(src).toLowerCase();
+  if (ext !== '.jpeg' && ext !== '.jpg' && ext !== '.png') {
+    console.warn('Skipping optimization: favicon.ico is not a JPEG/PNG source. Provide a JPEG or PNG if optimization is needed.');
+    process.exit(0);
+  }
+  await optimizeOne(src, imagesDir, 'favicon');
+  console.log('Optimized images written to public/images/favicon-160.webp and -320.webp');
 }
 
 main().catch((e) => {
   console.error(e);
   process.exit(1);
 });
-

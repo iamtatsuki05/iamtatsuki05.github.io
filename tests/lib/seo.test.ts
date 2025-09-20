@@ -31,8 +31,8 @@ describe('buildPageMetadata', () => {
 
     expect(metadata.alternates?.canonical).toBe('https://example.com/test/');
     expect(metadata.alternates?.languages?.['ja-JP']).toBe('https://example.com/ja/test/');
-    expect(metadata.openGraph?.images?.[0]).toBe('https://example.com/images/icon.jpeg');
-    expect(metadata.twitter?.images?.[0]).toBe('https://example.com/images/icon.jpeg');
+    expect(metadata.openGraph?.images?.[0]).toBe('https://example.com/favicon.ico');
+    expect(metadata.twitter?.images?.[0]).toBe('https://example.com/favicon.ico');
     expect(metadata.keywords).toContain('custom');
   });
 });
@@ -51,7 +51,7 @@ describe('buildArticleJsonLd', () => {
     expect(article['@type']).toBe('BlogPosting');
     expect(article.url).toBe('https://example.com/blogs/structured-data/');
     expect(article.image?.[0]).toBe('https://example.com/images/og-sample.jpg');
-    expect(article.publisher?.logo?.url).toBe('https://example.com/images/icon.jpeg');
+    expect(article.publisher?.logo?.url).toBe('https://example.com/favicon.ico');
     expect(article.keywords).toEqual(['seo']);
   });
 });
