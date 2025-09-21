@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import YAML from 'yaml';
+import { cached } from '@/lib/server/cache';
 
 export type LinkItem = {
   title: string;
@@ -13,7 +14,9 @@ export type LinkItem = {
 
 export async function getLinks(): Promise<LinkItem[]> {
   const file = path.join(process.cwd(), 'data', 'links.yaml');
-  const raw = await fs.readFile(file, 'utf8');
-  const json = YAML.parse(raw) as LinkItem[];
-  return json;
+  return cached('links:all', async () => {
+    const raw = await fs.readFile(file, 'utf8');
+    const json = YAML.parse(raw) as LinkItem[];
+    return json;
+  });
 }

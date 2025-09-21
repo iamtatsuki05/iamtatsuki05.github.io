@@ -1,27 +1,20 @@
 import type { Metadata } from 'next';
-import { getAllPublications } from '@/lib/content/publication';
-import { PublicationsClient } from './sections/PublicationsClient';
-import { buildPageMetadata } from '@/lib/seo';
+import type { Locale } from '@/lib/i18n';
+import { PublicationsPage as PublicationsPageView } from '@/app/(site)/_components/PublicationsPage';
+import { buildPageMetadata, defaultLanguageAlternates } from '@/lib/seo';
+import { publicationsPageCopy } from '@/app/(site)/_config/pageCopy';
+
+const DEFAULT_LOCALE: Locale = 'en';
+const copy = publicationsPageCopy[DEFAULT_LOCALE];
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Publications',
-  description: 'Academic publications, articles, and talks by Tatsuki Okada in the field of NLP and machine learning.',
-  locale: 'en',
+  title: copy.metadataTitle,
+  description: copy.metadataDescription,
+  locale: DEFAULT_LOCALE,
   path: '/publications/',
-  languageAlternates: {
-    'ja-JP': '/ja/publications/',
-    'en-US': '/en/publications/',
-    'x-default': '/publications/',
-  },
+  languageAlternates: defaultLanguageAlternates,
 });
 
-export default async function PublicationsPage() {
-  const items = await getAllPublications();
-  return (
-    <div className="space-y-4">
-      <div className="text-sm opacity-70">🏠 Home / 📚 Publications</div>
-      <h1 className="text-3xl font-bold">📚 Publications</h1>
-      <PublicationsClient items={items} locale="en" />
-    </div>
-  );
+export default function PublicationsPage() {
+  return <PublicationsPageView locale={DEFAULT_LOCALE} />;
 }

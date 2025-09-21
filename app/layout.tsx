@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { withBasePath, withVersion } from '@/lib/url';
-import { absoluteUrl, buildPageMetadata, siteConfig } from '@/lib/seo';
+import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
@@ -14,11 +14,7 @@ const baseMetadata = buildPageMetadata({
   description: siteConfig.description.ja,
   locale: 'ja',
   path: '/',
-  languageAlternates: {
-    'ja-JP': '/ja/',
-    'en-US': '/en/',
-    'x-default': '/',
-  },
+  languageAlternates: defaultLanguageAlternates,
 });
 
 export const metadata: Metadata = {

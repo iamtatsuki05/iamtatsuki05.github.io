@@ -193,13 +193,12 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
                     {...clickableProps}
                   >
-                  {i.headerImage ? (
-                    <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={withBasePath(i.headerImage)}
-                        alt={i.headerAlt || i.title}
-                        className="max-w-full max-h-full object-contain"
+                {i.headerImage ? (
+                  <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
+                    <img
+                      src={withBasePath(i.headerImage)}
+                      alt={i.headerAlt || i.title}
+                      className="max-w-full max-h-full object-contain"
                         loading="lazy"
                         decoding="async"
                       />

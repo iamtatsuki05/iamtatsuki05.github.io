@@ -26,13 +26,11 @@ if (typeof (globalThis as any).window === 'undefined') {
   // https://github.com/jsdom/jsdom では document.oninput が未定義のため補う
   // @ts-ignore
   if (!('oninput' in (globalThis as any).document)) {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     (globalThis as any).document.oninput = null;
   }
   // React の古い IE ポリフィルが参照する attachEvent を no-op で用意
   // @ts-ignore
   if (!(dom.window as any).HTMLElement.prototype.attachEvent) {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     (dom.window as any).HTMLElement.prototype.attachEvent = () => {};
   }
 }

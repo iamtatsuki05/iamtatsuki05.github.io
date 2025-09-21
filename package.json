@@ -8,7 +8,7 @@
     "dev:test": "bun scripts/ensure-favicon.ts && next dev --port 3000",
     "build": "bun scripts/ensure-favicon.ts && next build && bun run gen:sitemap",
     "start": "serve out -p 3000",
-    "lint": "next lint",
+    "lint": "eslint . --ext js,jsx,ts,tsx",
     "gen:sitemap": "bun scripts/generate-sitemap.ts",
     "optimize:images": "bun scripts/optimize-images.ts",
     "vitest:run": "vitest run",

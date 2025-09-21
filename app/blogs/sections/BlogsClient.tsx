@@ -137,7 +137,6 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={withBasePath(p.headerImage)}
                   alt={p.headerAlt || p.title}
@@ -172,7 +171,6 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
               <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
                   <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={withBasePath(p.headerImage)}
                       alt={p.headerAlt || p.title}
