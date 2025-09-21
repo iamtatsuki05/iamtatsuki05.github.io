@@ -18,6 +18,7 @@ export function withBasePath(src?: string | null): string | undefined {
 export function withVersion(src?: string | null): string | undefined {
   if (!src) return undefined;
   if (!ASSET_VERSION) return src || undefined;
+  if (/\.ico($|\?)/i.test(src)) return src;
   const hasQuery = src.includes('?');
   const sep = hasQuery ? '&' : '?';
   return `${src}${sep}v=${ASSET_VERSION}`;

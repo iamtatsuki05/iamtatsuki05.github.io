@@ -7,7 +7,7 @@ import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig }
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
-const inter = Inter({ subsets: ['latin'], preload: false });
+const inter = Inter({ subsets: ['latin'] });
 
 const baseMetadata = buildPageMetadata({
   title: siteConfig.defaultTitle.ja,
