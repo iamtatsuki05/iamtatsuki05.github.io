@@ -15,7 +15,6 @@ export function ExternalIcon({ src, alt, size = 48, className = '' }: Props) {
     return (
       <picture>
         <source media="(prefers-color-scheme: dark)" srcSet={dark} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={light}
           alt={alt}
@@ -30,7 +29,6 @@ export function ExternalIcon({ src, alt, size = 48, className = '' }: Props) {
   }
   // Fallback: use same src and invert in dark mode
   return (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt={alt}

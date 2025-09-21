@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { withBasePath } from '@/lib/url';
 import type { Locale } from '@/lib/i18n';
-
-const FALLBACK_SITE_URL = 'https://iamtatsuki05.github.io';
+import { getSiteUrl } from '@/lib/config/env';
 
 export const siteConfig = {
   owner: 'Tatsuki Okada',
@@ -39,6 +38,12 @@ export const siteConfig = {
   defaultOgImage: '/favicon.ico',
 } as const;
 
+export const defaultLanguageAlternates: Record<string, string> = {
+  'ja-JP': '/ja/',
+  'en-US': '/en/',
+  'x-default': '/',
+};
+
 type Alternates = Record<string, string>;
 
 type BuildMetadataOptions = {
@@ -56,19 +61,7 @@ type BuildMetadataOptions = {
 };
 
 export function getSiteOrigin() {
-  const configUrl = (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || '').trim();
-  if (configUrl) {
-    try {
-      const parsed = new URL(configUrl);
-      return parsed.origin + parsed.pathname.replace(/\/$/, '');
-    } catch {
-      // ignore malformed env
-    }
-  }
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:3000';
-  }
-  return FALLBACK_SITE_URL;
+  return getSiteUrl();
 }
 
 export function absoluteUrl(input: string = '/') {

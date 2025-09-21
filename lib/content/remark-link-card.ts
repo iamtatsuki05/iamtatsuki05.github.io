@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { getOgCacheTtlMs, shouldDisableOgFetch } from '@/lib/config/env';
 
 type OGData = {
   url: string;
@@ -174,7 +175,7 @@ async function fetchProviderMeta(url: string): Promise<OGData | null> {
 }
 
 async function fetchOG(url: string): Promise<OGData | null> {
-  if (process.env.OG_DISABLE_FETCH === 'true') {
+  if (shouldDisableOgFetch()) {
     return { url };
   }
   try {
@@ -277,7 +278,7 @@ export default function remarkLinkCard(options?: Options) {
   const cacheFile = options?.cacheFile || DEFAULT_CACHE;
   const ttlMs = Number.isFinite(options?.ttlMs as number)
     ? (options?.ttlMs as number)
-    : Number.parseInt(process.env.OG_CACHE_TTL_MS || '', 10) || 7 * 24 * 60 * 60 * 1000; // 7日
+    : getOgCacheTtlMs();
   return async function transformer(tree: any) {
     const targets: { parent: any; index: number; url: string }[] = [];
     walk(tree, (node, parent, index) => {

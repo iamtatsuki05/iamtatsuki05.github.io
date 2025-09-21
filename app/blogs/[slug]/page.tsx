@@ -14,6 +14,8 @@ export async function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
 }
 
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
@@ -62,7 +64,6 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
     <article className="prose dark:prose-invert max-w-none">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       {headerImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={withBasePath(headerImage)}
           alt={headerAlt || title}
@@ -78,7 +79,6 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
         {formatDate(date, 'ja')}
         {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
       </p>
-      {/* eslint-disable-next-line react/no-danger */}
       <div dangerouslySetInnerHTML={{ __html: html || '' }} />
       <CodeCopyClient />
       <EmbedsClient />

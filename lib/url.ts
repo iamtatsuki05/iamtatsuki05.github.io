@@ -1,14 +1,7 @@
-// BASE_PATH を常に先頭スラッシュ付き・末尾なしに正規化する
-// 例: 'repo' -> '/repo', '/repo/' -> '/repo', '' | '/' -> ''
-function normalizeBasePath(input?: string | null): string {
-  const raw = (input ?? '').trim();
-  if (!raw || raw === '/') return '';
-  const stripped = raw.replace(/^\/+|\/+$/g, '');
-  return `/${stripped}`;
-}
+import { getAssetVersion, getBasePath } from '@/lib/config/env';
 
-export const BASE_PATH = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH);
-export const ASSET_VERSION = (process.env.NEXT_PUBLIC_ASSET_VERSION || '').slice(0, 8);
+export const BASE_PATH = getBasePath();
+export const ASSET_VERSION = getAssetVersion();
 
 export function withBasePath(src?: string | null): string | undefined {
   if (!src) return undefined;
