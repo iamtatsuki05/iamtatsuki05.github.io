@@ -12,7 +12,7 @@ describe('Blog index page', () => {
       });
 
       it('lists blog posts with metadata', () => {
-        cy.contains('h1', 'Blog').should('be.visible');
+        cy.contains('h1', '📝 ブログ').should('be.visible');
         cy.contains('h2', '✨ 最新').parents('section').find('li').should('have.length.at.least', 1);
         cy.contains('h2', '🗂 すべての記事')
           .parents('section')
@@ -105,5 +105,19 @@ describe('Publications page', () => {
         cy.get('@publicationOpen').should('have.been.called');
       });
     });
+  });
+});
+
+describe('Localized page variants', () => {
+  it('renders the Japanese blog index', () => {
+    cy.viewport(1280, 800);
+    cy.visit('/ja/blogs/');
+    cy.contains('h1', '📝 ブログ').should('be.visible');
+  });
+
+  it('renders the English blog index', () => {
+    cy.viewport(1280, 800);
+    cy.visit('/en/blogs/');
+    cy.contains('h1', '📝 Blog').should('be.visible');
   });
 });
