@@ -16,6 +16,8 @@ export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
 
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const locale = resolveLocale((await params).locale);
   return buildPageMetadata({

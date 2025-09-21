@@ -1,12 +1,12 @@
-import { NextResponse } from 'next/server';
+#!/usr/bin/env bun
+import path from 'node:path';
+import { writeFile, mkdir } from 'node:fs/promises';
 import { Feed } from 'feed';
-import { getAllPosts } from '@/lib/content/blog';
-import { getSiteUrlWithBasePath } from '@/lib/config/env';
-import { siteConfig } from '@/lib/seo';
+import { getAllPosts } from '../lib/content/blog';
+import { getSiteUrlWithBasePath } from '../lib/config/env';
+import { siteConfig } from '../lib/seo';
 
-export const dynamic = 'force-static';
-
-export async function GET() {
+async function main() {
   const site = getSiteUrlWithBasePath();
   const posts = await getAllPosts();
   const feed = new Feed({
@@ -32,7 +32,13 @@ export async function GET() {
     });
   }
 
-  return new NextResponse(feed.rss2(), {
-    headers: { 'Content-Type': 'application/xml; charset=utf-8' },
-  });
+  const outDir = path.join(process.cwd(), 'out');
+  await mkdir(outDir, { recursive: true });
+  await writeFile(path.join(outDir, 'rss.xml'), feed.rss2(), 'utf8');
+  console.log('rss.xml generated');
 }
+
+main().catch((error) => {
+  console.error('[generate-rss] failed', error);
+  process.exitCode = 1;
+});
