@@ -27,7 +27,7 @@ export const siteConfig = {
     github: 'https://github.com/iamtatsuki05',
     x: 'https://x.com/iam_tatsuki05',
     instagram: 'https://www.instagram.com/iam_tatsuki05',
-    linkedin: 'https://www.linkedin.com/in/tatsuki-okada-186362224',
+    linkedin: 'https://www.linkedin.com/in/iamtatsuki05',
     huggingface: 'https://huggingface.co/iamtatsuki05',
   },
   affiliation: {
