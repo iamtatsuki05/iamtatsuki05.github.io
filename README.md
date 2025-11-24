@@ -14,6 +14,9 @@
 bun dev                       # start dev server at http://localhost:3000
 INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
 bun run start                 # serve static out/ on :3000
+bun run storybook             # start Storybook at http://localhost:6006
+bun run storybook:build       # output static build to storybook-static/
+# Telemetry: set STORYBOOK_DISABLE_TELEMETRY=1 to opt out
 ```
 
 ## How to operate Docker
@@ -38,13 +41,14 @@ bun run start                 # serve static out/ on :3000
 ├── .dockerignore
 ├── .github
 ├── .gitignore
+├── .storybook
 ├── compose.yml
 ├── Dockerfile
 ├── README.md
 ├── README_JA.md
 ├── app
 ├── components
-├── cypre
+├── cypress
 ├── content
 │   ├── blogs
 │   └── publications
@@ -52,7 +56,6 @@ bun run start                 # serve static out/ on :3000
 │   └── links.yaml
 ├── lib
 ├── locales
-├── pages
 ├── public
 │   └── images
 ├── scripts

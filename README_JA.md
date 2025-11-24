@@ -14,6 +14,9 @@
 bun dev                       # http://localhost:3000 で開発
 INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
 bun run start                 # :3000 で out/ を配信
+bun run storybook             # http://localhost:6006 で Storybook
+bun run storybook:build       # storybook-static/ に静的ビルド
+# テレメトリ: 参加したくない場合は STORYBOOK_DISABLE_TELEMETRY=1 を設定
 ```
 
 ## Docker の操作方法
@@ -38,13 +41,14 @@ bun run start                 # :3000 で out/ を配信
 ├── .dockerignore
 ├── .github
 ├── .gitignore
+├── .storybook
 ├── compose.yml
 ├── Dockerfile
 ├── README.md
 ├── README_JA.md
 ├── app
 ├── components
-├── cypre
+├── cypress
 ├── content
 │   ├── blogs
 │   └── publications
@@ -52,7 +56,6 @@ bun run start                 # :3000 で out/ を配信
 │   └── links.yaml
 ├── lib
 ├── locales
-├── pages
 ├── public
 │   └── images
 ├── scripts

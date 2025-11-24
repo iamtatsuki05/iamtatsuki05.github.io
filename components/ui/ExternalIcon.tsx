@@ -23,6 +23,8 @@ export function ExternalIcon({ src, alt, size = 48, className = '' }: Props) {
           className={`mx-auto ${className}`}
           loading="lazy"
           decoding="async"
+          referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
         />
       </picture>
     );
@@ -37,6 +39,8 @@ export function ExternalIcon({ src, alt, size = 48, className = '' }: Props) {
       className={`mx-auto dark:invert ${className}`}
       loading="lazy"
       decoding="async"
+      referrerPolicy="no-referrer"
+      crossOrigin="anonymous"
     />
   );
 }

@@ -47,6 +47,16 @@ jobs:
           NEXT_PUBLIC_ASSET_VERSION: ${{ github.sha }}
           INCLUDE_DRAFTS: 'false'
         run: bun run build
+      - name: Build Storybook
+        env:
+          HOME: .storybook-home
+          STORYBOOK_DISABLE_TELEMETRY: '1'
+          STORYBOOK_DISABLE_GLOBAL_SETTINGS: 'true'
+          STORYBOOK_DISABLE_VERSION_CHECK: 'true'
+        run: |
+          bun run storybook:build
+          mkdir -p out/storybook
+          cp -R storybook-static/* out/storybook
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -1,8 +1,9 @@
 "use client";
 import { useEffect } from 'react';
 
-export function CodeCopyClient() {
+export function CodeCopyClient({ enabled = true }: { enabled?: boolean } = {}) {
   useEffect(() => {
+    if (!enabled) return;
     const pres = Array.from(document.querySelectorAll<HTMLElement>('article.prose pre'));
     pres.forEach((pre) => {
       if (pre.dataset.copyReady === '1') return;
@@ -43,7 +44,6 @@ export function CodeCopyClient() {
       });
       pre.appendChild(btn);
     });
-  }, []);
+  }, [enabled]);
   return null;
 }
-
