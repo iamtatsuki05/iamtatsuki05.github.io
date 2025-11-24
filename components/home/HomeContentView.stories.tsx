@@ -57,13 +57,41 @@ const samplePublications: Publication[] = [
 ];
 
 const sampleLinks: LinkItem[] = [
-  { title: 'GitHub', url: 'https://github.com/iamtatsuki05', iconUrl: 'https://cdn.simpleicons.org/github' },
-  { title: 'X (Twitter)', url: 'https://x.com/iam_tatsuki05', iconUrl: 'https://cdn.simpleicons.org/x' },
-  { title: 'LinkedIn', url: 'https://www.linkedin.com/in/iamtatsuki05', iconUrl: 'https://cdn.simpleicons.org/linkedin' },
-  { title: 'Zenn', url: 'https://zenn.dev/iamtatsuki05', iconUrl: 'https://cdn.simpleicons.org/zenn' },
-  { title: 'Speaker Deck', url: 'https://speakerdeck.com', iconUrl: 'https://cdn.simpleicons.org/speakerdeck' },
-  { title: 'Qiita', url: 'https://qiita.com/iamtatsuki05', iconUrl: 'https://cdn.simpleicons.org/qiita' },
-  { title: 'YouTube', url: 'https://youtube.com', iconUrl: 'https://cdn.simpleicons.org/youtube' },
+  {
+    title: 'GitHub',
+    url: 'https://github.com/iamtatsuki05',
+    iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg',
+    desc: 'ソースコードとプロジェクト',
+    category: 'Social',
+  },
+  {
+    title: 'X (Twitter)',
+    url: 'https://x.com/iam_tatsuki05',
+    iconUrl: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/twitter/twitter-original.svg',
+    desc: '日々の発信',
+    category: 'Social',
+  },
+  {
+    title: 'Instagram',
+    url: 'https://www.instagram.com/iam_tatsuki05',
+    iconUrl: 'https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg',
+    desc: '写真・日常',
+    category: 'Social',
+  },
+  {
+    title: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/iamtatsuki05',
+    iconUrl: 'https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg',
+    desc: '職務経歴・プロフィール',
+    category: 'Social',
+  },
+  {
+    title: 'Huggingface',
+    url: 'https://huggingface.co/iamtatsuki05',
+    iconUrl: 'https://huggingface.co/front/assets/huggingface_logo-noborder.svg',
+    desc: 'モデル・データセット・アプリ',
+    category: 'Social',
+  },
 ];
 
 const meta = {
