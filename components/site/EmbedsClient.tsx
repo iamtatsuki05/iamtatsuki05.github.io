@@ -41,7 +41,8 @@ function loadOnce(src: string, globalReady: () => boolean) {
   });
 }
 
-export function EmbedsClient() {
+export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
+  if (!enabled) return null;
   useEffect(() => {
     let disposed = false;
     const roots = new WeakMap<Element, Root>();

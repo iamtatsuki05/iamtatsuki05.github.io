@@ -2,21 +2,18 @@
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/site/ThemeToggle';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
-import clsx from 'clsx';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-
-const nav = [
-  { href: '/', label: '🏠 Home' },
-  { href: '/links/', label: '🔗 Links' },
-  { href: '/publications/', label: '📚 Publications' },
-  { href: '/blogs/', label: '📝 Blog' },
-];
+import { useEffect, useMemo, useState } from 'react';
+import { NavLinks } from '@/components/site/NavLinks';
+import { MobileMenu } from '@/components/site/MobileMenu';
+import { NAV_ITEMS } from '@/components/site/navItems';
 
 export function Header() {
   const pathname = usePathname() || '';
   const [open, setOpen] = useState(false);
+  const localePrefix = pathname.startsWith('/ja') ? '/ja' : pathname.startsWith('/en') ? '/en' : '';
+  const activePath = pathname;
+
   // メニュー表示中はスクロールを固定
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -30,39 +27,30 @@ export function Header() {
       root.style.overflow = '';
     };
   }, [open]);
-  const localePrefix = pathname.startsWith('/ja') ? '/ja' : pathname.startsWith('/en') ? '/en' : '';
+
+  const navItems = useMemo(() => NAV_ITEMS, []);
+
   return (
     <header className="sticky top-0 z-40 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
       <div className="container mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
         <Link href="/" className="font-semibold text-lg">Tatsuki Okada - Personal Site</Link>
         {/* Desktop nav */}
-        <nav className="hidden sm:flex items-center gap-4">
-          {nav.map((n) => (
-            <Link
-              key={n.href}
-              href={`${localePrefix}${n.href}`}
-              className={clsx(
-                'px-2 py-1 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800',
-                pathname === `${localePrefix}${n.href}` && 'bg-gray-100 dark:bg-gray-800',
-              )}
-            >
-              {n.label}
-            </Link>
-          ))}
+        <div className="hidden sm:flex items-center gap-4">
+          <NavLinks items={navItems} activePath={activePath} localePrefix={localePrefix} />
           <LanguageSwitch />
           <ThemeToggle />
-        </nav>
+        </div>
 
         {/* Mobile buttons */}
         <div className="sm:hidden flex items-center gap-2">
           <LanguageSwitch />
           <ThemeToggle />
           <button
-            aria-label="Open menu"
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            onClick={() => setOpen(true)}
-            className="px-2 py-1 rounded-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors focus-ring"
+          aria-label="Open menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          onClick={() => setOpen(true)}
+          className="px-2 py-1 rounded-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors focus-ring"
           >
             {/* Hamburger icon */}
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -74,52 +62,13 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile menu panel (portal to body for full-screen cover) */}
-      {open && typeof document !== 'undefined' &&
-        createPortal(
-          <div
-            id="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            className="sm:hidden fixed inset-0 z-[100] bg-black/20 hover:bg-black/30 transition-colors"
-            onClick={() => setOpen(false)}
-          >
-            <div
-              className="absolute right-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-xl p-4 flex flex-col gap-3"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold">Menu</span>
-                <button
-                  aria-label="Close menu"
-                  onClick={() => setOpen(false)}
-                  className="p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-ring"
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
-              <nav className="flex flex-col">
-                {nav.map((n) => (
-                  <Link
-                    key={n.href}
-                    href={`${localePrefix}${n.href}`}
-                    onClick={() => setOpen(false)}
-                    className={clsx(
-                      'px-3 py-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800',
-                      pathname === `${localePrefix}${n.href}` && 'bg-gray-100 dark:bg-gray-800',
-                    )}
-                  >
-                    {n.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </div>,
-          document.body,
-        )}
+      <MobileMenu
+        open={open}
+        onClose={() => setOpen(false)}
+        items={navItems}
+        activePath={activePath}
+        localePrefix={localePrefix}
+      />
     </header>
   );
 }
