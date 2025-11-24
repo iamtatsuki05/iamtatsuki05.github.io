@@ -5,7 +5,7 @@ import { cached } from '@/lib/server/cache';
 import { BlogFrontmatter } from './types';
 import { parseMarkdownFile, slugFromFilename } from './markdown';
 
-const BLOG_DIR = path.join(process.cwd(), 'content', 'blogs');
+const BLOG_DIR = path.join(process.cwd(), 'src', 'content', 'blogs');
 
 export type BlogPost = {
   slug: string;

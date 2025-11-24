@@ -2,7 +2,7 @@ import path from 'path';
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
-  stories: ['../components/**/*.stories.@(ts|tsx)'],
+  stories: ['../src/components/**/*.stories.@(ts|tsx)'],
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
@@ -21,7 +21,7 @@ const config: StorybookConfig = {
     const resolve = baseConfig.resolve || {};
     resolve.alias = {
       ...(resolve.alias || {}),
-      '@': path.resolve(__dirname, '..'),
+      '@': path.resolve(__dirname, '..', 'src'),
     };
     return {
       ...baseConfig,

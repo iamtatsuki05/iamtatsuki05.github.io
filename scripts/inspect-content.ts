@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
-import { getAllPosts } from '../lib/content/blog';
-import { getAllPublications } from '../lib/content/publication';
+import { getAllPosts } from '../src/lib/content/blog';
+import { getAllPublications } from '../src/lib/content/publication';
 
 const main = async () => {
   const posts = await getAllPosts();
@@ -10,4 +10,3 @@ const main = async () => {
 };
 
 main();
-

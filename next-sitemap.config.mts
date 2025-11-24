@@ -45,7 +45,7 @@ function getSiteUrlWithBasePath() {
 
 async function loadBlogMetadata() {
   const includeDrafts = normalize(process.env.INCLUDE_DRAFTS).toLowerCase() === 'true';
-  const blogDir = path.join(process.cwd(), 'content', 'blogs');
+  const blogDir = path.join(process.cwd(), 'src', 'content', 'blogs');
   const entries = await fs.readdir(blogDir);
   const posts = [];
   for (const entry of entries) {
