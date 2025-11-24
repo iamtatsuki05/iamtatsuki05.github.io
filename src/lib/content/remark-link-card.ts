@@ -132,6 +132,49 @@ function providerFallback(url: string): OGData | null {
   return null;
 }
 
+type Provider = 'youtube' | 'twitter' | 'instagram' | 'other';
+
+function providerOf(u: string): Provider {
+  try {
+    const x = new URL(u);
+    if (x.hostname === 'youtu.be' || x.hostname.endsWith('youtube.com')) return 'youtube';
+    if (x.hostname === 'x.com' || x.hostname === 'twitter.com') return 'twitter';
+    if (x.hostname.endsWith('instagram.com')) return 'instagram';
+  } catch {}
+  return 'other';
+}
+
+function ytIdFrom(u: string): string {
+  try {
+    const x = new URL(u);
+    if (x.hostname === 'youtu.be') return x.pathname.slice(1);
+    if (x.hostname.endsWith('youtube.com')) {
+      if (x.pathname.startsWith('/watch')) return x.searchParams.get('v') || '';
+      if (x.pathname.startsWith('/shorts/')) return x.pathname.split('/')[2] || '';
+    }
+  } catch {}
+  return '';
+}
+
+function mkYouTube(id: string) {
+  const canonical = `https://www.youtube.com/watch?v=${id}`;
+  return `<div class="rse-embed embed-video embed-youtube" data-provider="youtube" data-url="${canonical}"></div>`;
+}
+
+function mkTwitter(u: string) {
+  try {
+    const x = new URL(u);
+    const canonical = x.hostname === 'twitter.com' ? u : `https://twitter.com${x.pathname}`;
+    return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${canonical}"></div>`;
+  } catch {
+    return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${u}"></div>`;
+  }
+}
+
+function mkInstagram(u: string) {
+  return `<div class="rse-embed embed-social embed-instagram" data-provider="instagram" data-url="${u}"></div>`;
+}
+
 // Provider専用取得（oEmbed等）。成功したらメタより優先
 async function fetchProviderMeta(url: string): Promise<OGData | null> {
   try {
@@ -309,46 +352,6 @@ export default function remarkLinkCard(options?: Options) {
       }
     };
     const outNodes: { html: string; parent: any; index: number; url: string }[] = [];
-
-    const providerOf = (u: string) => {
-      try {
-        const x = new URL(u);
-        if (x.hostname === 'youtu.be' || x.hostname.endsWith('youtube.com')) return 'youtube';
-        if (x.hostname === 'x.com' || x.hostname === 'twitter.com') return 'twitter';
-        if (x.hostname.endsWith('instagram.com')) return 'instagram';
-      } catch {}
-      return 'other';
-    };
-
-    const ytIdFrom = (u: string) => {
-      try {
-        const x = new URL(u);
-        if (x.hostname === 'youtu.be') return x.pathname.slice(1);
-        if (x.hostname.endsWith('youtube.com')) {
-          if (x.pathname.startsWith('/watch')) return x.searchParams.get('v') || '';
-          if (x.pathname.startsWith('/shorts/')) return x.pathname.split('/')[2] || '';
-        }
-      } catch {}
-      return '';
-    };
-
-    const mkYouTube = (id: string) => {
-      const canonical = `https://www.youtube.com/watch?v=${id}`;
-      return `<div class="rse-embed embed-video embed-youtube" data-provider="youtube" data-url="${canonical}"></div>`;
-    };
-
-    const mkTwitter = (u: string) => {
-      try {
-        const x = new URL(u);
-        const canonical = x.hostname === 'twitter.com' ? u : `https://twitter.com${x.pathname}`;
-        return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${canonical}"></div>`;
-      } catch {
-        return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${u}"></div>`;
-      }
-    };
-
-    const mkInstagram = (u: string) =>
-      `<div class="rse-embed embed-social embed-instagram" data-provider="instagram" data-url="${u}"></div>`;
 
     for (const t of targets) {
       const provider = providerOf(t.url);

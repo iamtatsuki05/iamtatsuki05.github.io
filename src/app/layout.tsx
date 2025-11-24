@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
-import { withBasePath, withVersion } from '@/lib/url';
+import { assetPath, withBasePath, withVersion } from '@/lib/url';
 import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
@@ -29,11 +29,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: withVersion(withBasePath('/favicon.ico'))!, type: 'image/x-icon' },
-      { url: withVersion(withBasePath('/favicon-32x32.png'))!, type: 'image/png', sizes: '32x32' },
-      { url: withVersion(withBasePath('/favicon-16x16.png'))!, type: 'image/png', sizes: '16x16' },
+      { url: assetPath('/favicon-32x32.png')!, type: 'image/png', sizes: '32x32' },
+      { url: assetPath('/favicon-16x16.png')!, type: 'image/png', sizes: '16x16' },
     ],
-    shortcut: withVersion(withBasePath('/favicon-32x32.png')),
-    apple: withVersion(withBasePath('/apple-touch-icon.png')),
+    shortcut: assetPath('/favicon-32x32.png'),
+    apple: assetPath('/apple-touch-icon.png'),
   },
   category: 'technology',
   applicationName: siteConfig.siteName.ja,
@@ -57,7 +57,7 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
-          href={withVersion(withBasePath('/favicon.ico'))}
+          href={assetPath('/favicon.ico')}
           fetchPriority="high"
         />
       </head>

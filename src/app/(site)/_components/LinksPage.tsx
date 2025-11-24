@@ -1,8 +1,7 @@
-import clsx from 'clsx';
-import { ExternalIcon } from '@/components/ui/ExternalIcon';
 import { getLinks } from '@/lib/data/links';
 import type { Locale } from '@/lib/i18n';
 import { linksPageCopy } from '@/app/(site)/_config/pageCopy';
+import { LinkGrid } from '@/components/links/LinkGrid';
 
 type LinkItem = Awaited<ReturnType<typeof getLinks>>[number];
 
@@ -12,29 +11,6 @@ export async function LinksPage({ locale }: { locale: Locale }) {
   const groups = groupBy(links, (l) => l.category || copy.groupFallback);
   const mobileLimit = 3;
 
-  const renderLinkItem = (key: string, l: LinkItem, extraClassName?: string) => (
-    <li key={key} className={clsx('card p-4 text-center', extraClassName)}>
-      <a href={l.url} target="_blank" rel="noreferrer" className="inline-block mb-2">
-        {l.iconUrl ? (
-          <ExternalIcon src={l.iconUrl} alt={l.title} size={48} />
-        ) : (
-          <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 text-lg">
-            {l.title.slice(0, 1)}
-          </span>
-        )}
-      </a>
-      <a
-        href={l.url}
-        target="_blank"
-        rel="noreferrer"
-        className="font-medium underline-offset-2 hover:underline block"
-      >
-        {l.title}
-      </a>
-      {l.desc ? <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{l.desc}</p> : null}
-    </li>
-  );
-
   return (
     <div className="space-y-6">
       <div className="text-sm opacity-70">{copy.breadcrumb}</div>
@@ -42,23 +18,14 @@ export async function LinksPage({ locale }: { locale: Locale }) {
       {Object.entries(groups).map(([cat, items]) => (
         <section key={cat} className="space-y-2">
           <h2 className="text-xl font-semibold">{cat}</h2>
-          <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {items.map((l, index) =>
-              renderLinkItem(
-                `${cat}-primary-${l.url}`,
-                l,
-                index >= mobileLimit ? 'hidden sm:block' : undefined,
-              ),
-            )}
-          </ul>
-          {items.length > mobileLimit ? (
-            <details className="sm:hidden">
-              <summary className="cursor-pointer text-sm underline">{copy.moreLabel}</summary>
-              <ul className="grid grid-cols-2 gap-4 mt-3">
-                {items.slice(mobileLimit).map((l) => renderLinkItem(`${cat}-mobile-${l.url}`, l))}
-              </ul>
-            </details>
-          ) : null}
+          <LinkGrid
+            items={items}
+            mobileLimit={mobileLimit}
+            showDescription
+            moreLabel={copy.moreLabel}
+            iconSize={48}
+            gridClassName="grid grid-cols-2 sm:grid-cols-3 gap-4"
+          />
         </section>
       ))}
     </div>

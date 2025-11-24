@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState, type KeyboardEvent } from 'react';
-import Fuse from 'fuse.js';
 import { withBasePath } from '@/lib/url';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
 
 type Item = {
   slug: string;
@@ -18,8 +18,6 @@ type Item = {
 };
 
 export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; locale?: 'ja' | 'en' }) {
-  const [q, setQ] = useState('');
-  const [year, setYear] = useState<string>('');
   const [types, setTypes] = useState<Record<Item['type'], boolean>>({
     paper: true,
     article: true,
@@ -28,40 +26,36 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     media: true,
     app: true,
   });
-  const [tagSet, setTagSet] = useState<Set<string>>(new Set());
+  const {
+    q,
+    setQ,
+    year,
+    setYear,
+    tagSet,
+    setTagSet,
+    years,
+    allTags,
+    filtered,
+    clearFilters,
+  } = useSearchFilters(items, {
+    fuseKeys: ['title', 'tags', 'venue', 'publisher'],
+    extractYear: (i) => i.publishedAt,
+    extractTags: (i) => i.tags || [],
+  });
 
-  const fuse = useMemo(
-    () => new Fuse(items, { keys: ['title', 'tags', 'venue', 'publisher'], threshold: 0.35 }),
-    [items],
-  );
-
-  const years = useMemo(
-    () => Array.from(new Set(items.map((i) => (i.publishedAt || '').slice(0, 4))).values())
-      .filter(Boolean)
-      .sort((a, b) => (a < b ? 1 : -1)),
-    [items],
-  );
-  const allTags = useMemo(() => Array.from(new Set(items.flatMap((i) => i.tags || []))).sort(), [items]);
-
-  const filtered = useMemo(() => {
-    let r = q ? fuse.search(q).map((x) => x.item) : items;
-    r = r.filter((i) => types[i.type]);
-    if (year) r = r.filter((i) => (i.publishedAt || '').startsWith(year));
-    if (tagSet.size) r = r.filter((i) => (i.tags || []).some((t) => tagSet.has(t)));
-    return r;
-  }, [items, fuse, q, year, types, tagSet]);
+  const typeFiltered = useMemo(() => filtered.filter((i) => types[i.type]), [filtered, types]);
 
   const order: Item['type'][] = ['paper', 'app', 'article', 'talk', 'slide', 'media'];
   const groups = useMemo(() => {
     const map: Record<string, Item[]> = {};
-    for (const it of filtered) {
+    for (const it of typeFiltered) {
       (map[it.type] ||= []).push(it);
     }
     for (const k of Object.keys(map)) {
       map[k].sort((a, b) => ((a.publishedAt || '') < (b.publishedAt || '') ? 1 : -1));
     }
     return map;
-  }, [filtered]);
+  }, [typeFiltered]);
 
   const t = (key: string) => {
     const ja: Record<string, string> = {
@@ -163,7 +157,13 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         </details>
 
         {(q || year || tagSet.size || Object.values(types).some(v=>!v)) ? (
-          <button onClick={()=>{ setQ(''); setYear(''); setTagSet(new Set()); setTypes({paper:true,article:true,talk:true,slide:true,media:true,app:true}); }} className="ml-auto text-sm underline">
+          <button
+            onClick={() => {
+              clearFilters();
+              setTypes({ paper: true, article: true, talk: true, slide: true, media: true, app: true });
+            }}
+            className="ml-auto text-sm underline"
+          >
             {t('clear')}
           </button>
         ) : null}

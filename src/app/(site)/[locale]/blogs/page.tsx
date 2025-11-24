@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
-import { buildPageMetadata, defaultLanguageAlternates } from '@/lib/seo';
+import { buildLocalizedMetadata, localizedStaticParams } from '@/lib/metadata';
 import type { Locale } from '@/lib/i18n';
 import {
-  SUPPORTED_LOCALES,
   blogsPageCopy,
   resolveLocale,
 } from '@/app/(site)/_config/pageCopy';
@@ -13,22 +12,12 @@ type Params = {
   locale: string;
 };
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
+export const generateStaticParams = localizedStaticParams;
 
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  const locale = resolveLocale((await params).locale);
-  const copy = blogsPageCopy[locale];
-  return buildPageMetadata({
-    title: copy.metadataTitle,
-    description: copy.metadataDescription,
-    locale,
-    path: copy.path,
-    languageAlternates: defaultLanguageAlternates,
-  });
+  return buildLocalizedMetadata(params, blogsPageCopy);
 }
 
 export default async function LocaleBlogsPage({ params }: { params: Promise<Params> }) {

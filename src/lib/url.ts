@@ -3,6 +3,11 @@ import { getAssetVersion, getBasePath } from '@/lib/config/env';
 export const BASE_PATH = getBasePath();
 export const ASSET_VERSION = getAssetVersion();
 
+export function assetPath(src: string): string | undefined {
+  const withBase = withBasePath(src.startsWith('/') ? src : `/${src}`);
+  return withVersion(withBase);
+}
+
 export function withBasePath(src?: string | null): string | undefined {
   if (!src) return undefined;
   if (/^(https?:)?\/\//i.test(src) || src.startsWith('data:')) return src;

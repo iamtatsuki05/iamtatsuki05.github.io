@@ -1,6 +1,7 @@
 import type { Locale } from '@/lib/i18n';
+import { SUPPORTED_LOCALES, resolveLocale } from '@/lib/i18n';
 
-export const SUPPORTED_LOCALES: Locale[] = ['ja', 'en'];
+export { SUPPORTED_LOCALES, resolveLocale };
 
 export type PageCopy<T extends Record<string, unknown> = {}> = {
   metadataTitle: string;
@@ -76,7 +77,3 @@ export const publicationsPageCopy: Record<Locale, PublicationsPageCopy> = {
     breadcrumb: '🏠 Home / 📚 Publications',
   },
 };
-
-export function resolveLocale(raw: string): Locale {
-  return raw === 'en' ? 'en' : 'ja';
-}

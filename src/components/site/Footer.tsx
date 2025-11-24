@@ -1,22 +1,10 @@
 "use client";
-import { useEffect, useState } from 'react';
-import { withBasePath } from '@/lib/url';
+import { absoluteUrl } from '@/lib/seo';
 
 export function Footer() {
-  const [sitemapHref, setSitemapHref] = useState(withBasePath('/sitemap.xml')!);
-  const [rssHref, setRssHref] = useState(withBasePath('/rss.xml')!);
-  const [robotsHref, setRobotsHref] = useState(withBasePath('/robots.txt')!);
-
-  useEffect(() => {
-    try {
-      const base = window.location.href;
-      setSitemapHref(new URL(withBasePath('/sitemap.xml')!, base).toString());
-      setRssHref(new URL(withBasePath('/rss.xml')!, base).toString());
-      setRobotsHref(new URL(withBasePath('/robots.txt')!, base).toString());
-    } catch {
-      // noop: keep SSR fallback
-    }
-  }, []);
+  const sitemapHref = absoluteUrl('/sitemap.xml');
+  const rssHref = absoluteUrl('/rss.xml');
+  const robotsHref = absoluteUrl('/robots.txt');
 
   return (
     <footer className="mt-12 border-t border-gray-200 dark:border-gray-800">

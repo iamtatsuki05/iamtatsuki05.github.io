@@ -1,32 +1,25 @@
 import type { Metadata } from 'next';
 import HomeContent from '@/components/home/HomeContent';
 import type { Locale } from '@/lib/i18n';
-import { buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
-import { SUPPORTED_LOCALES, resolveLocale } from '@/app/(site)/_config/pageCopy';
+import { buildLocalizedMetadata, localizedStaticParams } from '@/lib/metadata';
+import { resolveLocale } from '@/lib/i18n';
+import { siteConfig } from '@/lib/seo';
 
 type Params = {
   locale: string;
 };
 
-function resolvePath(locale: Locale): string {
-  return locale === 'ja' ? '/ja/' : '/en/';
-}
+const homeCopy: Record<Locale, { metadataTitle: string; metadataDescription: string; path: string }> = {
+  ja: { metadataTitle: siteConfig.defaultTitle.ja, metadataDescription: siteConfig.description.ja, path: '/ja/' },
+  en: { metadataTitle: siteConfig.defaultTitle.en, metadataDescription: siteConfig.description.en, path: '/en/' },
+};
 
-export function generateStaticParams() {
-  return SUPPORTED_LOCALES.map((locale) => ({ locale }));
-}
+export const generateStaticParams = localizedStaticParams;
 
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  const locale = resolveLocale((await params).locale);
-  return buildPageMetadata({
-    title: siteConfig.defaultTitle[locale],
-    description: siteConfig.description[locale],
-    locale,
-    path: resolvePath(locale),
-    languageAlternates: defaultLanguageAlternates,
-  });
+  return buildLocalizedMetadata(params, homeCopy);
 }
 
 export default async function LocaleHomePage({ params }: { params: Promise<Params> }) {

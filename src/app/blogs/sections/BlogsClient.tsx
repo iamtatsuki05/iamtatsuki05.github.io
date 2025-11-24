@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import Fuse from 'fuse.js';
 import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
 
 type Post = {
   slug: string;
@@ -16,34 +16,29 @@ type Post = {
 };
 
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
-  const [q, setQ] = useState('');
   const [visible, setVisible] = useState(10);
-  const [year, setYear] = useState<string>('');
-  const [tagSet, setTagSet] = useState<Set<string>>(new Set());
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(posts || [], {
-        keys: ['title', 'summary', 'tags'],
-        threshold: 0.35,
-      }),
-    [posts],
-  );
-
-  const allYears = useMemo(() => Array.from(new Set(posts.map(p => (p.date || '').slice(0,4)))).filter(Boolean).sort((a,b)=> (a<b?1:-1)), [posts]);
-  const allTags = useMemo(() => Array.from(new Set(posts.flatMap(p => p.tags || []))).sort(), [posts]);
-
-  const filtered = useMemo(() => {
-    let r = q ? fuse.search(q).map((r)=>r.item) : posts;
-    if (year) r = r.filter(p => p.date?.startsWith(year));
-    if (tagSet.size) r = r.filter(p => (p.tags||[]).some(t => tagSet.has(t)));
-    return r;
-  }, [posts, fuse, q, year, tagSet]);
+  const {
+    q,
+    setQ,
+    year,
+    setYear,
+    tagSet,
+    setTagSet,
+    years: allYears,
+    allTags,
+    filtered,
+    clearFilters,
+  } = useSearchFilters(posts, {
+    fuseKeys: ['title', 'summary', 'tags'],
+    extractYear: (p) => p.date,
+    extractTags: (p) => p.tags || [],
+  });
 
   useEffect(() => {
     setVisible(10);
-  }, [q, year, tagSet]);
+  }, [filtered]);
 
   useEffect(() => {
     const el = loadMoreRef.current;
@@ -125,7 +120,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           </div>
         </details>
         {(year || tagSet.size || q) ? (
-          <button onClick={()=>{ setYear(''); setTagSet(new Set()); setQ(''); }} className="ml-auto text-sm underline">
+          <button onClick={()=>{ clearFilters(); }} className="ml-auto text-sm underline">
             {t('clear')}
           </button>
         ) : null}
