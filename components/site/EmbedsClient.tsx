@@ -42,8 +42,8 @@ function loadOnce(src: string, globalReady: () => boolean) {
 }
 
 export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
-  if (!enabled) return null;
   useEffect(() => {
+    if (!enabled) return;
     let disposed = false;
     const roots = new WeakMap<Element, Root>();
 
@@ -134,7 +134,7 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
       window.removeEventListener('resize', onResize);
       window.clearTimeout(t);
     };
-  }, []);
+  }, [enabled]);
 
   return null;
 }

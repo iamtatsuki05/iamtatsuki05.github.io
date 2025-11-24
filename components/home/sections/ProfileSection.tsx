@@ -1,3 +1,4 @@
+import React, { type ReactNode } from 'react';
 import Link from 'next/link';
 import { withBasePath, withVersion } from '@/lib/url';
 
@@ -68,10 +69,9 @@ export function ProfileSection({ title, alias, handle, affiliation, intro }: Pro
           </Link>
         </p>
       </div>
-      <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed bg-white/70 dark:bg-gray-900/70 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm sm:hidden">
+      <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed bg-white/70 dark:bg-gray-900/70 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
         {intro}
       </p>
     </section>
   );
 }
-import React, { type ReactNode } from 'react';

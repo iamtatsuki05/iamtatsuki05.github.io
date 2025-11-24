@@ -13,6 +13,7 @@ const meta = {
     items: NAV_ITEMS,
     activePath: '/',
     localePrefix: '',
+    onClose: () => {},
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof MobileMenu>;
