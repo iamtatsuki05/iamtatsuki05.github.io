@@ -17,7 +17,7 @@ type Options = {
   ttlMs?: number; // キャッシュの有効期限（既定: 7日）
 };
 
-const DEFAULT_CACHE = path.join(process.cwd(), 'data', 'og-cache.json');
+const DEFAULT_CACHE = path.join(process.cwd(), 'src', 'data', 'og-cache.json');
 
 function escapeHtml(s: string) {
   return s

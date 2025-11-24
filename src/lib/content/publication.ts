@@ -4,7 +4,7 @@ import matter from 'gray-matter';
 import { cached } from '@/lib/server/cache';
 import { PublicationFrontmatter } from './types';
 
-const PUB_DIR = path.join(process.cwd(), 'content', 'publications');
+const PUB_DIR = path.join(process.cwd(), 'src', 'content', 'publications');
 
 export type Publication = PublicationFrontmatter & { slug: string };
 

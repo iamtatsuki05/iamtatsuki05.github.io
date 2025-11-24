@@ -37,34 +37,41 @@ bun run storybook:build       # storybook-static/ に静的ビルド
 
 ## ディレクトリ構成
 ```text
-./
-├── .dockerignore
-├── .github
-├── .gitignore
-├── .storybook
-├── compose.yml
+./ 
 ├── Dockerfile
 ├── README.md
 ├── README_JA.md
-├── app
-├── components
+├── bunfig.toml
+├── compose.yml
 ├── cypress
-├── content
-│   ├── blogs
-│   └── publications
-├── data
-│   └── links.yaml
-├── lib
-├── locales
+├── node_modules
 ├── public
 │   └── images
 ├── scripts
-│   └── generate-sitemap.ts
+│   ├── ensure-favicon.ts
+│   ├── generate-rss.ts
+│   ├── inspect-content.ts
+│   ├── optimize-images.ts
+│   └── utils
+├── src
+│   ├── app
+│   ├── components
+│   ├── content
+│   │   ├── blogs
+│   │   └── publications
+│   ├── data
+│   │   └── links.yaml
+│   ├── lib
+│   ├── locales
+│   └── types
 ├── tests
-├── types
 ├── package.json
-├── tailwind.config.ts
-└── tsconfig.json
+├── eslint.config.mjs
+├── next.config.mjs
+├── next-sitemap.config.mts
+├── postcss.config.js
+├── tsconfig.json
+└── vitest.config.mts
 ```
 
 ## 補足

@@ -4,6 +4,7 @@ out
 .DS_Store
 *.log
 data/og-cache.json
+src/data/og-cache.json
 .cache
 cypress/screenshots
 cypress/downloads

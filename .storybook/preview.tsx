@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Preview } from '@storybook/react';
 import { ThemeProvider } from 'next-themes';
-import '../app/globals.css';
+import '../src/app/globals.css';
 
 const preview: Preview = {
   parameters: {

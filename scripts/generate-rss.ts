@@ -2,9 +2,9 @@
 import path from 'node:path';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { Feed } from 'feed';
-import { getAllPosts } from '../lib/content/blog';
-import { getSiteUrlWithBasePath } from '../lib/config/env';
-import { siteConfig } from '../lib/seo';
+import { getAllPosts } from '../src/lib/content/blog';
+import { getSiteUrlWithBasePath } from '../src/lib/config/env';
+import { siteConfig } from '../src/lib/seo';
 
 async function main() {
   const site = getSiteUrlWithBasePath();
