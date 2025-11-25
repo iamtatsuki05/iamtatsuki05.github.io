@@ -8,3 +8,8 @@ export const dictionaries: Record<Locale, typeof ja> = {
   en,
 };
 
+export const SUPPORTED_LOCALES: Locale[] = ['ja', 'en'];
+
+export function resolveLocale(raw: string): Locale {
+  return raw === 'en' ? 'en' : 'ja';
+}

@@ -1,0 +1,18 @@
+@layer components {
+  /* Common UI atoms */
+  .ui-card {
+    @apply border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 shadow-xs transition hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  .card {
+    @apply border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 shadow-xs transition hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  .ui-tag {
+    @apply inline-block px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-gray-800 text-xs;
+  }
+
+  .tag {
+    @apply inline-block px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-gray-800 text-xs;
+  }
+}

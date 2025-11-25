@@ -1,3 +1,5 @@
+import { localizedPath } from '../support/paths';
+
 const viewports = [
   { label: 'desktop', apply: () => cy.viewport(1280, 800) },
   { label: 'mobile', apply: () => cy.viewport('iphone-6') },
@@ -8,11 +10,11 @@ describe('Blog index page', () => {
     context(label, () => {
       beforeEach(() => {
         apply();
-        cy.visit('/blogs/');
+        cy.visit(localizedPath('ja', '/blogs/'));
       });
 
       it('lists blog posts with metadata', () => {
-        cy.contains('h1', '📝 ブログ').should('be.visible');
+        cy.contains('h1', '📝 Blog').should('be.visible');
         cy.contains('h2', '✨ 最新').parents('section').find('li').should('have.length.at.least', 1);
         cy.contains('h2', '🗂 すべての記事')
           .parents('section')
@@ -28,10 +30,12 @@ describe('Blog index page', () => {
         it('navigates to detail when clicking a blog card', () => {
           cy.contains('h2', '🗂 すべての記事')
             .parents('section')
-            .find('[data-testid="blog-card"] a[href^="/blogs/"]')
+            .find('[data-testid="blog-card"] a[href*="/blogs/"]')
             .first()
             .click({ force: true });
-          cy.location('pathname', { timeout: 10000 }).should('match', /\/blogs\/[\w-]+\/?$/);
+          cy.location('pathname', { timeout: 10000 }).should((pathname) => {
+            expect(pathname).to.match(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+          });
         });
       }
     });
@@ -43,7 +47,7 @@ describe('Links page', () => {
     context(label, () => {
       beforeEach(() => {
         apply();
-        cy.visit('/links/');
+        cy.visit(localizedPath('en', '/links/'));
       });
 
       it('groups external links by category', () => {
@@ -81,7 +85,7 @@ describe('Publications page', () => {
     context(label, () => {
       beforeEach(() => {
         apply();
-        cy.visit('/publications/', {
+        cy.visit(localizedPath('en', '/publications/'), {
           onBeforeLoad(win) {
             cy.stub(win, 'open').as('publicationOpen');
           },
@@ -112,7 +116,7 @@ describe('Localized page variants', () => {
   it('renders the Japanese blog index', () => {
     cy.viewport(1280, 800);
     cy.visit('/ja/blogs/');
-    cy.contains('h1', '📝 ブログ').should('be.visible');
+    cy.contains('h1', '📝 Blog').should('be.visible');
   });
 
   it('renders the English blog index', () => {

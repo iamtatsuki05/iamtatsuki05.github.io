@@ -1,9 +1,13 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import Fuse from 'fuse.js';
 import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
+import { useSearchFilters } from '@/hooks/useSearchFilters';
+import { YearSelect } from '@/components/filters/YearSelect';
+import { TagSelector } from '@/components/filters/TagSelector';
+import { FilterBar } from '@/components/filters/FilterBar';
+import { resolveFilterText } from '@/components/filters/filterTexts';
 
 type Post = {
   slug: string;
@@ -16,34 +20,29 @@ type Post = {
 };
 
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
-  const [q, setQ] = useState('');
   const [visible, setVisible] = useState(10);
-  const [year, setYear] = useState<string>('');
-  const [tagSet, setTagSet] = useState<Set<string>>(new Set());
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(posts || [], {
-        keys: ['title', 'summary', 'tags'],
-        threshold: 0.35,
-      }),
-    [posts],
-  );
-
-  const allYears = useMemo(() => Array.from(new Set(posts.map(p => (p.date || '').slice(0,4)))).filter(Boolean).sort((a,b)=> (a<b?1:-1)), [posts]);
-  const allTags = useMemo(() => Array.from(new Set(posts.flatMap(p => p.tags || []))).sort(), [posts]);
-
-  const filtered = useMemo(() => {
-    let r = q ? fuse.search(q).map((r)=>r.item) : posts;
-    if (year) r = r.filter(p => p.date?.startsWith(year));
-    if (tagSet.size) r = r.filter(p => (p.tags||[]).some(t => tagSet.has(t)));
-    return r;
-  }, [posts, fuse, q, year, tagSet]);
+  const {
+    q,
+    setQ,
+    year,
+    setYear,
+    tagSet,
+    setTagSet,
+    years: allYears,
+    allTags,
+    filtered,
+    clearFilters,
+  } = useSearchFilters(posts, {
+    fuseKeys: ['title', 'summary', 'tags'],
+    extractYear: (p) => p.date,
+    extractTags: (p) => p.tags || [],
+  });
 
   useEffect(() => {
     setVisible(10);
-  }, [q, year, tagSet]);
+  }, [filtered]);
 
   useEffect(() => {
     const el = loadMoreRef.current;
@@ -62,77 +61,43 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   const latest = filtered.slice(0, 3);
   const items = filtered.slice(0, visible);
 
-  const t = (key: string) => {
-    const ja: Record<string, string> = {
-      search: '検索...',
-      latest: '✨ 最新',
-      allPosts: '🗂 すべての記事',
-      noResult: '該当する記事がありません',
-      year: '年',
-      tags: 'タグ',
-      clear: 'クリア',
-    };
-    const en: Record<string, string> = {
-      search: 'Search...',
-      latest: '✨ Latest',
-      allPosts: '🗂 All Posts',
-      noResult: 'No posts found',
-      year: 'Year',
-      tags: 'Tags',
-      clear: 'Clear',
-    };
-    return (locale === 'ja' ? ja : en)[key];
-  };
+  const t = resolveFilterText(locale);
 
   return (
     <div className="space-y-6">
-      <input
-        aria-label={t('search')}
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        placeholder={t('search')}
-        className="w-full border rounded-sm px-3 py-2 dark:border-gray-700"
-      />
+      <FilterBar
+        query={q}
+        onQueryChange={setQ}
+        placeholder={t.search}
+        onClear={() => {
+          clearFilters();
+        }}
+        clearLabel={t.clear}
+        hasActiveFilters={Boolean(year || tagSet.size)}
+      >
+        <YearSelect
+          years={allYears}
+          value={year}
+          onChange={setYear}
+          label={t.year}
+        />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <label className="text-sm opacity-70">{t('year')}</label>
-        <select value={year} onChange={(e)=>setYear(e.target.value)} className="border rounded-sm px-2 py-1 dark:border-gray-700">
-          <option value="">All</option>
-          {allYears.map(y => <option key={y} value={y}>{y}</option>)}
-        </select>
-        <details className="ml-2">
-          <summary className="cursor-pointer select-none text-sm opacity-80">
-            {t('tags')} ({allTags.length})
-          </summary>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {allTags.map((tag) => {
-              const active = tagSet.has(tag);
-              return (
-                <button
-                  key={tag}
-                  onClick={() => {
-                    const next = new Set(tagSet);
-                    if (active) next.delete(tag);
-                    else next.add(tag);
-                    setTagSet(next);
-                  }}
-                  className={`px-2 py-0.5 rounded-sm text-sm border ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
-                >
-                  #{tag}
-                </button>
-              );
-            })}
-          </div>
-        </details>
-        {(year || tagSet.size || q) ? (
-          <button onClick={()=>{ setYear(''); setTagSet(new Set()); setQ(''); }} className="ml-auto text-sm underline">
-            {t('clear')}
-          </button>
-        ) : null}
-      </div>
+        <TagSelector
+          tags={allTags}
+          selected={tagSet}
+          onToggle={(tag) => {
+            const next = new Set(tagSet);
+            if (next.has(tag)) next.delete(tag);
+            else next.add(tag);
+            setTagSet(next);
+          }}
+          label={t.tags}
+          className="ml-2"
+        />
+      </FilterBar>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">{t('latest')}</h2>
+        <h2 className="text-xl font-semibold mb-2">{t.latest}</h2>
         <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
@@ -162,9 +127,9 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">{t('allPosts')}</h2>
+        <h2 className="text-xl font-semibold mb-2">{t.allPosts}</h2>
         {items.length === 0 ? (
-          <p className="opacity-70">{t('noResult')}</p>
+          <p className="opacity-70">{t.noResult}</p>
         ) : (
           <ul className="space-y-2" data-testid="blog-all-list">
             {items.map((p) => (

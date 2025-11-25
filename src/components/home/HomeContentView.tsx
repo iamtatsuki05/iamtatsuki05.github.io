@@ -34,9 +34,9 @@ export function HomeContentView({ locale, dict, latest, publications, links }: H
         title={dict.title}
         alias={dict.alias}
         handle={dict.handle}
-      affiliation={dict.affiliation}
-      intro={dict.intro}
-    />
+        affiliation={dict.affiliation}
+        intro={dict.intro}
+      />
 
       <LinksSection links={links} ctaLabel={dict.cta_more} />
 

@@ -1,14 +1,15 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NavLinks } from '@/components/site/NavLinks';
-import { NAV_ITEMS } from '@/components/site/navItems';
+import { resolveNavItems } from '@/components/site/navItems';
 
 describe('NavLinks', () => {
   const activePath = '/blogs/';
   const localePrefix = '';
+  const items = resolveNavItems('ja');
 
   it('renders navigation items and marks active link', () => {
-    render(<NavLinks items={NAV_ITEMS} activePath={activePath} localePrefix={localePrefix} />);
+    render(<NavLinks items={items} activePath={activePath} localePrefix={localePrefix} />);
 
     const blogLink = screen.getByText('📝 Blog');
     expect(blogLink).toBeVisible();
@@ -19,7 +20,7 @@ describe('NavLinks', () => {
     const handler = vi.fn();
     render(
       <NavLinks
-        items={NAV_ITEMS}
+        items={items}
         activePath={activePath}
         localePrefix={localePrefix}
         onNavigate={handler}
@@ -33,7 +34,7 @@ describe('NavLinks', () => {
   it('renders vertical layout when orientation is vertical', () => {
     render(
       <NavLinks
-        items={NAV_ITEMS}
+        items={items}
         activePath="/"
         localePrefix=""
         orientation="vertical"
@@ -44,4 +45,3 @@ describe('NavLinks', () => {
     expect(nav.className).toContain('flex-col');
   });
 });
-

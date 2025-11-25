@@ -1,31 +1,26 @@
 "use client";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { extractLocaleFromPath, isTranslatablePath, localizedPath, stripLocalePrefix } from '@/lib/routing';
 
 // 簡易実装: トップのみja/enを切替（他ページは言語非対応）
 export function LanguageSwitch() {
   const pathname = usePathname() || '';
 
-  // 対応ページ: /, /links, /publications, /blogs（ロケール有無）
-  const translatable = (p: string) => {
-    if (!p) return false;
-    if (p === '/' || p === '/ja/' || p === '/en/') return true;
-    const bare = p.replace(/^\/(ja|en)/, '');
-    return ['/', '/links/', '/publications/', '/blogs/'].includes(bare.endsWith('/') ? bare : bare + '/');
-  };
-
-  if (!translatable(pathname)) {
+  if (!isTranslatablePath(pathname)) {
     return <span className="text-sm opacity-60">JA/EN</span>;
   }
 
-  const rest = pathname.replace(/^\/(ja|en)/, '');
-  const toJa = rest === '/' ? '/ja/' : `/ja${rest.endsWith('/') ? rest : rest + '/'}`;
-  const toEn = rest === '/' ? '/en/' : `/en${rest.endsWith('/') ? rest : rest + '/'}`;
+  const currentLocale = extractLocaleFromPath(pathname) || 'ja';
+  const bare = stripLocalePrefix(pathname);
+  const normalized = bare.endsWith('/') ? bare : `${bare}/`;
+  const toJa = localizedPath(normalized, 'ja');
+  const toEn = localizedPath(normalized, 'en');
 
   return (
     <span className="text-sm">
-      <Link href={toJa} className="mr-1 underline">JA</Link>/
-      <Link href={toEn} className="ml-1 underline">EN</Link>
+      <Link href={toJa} className="mr-1 underline" aria-current={currentLocale === 'ja' ? 'true' : undefined}>JA</Link>/
+      <Link href={toEn} className="ml-1 underline" aria-current={currentLocale === 'en' ? 'true' : undefined}>EN</Link>
     </span>
   );
 }

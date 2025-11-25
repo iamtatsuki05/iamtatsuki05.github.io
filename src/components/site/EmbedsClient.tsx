@@ -46,6 +46,23 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
     if (!enabled) return;
     let disposed = false;
     const roots = new WeakMap<Element, Root>();
+    let embedModule: any | null = null;
+
+    const resolveComponent = (provider: string, mod: any) => {
+      const TwitterComp = mod.TwitterEmbed || mod.TwitterTweetEmbed || mod.XEmbed;
+      const InstaComp = mod.InstagramEmbed || mod.InstagramPostEmbed;
+      const YtComp = mod.YouTubeEmbed || mod.YoutubeEmbed;
+      if (provider === 'twitter') return TwitterComp;
+      if (provider === 'instagram') return InstaComp;
+      if (provider === 'youtube') return YtComp;
+      return null;
+    };
+
+    const loadModule = async () => {
+      if (embedModule) return embedModule;
+      embedModule = await import('react-social-media-embed');
+      return embedModule;
+    };
 
     const mountAll = async () => {
       if (disposed) return;
@@ -54,19 +71,13 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
       );
       if (targets.length === 0) return; // 使うページだけ動的 import
 
-      const mod: any = await import('react-social-media-embed');
+      const mod = await loadModule();
       if (disposed) return;
       targets.forEach((el) => {
         if (el.dataset.mounted === '1') return;
         const url = el.dataset.url!;
         const provider = el.dataset.provider!;
-        const TwitterComp = mod.TwitterEmbed || mod.TwitterTweetEmbed || mod.XEmbed;
-        const InstaComp = mod.InstagramEmbed || mod.InstagramPostEmbed;
-        const YtComp = mod.YouTubeEmbed || mod.YoutubeEmbed;
-        let Comp: any = null;
-        if (provider === 'twitter') Comp = TwitterComp;
-        else if (provider === 'instagram') Comp = InstaComp;
-        else if (provider === 'youtube') Comp = YtComp;
+        const Comp = resolveComponent(provider, mod);
         if (!Comp) return;
         const root = createRoot(el);
         roots.set(el, root);
@@ -90,14 +101,8 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
         if (!root) return;
         const url = el.dataset.url!;
         const provider = el.dataset.provider!;
-        import('react-social-media-embed').then((mod: any) => {
-          const TwitterComp = mod.TwitterEmbed || mod.TwitterTweetEmbed || mod.XEmbed;
-          const InstaComp = mod.InstagramEmbed || mod.InstagramPostEmbed;
-          const YtComp = mod.YouTubeEmbed || mod.YoutubeEmbed;
-          let Comp: any = null;
-          if (provider === 'twitter') Comp = TwitterComp;
-          else if (provider === 'instagram') Comp = InstaComp;
-          else if (provider === 'youtube') Comp = YtComp;
+        loadModule().then((mod: any) => {
+          const Comp = resolveComponent(provider, mod);
           if (!Comp) return;
           const compProps: any = { url };
           if (provider !== 'twitter') compProps.width = '100%';
@@ -133,6 +138,12 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
       disposed = true;
       window.removeEventListener('resize', onResize);
       window.clearTimeout(t);
+      document
+        .querySelectorAll<HTMLElement>('.rse-embed[data-provider][data-url]')
+        .forEach((el) => {
+          const root = roots.get(el);
+          if (root) root.unmount();
+        });
     };
   }, [enabled]);
 

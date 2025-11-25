@@ -1,12 +1,12 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import type { NavItem } from '@/components/site/navItems';
+import type { NavDisplayItem } from '@/components/site/navItems';
 import { NavLinks } from '@/components/site/NavLinks';
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  items: NavItem[];
+  items: NavDisplayItem[];
   activePath: string;
   localePrefix: string;
 };
@@ -51,4 +51,3 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
     document.body,
   );
 }
-

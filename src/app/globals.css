@@ -2,6 +2,8 @@
 
 @plugin '@tailwindcss/typography';
 
+@import '../styles/ui.css';
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -73,8 +75,6 @@ a { @apply text-blue-600 dark:text-blue-400 underline-offset-2 hover:underline; 
   border-color: rgba(255,255,255,0.1);
 }
 .code-copy-btn.copied { background: #10b981; color: white; border-color: transparent; }
-.card { @apply border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 shadow-xs transition hover:shadow-md hover:-translate-y-0.5; }
-.tag { @apply inline-block px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-gray-800 text-xs; }
 .focus-ring { @apply focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand; }
 .prose h2 { @apply mt-10 border-b border-gray-200 dark:border-gray-800 pb-1; }
 .prose h3 { @apply mt-8; }

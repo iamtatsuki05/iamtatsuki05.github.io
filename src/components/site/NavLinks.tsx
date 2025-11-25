@@ -1,10 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import type { NavItem } from '@/components/site/navItems';
+import type { NavDisplayItem } from '@/components/site/navItems';
+import { extractLocaleFromPath, localizedPath, stripLocalePrefix } from '@/lib/routing';
 
 type Props = {
-  items: NavItem[];
+  items: NavDisplayItem[];
   activePath: string;
   localePrefix: string;
   orientation?: 'horizontal' | 'vertical';
@@ -12,7 +13,9 @@ type Props = {
 };
 
 export function NavLinks({ items, activePath, localePrefix, orientation = 'horizontal', onNavigate }: Props) {
-  const isActive = (href: string) => activePath === `${localePrefix}${href}`;
+  const locale = extractLocaleFromPath(activePath) || (localePrefix === '/en' ? 'en' : null);
+  const normalizedActive = stripLocalePrefix(activePath.endsWith('/') ? activePath : `${activePath}/`);
+  const isActive = (href: string) => normalizedActive === (href.endsWith('/') ? href : `${href}/`);
 
   const baseClass = orientation === 'horizontal'
     ? 'px-2 py-1 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -23,7 +26,7 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
       {items.map((n) => (
         <Link
           key={n.href}
-          href={`${localePrefix}${n.href}`}
+          href={locale ? localizedPath(n.href, locale) : n.href}
           onClick={onNavigate}
           className={clsx(baseClass, isActive(n.href) && 'bg-gray-100 dark:bg-gray-800')}
         >
@@ -33,4 +36,3 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
     </nav>
   );
 }
-

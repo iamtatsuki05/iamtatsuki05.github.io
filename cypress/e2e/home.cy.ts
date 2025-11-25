@@ -1,3 +1,5 @@
+import { localizedPath } from '../support/paths';
+
 const viewports = [
   { label: 'desktop', apply: () => cy.viewport(1280, 800) },
   { label: 'mobile', apply: () => cy.viewport('iphone-6') },
@@ -14,7 +16,7 @@ describe('Homepage JA', () => {
     context(label, () => {
       beforeEach(() => {
         apply();
-        cy.visit('/');
+        cy.visit(localizedPath('ja'));
       });
 
       it('shows main hero and contact info', () => {
@@ -51,7 +53,7 @@ describe('Homepage JA', () => {
           cy.get('#mobile-menu').should('exist');
           cy.contains('#mobile-menu nav a', 'Links').first().click();
           cy.get('#mobile-menu').should('not.exist');
-          cy.location('pathname').should('match', /\/links\/?$/);
+          cy.location('pathname').should('eq', localizedPath('ja', '/links/'));
         });
       } else {
         it('navigates to a blog post when clicking a card', () => {
@@ -60,13 +62,13 @@ describe('Homepage JA', () => {
             if (link) {
               cy.wrap(link).click({ force: true });
             } else {
-              cy.get('a[href="/blogs/"]').first().click({ force: true });
-              cy.location('pathname', { timeout: 10000 }).should('match', /\/blogs\/?$/);
-              cy.get('[data-testid="blog-card"] a[href^="/blogs/"]').first().click({ force: true });
+              cy.get(`a[href="${localizedPath('ja', '/blogs/')}"]`).first().click({ force: true });
+              cy.location('pathname', { timeout: 10000 }).should('eq', localizedPath('ja', '/blogs/'));
+              cy.get('[data-testid="blog-card"] a[href*="/blogs/"]').first().click({ force: true });
             }
           });
           cy.location('pathname', { timeout: 10000 }).should((pathname) => {
-            expect(pathname).to.match(/\/blogs\/[\w-]+\/?$/);
+            expect(pathname).to.match(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
           });
         });
       }
@@ -79,7 +81,7 @@ describe('Homepage EN', () => {
     context(label, () => {
       beforeEach(() => {
         apply();
-        cy.visit('/en');
+        cy.visit(localizedPath('en'));
       });
 
       it('shows localized content', () => {

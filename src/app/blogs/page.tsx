@@ -4,15 +4,17 @@ import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from './sections/BlogsClient';
 import { buildPageMetadata, defaultLanguageAlternates } from '@/lib/seo';
 import { blogsPageCopy } from '@/app/(site)/_config/pageCopy';
+import { getPageMeta } from '@/lib/seo/metaConfig';
 
 const DEFAULT_LOCALE: Locale = 'ja';
 const copy = blogsPageCopy[DEFAULT_LOCALE];
+const pageMeta = getPageMeta('blogs', DEFAULT_LOCALE);
 
 export const metadata: Metadata = buildPageMetadata({
-  title: copy.metadataTitle,
-  description: copy.metadataDescription,
+  title: pageMeta.metadataTitle,
+  description: pageMeta.metadataDescription,
   locale: DEFAULT_LOCALE,
-  path: '/blogs/',
+  path: pageMeta.path,
   languageAlternates: defaultLanguageAlternates,
 });
 
