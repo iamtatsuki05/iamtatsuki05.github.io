@@ -113,17 +113,23 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           label={t.year}
         />
 
-        <span className="text-sm opacity-70">{t.types}</span>
-        {order.map((tp) => (
-          <label key={tp} className="text-sm inline-flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={types[tp]}
-              onChange={() => setTypes({ ...types, [tp]: !types[tp] })}
-            />
-            {typeLabels[tp]}
-          </label>
-        ))}
+        <details className="ml-2">
+          <summary className="cursor-pointer select-none text-sm opacity-80">
+            {t.types} ({order.length})
+          </summary>
+          <div className="mt-2 flex flex-col gap-1">
+            {order.map((tp) => (
+              <label key={tp} className="text-sm inline-flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  checked={types[tp]}
+                  onChange={() => setTypes({ ...types, [tp]: !types[tp] })}
+                />
+                {typeLabels[tp]}
+              </label>
+            ))}
+          </div>
+        </details>
 
         <TagSelector
           tags={allTags}
