@@ -5,6 +5,7 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
+import { resolveFilterText } from '@/components/filters/filterTexts';
 
 type Item = {
   slug: string;
@@ -60,37 +61,24 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     return map;
   }, [typeFiltered]);
 
-  const t = (key: string) => {
-    const ja: Record<string, string> = {
-      search: '検索...',
-      paper: '📄 論文',
-      article: '📝 技術ブログ',
-      talk: '🎤 登壇',
-      slide: '📑 スライド',
-      media: '📰 メディア',
-      app: '📱 アプリ',
-      year: '年',
-      types: '種類',
-      tags: 'タグ',
-      clear: 'クリア',
-      noResult: '該当する項目がありません',
-    };
-    const en: Record<string, string> = {
-      search: 'Search...',
-      paper: '📄 Papers',
-      article: '📝 Technical Articles',
-      talk: '🎤 Talks',
-      slide: '📑 Slides',
-      media: '📰 Media',
-      app: '📱 Apps',
-      year: 'Year',
-      types: 'Types',
-      tags: 'Tags',
-      clear: 'Clear',
-      noResult: 'No items found',
-    };
-    return (locale === 'ja' ? ja : en)[key];
-  };
+  const t = resolveFilterText(locale);
+  const typeLabels: Record<Item['type'], string> = locale === 'ja'
+    ? {
+        paper: '📄 論文',
+        article: '📝 技術ブログ',
+        talk: '🎤 登壇',
+        slide: '📑 スライド',
+        media: '📰 メディア',
+        app: '📱 アプリ',
+      }
+    : {
+        paper: '📄 Papers',
+        article: '📝 Technical Articles',
+        talk: '🎤 Talks',
+        slide: '📑 Slides',
+        media: '📰 Media',
+        app: '📱 Apps',
+      };
 
   const openInNewTab = (url?: string) => {
     if (!url || typeof window === 'undefined') return;
@@ -110,22 +98,22 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       <FilterBar
         query={q}
         onQueryChange={setQ}
-        placeholder={t('search')}
+        placeholder={t.search}
         onClear={() => {
           clearFilters();
           setTypes({ paper: true, article: true, talk: true, slide: true, media: true, app: true });
         }}
-        clearLabel={t('clear')}
+        clearLabel={t.clear}
         hasActiveFilters={Boolean(year || tagSet.size || Object.values(types).some((v) => !v))}
       >
         <YearSelect
           years={years}
           value={year}
           onChange={setYear}
-          label={t('year')}
+          label={t.year}
         />
 
-        <span className="text-sm opacity-70">{t('types')}</span>
+        <span className="text-sm opacity-70">{t.types}</span>
         {order.map((tp) => (
           <label key={tp} className="text-sm inline-flex items-center gap-1">
             <input
@@ -133,7 +121,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
               checked={types[tp]}
               onChange={() => setTypes({ ...types, [tp]: !types[tp] })}
             />
-            {t(tp)}
+            {typeLabels[tp]}
           </label>
         ))}
 
@@ -146,7 +134,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
             else next.add(tag);
             setTagSet(next);
           }}
-          label={t('tags')}
+          label={t.tags}
           className="ml-2"
         />
       </FilterBar>
@@ -156,7 +144,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         if (!arr.length) return null;
         return (
           <section key={type} className="space-y-3">
-            <h2 className="text-xl font-semibold">{t(type)}</h2>
+            <h2 className="text-xl font-semibold">{typeLabels[type]}</h2>
             <ul className="space-y-3">
               {arr.map((i) => {
                 const primaryLink = i.links[0]?.url;
@@ -227,7 +215,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       })}
 
       {order.every((t) => !(groups[t] || []).length) && (
-        <p className="opacity-70">{t('noResult')}</p>
+        <p className="opacity-70">{t.noResult}</p>
       )}
     </div>
   );

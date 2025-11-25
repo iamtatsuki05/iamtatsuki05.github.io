@@ -7,6 +7,7 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
+import { resolveFilterText } from '@/components/filters/filterTexts';
 
 type Post = {
   slug: string;
@@ -60,45 +61,25 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   const latest = filtered.slice(0, 3);
   const items = filtered.slice(0, visible);
 
-  const t = (key: string) => {
-    const ja: Record<string, string> = {
-      search: '検索...',
-      latest: '✨ 最新',
-      allPosts: '🗂 すべての記事',
-      noResult: '該当する記事がありません',
-      year: '年',
-      tags: 'タグ',
-      clear: 'クリア',
-    };
-    const en: Record<string, string> = {
-      search: 'Search...',
-      latest: '✨ Latest',
-      allPosts: '🗂 All Posts',
-      noResult: 'No posts found',
-      year: 'Year',
-      tags: 'Tags',
-      clear: 'Clear',
-    };
-    return (locale === 'ja' ? ja : en)[key];
-  };
+  const t = resolveFilterText(locale);
 
   return (
     <div className="space-y-6">
       <FilterBar
         query={q}
         onQueryChange={setQ}
-        placeholder={t('search')}
+        placeholder={t.search}
         onClear={() => {
           clearFilters();
         }}
-        clearLabel={t('clear')}
+        clearLabel={t.clear}
         hasActiveFilters={Boolean(year || tagSet.size)}
       >
         <YearSelect
           years={allYears}
           value={year}
           onChange={setYear}
-          label={t('year')}
+          label={t.year}
         />
 
         <TagSelector
@@ -110,13 +91,13 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             else next.add(tag);
             setTagSet(next);
           }}
-          label={t('tags')}
+          label={t.tags}
           className="ml-2"
         />
       </FilterBar>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">{t('latest')}</h2>
+        <h2 className="text-xl font-semibold mb-2">{t.latest}</h2>
         <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
@@ -146,9 +127,9 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">{t('allPosts')}</h2>
+        <h2 className="text-xl font-semibold mb-2">{t.allPosts}</h2>
         {items.length === 0 ? (
-          <p className="opacity-70">{t('noResult')}</p>
+          <p className="opacity-70">{t.noResult}</p>
         ) : (
           <ul className="space-y-2" data-testid="blog-all-list">
             {items.map((p) => (
