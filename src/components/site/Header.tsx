@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NavLinks } from '@/components/site/NavLinks';
 import { MobileMenu } from '@/components/site/MobileMenu';
-import { NAV_ITEMS } from '@/components/site/navItems';
+import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
 
 export function Header() {
@@ -30,7 +30,7 @@ export function Header() {
     };
   }, [open]);
 
-  const navItems = NAV_ITEMS;
+  const navItems = resolveNavItems(locale);
 
   return (
     <header className="sticky top-0 z-40 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">

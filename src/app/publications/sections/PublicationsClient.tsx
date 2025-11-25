@@ -2,6 +2,8 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
 import { withBasePath } from '@/lib/url';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
+import { YearSelect } from '@/components/filters/YearSelect';
+import { TagSelector } from '@/components/filters/TagSelector';
 
 type Item = {
   slug: string;
@@ -113,11 +115,12 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       />
 
       <div className="flex flex-wrap items-center gap-2">
-        <label className="text-sm opacity-70">{t('year')}</label>
-        <select value={year} onChange={(e)=>setYear(e.target.value)} className="border rounded-sm px-2 py-1 dark:border-gray-700">
-          <option value="">All</option>
-          {years.map((y)=> <option key={y} value={y}>{y}</option>)}
-        </select>
+        <YearSelect
+          years={years}
+          value={year}
+          onChange={setYear}
+          label={t('year')}
+        />
 
         <span className="text-sm opacity-70">{t('types')}</span>
         {order.map((tp) => (
@@ -131,30 +134,18 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           </label>
         ))}
 
-        <details className="ml-2">
-          <summary className="cursor-pointer select-none text-sm opacity-80">
-            {t('tags')} ({allTags.length})
-          </summary>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {allTags.map((tag) => {
-              const active = tagSet.has(tag);
-              return (
-                <button
-                  key={tag}
-                  onClick={() => {
-                    const next = new Set(tagSet);
-                    if (active) next.delete(tag);
-                    else next.add(tag);
-                    setTagSet(next);
-                  }}
-                  className={`px-2 py-0.5 rounded-sm text-sm border ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
-                >
-                  #{tag}
-                </button>
-              );
-            })}
-          </div>
-        </details>
+        <TagSelector
+          tags={allTags}
+          selected={tagSet}
+          onToggle={(tag) => {
+            const next = new Set(tagSet);
+            if (next.has(tag)) next.delete(tag);
+            else next.add(tag);
+            setTagSet(next);
+          }}
+          label={t('tags')}
+          className="ml-2"
+        />
 
         {(q || year || tagSet.size || Object.values(types).some(v=>!v)) ? (
           <button

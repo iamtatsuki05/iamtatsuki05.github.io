@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { NavLinks } from './NavLinks';
-import { NAV_ITEMS } from './navItems';
+import { resolveNavItems } from './navItems';
 
 const meta = {
   title: 'Site/NavLinks',
   component: NavLinks,
   args: {
-    items: NAV_ITEMS,
+    items: resolveNavItems('ja'),
     activePath: '/',
     localePrefix: '',
   },

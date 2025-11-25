@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MobileMenu } from './MobileMenu';
-import { NAV_ITEMS } from './navItems';
+import { resolveNavItems } from './navItems';
 
 const meta = {
   title: 'Site/MobileMenu',
@@ -10,7 +10,7 @@ const meta = {
   },
   args: {
     open: true,
-    items: NAV_ITEMS,
+    items: resolveNavItems('ja'),
     activePath: '/',
     localePrefix: '',
     onClose: () => {},

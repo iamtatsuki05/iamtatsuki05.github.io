@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import type { NavItem } from '@/components/site/navItems';
+import type { NavDisplayItem } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath, stripLocalePrefix } from '@/lib/routing';
 
 type Props = {
-  items: NavItem[];
+  items: NavDisplayItem[];
   activePath: string;
   localePrefix: string;
   orientation?: 'horizontal' | 'vertical';

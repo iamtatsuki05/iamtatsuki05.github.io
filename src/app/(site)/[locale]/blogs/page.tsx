@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
 import { buildLocalizedMetadata, localizedStaticParams } from '@/lib/metadata';
+import { pageMeta } from '@/lib/seo/metaConfig';
 import type { Locale } from '@/lib/i18n';
 import {
   blogsPageCopy,
@@ -17,7 +18,7 @@ export const generateStaticParams = localizedStaticParams;
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
-  return buildLocalizedMetadata(params, blogsPageCopy);
+  return buildLocalizedMetadata(params, pageMeta.blogs);
 }
 
 export default async function LocaleBlogsPage({ params }: { params: Promise<Params> }) {

@@ -1,28 +1,35 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LinksSection } from './LinksSection';
+import { LinkGrid } from './LinkGrid';
 import { sampleLinks } from '@/stories/fixtures/links';
 
 const meta = {
-  title: 'Home/LinksSection',
-  component: LinksSection,
+  title: 'Links/LinkGrid',
+  component: LinkGrid,
   parameters: {
     layout: 'fullscreen',
   },
   args: {
-    links: sampleLinks,
-    ctaLabel: 'もっと見る',
+    items: sampleLinks,
+    moreLabel: 'さらに表示',
+    showDescription: true,
   },
-  tags: ['autodocs'],
   render: (args) => (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-[260px]">
       <div className="container mx-auto max-w-4xl px-4 py-6">
-        <LinksSection {...args} />
+        <LinkGrid {...args} />
       </div>
     </div>
   ),
-} satisfies Meta<typeof LinksSection>;
+  tags: ['autodocs'],
+} satisfies Meta<typeof LinkGrid>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const WithoutDescriptions: Story = {
+  args: {
+    showDescription: false,
+  },
+};
