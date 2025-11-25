@@ -6,6 +6,7 @@ import { withBasePath } from '@/lib/url';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
+import { FilterBar } from '@/components/filters/FilterBar';
 
 type Post = {
   slug: string;
@@ -83,15 +84,16 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
   return (
     <div className="space-y-6">
-      <input
-        aria-label={t('search')}
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
+      <FilterBar
+        query={q}
+        onQueryChange={setQ}
         placeholder={t('search')}
-        className="w-full border rounded-sm px-3 py-2 dark:border-gray-700"
-      />
-
-      <div className="flex flex-wrap items-center gap-2">
+        onClear={() => {
+          clearFilters();
+        }}
+        clearLabel={t('clear')}
+        hasActiveFilters={Boolean(year || tagSet.size)}
+      >
         <YearSelect
           years={allYears}
           value={year}
@@ -111,12 +113,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           label={t('tags')}
           className="ml-2"
         />
-        {(year || tagSet.size || q) ? (
-          <button onClick={()=>{ clearFilters(); }} className="ml-auto text-sm underline">
-            {t('clear')}
-          </button>
-        ) : null}
-      </div>
+      </FilterBar>
 
       <section>
         <h2 className="text-xl font-semibold mb-2">{t('latest')}</h2>

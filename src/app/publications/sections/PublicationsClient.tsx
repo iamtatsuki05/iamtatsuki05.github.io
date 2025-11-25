@@ -4,6 +4,7 @@ import { withBasePath } from '@/lib/url';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
+import { FilterBar } from '@/components/filters/FilterBar';
 
 type Item = {
   slug: string;
@@ -106,15 +107,17 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
 
   return (
     <div className="space-y-6">
-      <input
-        aria-label={t('search')}
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
+      <FilterBar
+        query={q}
+        onQueryChange={setQ}
         placeholder={t('search')}
-        className="w-full border rounded-sm px-3 py-2 dark:border-gray-700"
-      />
-
-      <div className="flex flex-wrap items-center gap-2">
+        onClear={() => {
+          clearFilters();
+          setTypes({ paper: true, article: true, talk: true, slide: true, media: true, app: true });
+        }}
+        clearLabel={t('clear')}
+        hasActiveFilters={Boolean(year || tagSet.size || Object.values(types).some((v) => !v))}
+      >
         <YearSelect
           years={years}
           value={year}
@@ -146,19 +149,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           label={t('tags')}
           className="ml-2"
         />
-
-        {(q || year || tagSet.size || Object.values(types).some(v=>!v)) ? (
-          <button
-            onClick={() => {
-              clearFilters();
-              setTypes({ paper: true, article: true, talk: true, slide: true, media: true, app: true });
-            }}
-            className="ml-auto text-sm underline"
-          >
-            {t('clear')}
-          </button>
-        ) : null}
-      </div>
+      </FilterBar>
 
       {order.map((type) => {
         const arr = groups[type] || [];
