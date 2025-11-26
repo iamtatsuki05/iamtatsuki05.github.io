@@ -1,8 +1,8 @@
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
-import { withBasePath } from '@/lib/url';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { EmbedsClient } from '@/components/site/EmbedsClient';
 import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
@@ -64,15 +64,16 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
     <article className="prose dark:prose-invert max-w-none">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       {headerImage ? (
-        <img
-          src={withBasePath(headerImage)}
-          alt={headerAlt || title}
-          className="mb-4 w-full h-auto rounded-sm border border-gray-200 dark:border-gray-700"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          referrerPolicy="no-referrer"
-        />
+        <div className="relative mb-4 w-full aspect-video">
+          <Image
+            src={headerImage}
+            alt={headerAlt || title}
+            fill
+            className="rounded-sm border border-gray-200 dark:border-gray-700 object-cover"
+            priority
+            sizes="(max-width: 768px) 100vw, 800px"
+          />
+        </div>
       ) : null}
       <h1>{title}</h1>
       <p className="mt-0! text-sm opacity-70">
