@@ -1,13 +1,14 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from 'next-themes';
 import { assetPath, withBasePath, withVersion } from '@/lib/url';
 import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
 const baseMetadata = buildPageMetadata({
   title: siteConfig.defaultTitle.ja,
@@ -53,22 +54,17 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://platform.twitter.com" />
         <link rel="dns-prefetch" href="https://www.instagram.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
-        {/* LCP想定画像の先読み（トップのアバター） */}
-        <link
-          rel="preload"
-          as="image"
-          href={assetPath('/favicon.ico')}
-          fetchPriority="high"
-        />
       </head>
       <body suppressHydrationWarning className={`${inter.className} min-h-screen flex flex-col`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header />
-          <main className="container mx-auto max-w-4xl px-4 py-8 flex-1">
-            {children}
-          </main>
-          <Footer />
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Header />
+            <main className="container mx-auto max-w-4xl px-4 py-8 flex-1">
+              {children}
+            </main>
+            <Footer />
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

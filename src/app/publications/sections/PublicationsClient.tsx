@@ -1,6 +1,7 @@
 "use client";
-import { useMemo, useState, type KeyboardEvent } from 'react';
-import { withBasePath } from '@/lib/url';
+import { useMemo, type KeyboardEvent } from 'react';
+import Image from 'next/image';
+import { parseAsArrayOf, parseAsStringEnum, useQueryState } from 'nuqs';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
@@ -21,15 +22,13 @@ type Item = {
   abstract?: string;
 };
 
+const typeOrder: Item['type'][] = ['paper', 'app', 'article', 'talk', 'slide', 'media'];
+
 export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; locale?: 'ja' | 'en' }) {
-  const [types, setTypes] = useState<Record<Item['type'], boolean>>({
-    paper: true,
-    article: true,
-    talk: true,
-    slide: true,
-    media: true,
-    app: true,
-  });
+  const [selectedTypes, setSelectedTypes] = useQueryState(
+    'types',
+    parseAsArrayOf(parseAsStringEnum(typeOrder)).withDefault(typeOrder),
+  );
   const {
     q,
     setQ,
@@ -47,9 +46,13 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     extractTags: (i) => i.tags || [],
   });
 
-  const typeFiltered = useMemo(() => filtered.filter((i) => types[i.type]), [filtered, types]);
+  const selectedTypeSet = useMemo(
+    () => new Set((selectedTypes || typeOrder).filter((t): t is Item['type'] => typeOrder.includes(t))),
+    [selectedTypes],
+  );
 
-  const order: Item['type'][] = ['paper', 'app', 'article', 'talk', 'slide', 'media'];
+  const typeFiltered = useMemo(() => filtered.filter((i) => selectedTypeSet.has(i.type)), [filtered, selectedTypeSet]);
+
   const groups = useMemo(() => {
     const map: Record<string, Item[]> = {};
     for (const it of typeFiltered) {
@@ -101,10 +104,10 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         placeholder={t.search}
         onClear={() => {
           clearFilters();
-          setTypes({ paper: true, article: true, talk: true, slide: true, media: true, app: true });
+          void setSelectedTypes(null);
         }}
         clearLabel={t.clear}
-        hasActiveFilters={Boolean(year || tagSet.size || Object.values(types).some((v) => !v))}
+        hasActiveFilters={Boolean(year || tagSet.size || selectedTypeSet.size !== typeOrder.length)}
       >
         <YearSelect
           years={years}
@@ -115,15 +118,22 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
 
         <details className="ml-2">
           <summary className="cursor-pointer select-none text-sm opacity-80">
-            {t.types} ({order.length})
+            {t.types} ({typeOrder.length})
           </summary>
           <div className="mt-2 flex flex-col gap-1">
-            {order.map((tp) => (
+            {typeOrder.map((tp) => (
               <label key={tp} className="text-sm inline-flex items-center gap-1">
                 <input
                   type="checkbox"
-                  checked={types[tp]}
-                  onChange={() => setTypes({ ...types, [tp]: !types[tp] })}
+                  checked={selectedTypeSet.has(tp)}
+                  onChange={() =>
+                    void setSelectedTypes((prev) => {
+                      const next = new Set(prev || typeOrder);
+                      if (next.has(tp)) next.delete(tp);
+                      else next.add(tp);
+                      return Array.from(next);
+                    })
+                  }
                 />
                 {typeLabels[tp]}
               </label>
@@ -145,7 +155,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         />
       </FilterBar>
 
-      {order.map((type) => {
+      {typeOrder.map((type) => {
         const arr = groups[type] || [];
         if (!arr.length) return null;
         return (
@@ -170,14 +180,14 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     {...clickableProps}
                   >
                 {i.headerImage ? (
-                  <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
-                    <img
-                      src={withBasePath(i.headerImage)}
+                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
+                    <Image
+                      src={i.headerImage}
                       alt={i.headerAlt || i.title}
-                      className="max-w-full max-h-full object-contain"
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 100vw, 120px"
+                    />
                     </div>
                   ) : null}
                   <div className="flex-1 min-w-0 mt-2 sm:mt-0">
@@ -220,7 +230,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         );
       })}
 
-      {order.every((t) => !(groups[t] || []).length) && (
+      {typeOrder.every((t) => !(groups[t] || []).length) && (
         <p className="opacity-70">{t.noResult}</p>
       )}
     </div>

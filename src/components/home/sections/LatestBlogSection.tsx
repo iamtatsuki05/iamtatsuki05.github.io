@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { BlogPost } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { SectionHeader } from './SectionHeader';
@@ -12,14 +12,18 @@ type Props = {
 };
 
 export function LatestBlogSection({ posts, locale, title, ctaLabel }: Props) {
-  const items = posts.map((post) => ({
-    key: post.slug,
-    title: post.title,
-    description: post.summary,
-    href: `/blogs/${post.slug}/`,
-    date: formatDate(post.date, locale === 'ja' ? 'ja' : 'en'),
-    linkTestId: 'home-latest-blog-link',
-  }));
+  const items = useMemo(
+    () =>
+      posts.map((post) => ({
+        key: post.slug,
+        title: post.title,
+        description: post.summary,
+        href: `/blogs/${post.slug}/`,
+        date: formatDate(post.date, locale === 'ja' ? 'ja' : 'en'),
+        linkTestId: 'home-latest-blog-link',
+      })),
+    [posts, locale],
+  );
 
   return (
     <section>

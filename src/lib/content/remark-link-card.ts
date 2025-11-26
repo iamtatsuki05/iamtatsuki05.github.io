@@ -104,7 +104,9 @@ export default function remarkLinkCard(options?: Options) {
     if (cacheChanged) {
       try {
         await writeCache(cacheFile, cache);
-      } catch {}
+      } catch (err) {
+        console.warn('[remarkLinkCard] Failed to write cache:', err);
+      }
     }
 
     // Replace nodes

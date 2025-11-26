@@ -16,7 +16,9 @@ export default function rehypeImgDefaults() {
         try {
           const isHttp = /^https?:\/\//i.test(src);
           if (isHttp && !props.referrerpolicy) props.referrerpolicy = 'no-referrer';
-        } catch {}
+        } catch (err) {
+          console.warn('[rehypeImgDefaults] Failed to process image src:', err);
+        }
       }
       (node.children || []).forEach(visit);
     };

@@ -21,6 +21,8 @@ export function TagSelector({ tags, selected, onToggle, label, className }: Prop
             <button
               key={tag}
               onClick={() => onToggle(tag)}
+              aria-pressed={active}
+              aria-label={`Filter by ${tag} tag`}
               className={`px-2 py-0.5 rounded-sm text-sm border ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
             >
               #{tag}

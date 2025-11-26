@@ -11,7 +11,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import rehypeRaw from 'rehype-raw';
 import GithubSlugger from 'github-slugger';
-import type { Root as MdastRoot } from 'mdast';
+import type { Root as MdastRoot, Heading, Text, InlineCode, RootContent } from 'mdast';
 import { cached } from '@/lib/server/cache';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';
@@ -23,7 +23,7 @@ export type ParsedMarkdown<T> = {
 };
 
 export async function parseMarkdownFile<T>(filePath: string): Promise<{
-  data: any;
+  data: T;
   contentHtml: string;
   headings: { id: string; title: string; level: number }[];
 }> {
@@ -36,19 +36,21 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
     const mdast = (await unified().use(remarkParse).parse(content)) as MdastRoot;
     const slugger = new GithubSlugger();
     const headings: { id: string; title: string; level: number }[] = [];
-    const visit = (node: any) => {
+    const visit = (node: RootContent) => {
       if (!node) return;
       if (node.type === 'heading' && (node.depth === 2 || node.depth === 3)) {
         const text = (node.children || [])
-          .filter((c: any) => c.type === 'text' || c.type === 'inlineCode')
-          .map((c: any) => c.value)
+          .filter((c): c is Text | InlineCode => c.type === 'text' || c.type === 'inlineCode')
+          .map((c) => c.value)
           .join(' ');
         const id = slugger.slug(text || '');
         headings.push({ id, title: text, level: node.depth });
       }
-      (node.children || []).forEach(visit);
+      if ('children' in node && Array.isArray(node.children)) {
+        node.children.forEach(visit);
+      }
     };
-    visit(mdast);
+    mdast.children.forEach(visit);
 
     // 2) HTML へ変換
     const file = await unified()
@@ -64,7 +66,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(rehypePrism)
       .use(rehypeStringify)
       .process(content);
-    return { data, contentHtml: String(file), headings };
+    return { data: data as T, contentHtml: String(file), headings };
   });
 }
 
