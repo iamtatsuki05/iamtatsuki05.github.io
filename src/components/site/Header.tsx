@@ -1,13 +1,17 @@
 "use client";
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { ThemeToggle } from '@/components/site/ThemeToggle';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { NavLinks } from '@/components/site/NavLinks';
-import { MobileMenu } from '@/components/site/MobileMenu';
 import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
+
+const MobileMenu = dynamic(() => import('@/components/site/MobileMenu').then(mod => mod.MobileMenu), {
+  ssr: false,
+});
 
 export function Header() {
   const pathname = usePathname() || '';
