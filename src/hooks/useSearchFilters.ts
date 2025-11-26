@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
-import type FuseType from 'fuse.js';
+import { useMemo, useState } from 'react';
+import Fuse from 'fuse.js';
 
 type Options<T> = {
   fuseKeys: string[];
@@ -12,21 +12,8 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
   const [q, setQ] = useState('');
   const [year, setYear] = useState('');
   const [tagSet, setTagSet] = useState<Set<string>>(new Set());
-  const [fuse, setFuse] = useState<FuseType<T> | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    const loadFuse = async () => {
-      const Fuse = (await import('fuse.js')).default;
-      if (active) {
-        setFuse(new Fuse(items, { keys: fuseKeys, threshold }));
-      }
-    };
-    loadFuse();
-    return () => {
-      active = false;
-    };
-  }, [items, fuseKeys, threshold]);
+  const fuse = useMemo(() => new Fuse(items, { keys: fuseKeys, threshold }), [items, fuseKeys, threshold]);
 
   const years = useMemo(
     () =>
@@ -42,12 +29,7 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
   );
 
   const filtered = useMemo(() => {
-    let result = items;
-    if (q && fuse) {
-      result = fuse.search(q).map((r) => r.item);
-    }
-    // If q is present but fuse is not loaded yet, we return all items (or could return empty)
-
+    let result = q ? fuse.search(q).map((r) => r.item) : items;
     if (year) result = result.filter((item) => (extractYear(item) || '').startsWith(year));
     if (tagSet.size) result = result.filter((item) => extractTags(item).some((tag) => tagSet.has(tag)));
     return result;
