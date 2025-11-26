@@ -2,6 +2,18 @@ import { getOgCacheTtlMs, shouldDisableOgFetch } from '@/lib/config/env';
 import type { OGData } from './types';
 import { providerFallback } from './provider';
 
+type YouTubeOEmbedResponse = {
+  title: string;
+  thumbnail_url: string;
+  [key: string]: unknown;
+};
+
+type TwitterOEmbedResponse = {
+  html: string;
+  author_name?: string;
+  [key: string]: unknown;
+};
+
 async function fetchProviderMeta(url: string): Promise<OGData | null> {
   try {
     const u = new URL(url);
@@ -14,7 +26,7 @@ async function fetchProviderMeta(url: string): Promise<OGData | null> {
       }
       const o = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(canonical)}`);
       if (o.ok) {
-        const j: any = await o.json();
+        const j = (await o.json()) as YouTubeOEmbedResponse;
         return { url, title: j.title, image: j.thumbnail_url, siteName: 'YouTube' };
       }
     }
@@ -23,7 +35,7 @@ async function fetchProviderMeta(url: string): Promise<OGData | null> {
       const canonical = `https://twitter.com${u.pathname}`;
       const o = await fetch(`https://publish.twitter.com/oembed?omit_script=1&hide_thread=1&align=left&url=${encodeURIComponent(canonical)}`);
       if (o.ok) {
-        const j: any = await o.json();
+        const j = (await o.json()) as TwitterOEmbedResponse;
         const html: string = j.html || '';
         const p = html.match(/<p[^>]*>([\s\S]*?)<\/p>/i)?.[1] || '';
         const text = p
@@ -39,7 +51,9 @@ async function fetchProviderMeta(url: string): Promise<OGData | null> {
       }
       return null;
     }
-  } catch {}
+  } catch (err) {
+    console.warn('[fetchProviderMeta] Failed to fetch provider metadata:', err);
+  }
   return null;
 }
 
@@ -76,7 +90,9 @@ export async function fetchOG(url: string): Promise<OGData | null> {
         }
         data.siteName = data.siteName || 'Amazon';
       }
-    } catch {}
+    } catch (err) {
+      console.warn('[fetchOG] Failed to extract Amazon product title:', err);
+    }
     data.fetchedAt = Date.now();
     const hasAny = !!(data.title || data.image || data.description || data.siteName);
     return hasAny ? data : providerFallback(url) || data;

@@ -1,8 +1,7 @@
 import React, { type ReactNode } from 'react';
 
-const linkPattern = /\[([^\]]+)]\(([^)]+)\)/g;
-
 export function renderInlineLinks(text: string): ReactNode {
+  const linkPattern = /\[([^\]]+)]\(([^)]+)\)/g;
   const nodes: ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;

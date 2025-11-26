@@ -9,6 +9,10 @@ import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { resolveFilterText } from '@/components/filters/filterTexts';
 
+const INITIAL_VISIBLE_COUNT = 10;
+const LOAD_MORE_INCREMENT = 10;
+const LATEST_POSTS_COUNT = 3;
+
 type Post = {
   slug: string;
   title: string;
@@ -20,7 +24,7 @@ type Post = {
 };
 
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
-  const [visible, setVisible] = useState(10);
+  const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -41,7 +45,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   });
 
   useEffect(() => {
-    setVisible(10);
+    setVisible(INITIAL_VISIBLE_COUNT);
   }, [filtered]);
 
   useEffect(() => {
@@ -50,7 +54,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
-          setVisible((v) => Math.min(v + 10, filtered.length));
+          setVisible((v) => Math.min(v + LOAD_MORE_INCREMENT, filtered.length));
         }
       });
     });
@@ -58,7 +62,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
     return () => io.disconnect();
   }, [filtered.length]);
 
-  const latest = filtered.slice(0, 3);
+  const latest = filtered.slice(0, LATEST_POSTS_COUNT);
   const items = filtered.slice(0, visible);
 
   const t = resolveFilterText(locale);
