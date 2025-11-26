@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
-import Image from 'next/image';
 import { withBasePath } from '@/lib/url';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { EmbedsClient } from '@/components/site/EmbedsClient';
@@ -50,7 +49,6 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   if (!post) return notFound();
 
   const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags } = post;
-  const headerImageUrl = headerImage ? withBasePath(headerImage) : undefined;
   const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
   const articleJsonLd = buildArticleJsonLd({
     title,
@@ -65,19 +63,16 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   return (
     <article className="prose dark:prose-invert max-w-none">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-      {headerImageUrl ? (
-        <div className="mb-4 w-full overflow-hidden rounded-sm border border-gray-200 dark:border-gray-700">
-          <Image
-            src={headerImageUrl}
-            alt={headerAlt || title}
-            width={1600}
-            height={900}
-            priority
-            className="block w-full h-auto"
-            sizes="(max-width: 768px) 100vw, 1200px"
-            referrerPolicy="no-referrer"
-          />
-        </div>
+      {headerImage ? (
+        <img
+          src={withBasePath(headerImage)}
+          alt={headerAlt || title}
+          className="mb-4 w-full h-auto rounded-sm border border-gray-200 dark:border-gray-700"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          referrerPolicy="no-referrer"
+        />
       ) : null}
       <h1>{title}</h1>
       <p className="mt-0! text-sm opacity-70">

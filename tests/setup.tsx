@@ -11,7 +11,7 @@ process.env.OG_DISABLE_FETCH = 'true';
 
 // next/link mock (anchor passthrough)
 vi.mock('next/link', () => {
-  const Link = ({ href, children, prefetch: _prefetch, ...rest }: any) =>
+  const Link = ({ href, children, ...rest }: any) =>
     React.createElement('a', { href: typeof href === 'string' ? href : '#', ...rest }, children);
   return { __esModule: true, default: Link };
 });

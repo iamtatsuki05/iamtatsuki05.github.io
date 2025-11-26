@@ -11,10 +11,9 @@ type Props = {
   items: NavDisplayItem[];
   activePath: string;
   localePrefix: string;
-  prefetch?: boolean;
 };
 
-export function MobileMenu({ open, onClose, items, activePath, localePrefix, prefetch = true }: Props) {
+export function MobileMenu({ open, onClose, items, activePath, localePrefix }: Props) {
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -55,7 +54,6 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix, pre
           localePrefix={localePrefix}
           orientation="vertical"
           onNavigate={onClose}
-          prefetch={prefetch}
         />
       </div>
     </div>,
