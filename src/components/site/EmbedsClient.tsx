@@ -131,13 +131,25 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
       io.observe(first);
     }
     // 念のため遅延実行（埋め込みが下部にあるケース）
-    const t = window.setTimeout(() => mountAll(), 5000);
+    // requestIdleCallback でブラウザアイドル時に実行
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+
+    if (typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(() => mountAll(), { timeout: 5000 });
+    } else {
+      timeoutId = window.setTimeout(() => mountAll(), 5000);
+    }
+
     const onResize = () => reflow();
     window.addEventListener('resize', onResize);
     return () => {
       disposed = true;
       window.removeEventListener('resize', onResize);
-      window.clearTimeout(t);
+      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
       document
         .querySelectorAll<HTMLElement>('.rse-embed[data-provider][data-url]')
         .forEach((el) => {

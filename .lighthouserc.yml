@@ -1,0 +1,15 @@
+ci:
+  collect:
+    startServerCommand: bun run start
+    startServerReadyPattern: "Local:.*3000|127\\.0\\.0\\.1:3000|http://localhost:3000"
+    startServerTimeout: 180000
+    url:
+      - http://localhost:3000/
+      - http://localhost:3000/blogs/
+      - http://localhost:3000/links/
+      - http://localhost:3000/publications/
+    numberOfRuns: 3
+    settings:
+      chromeFlags: "--no-sandbox"
+  upload:
+    target: temporary-public-storage

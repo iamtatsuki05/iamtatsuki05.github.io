@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import type { Locale } from '@/lib/i18n';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from './sections/BlogsClient';
@@ -24,7 +25,9 @@ export default async function BlogIndex() {
     <div className="space-y-4">
       <div className="text-sm opacity-70">{copy.breadcrumb}</div>
       <h1 className="text-3xl font-bold">{copy.heading}</h1>
-      <BlogsClient posts={posts} locale={DEFAULT_LOCALE} />
+      <Suspense fallback={null}>
+        <BlogsClient posts={posts} locale={DEFAULT_LOCALE} />
+      </Suspense>
     </div>
   );
 }

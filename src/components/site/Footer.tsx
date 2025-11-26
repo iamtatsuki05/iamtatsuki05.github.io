@@ -1,4 +1,3 @@
-"use client";
 import { absoluteUrl } from '@/lib/seo';
 
 export function Footer() {

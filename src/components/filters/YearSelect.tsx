@@ -10,10 +10,14 @@ type Props = {
 };
 
 export function YearSelect({ years, value, onChange, label, allLabel = 'All', className }: Props) {
+  const selectId = 'year-select';
   return (
     <div className={className}>
-      <label className="text-sm opacity-70 mr-2">{label}</label>
+      <label htmlFor={selectId} className="text-sm opacity-70 mr-2">
+        {label}
+      </label>
       <select
+        id={selectId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="border rounded-sm px-2 py-1 dark:border-gray-700"

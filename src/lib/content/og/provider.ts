@@ -8,7 +8,9 @@ export function providerOf(u: string): Provider {
     if (x.hostname === 'youtu.be' || x.hostname.endsWith('youtube.com')) return 'youtube';
     if (x.hostname === 'x.com' || x.hostname === 'twitter.com') return 'twitter';
     if (x.hostname.endsWith('instagram.com')) return 'instagram';
-  } catch {}
+  } catch (err) {
+    console.warn('[providerOf] Failed to parse URL:', err);
+  }
   return 'other';
 }
 
@@ -20,7 +22,9 @@ export function ytIdFrom(u: string): string {
       if (x.pathname.startsWith('/watch')) return x.searchParams.get('v') || '';
       if (x.pathname.startsWith('/shorts/')) return x.pathname.split('/')[2] || '';
     }
-  } catch {}
+  } catch (err) {
+    console.warn('[ytIdFrom] Failed to extract YouTube ID:', err);
+  }
   return '';
 }
 
@@ -59,7 +63,9 @@ export function providerFallback(url: string): OGData | null {
       const asin = asinMatch?.[1];
       return { url, title: asin ? `Amazon: ${asin}` : undefined, siteName: 'Amazon' };
     }
-  } catch {}
+  } catch (err) {
+    console.warn('[providerFallback] Failed to parse URL for fallback:', err);
+  }
   return null;
 }
 

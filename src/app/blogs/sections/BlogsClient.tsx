@@ -1,13 +1,17 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatDate } from '@/lib/date';
-import { withBasePath } from '@/lib/url';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { resolveFilterText } from '@/components/filters/filterTexts';
+
+const INITIAL_VISIBLE_COUNT = 10;
+const LOAD_MORE_INCREMENT = 10;
+const LATEST_POSTS_COUNT = 3;
 
 type Post = {
   slug: string;
@@ -20,7 +24,7 @@ type Post = {
 };
 
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
-  const [visible, setVisible] = useState(10);
+  const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -41,27 +45,30 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   });
 
   useEffect(() => {
-    setVisible(10);
+    setVisible(INITIAL_VISIBLE_COUNT);
   }, [filtered]);
 
   useEffect(() => {
     const el = loadMoreRef.current;
     if (!el) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          setVisible((v) => Math.min(v + 10, filtered.length));
-        }
-      });
-    });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setVisible((v) => Math.min(v + LOAD_MORE_INCREMENT, filtered.length));
+          }
+        });
+      },
+      { rootMargin: '200px' }, // 200px前にプリロード
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [filtered.length]);
 
-  const latest = filtered.slice(0, 3);
-  const items = filtered.slice(0, visible);
+  const latest = useMemo(() => filtered.slice(0, LATEST_POSTS_COUNT), [filtered]);
+  const items = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
 
-  const t = resolveFilterText(locale);
+  const t = useMemo(() => resolveFilterText(locale), [locale]);
 
   return (
     <div className="space-y-6">
@@ -102,13 +109,15 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
-                <img
-                  src={withBasePath(p.headerImage)}
-                  alt={p.headerAlt || p.title}
-                  className="w-full h-24 object-cover border-b border-gray-200 dark:border-gray-700"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div className="relative w-full h-24 border-b border-gray-200 dark:border-gray-700">
+                  <Image
+                    src={p.headerImage}
+                    alt={p.headerAlt || p.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                  />
+                </div>
               ) : null}
               <div className="p-3">
                 <h3 className="font-medium">
@@ -135,13 +144,13 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             {items.map((p) => (
               <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
-                  <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
-                    <img
-                      src={withBasePath(p.headerImage)}
+                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
+                    <Image
+                      src={p.headerImage}
                       alt={p.headerAlt || p.title}
-                      className="max-w-full max-h-full object-contain"
-                      loading="lazy"
-                      decoding="async"
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 100vw, 120px"
                     />
                   </div>
                 ) : null}

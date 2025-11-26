@@ -1,5 +1,6 @@
 import React from 'react';
 import { describe, it } from 'vitest';
+import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
 
 const sample = Array.from({ length: 12 }).map((_, i) => ({
@@ -10,10 +11,16 @@ const sample = Array.from({ length: 12 }).map((_, i) => ({
   summary: 'hello',
 }));
 
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <NuqsTestingAdapter>{children}</NuqsTestingAdapter>
+);
+
 describe('BlogsClient', () => {
   it('renders headings and first items', async () => {
     const { render } = await import('@testing-library/react');
-    const { getByText, getAllByText } = render(<BlogsClient posts={sample} locale="en" />);
+    const { getByText, getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
     expect(getByText('✨ Latest')).toBeInTheDocument();
     expect(getByText('🗂 All Posts')).toBeInTheDocument();
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
@@ -21,11 +28,21 @@ describe('BlogsClient', () => {
   it('filters by search query', async () => {
     const { render } = await import('@testing-library/react');
     const userEvent = await import('@testing-library/user-event');
-    const { getByPlaceholderText, findAllByText } = render(<BlogsClient posts={sample} locale="en" />);
+    const { getByPlaceholderText, findAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
     const input = getByPlaceholderText('Search...') as HTMLInputElement;
     const user = userEvent.default.setup();
     await user.type(input, 'Sample 11');
     const results = await findAllByText('Sample 11');
     expect(results.length).toBeGreaterThan(0);
+  });
+  it('applies tag filter from query params', async () => {
+    const { render } = await import('@testing-library/react');
+    const { getAllByText, queryByText } = render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?tags=a">{children}</NuqsTestingAdapter>,
+    });
+    expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
+    expect(queryByText('Sample 1')).toBeNull();
   });
 });
