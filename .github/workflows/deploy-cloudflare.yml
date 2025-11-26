@@ -1,0 +1,71 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: ["main", "develop"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Next.js
+        env:
+          SITE_URL: ${{ github.ref_name == 'main'
+            && (secrets.CLOUDFLARE_SITE_URL || format('https://{0}.pages.dev', secrets.CLOUDFLARE_PAGES_PROJECT))
+            || github.ref_name == 'develop'
+            && (secrets.CLOUDFLARE_SITE_URL_DEVELOP || format('https://develop.{0}.pages.dev', secrets.CLOUDFLARE_PAGES_PROJECT))
+            || format('https://{0}.{1}.pages.dev', github.ref_name, secrets.CLOUDFLARE_PAGES_PROJECT) }}
+          NEXT_PUBLIC_BASE_PATH: ${{ secrets.CLOUDFLARE_BASE_PATH || '' }}
+          NEXT_PUBLIC_ASSET_VERSION: ${{ github.sha }}
+          INCLUDE_DRAFTS: 'false'
+        run: bun run build
+
+      - name: Build Storybook
+        env:
+          HOME: .storybook-home
+          STORYBOOK_DISABLE_TELEMETRY: '1'
+          STORYBOOK_DISABLE_GLOBAL_SETTINGS: 'true'
+          STORYBOOK_DISABLE_VERSION_CHECK: 'true'
+        run: |
+          bun run storybook:build
+          mkdir -p out/storybook
+          cp -R storybook-static/* out/storybook
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy ./out
+            --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT }}
+            --branch=${{ github.ref_name }}
+            --commit-hash=${{ github.sha }}

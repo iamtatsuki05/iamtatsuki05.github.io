@@ -1,8 +1,7 @@
 name: Deploy Next.js site to Pages
 
 on:
-  push:
-    branches: ["main"]
+  # Cloudflare Pages を優先するため GitHub Pages の自動デプロイは一旦無効化
   workflow_dispatch:
 
 permissions:
