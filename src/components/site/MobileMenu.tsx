@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { NavDisplayItem } from '@/components/site/navItems';
 import { NavLinks } from '@/components/site/NavLinks';
@@ -12,7 +14,14 @@ type Props = {
 };
 
 export function MobileMenu({ open, onClose, items, activePath, localePrefix }: Props) {
-  if (!open || typeof document === 'undefined') return null;
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPortalRoot(document.body);
+    return () => setPortalRoot(null);
+  }, []);
+
+  if (!open || !portalRoot) return null;
 
   return createPortal(
     <div
@@ -48,6 +57,6 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
         />
       </div>
     </div>,
-    document.body,
+    portalRoot,
   );
 }
