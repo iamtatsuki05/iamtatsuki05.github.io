@@ -28,3 +28,4 @@ storybook-static/
 
 # custom scripts output
 public/images/
+.lighthouseci
