@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import matter from 'gray-matter';
 
-const DEFAULT_PRODUCTION_SITE_URL = 'https://iamtatsuki05.github.io';
+const DEFAULT_PRODUCTION_SITE_URL = 'https://iamtatsuki05.com';
 const DEFAULT_DEVELOPMENT_SITE_URL = 'http://localhost:3000';
 
 function normalize(input) {

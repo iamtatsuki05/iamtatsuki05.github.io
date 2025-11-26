@@ -1,4 +1,4 @@
-const DEFAULT_PRODUCTION_SITE_URL = 'https://iamtatsuki05.github.io';
+const DEFAULT_PRODUCTION_SITE_URL = 'https://iamtatsuki05.com';
 const DEFAULT_DEVELOPMENT_SITE_URL = 'http://localhost:3000';
 const DAY_MS = 24 * 60 * 60 * 1000;
 

@@ -38,7 +38,7 @@ export const sampleLinks: LinkItem[] = [
   },
   {
     title: 'Blog',
-    url: 'https://iamtatsuki05.github.io/blogs/',
+    url: 'https://iamtatsuki05.com/blogs/',
     desc: 'ブログ一覧',
     iconUrl: 'https://cdn.simpleicons.org/rss',
     category: 'Projects',
