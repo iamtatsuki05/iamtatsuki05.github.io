@@ -13,7 +13,7 @@
     "optimize:images": "bun scripts/optimize-images.ts",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "vitest:run": "vitest run",
+    "vitest:run": "vitest run --pool threads --poolOptions.threads.singleThread --isolate=false",
     "vitest:watch": "vitest",
     "e2e:run": "bun run e2e:install && bunx start-server-and-test \"bun run dev:test\" http://127.0.0.1:3000 \"bunx cypress run --e2e --browser chrome\"",
     "e2e:open": "bun run e2e:install && bunx start-server-and-test \"bun run dev:test\" http://127.0.0.1:3000 \"bunx cypress open --e2e\"",
