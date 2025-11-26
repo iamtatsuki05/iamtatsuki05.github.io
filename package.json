@@ -10,7 +10,6 @@
     "start": "serve out -p 3000",
     "lint": "eslint .",
     "gen:sitemap": "bun build next-sitemap.config.mts --target node --outfile .next-sitemap.config.mjs && next-sitemap --config .next-sitemap.config.mjs && rm .next-sitemap.config.mjs",
-    "optimize:images": "bun scripts/optimize-images.ts",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "vitest:run": "vitest run --pool threads --poolOptions.threads.singleThread",
