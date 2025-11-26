@@ -1,0 +1,13 @@
+ci:
+  collect:
+    startServerCommand: SITE_URL=http://localhost:3000 bun run build && bun run start
+    url:
+      - http://localhost:3000/
+      - http://localhost:3000/blogs/
+      - http://localhost:3000/links/
+      - http://localhost:3000/publications/
+    numberOfRuns: 3
+    settings:
+      chromeFlags: "--no-sandbox"
+  upload:
+    target: temporary-public-storage
