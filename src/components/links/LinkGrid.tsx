@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import clsx from 'clsx';
 import type { LinkItem } from '@/lib/data/links';
 import { LinkIcon } from '@/components/links/LinkIcon';
@@ -16,23 +16,26 @@ export function LinkGrid({ items, mobileLimit = 3, showDescription = false, more
   const primary = items.slice(0, mobileLimit);
   const secondary = items.slice(mobileLimit);
 
-  const renderItem = (key: string, item: LinkItem, extraClassName?: string) => (
-    <li key={key} className={clsx('text-center card p-4', extraClassName)}>
-      <a href={item.url} target="_blank" rel="noreferrer" className="inline-block mb-2">
-        <LinkIcon item={item} size={iconSize} />
-      </a>
-      <a
-        href={item.url}
-        target="_blank"
-        rel="noreferrer"
-        className="font-medium underline-offset-2 hover:underline block"
-      >
-        {item.title}
-      </a>
-      {showDescription && item.desc ? (
-        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{item.desc}</p>
-      ) : null}
-    </li>
+  const renderItem = useCallback(
+    (key: string, item: LinkItem, extraClassName?: string) => (
+      <li key={key} className={clsx('text-center card p-4', extraClassName)}>
+        <a href={item.url} target="_blank" rel="noreferrer" className="inline-block mb-2">
+          <LinkIcon item={item} size={iconSize} />
+        </a>
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noreferrer"
+          className="font-medium underline-offset-2 hover:underline block"
+        >
+          {item.title}
+        </a>
+        {showDescription && item.desc ? (
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{item.desc}</p>
+        ) : null}
+      </li>
+    ),
+    [iconSize, showDescription],
   );
 
   return (

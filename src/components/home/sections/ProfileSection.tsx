@@ -11,15 +11,16 @@ type Props = {
   intro: string;
 };
 
+const AVATAR_SRC = '/favicon.ico' as const;
+
 // シンプルなプロフィール表示セクション
 export function ProfileSection({ title, alias, handle, affiliation, intro }: Props) {
-  const avatarSrc = '/favicon.ico';
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <Image
-          src={avatarSrc}
+          src={AVATAR_SRC}
           alt="My Avatar"
           width={144}
           height={144}
