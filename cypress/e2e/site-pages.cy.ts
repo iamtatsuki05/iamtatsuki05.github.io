@@ -14,7 +14,7 @@ describe('Blog index page', () => {
       });
 
       it('lists blog posts with metadata', () => {
-        cy.contains('h1', '📝 Blog').should('be.visible');
+        cy.contains('h1', '📝 ブログ').should('be.visible');
         cy.contains('h2', '✨ 最新').parents('section').find('li').should('have.length.at.least', 1);
         cy.contains('h2', '🗂 すべての記事')
           .parents('section')
@@ -116,12 +116,26 @@ describe('Localized page variants', () => {
   it('renders the Japanese blog index', () => {
     cy.viewport(1280, 800);
     cy.visit('/ja/blogs/');
-    cy.contains('h1', '📝 Blog').should('be.visible');
+    cy.contains('h1', '📝 ブログ').should('be.visible');
   });
 
   it('renders the English blog index', () => {
     cy.viewport(1280, 800);
     cy.visit('/en/blogs/');
     cy.contains('h1', '📝 Blog').should('be.visible');
+  });
+});
+
+describe('Default locale fallback', () => {
+  it('renders Japanese links page at /links/', () => {
+    cy.viewport(1280, 800);
+    cy.visit('/links/');
+    cy.contains('h1', '🔗 リンク').should('be.visible');
+  });
+
+  it('renders Japanese publications page at /publications/', () => {
+    cy.viewport(1280, 800);
+    cy.visit('/publications/');
+    cy.contains('h1', '📚 公開物').should('be.visible');
   });
 });
