@@ -53,13 +53,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://platform.twitter.com" />
         <link rel="dns-prefetch" href="https://www.instagram.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
-        {/* LCP想定画像の先読み（トップのアバター） */}
-        <link
-          rel="preload"
-          as="image"
-          href={assetPath('/favicon.ico')}
-          fetchPriority="high"
-        />
       </head>
       <body suppressHydrationWarning className={`${inter.className} min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
