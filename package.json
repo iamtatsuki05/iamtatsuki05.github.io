@@ -22,7 +22,6 @@
     "e2e:electron": "bunx cypress run --e2e --browser electron",
     "e2e:firefox": "bunx cypress run --e2e --browser firefox",
     "e2e:install": "bunx cypress install",
-    "measure": "bun run build && lhci autorun",
     "test": "bun run vitest:run && bun run e2e:run"
   },
   "dependencies": {
@@ -53,7 +52,6 @@
     "zod": "4.1.5"
   },
   "devDependencies": {
-    "@lhci/cli": "^0.15.1",
     "@storybook/addon-essentials": "8.4.5",
     "@storybook/addon-interactions": "8.4.5",
     "@storybook/blocks": "8.4.5",
