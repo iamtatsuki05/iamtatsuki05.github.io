@@ -51,21 +51,24 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   useEffect(() => {
     const el = loadMoreRef.current;
     if (!el) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          setVisible((v) => Math.min(v + LOAD_MORE_INCREMENT, filtered.length));
-        }
-      });
-    });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setVisible((v) => Math.min(v + LOAD_MORE_INCREMENT, filtered.length));
+          }
+        });
+      },
+      { rootMargin: '200px' }, // 200px前にプリロード
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [filtered.length]);
 
-  const latest = filtered.slice(0, LATEST_POSTS_COUNT);
-  const items = filtered.slice(0, visible);
+  const latest = useMemo(() => filtered.slice(0, LATEST_POSTS_COUNT), [filtered]);
+  const items = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
 
-  const t = resolveFilterText(locale);
+  const t = useMemo(() => resolveFilterText(locale), [locale]);
 
   return (
     <div className="space-y-6">
