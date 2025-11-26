@@ -5,7 +5,7 @@ import { buildPageMetadata, defaultLanguageAlternates } from '@/lib/seo';
 import { publicationsPageCopy } from '@/app/(site)/_config/pageCopy';
 import { getPageMeta } from '@/lib/seo/metaConfig';
 
-const DEFAULT_LOCALE: Locale = 'en';
+const DEFAULT_LOCALE: Locale = 'ja';
 const copy = publicationsPageCopy[DEFAULT_LOCALE];
 const pageMeta = getPageMeta('publications', DEFAULT_LOCALE);
 

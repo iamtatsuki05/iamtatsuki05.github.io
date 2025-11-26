@@ -17,8 +17,8 @@ export type BlogsPageCopy = PageCopy;
 export const blogsPageCopy: Record<Locale, BlogsPageCopy> = {
   ja: {
     ...pageMeta.blogs.ja,
-    heading: '📝 Blog',
-    breadcrumb: '🏠 Home / 📝 Blog',
+    heading: '📝 ブログ',
+    breadcrumb: '🏠 Home / 📝 ブログ',
   },
   en: {
     ...pageMeta.blogs.en,
