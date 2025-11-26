@@ -12,15 +12,34 @@ on:
         type: boolean
 
 jobs:
-  test:
+  unit-test:
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: Install
+      - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Run tests
-        run: bun run test
+      - name: Run unit tests
+        run: bun run vitest:run
 
+  e2e-test:
+    name: E2E Tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chrome, firefox, edge]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Install Cypress binary
+        run: bun run e2e:install
+      - name: Run E2E tests
+        run: bunx start-server-and-test "bun run dev:test" http://127.0.0.1:3000 "bunx cypress run --e2e --browser ${{ matrix.browser }}"
