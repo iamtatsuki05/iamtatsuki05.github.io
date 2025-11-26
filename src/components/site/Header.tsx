@@ -8,6 +8,7 @@ import { NavLinks } from '@/components/site/NavLinks';
 import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
 import { MobileMenu } from '@/components/site/MobileMenu';
+import { usePrefetchPreference } from '@/hooks/usePrefetchPreference';
 
 export function Header() {
   const pathname = usePathname() || '';
@@ -15,6 +16,7 @@ export function Header() {
   const locale = extractLocaleFromPath(pathname) || 'ja';
   const localePrefix = locale === 'ja' ? '/ja' : '/en';
   const activePath = pathname;
+  const shouldPrefetch = usePrefetchPreference();
 
   // メニュー表示中はスクロールを固定
   useEffect(() => {
@@ -38,7 +40,12 @@ export function Header() {
         <Link href={localizedPath('/', locale)} className="font-semibold text-lg">Tatsuki Okada - Personal Site</Link>
         {/* Desktop nav */}
         <div className="hidden sm:flex items-center gap-4">
-          <NavLinks items={navItems} activePath={activePath} localePrefix={localePrefix} />
+          <NavLinks
+            items={navItems}
+            activePath={activePath}
+            localePrefix={localePrefix}
+            prefetch={shouldPrefetch}
+          />
           <LanguageSwitch />
           <ThemeToggle />
         </div>
@@ -70,6 +77,7 @@ export function Header() {
         items={navItems}
         activePath={activePath}
         localePrefix={localePrefix}
+        prefetch={shouldPrefetch}
       />
     </header>
   );

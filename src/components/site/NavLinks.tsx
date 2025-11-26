@@ -10,9 +10,10 @@ type Props = {
   localePrefix: string;
   orientation?: 'horizontal' | 'vertical';
   onNavigate?: () => void;
+  prefetch?: boolean;
 };
 
-export function NavLinks({ items, activePath, localePrefix, orientation = 'horizontal', onNavigate }: Props) {
+export function NavLinks({ items, activePath, localePrefix, orientation = 'horizontal', onNavigate, prefetch = true }: Props) {
   const locale = extractLocaleFromPath(activePath) || (localePrefix === '/en' ? 'en' : null);
   const normalizedActive = stripLocalePrefix(activePath.endsWith('/') ? activePath : `${activePath}/`);
   const isActive = (href: string) => normalizedActive === (href.endsWith('/') ? href : `${href}/`);
@@ -28,6 +29,7 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
           key={n.href}
           href={locale ? localizedPath(n.href, locale) : n.href}
           onClick={onNavigate}
+          prefetch={prefetch}
           className={clsx(baseClass, isActive(n.href) && 'bg-gray-100 dark:bg-gray-800')}
         >
           {n.label}

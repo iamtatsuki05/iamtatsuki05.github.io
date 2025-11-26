@@ -8,6 +8,7 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { resolveFilterText } from '@/components/filters/filterTexts';
+import { usePrefetchPreference } from '@/hooks/usePrefetchPreference';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -26,6 +27,7 @@ type Post = {
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
   const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const shouldPrefetch = usePrefetchPreference();
 
   const {
     q,
@@ -121,7 +123,11 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
               ) : null}
               <div className="p-3">
                 <h3 className="font-medium">
-                  <Link href={`/blogs/${p.slug}/`} className="underline-offset-2 hover:underline">
+                  <Link
+                    href={`/blogs/${p.slug}/`}
+                    className="underline-offset-2 hover:underline"
+                    prefetch={shouldPrefetch}
+                  >
                     {p.title}
                   </Link>
                 </h3>
@@ -156,7 +162,11 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                 ) : null}
                 <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                   <h3 className="text-base font-semibold">
-                    <Link href={`/blogs/${p.slug}/`} className="underline-offset-2 hover:underline">
+                    <Link
+                      href={`/blogs/${p.slug}/`}
+                      className="underline-offset-2 hover:underline"
+                      prefetch={shouldPrefetch}
+                    >
                       {p.title}
                     </Link>
                   </h3>
