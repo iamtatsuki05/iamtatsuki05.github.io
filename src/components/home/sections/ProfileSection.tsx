@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { withBasePath, withVersion } from '@/lib/url';
+import Image from 'next/image';
 import { renderInlineLinks } from '@/lib/ui/inlineMarkdown';
 
 type Props = {
@@ -13,20 +13,18 @@ type Props = {
 
 // シンプルなプロフィール表示セクション
 export function ProfileSection({ title, alias, handle, affiliation, intro }: Props) {
-  const avatarSrc = withVersion(withBasePath('/favicon.ico'));
+  const avatarSrc = '/favicon.ico';
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <img
+        <Image
           src={avatarSrc}
           alt="My Avatar"
           width={144}
           height={144}
           className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-gray-200 dark:border-gray-700 object-cover shadow-sm"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
+          priority
         />
         <div className="flex-1">
           <h1 className="text-3xl font-bold mb-2">{title}</h1>

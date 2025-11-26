@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "bun scripts/ensure-favicon.ts && next dev",
     "dev:test": "bun scripts/ensure-favicon.ts && next dev --port 3000",
-    "build": "bun scripts/ensure-favicon.ts && next build && bun run gen:sitemap && bun scripts/generate-rss.ts",
+    "build": "bun scripts/ensure-favicon.ts && next build && next-image-export-optimizer && bun run gen:sitemap && bun scripts/generate-rss.ts",
     "start": "serve out -p 3000",
     "lint": "eslint .",
     "gen:sitemap": "bun build next-sitemap.config.mts --target node --outfile .next-sitemap.config.mjs && next-sitemap --config .next-sitemap.config.mjs && rm .next-sitemap.config.mjs",
@@ -31,6 +31,7 @@
     "github-slugger": "2.0.0",
     "gray-matter": "4.0.3",
     "next": "15",
+    "next-image-export-optimizer": "^1.19.0",
     "next-themes": "0.4.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState, type KeyboardEvent } from 'react';
-import { withBasePath } from '@/lib/url';
+import Image from 'next/image';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
@@ -170,14 +170,14 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     {...clickableProps}
                   >
                 {i.headerImage ? (
-                  <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
-                    <img
-                      src={withBasePath(i.headerImage)}
+                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
+                    <Image
+                      src={i.headerImage}
                       alt={i.headerAlt || i.title}
-                      className="max-w-full max-h-full object-contain"
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 100vw, 120px"
+                    />
                     </div>
                   ) : null}
                   <div className="flex-1 min-w-0 mt-2 sm:mt-0">

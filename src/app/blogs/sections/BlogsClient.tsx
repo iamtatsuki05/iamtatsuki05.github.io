@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatDate } from '@/lib/date';
-import { withBasePath } from '@/lib/url';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
@@ -102,13 +102,15 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
-                <img
-                  src={withBasePath(p.headerImage)}
-                  alt={p.headerAlt || p.title}
-                  className="w-full h-24 object-cover border-b border-gray-200 dark:border-gray-700"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div className="relative w-full h-24 border-b border-gray-200 dark:border-gray-700">
+                  <Image
+                    src={p.headerImage}
+                    alt={p.headerAlt || p.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                  />
+                </div>
               ) : null}
               <div className="p-3">
                 <h3 className="font-medium">
@@ -135,13 +137,13 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             {items.map((p) => (
               <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
-                  <div className="sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden shrink-0">
-                    <img
-                      src={withBasePath(p.headerImage)}
+                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
+                    <Image
+                      src={p.headerImage}
                       alt={p.headerAlt || p.title}
-                      className="max-w-full max-h-full object-contain"
-                      loading="lazy"
-                      decoding="async"
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 640px) 100vw, 120px"
                     />
                   </div>
                 ) : null}
