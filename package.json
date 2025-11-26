@@ -25,6 +25,7 @@
     "test": "bun run vitest:run && bun run e2e:run"
   },
   "dependencies": {
+    "babel-plugin-react-compiler": "^1.0.0",
     "clsx": "2.1.1",
     "feed": "4.2.2",
     "fuse.js": "7.1.0",

@@ -18,6 +18,9 @@ const nextConfig = {
     nextImageExportOptimizer_generateAndUseAvif: "true",
   },
   reactStrictMode: true,
+  experimental: {
+    reactCompiler: true,
+  },
   // NOTE:
   // GitHub Pages の公式 Action (actions/configure-pages@v5 with static_site_generator: next)
   // が basePath と画像最適化を自動注入します。ここで basePath/assetPrefix を設定すると
