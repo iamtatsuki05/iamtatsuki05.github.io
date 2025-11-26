@@ -2,7 +2,7 @@ name: Deploy to Cloudflare Pages
 
 on:
   push:
-    branches: ["main", "feature/cloudflare-pages"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
