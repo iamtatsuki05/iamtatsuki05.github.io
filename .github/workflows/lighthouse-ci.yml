@@ -22,6 +22,12 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Build static site for Lighthouse
+        env:
+          SITE_URL: http://localhost:3000
+          INCLUDE_DRAFTS: 'false'
+        run: bun run build
+
       - name: Run Lighthouse (mobile)
         run: |
           rm -rf .lighthouseci

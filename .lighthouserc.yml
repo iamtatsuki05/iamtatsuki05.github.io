@@ -1,6 +1,8 @@
 ci:
   collect:
-    startServerCommand: SITE_URL=http://localhost:3000 bun run build && bun run start
+    startServerCommand: bun run start
+    startServerReadyPattern: "Local:.*3000|127\\.0\\.0\\.1:3000|http://localhost:3000"
+    startServerTimeout: 180000
     url:
       - http://localhost:3000/
       - http://localhost:3000/blogs/
