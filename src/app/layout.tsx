@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from 'next-themes';
 import { assetPath, withBasePath, withVersion } from '@/lib/url';
 import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
@@ -55,13 +56,15 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
       </head>
       <body suppressHydrationWarning className={`${inter.className} min-h-screen flex flex-col`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header />
-          <main className="container mx-auto max-w-4xl px-4 py-8 flex-1">
-            {children}
-          </main>
-          <Footer />
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Header />
+            <main className="container mx-auto max-w-4xl px-4 py-8 flex-1">
+              {children}
+            </main>
+            <Footer />
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

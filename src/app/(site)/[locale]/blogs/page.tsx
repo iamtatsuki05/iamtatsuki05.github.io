@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
 import { buildLocalizedMetadata, localizedStaticParams } from '@/lib/metadata';
@@ -29,7 +30,9 @@ export default async function LocaleBlogsPage({ params }: { params: Promise<Para
     <div className="space-y-4">
       <div className="text-sm opacity-70">{copy.breadcrumb}</div>
       <h1 className="text-3xl font-bold">{copy.heading}</h1>
-      <BlogsClient posts={posts} locale={locale} />
+      <Suspense fallback={null}>
+        <BlogsClient posts={posts} locale={locale} />
+      </Suspense>
     </div>
   );
 }

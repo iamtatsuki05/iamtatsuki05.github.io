@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
 
 type Options<T> = {
@@ -9,9 +10,12 @@ type Options<T> = {
 };
 
 export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, extractYear, extractTags }: Options<T>) {
-  const [q, setQ] = useState('');
-  const [year, setYear] = useState('');
-  const [tagSet, setTagSet] = useState<Set<string>>(new Set());
+  const [{ q, year, tags }, setFilters] = useQueryStates({
+    q: parseAsString.withDefault(''),
+    year: parseAsString.withDefault(''),
+    tags: parseAsArrayOf(parseAsString).withDefault([]),
+  });
+  const tagSet = useMemo(() => new Set(tags || []), [tags]);
   const [fuse, setFuse] = useState<Fuse<T> | null>(null);
   const [fuseLoading, setFuseLoading] = useState(false);
 
@@ -58,18 +62,22 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
   }, [items, fuse, q, year, tagSet, extractYear, extractTags]);
 
   const clearFilters = () => {
-    setQ('');
-    setYear('');
-    setTagSet(new Set());
+    setFilters({ q: null, year: null, tags: null });
   };
 
   return {
     q,
-    setQ,
+    setQ: (value: string) => {
+      void setFilters({ q: value || null });
+    },
     year,
-    setYear,
+    setYear: (value: string) => {
+      void setFilters({ year: value || null });
+    },
     tagSet,
-    setTagSet,
+    setTagSet: (next: Set<string>) => {
+      void setFilters({ tags: Array.from(next) });
+    },
     fuse,
     years,
     allTags,
