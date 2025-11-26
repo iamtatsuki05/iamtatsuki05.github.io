@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { assetPath, withBasePath, withVersion } from '@/lib/url';
-import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig, buildPersonJsonLd, buildWebsiteJsonLd } from '@/lib/seo';
+import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
@@ -47,10 +47,6 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify([buildPersonJsonLd(), buildWebsiteJsonLd()]) }}
-        />
         {/* 主要外部オリジンの接続最適化 */}
         <link rel="preconnect" href="https://cdn.simpleicons.org" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.simpleicons.org" />
