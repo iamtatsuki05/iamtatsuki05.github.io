@@ -8,6 +8,8 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { resolveFilterText } from '@/components/filters/filterTexts';
+import { SectionShell } from '@/components/home/SectionShell';
+import { SectionHeader } from '@/components/home/sections/SectionHeader';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -103,8 +105,8 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         />
       </FilterBar>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">{t.latest}</h2>
+      <SectionShell tone="amber">
+        <SectionHeader title={t.latest} tone="amber" />
         <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
@@ -136,10 +138,10 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             </li>
           ))}
         </ul>
-      </section>
+      </SectionShell>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">{t.allPosts}</h2>
+      <SectionShell tone="lilac">
+        <SectionHeader title={t.allPosts} tone="lilac" />
         {items.length === 0 ? (
           <p className="opacity-70">{t.noResult}</p>
         ) : (
@@ -177,7 +179,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           </ul>
         )}
         <div ref={loadMoreRef} className="h-8" />
-      </section>
+      </SectionShell>
     </div>
   );
 }

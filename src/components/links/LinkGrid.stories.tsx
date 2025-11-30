@@ -10,7 +10,6 @@ const meta = {
   },
   args: {
     items: sampleLinks,
-    moreLabel: 'さらに表示',
     showDescription: true,
   },
   render: (args) => (

@@ -3,6 +3,7 @@ import type { BlogPost } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { SectionHeader } from './SectionHeader';
 import { ContentCardList } from './ContentCardList';
+import { SectionShell } from '@/components/home/SectionShell';
 
 type Props = {
   posts: BlogPost[];
@@ -26,13 +27,13 @@ export function LatestBlogSection({ posts, locale, title, ctaLabel }: Props) {
   );
 
   return (
-    <section id="blog">
-      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/blogs/" />
+    <SectionShell id="blog" tone="amber">
+      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/blogs/" tone="amber" />
       <ContentCardList
         items={items}
         listTestId="home-latest-blog-list"
         cardTestId="home-latest-blog-card"
       />
-    </section>
+    </SectionShell>
   );
 }

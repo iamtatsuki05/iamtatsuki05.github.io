@@ -19,11 +19,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 describe('BlogsClient', () => {
   it('renders headings and first items', async () => {
     const { render } = await import('@testing-library/react');
-    const { getByText, getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+    const { getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
       wrapper: Wrapper,
     });
-    expect(getByText('✨ Latest')).toBeInTheDocument();
-    expect(getByText('🗂 All Posts')).toBeInTheDocument();
+    expect(getAllByText('✨ Latest').length).toBeGreaterThan(0);
+    expect(getAllByText('🗂 All Posts').length).toBeGreaterThan(0);
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
   });
   it('filters by search query', async () => {
