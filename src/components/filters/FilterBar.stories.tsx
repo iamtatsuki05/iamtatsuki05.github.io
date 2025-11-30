@@ -66,6 +66,12 @@ export const Default: Story = {
 };
 
 export const Mobile: Story = {
+  args: {
+    query: '',
+    onQueryChange: () => {},
+    placeholder: 'Search...',
+    clearLabel: 'Clear',
+  },
   parameters: {
     viewport: { defaultViewport: 'mobile2' },
   },
