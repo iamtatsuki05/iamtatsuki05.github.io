@@ -13,7 +13,8 @@ describe('NavLinks', () => {
 
     const blogLink = screen.getByText('📝 Blog');
     expect(blogLink).toBeVisible();
-    expect(blogLink.className).toContain('bg-gray-100');
+    expect(blogLink.className).toContain('bg-purple-50');
+    expect(blogLink.className).toContain('border-purple-300');
   });
 
   it('calls onNavigate when a link is clicked', () => {

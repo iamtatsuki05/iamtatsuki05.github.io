@@ -21,11 +21,13 @@ export function Footer() {
   ];
 
   return (
-    <footer className="mt-12 border-t border-gray-200/80 bg-gradient-to-r from-gray-50 via-white to-gray-100 dark:border-gray-800/80 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+    <footer className="mt-12 border-t border-purple-100/70 bg-gradient-to-r from-[#f8f5ff] via-[#fff6e6] to-[#f4eeff] dark:border-purple-500/40 dark:from-[#0b101a] dark:via-[#120d21] dark:to-[#0b101a]">
       <div className="container mx-auto max-w-5xl px-4 py-8 text-sm text-gray-700 dark:text-gray-300">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
-            <p className="text-lg font-semibold text-gray-900 dark:text-gray-50">Tatsuki Okada</p>
+            <p className="text-lg font-semibold bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
+              Tatsuki Okada
+            </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               NLP / LLM Engineer. Sharing projects, writings, and publications.
             </p>
@@ -36,7 +38,7 @@ export function Footer() {
               <Link
                 key={link.href}
                 href={localizedPath(link.href, locale)}
-                className="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow md:px-4 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+                className="rounded-full border border-purple-200/70 bg-white/85 px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 md:px-4 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
               >
                 {link.label}
               </Link>
