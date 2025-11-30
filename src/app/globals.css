@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-brand: #6366f1;
+  --color-brand: #c084fc;
 }
 
 /*
@@ -29,13 +29,25 @@
 }
 
 :root {
-  --bg: 255 255 255;
-  --fg: 17 24 39;
+  --bg: 252 249 243;
+  --fg: 23 23 23;
+  --accent: #c084fc; /* lilac */
+  --accent-2: #fcd34d; /* cream/gold */
+  --body-gradient:
+    radial-gradient(60% 60% at 15% 20%, rgba(192, 132, 252, 0.18), transparent),
+    radial-gradient(50% 50% at 85% 10%, rgba(252, 211, 77, 0.14), transparent),
+    linear-gradient(180deg, #fdf8f3 0%, #fbf7ff 100%);
 }
 
 .dark {
-  --bg: 17 24 39;
+  --bg: 16 12 30;
   --fg: 243 244 246;
+  --accent: #c084fc;
+  --accent-2: #fcd34d;
+  --body-gradient:
+    radial-gradient(50% 50% at 20% 10%, rgba(192, 132, 252, 0.22), transparent),
+    radial-gradient(45% 45% at 80% 20%, rgba(252, 211, 77, 0.18), transparent),
+    linear-gradient(180deg, #0f0a1f 0%, #120d21 100%);
 }
 
 html, body {
@@ -44,10 +56,18 @@ html, body {
 
 body {
   background-color: rgb(var(--bg));
+  background-image: var(--body-gradient);
+  background-attachment: fixed;
   color: rgb(var(--fg));
 }
 
-a { @apply text-blue-600 dark:text-blue-400 underline-offset-2 hover:underline; }
+a {
+  color: var(--accent);
+  text-underline-offset: 4px;
+}
+a:hover {
+  text-decoration: underline;
+}
 
 .prose pre {
   @apply overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700;

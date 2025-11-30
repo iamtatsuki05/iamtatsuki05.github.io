@@ -29,3 +29,9 @@ export const WithFallbackIcon: Story = {
     size: 56,
   },
 };
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};

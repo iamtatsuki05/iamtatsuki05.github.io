@@ -2,10 +2,16 @@
   /* Common UI atoms */
   .ui-card {
     @apply border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 shadow-xs transition hover:shadow-md hover:-translate-y-0.5;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(192, 132, 252, 0.5);
+    box-shadow: 0 12px 32px -18px rgba(192, 132, 252, 0.28), 0 10px 24px -20px rgba(252, 211, 77, 0.45);
   }
 
   .card {
     @apply border border-gray-200 dark:border-gray-800 rounded-lg bg-white dark:bg-gray-900 shadow-xs transition hover:shadow-md hover:-translate-y-0.5;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(192, 132, 252, 0.5);
+    box-shadow: 0 12px 32px -18px rgba(192, 132, 252, 0.28), 0 10px 24px -20px rgba(252, 211, 77, 0.45);
   }
 
   .ui-tag {
@@ -14,5 +20,12 @@
 
   .tag {
     @apply inline-block px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-gray-800 text-xs;
+  }
+
+  .dark .card,
+  .dark .ui-card {
+    background-color: rgba(14, 10, 26, 0.92);
+    border-color: rgba(192, 132, 252, 0.35);
+    box-shadow: 0 12px 32px -18px rgba(192, 132, 252, 0.32), 0 10px 24px -20px rgba(252, 211, 77, 0.32);
   }
 }

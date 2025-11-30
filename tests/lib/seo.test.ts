@@ -31,8 +31,8 @@ describe('buildPageMetadata', () => {
 
     expect(metadata.alternates?.canonical).toBe('https://example.com/test/');
     expect(metadata.alternates?.languages?.['ja-JP']).toBe('https://example.com/ja/test/');
-    expect(metadata.openGraph?.images?.[0]).toBe('https://example.com/favicon.ico');
-    expect(metadata.twitter?.images?.[0]).toBe('https://example.com/favicon.ico');
+    expect(metadata.openGraph?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
+    expect(metadata.twitter?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.keywords).toContain('custom');
   });
 });

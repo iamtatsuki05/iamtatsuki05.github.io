@@ -46,13 +46,20 @@ export const defaultLanguageAlternates: Record<string, string> = {
 
 type Alternates = Record<string, string>;
 
+type ImageMetadata = {
+  url: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+};
+
 type BuildMetadataOptions = {
   title: string;
   description?: string;
   locale?: Locale;
   path?: string;
   type?: 'website' | 'article';
-  images?: string[];
+  images?: (string | ImageMetadata)[];
   keywords?: string[];
   languageAlternates?: Alternates;
   publishedTime?: string;
@@ -73,11 +80,21 @@ export function absoluteUrl(input: string = '/') {
   return new URL(withBase, getSiteOrigin()).toString();
 }
 
-function resolveImages(candidates?: string[]) {
+function resolveImages(candidates?: (string | ImageMetadata)[]) {
   const list = candidates?.length ? candidates : [siteConfig.defaultOgImage];
   return list
-    .filter((src): src is string => Boolean(src))
-    .map((src) => absoluteUrl(src));
+    .filter((item): item is string | ImageMetadata => Boolean(item))
+    .map((item) => {
+      if (typeof item === 'string') {
+        return { url: absoluteUrl(item) };
+      }
+      return {
+        url: absoluteUrl(item.url),
+        width: item.width,
+        height: item.height,
+        alt: item.alt,
+      };
+    });
 }
 
 export function buildPageMetadata({
@@ -198,7 +215,10 @@ export function buildPersonJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: siteConfig.owner,
+    givenName: 'Tatsuki',
+    familyName: 'Okada',
     alternateName: siteConfig.aliases,
+    description: 'NLP Engineer, Machine Learning Engineer, and Software Engineer specializing in natural language processing and machine learning.',
     jobTitle: ['NLP Engineer', 'Machine Learning Engineer', 'Software Engineer'],
     email: `mailto:${siteConfig.contactEmail}`,
     image: absoluteUrl(siteConfig.defaultOgImage),
@@ -219,11 +239,120 @@ export function buildWebsiteJsonLd() {
     '@type': 'WebSite',
     name: siteConfig.siteName.ja,
     alternateName: siteConfig.aliases,
+    description: siteConfig.description.ja,
     url: absoluteUrl('/'),
+    author: {
+      '@type': 'Person',
+      name: siteConfig.owner,
+    },
     potentialAction: {
       '@type': 'SearchAction',
       target: `${absoluteUrl('/blogs/')}?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
+  };
+}
+
+export function buildSiteLinksJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: [
+      {
+        '@type': 'SiteNavigationElement',
+        position: 1,
+        name: 'Links',
+        description: 'SNSと外部リンク',
+        url: absoluteUrl('/links/'),
+      },
+      {
+        '@type': 'SiteNavigationElement',
+        position: 2,
+        name: 'Blog',
+        description: '最新の技術ブログと記事',
+        url: absoluteUrl('/blogs/'),
+      },
+      {
+        '@type': 'SiteNavigationElement',
+        position: 3,
+        name: 'Publications',
+        description: '学術論文と研究成果',
+        url: absoluteUrl('/publications/'),
+      },
+    ],
+  };
+}
+
+export function buildBreadcrumbJsonLd(options?: { path?: string; items?: Array<{ name: string; url: string }> }) {
+  const items = options?.items || [
+    {
+      name: 'Home',
+      url: absoluteUrl('/'),
+    },
+  ];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+export function buildOrganizationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      '@id': absoluteUrl('/'),
+      name: siteConfig.owner,
+      givenName: 'Tatsuki',
+      familyName: 'Okada',
+      alternateName: siteConfig.aliases,
+      description: 'NLP Engineer, Machine Learning Engineer, and Software Engineer specializing in natural language processing and machine learning.',
+      jobTitle: ['NLP Engineer', 'Machine Learning Engineer', 'Software Engineer'],
+      email: `mailto:${siteConfig.contactEmail}`,
+      image: absoluteUrl(siteConfig.defaultOgImage),
+      url: absoluteUrl('/'),
+      sameAs: Object.values(siteConfig.socials),
+      worksFor: {
+        '@type': 'CollegeOrUniversity',
+        name: siteConfig.affiliation.name,
+        url: siteConfig.affiliation.url,
+      },
+      knowsAbout: ['Natural Language Processing', 'Machine Learning', 'Software Development'],
+    },
+  };
+}
+
+export function buildCollectionPageJsonLd(options: {
+  path: string;
+  name: string;
+  description: string;
+  itemCount?: number;
+}) {
+  const { path, name, description, itemCount } = options;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name,
+    description,
+    url: absoluteUrl(path),
+    isPartOf: {
+      '@type': 'WebSite',
+      name: siteConfig.siteName.ja,
+      url: absoluteUrl('/'),
+    },
+    about: {
+      '@type': 'Person',
+      name: siteConfig.owner,
+      url: absoluteUrl('/'),
+    },
+    ...(itemCount !== undefined ? { numberOfItems: itemCount } : {}),
   };
 }

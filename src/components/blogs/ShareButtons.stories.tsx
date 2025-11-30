@@ -1,17 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LanguageSwitch } from './LanguageSwitch';
+import { ShareButtons } from './ShareButtons';
 
 const meta = {
-  title: 'Site/LanguageSwitch',
-  component: LanguageSwitch,
+  title: 'Blogs/ShareButtons',
+  component: ShareButtons,
   parameters: {
-    layout: 'centered',
-    nextjs: {
-      navigation: { pathname: '/' },
-    },
+    layout: 'padded',
+  },
+  args: {
+    url: 'https://example.com/blogs/sample',
+    title: 'Sample Blog Post',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof LanguageSwitch>;
+} satisfies Meta<typeof ShareButtons>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

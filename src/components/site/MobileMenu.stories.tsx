@@ -28,3 +28,9 @@ export const Default: Story = {
     </div>
   ),
 };
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};
