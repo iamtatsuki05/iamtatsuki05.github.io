@@ -46,13 +46,20 @@ export const defaultLanguageAlternates: Record<string, string> = {
 
 type Alternates = Record<string, string>;
 
+type ImageMetadata = {
+  url: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+};
+
 type BuildMetadataOptions = {
   title: string;
   description?: string;
   locale?: Locale;
   path?: string;
   type?: 'website' | 'article';
-  images?: string[];
+  images?: (string | ImageMetadata)[];
   keywords?: string[];
   languageAlternates?: Alternates;
   publishedTime?: string;
@@ -73,11 +80,21 @@ export function absoluteUrl(input: string = '/') {
   return new URL(withBase, getSiteOrigin()).toString();
 }
 
-function resolveImages(candidates?: string[]) {
+function resolveImages(candidates?: (string | ImageMetadata)[]) {
   const list = candidates?.length ? candidates : [siteConfig.defaultOgImage];
   return list
-    .filter((src): src is string => Boolean(src))
-    .map((src) => absoluteUrl(src));
+    .filter((item): item is string | ImageMetadata => Boolean(item))
+    .map((item) => {
+      if (typeof item === 'string') {
+        return { url: absoluteUrl(item) };
+      }
+      return {
+        url: absoluteUrl(item.url),
+        width: item.width,
+        height: item.height,
+        alt: item.alt,
+      };
+    });
 }
 
 export function buildPageMetadata({
@@ -198,7 +215,10 @@ export function buildPersonJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: siteConfig.owner,
+    givenName: 'Tatsuki',
+    familyName: 'Okada',
     alternateName: siteConfig.aliases,
+    description: 'NLP Engineer, Machine Learning Engineer, and Software Engineer specializing in natural language processing and machine learning.',
     jobTitle: ['NLP Engineer', 'Machine Learning Engineer', 'Software Engineer'],
     email: `mailto:${siteConfig.contactEmail}`,
     image: absoluteUrl(siteConfig.defaultOgImage),
@@ -219,7 +239,12 @@ export function buildWebsiteJsonLd() {
     '@type': 'WebSite',
     name: siteConfig.siteName.ja,
     alternateName: siteConfig.aliases,
+    description: siteConfig.description.ja,
     url: absoluteUrl('/'),
+    author: {
+      '@type': 'Person',
+      name: siteConfig.owner,
+    },
     potentialAction: {
       '@type': 'SearchAction',
       target: `${absoluteUrl('/blogs/')}?q={search_term_string}`,
