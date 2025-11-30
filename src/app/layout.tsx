@@ -107,7 +107,7 @@ export default function RootLayout({
         <NuqsAdapter>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
-            <main className="container mx-auto max-w-4xl px-4 py-8 flex-1">
+            <main className="container mx-auto max-w-screen-2xl px-4 py-8 flex-1">
               {children}
             </main>
             <Footer />

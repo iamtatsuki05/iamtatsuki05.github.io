@@ -34,7 +34,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-purple-100/70 bg-gradient-to-r from-[#f8f5ff]/85 via-[#fff6e6]/90 to-[#f4eeff]/85 backdrop-blur-sm shadow-sm dark:border-purple-500/40 dark:from-[#120d1f]/90 dark:via-[#0f0a17]/90 dark:to-[#140f24]/88">
-      <div className="container mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto max-w-screen-2xl px-4 py-4 flex items-center justify-between">
         <Link
           href={localizedPath('/', locale)}
           className="font-semibold text-lg bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200"

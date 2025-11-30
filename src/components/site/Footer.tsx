@@ -22,7 +22,7 @@ export function Footer() {
 
   return (
     <footer className="mt-12 border-t border-purple-100/70 bg-gradient-to-r from-[#f8f5ff] via-[#fff6e6] to-[#f4eeff] dark:border-purple-500/40 dark:from-[#0b101a] dark:via-[#120d21] dark:to-[#0b101a]">
-      <div className="container mx-auto max-w-5xl px-4 py-8 text-sm text-gray-700 dark:text-gray-300">
+      <div className="container mx-auto max-w-screen-2xl px-4 py-8 text-sm text-gray-700 dark:text-gray-300">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <p className="text-lg font-semibold bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
