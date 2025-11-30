@@ -4,28 +4,51 @@ import { Inter } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from 'next-themes';
 import { assetPath, withBasePath, withVersion } from '@/lib/url';
-import { absoluteUrl, buildPageMetadata, defaultLanguageAlternates, siteConfig } from '@/lib/seo';
+import { absoluteUrl, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
-const baseMetadata = buildPageMetadata({
-  title: siteConfig.defaultTitle.ja,
-  description: siteConfig.description.ja,
-  locale: 'ja',
-  path: '/',
-  languageAlternates: defaultLanguageAlternates,
-});
+const SITE_NAME = siteConfig.siteName.ja;
+const TITLE = siteConfig.defaultTitle.ja;
+const DESCRIPTION = siteConfig.description.ja;
+const BASE_URL = absoluteUrl('/');
 
 export const metadata: Metadata = {
-  ...baseMetadata,
-  metadataBase: new URL(absoluteUrl('/')),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DESCRIPTION,
+  metadataBase: new URL(BASE_URL),
   alternates: {
-    ...baseMetadata.alternates,
+    canonical: BASE_URL,
+    languages: {
+      'ja-JP': absoluteUrl('/ja/'),
+      'en-US': absoluteUrl('/en/'),
+      'x-default': BASE_URL,
+    },
     types: {
       'application/rss+xml': absoluteUrl('/rss.xml'),
     },
+  },
+  openGraph: {
+    title: TITLE,
+    type: 'website',
+    url: BASE_URL,
+    siteName: SITE_NAME,
+    description: DESCRIPTION,
+    locale: 'ja_JP',
+    images: [{ url: absoluteUrl(siteConfig.defaultOgImage) }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: siteConfig.twitterHandle,
+    creator: siteConfig.owner,
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: absoluteUrl(siteConfig.defaultOgImage) }],
   },
   icons: {
     icon: [
@@ -36,8 +59,12 @@ export const metadata: Metadata = {
     shortcut: assetPath('/favicon-32x32.png'),
     apple: assetPath('/apple-touch-icon.png'),
   },
+  keywords: siteConfig.keywords.ja,
+  authors: [{ name: siteConfig.owner, url: BASE_URL }],
+  creator: siteConfig.owner,
+  publisher: siteConfig.owner,
   category: 'technology',
-  applicationName: siteConfig.siteName.ja,
+  applicationName: SITE_NAME,
   robots: {
     index: true,
     follow: true,
