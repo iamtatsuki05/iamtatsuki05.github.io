@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, type KeyboardEvent } from 'react';
+import React, { useMemo, type KeyboardEvent } from 'react';
 import Image from 'next/image';
 import { parseAsArrayOf, parseAsStringEnum, useQueryState } from 'nuqs';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
@@ -179,15 +179,18 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
                     {...clickableProps}
                   >
-                {i.headerImage ? (
-                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
-                    <Image
-                      src={i.headerImage}
-                      alt={i.headerAlt || i.title}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 640px) 100vw, 120px"
-                    />
+                  {i.headerImage ? (
+                    <div
+                      className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
+                      data-testid="publication-image"
+                    >
+                      <Image
+                        src={i.headerImage}
+                        alt={i.headerAlt || i.title}
+                        fill
+                        className="object-contain"
+                        sizes="120px"
+                      />
                     </div>
                   ) : null}
                   <div className="flex-1 min-w-0 mt-2 sm:mt-0">

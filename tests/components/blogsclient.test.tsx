@@ -9,6 +9,7 @@ const sample = Array.from({ length: 12 }).map((_, i) => ({
   date: `2025-01-${(i + 1).toString().padStart(2, '0')}`,
   tags: i % 2 === 0 ? ['a'] : ['b'],
   summary: 'hello',
+  headerImage: 'https://example.com/sample.png',
 }));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -44,5 +45,17 @@ describe('BlogsClient', () => {
     });
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
     expect(queryByText('Sample 1')).toBeNull();
+  });
+  it('hides preview images on mobile to reduce initial downloads', async () => {
+    const { render } = await import('@testing-library/react');
+    const { container } = render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
+    const wrappers = container.querySelectorAll('[data-testid="blog-image"]');
+    expect(wrappers.length).toBeGreaterThan(0);
+    wrappers.forEach((el) => {
+      expect(el.className).toContain('hidden');
+      expect(el.className).toContain('sm:block');
+    });
   });
 });

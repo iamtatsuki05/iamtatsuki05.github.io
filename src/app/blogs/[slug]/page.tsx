@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
@@ -64,15 +65,18 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
     <article className="prose dark:prose-invert max-w-none">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       {headerImage ? (
-        <img
-          src={withBasePath(headerImage)}
-          alt={headerAlt || title}
-          className="mb-4 w-full h-auto rounded-sm border border-gray-200 dark:border-gray-700"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          referrerPolicy="no-referrer"
-        />
+        <div className="relative mb-4 aspect-[16/9] w-full overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+          <Image
+            src={withBasePath(headerImage)!}
+            alt={headerAlt || title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, 720px"
+            loading="lazy"
+            priority={false}
+            referrerPolicy="no-referrer"
+          />
+        </div>
       ) : null}
       <h1>{title}</h1>
       <p className="mt-0! text-sm opacity-70">

@@ -109,13 +109,16 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
-                <div className="relative w-full h-24 border-b border-gray-200 dark:border-gray-700">
+                <div
+                  className="relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
+                  data-testid="blog-image"
+                >
                   <Image
                     src={p.headerImage}
                     alt={p.headerAlt || p.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 100vw, 50vw"
+                    sizes="50vw"
                   />
                 </div>
               ) : null}
@@ -144,13 +147,16 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             {items.map((p) => (
               <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
-                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
+                  <div
+                    className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
+                    data-testid="blog-image"
+                  >
                     <Image
                       src={p.headerImage}
                       alt={p.headerAlt || p.title}
                       fill
                       className="object-contain"
-                      sizes="(max-width: 640px) 100vw, 120px"
+                      sizes="120px"
                     />
                   </div>
                 ) : null}
