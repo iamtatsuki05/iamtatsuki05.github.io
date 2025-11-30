@@ -4,9 +4,11 @@ import Image from 'next/image';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
+import { absoluteUrl } from '@/lib/seo';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { EmbedsClient } from '@/components/site/EmbedsClient';
 import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
+import { ShareButtons } from '@/components/blogs/ShareButtons';
 
 type Params = { slug: string };
 
@@ -50,6 +52,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   if (!post) return notFound();
 
   const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags } = post;
+  const shareUrl = absoluteUrl(`/blogs/${slug}/`);
   const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
   const articleJsonLd = buildArticleJsonLd({
     title,
@@ -83,6 +86,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
         {formatDate(date, 'ja')}
         {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
       </p>
+      <ShareButtons url={shareUrl} title={title} className="my-4" />
       <div dangerouslySetInnerHTML={{ __html: html || '' }} />
       <CodeCopyClient />
       <EmbedsClient />
