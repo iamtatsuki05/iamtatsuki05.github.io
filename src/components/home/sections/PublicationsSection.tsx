@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import type { Publication } from '@/lib/content/publication';
 import { SectionHeader } from './SectionHeader';
 import { ContentCardList } from './ContentCardList';
+import { SectionShell } from '@/components/home/SectionShell';
 
 type Props = {
   publications: Publication[];
@@ -27,9 +28,9 @@ export function PublicationsSection({ publications, title, ctaLabel }: Props) {
   );
 
   return (
-    <section>
-      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/publications/" />
+    <SectionShell id="publications" tone="teal">
+      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/publications/" tone="teal" />
       <ContentCardList items={items} />
-    </section>
+    </SectionShell>
   );
 }

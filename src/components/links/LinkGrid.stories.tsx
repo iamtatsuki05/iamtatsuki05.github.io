@@ -10,7 +10,6 @@ const meta = {
   },
   args: {
     items: sampleLinks,
-    moreLabel: 'さらに表示',
     showDescription: true,
   },
   render: (args) => (
@@ -31,5 +30,11 @@ export const Default: Story = {};
 export const WithoutDescriptions: Story = {
   args: {
     showDescription: false,
+  },
+};
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
   },
 };

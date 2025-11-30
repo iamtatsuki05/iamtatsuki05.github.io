@@ -1,11 +1,15 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
+import { absoluteUrl } from '@/lib/seo';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { EmbedsClient } from '@/components/site/EmbedsClient';
 import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
+import { ShareButtons } from '@/components/blogs/ShareButtons';
+import { BlogToc } from '@/components/blogs/BlogToc';
 
 type Params = { slug: string };
 
@@ -49,6 +53,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   if (!post) return notFound();
 
   const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags } = post;
+  const shareUrl = absoluteUrl(`/blogs/${slug}/`);
   const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
   const articleJsonLd = buildArticleJsonLd({
     title,
@@ -61,28 +66,35 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   });
 
   return (
-    <article className="prose dark:prose-invert max-w-none">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-      {headerImage ? (
-        <img
-          src={withBasePath(headerImage)}
-          alt={headerAlt || title}
-          className="mb-4 w-full h-auto rounded-sm border border-gray-200 dark:border-gray-700"
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-          referrerPolicy="no-referrer"
-        />
-      ) : null}
-      <h1>{title}</h1>
-      <p className="mt-0! text-sm opacity-70">
-        {formatDate(date, 'ja')}
-        {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
-      </p>
-      <div dangerouslySetInnerHTML={{ __html: html || '' }} />
-      <CodeCopyClient />
-      <EmbedsClient />
-    </article>
+    <div className="lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(240px,1fr)] lg:gap-8">
+      <article id="blog-article" className="prose dark:prose-invert max-w-none">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+        {headerImage ? (
+          <div className="relative mb-4 aspect-[16/9] w-full overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+            <Image
+              src={withBasePath(headerImage)!}
+              alt={headerAlt || title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 720px"
+              loading="lazy"
+              priority={false}
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        ) : null}
+        <h1>{title}</h1>
+        <p className="mt-0! text-sm opacity-70">
+          {formatDate(date, 'ja')}
+          {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
+        </p>
+        <ShareButtons url={shareUrl} title={title} className="my-4" />
+        <div dangerouslySetInnerHTML={{ __html: html || '' }} />
+        <CodeCopyClient />
+        <EmbedsClient />
+      </article>
+      <BlogToc containerId="blog-article" />
+    </div>
   );
 }
 

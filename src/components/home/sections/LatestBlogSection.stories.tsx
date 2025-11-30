@@ -49,3 +49,9 @@ export const Default: Story = {};
 export const English: Story = {
   args: { locale: 'en', title: '✨ Latest Blog Posts', ctaLabel: 'See more' },
 };
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};

@@ -55,4 +55,4 @@ jobs:
       - name: Install Cypress binary
         run: bun run e2e:install
       - name: Run E2E tests
-        run: bunx start-server-and-test "bun run dev:test" http://127.0.0.1:3000 "bunx cypress run --e2e --browser ${{ matrix.browser }}"
+        run: bunx start-server-and-test "bun run e2e:dev" http://127.0.0.1:3000 "bunx cypress run --e2e --browser ${{ matrix.browser }}"

@@ -64,3 +64,15 @@ export const Default: Story = {
     clearLabel: 'Clear',
   },
 };
+
+export const Mobile: Story = {
+  args: {
+    query: '',
+    onQueryChange: () => {},
+    placeholder: 'Search...',
+    clearLabel: 'Clear',
+  },
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};

@@ -135,3 +135,16 @@ export const English: Story = {
     },
   },
 };
+
+export const JapaneseMobile: Story = {
+  args: {
+    locale: 'ja',
+    dict: ja,
+    latest: sampleLatest,
+    publications: samplePublications,
+    links: sampleLinks,
+  },
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};

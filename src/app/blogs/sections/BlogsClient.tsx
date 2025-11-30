@@ -8,6 +8,8 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { resolveFilterText } from '@/components/filters/filterTexts';
+import { SectionShell } from '@/components/home/SectionShell';
+import { SectionHeader } from '@/components/home/sections/SectionHeader';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -103,19 +105,22 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         />
       </FilterBar>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">{t.latest}</h2>
+      <SectionShell tone="amber">
+        <SectionHeader title={t.latest} tone="amber" />
         <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
           {latest.map((p) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
-                <div className="relative w-full h-24 border-b border-gray-200 dark:border-gray-700">
+                <div
+                  className="relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
+                  data-testid="blog-image"
+                >
                   <Image
                     src={p.headerImage}
                     alt={p.headerAlt || p.title}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 100vw, 50vw"
+                    sizes="50vw"
                   />
                 </div>
               ) : null}
@@ -133,10 +138,10 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             </li>
           ))}
         </ul>
-      </section>
+      </SectionShell>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">{t.allPosts}</h2>
+      <SectionShell tone="lilac">
+        <SectionHeader title={t.allPosts} tone="lilac" />
         {items.length === 0 ? (
           <p className="opacity-70">{t.noResult}</p>
         ) : (
@@ -144,13 +149,16 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             {items.map((p) => (
               <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
-                  <div className="relative sm:w-28 sm:h-20 w-full h-36 rounded-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden shrink-0">
+                  <div
+                    className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
+                    data-testid="blog-image"
+                  >
                     <Image
                       src={p.headerImage}
                       alt={p.headerAlt || p.title}
                       fill
                       className="object-contain"
-                      sizes="(max-width: 640px) 100vw, 120px"
+                      sizes="120px"
                     />
                   </div>
                 ) : null}
@@ -171,7 +179,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           </ul>
         )}
         <div ref={loadMoreRef} className="h-8" />
-      </section>
+      </SectionShell>
     </div>
   );
 }

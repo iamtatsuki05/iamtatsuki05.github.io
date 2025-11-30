@@ -18,8 +18,8 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
   const isActive = (href: string) => normalizedActive === (href.endsWith('/') ? href : `${href}/`);
 
   const baseClass = orientation === 'horizontal'
-    ? 'px-2 py-1 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800'
-    : 'px-3 py-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-800';
+    ? 'px-2 py-1 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40'
+    : 'px-3 py-2 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40';
 
   return (
     <nav className={clsx(orientation === 'horizontal' ? 'flex items-center gap-4' : 'flex flex-col')}>
@@ -28,7 +28,10 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
           key={n.href}
           href={locale ? localizedPath(n.href, locale) : n.href}
           onClick={onNavigate}
-          className={clsx(baseClass, isActive(n.href) && 'bg-gray-100 dark:bg-gray-800')}
+          className={clsx(
+            baseClass,
+            isActive(n.href) && 'border-purple-300 bg-purple-50 dark:border-amber-300/60 dark:bg-[#161028]',
+          )}
         >
           {n.label}
         </Link>
