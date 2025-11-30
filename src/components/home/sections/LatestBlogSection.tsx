@@ -26,7 +26,7 @@ export function LatestBlogSection({ posts, locale, title, ctaLabel }: Props) {
   );
 
   return (
-    <section>
+    <section id="blog">
       <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/blogs/" />
       <ContentCardList
         items={items}

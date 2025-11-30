@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import HomeContent from '@/components/home/HomeContent';
-import { buildPageMetadata, buildPersonJsonLd, buildWebsiteJsonLd, defaultLanguageAlternates } from '@/lib/seo';
+import { buildPageMetadata, buildPersonJsonLd, buildWebsiteJsonLd, buildSiteLinksJsonLd, buildBreadcrumbJsonLd, buildOrganizationJsonLd, defaultLanguageAlternates } from '@/lib/seo';
 import { getPageMeta } from '@/lib/seo/metaConfig';
 
 const homeMeta = getPageMeta('home', 'ja');
@@ -26,6 +26,9 @@ export const metadata: Metadata = buildPageMetadata({
 export default function Page() {
   const personJsonLd = buildPersonJsonLd();
   const websiteJsonLd = buildWebsiteJsonLd();
+  const siteLinksJsonLd = buildSiteLinksJsonLd();
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd();
+  const organizationJsonLd = buildOrganizationJsonLd();
 
   return (
     <>
@@ -36,6 +39,18 @@ export default function Page() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLinksJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <HomeContent locale="ja" />
     </>

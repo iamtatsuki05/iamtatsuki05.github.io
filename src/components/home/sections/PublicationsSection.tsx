@@ -27,7 +27,7 @@ export function PublicationsSection({ publications, title, ctaLabel }: Props) {
   );
 
   return (
-    <section>
+    <section id="publications">
       <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/publications/" />
       <ContentCardList items={items} />
     </section>

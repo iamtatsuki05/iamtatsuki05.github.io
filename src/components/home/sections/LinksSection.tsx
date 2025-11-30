@@ -10,7 +10,7 @@ type Props = {
 
 export function LinksSection({ links, ctaLabel }: Props) {
   return (
-    <section>
+    <section id="links">
       <SectionHeader title="🔗 Links" ctaLabel={ctaLabel} ctaHref="/links/" />
       <LinkGrid items={links} moreLabel={ctaLabel} iconSize={40} />
     </section>
