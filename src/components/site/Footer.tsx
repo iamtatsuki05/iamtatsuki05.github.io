@@ -21,7 +21,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="mt-12 border-t border-gray-200 dark:border-gray-800">
+    <footer className="mt-12 border-t border-gray-200/80 bg-gradient-to-r from-gray-50 via-white to-gray-100 dark:border-gray-800/80 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <div className="container mx-auto max-w-5xl px-4 py-8 text-sm text-gray-700 dark:text-gray-300">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">

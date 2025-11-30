@@ -33,7 +33,7 @@ export function Header() {
   const navItems = useMemo(() => resolveNavItems(locale), [locale]);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+    <header className="sticky top-0 z-40 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/80 via-white/90 to-gray-50/80 backdrop-blur-sm shadow-sm dark:border-gray-800/80 dark:from-gray-950/80 dark:via-gray-900/90 dark:to-gray-950/80">
       <div className="container mx-auto max-w-4xl px-4 py-4 flex items-center justify-between">
         <Link href={localizedPath('/', locale)} className="font-semibold text-lg">Tatsuki Okada - Personal Site</Link>
         {/* Desktop nav */}
