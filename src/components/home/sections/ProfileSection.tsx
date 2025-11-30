@@ -19,15 +19,17 @@ export function ProfileSection({ title, alias, handle, affiliation, intro }: Pro
 
   return (
     <SectionShell>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <Image
-          src={AVATAR_SRC}
-          alt="My Avatar"
-          width={144}
-          height={144}
-          className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-purple-100 dark:border-purple-500/40 object-cover shadow-sm shadow-purple-100/60 dark:shadow-purple-900/40"
-          priority
-        />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <div className="flex justify-center">
+          <Image
+            src={AVATAR_SRC}
+            alt="My Avatar"
+            width={144}
+            height={144}
+            className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-purple-100 dark:border-purple-500/40 object-cover shadow-sm shadow-purple-100/60 dark:shadow-purple-900/40"
+            priority
+          />
+        </div>
         <div className="flex-1">
           <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-500 via-amber-300 to-purple-500 bg-clip-text text-transparent">
             {title}
