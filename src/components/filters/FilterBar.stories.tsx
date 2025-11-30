@@ -64,3 +64,9 @@ export const Default: Story = {
     clearLabel: 'Clear',
   },
 };
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};

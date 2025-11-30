@@ -32,3 +32,9 @@ export const WithoutDescriptions: Story = {
     showDescription: false,
   },
 };
+
+export const Mobile: Story = {
+  parameters: {
+    viewport: { defaultViewport: 'mobile2' },
+  },
+};
