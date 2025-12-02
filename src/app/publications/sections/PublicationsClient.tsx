@@ -166,8 +166,9 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           <SectionShell key={type} tone={tone}>
             <SectionHeader title={typeLabels[type]} tone={tone} />
             <ul className="space-y-3">
-              {arr.map((i) => {
+              {arr.map((i, index) => {
                 const primaryLink = i.links[0]?.url;
+                const isFirstImage = index === 0 && Boolean(i.headerImage);
                 const clickableProps = primaryLink
                   ? {
                       role: 'link' as const,
@@ -194,6 +195,8 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                         fill
                         className="object-contain"
                         sizes="120px"
+                        loading={isFirstImage ? 'eager' : 'lazy'}
+                        priority={isFirstImage}
                       />
                     </div>
                   ) : null}

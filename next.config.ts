@@ -1,5 +1,11 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: process.env.CI !== 'true',
+});
+
+const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
   images: {
@@ -10,16 +16,20 @@ const nextConfig = {
   },
   transpilePackages: ['next-image-export-optimizer'],
   env: {
-    nextImageExportOptimizer_imageFolderPath: "public",
-    nextImageExportOptimizer_exportFolderPath: "out",
-    nextImageExportOptimizer_quality: "75",
-    nextImageExportOptimizer_storePicturesInWEBP: "true",
-    nextImageExportOptimizer_exportFolderName: "nextImageExportOptimizer",
-    nextImageExportOptimizer_generateAndUseAvif: "true",
+    nextImageExportOptimizer_imageFolderPath: 'public',
+    nextImageExportOptimizer_exportFolderPath: 'out',
+    nextImageExportOptimizer_quality: '75',
+    nextImageExportOptimizer_storePicturesInWEBP: 'true',
+    nextImageExportOptimizer_exportFolderName: 'nextImageExportOptimizer',
+    nextImageExportOptimizer_generateAndUseAvif: 'true',
   },
   reactStrictMode: true,
   experimental: {
     reactCompiler: true,
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
   },
   // NOTE:
   // GitHub Pages の公式 Action (actions/configure-pages@v5 with static_site_generator: next)
@@ -27,4 +37,4 @@ const nextConfig = {
   // 二重適用でアセットパスが壊れる可能性があるため、明示設定は行いません。
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
