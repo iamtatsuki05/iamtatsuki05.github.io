@@ -108,7 +108,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
       <SectionShell tone="amber">
         <SectionHeader title={t.latest} tone="amber" />
         <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
-          {latest.map((p) => (
+          {latest.map((p, index) => (
             <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
               {p.headerImage ? (
                 <div
@@ -121,6 +121,8 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                     fill
                     className="object-cover"
                     sizes="50vw"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    priority={index === 0}
                   />
                 </div>
               ) : null}
@@ -146,7 +148,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           <p className="opacity-70">{t.noResult}</p>
         ) : (
           <ul className="space-y-2" data-testid="blog-all-list">
-            {items.map((p) => (
+            {items.map((p, index) => (
               <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
                   <div
@@ -159,6 +161,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                       fill
                       className="object-contain"
                       sizes="120px"
+                      loading="lazy"
                     />
                   </div>
                 ) : null}
