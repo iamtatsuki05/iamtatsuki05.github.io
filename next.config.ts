@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
   images: {
@@ -10,12 +11,12 @@ const nextConfig = {
   },
   transpilePackages: ['next-image-export-optimizer'],
   env: {
-    nextImageExportOptimizer_imageFolderPath: "public",
-    nextImageExportOptimizer_exportFolderPath: "out",
-    nextImageExportOptimizer_quality: "75",
-    nextImageExportOptimizer_storePicturesInWEBP: "true",
-    nextImageExportOptimizer_exportFolderName: "nextImageExportOptimizer",
-    nextImageExportOptimizer_generateAndUseAvif: "true",
+    nextImageExportOptimizer_imageFolderPath: 'public',
+    nextImageExportOptimizer_exportFolderPath: 'out',
+    nextImageExportOptimizer_quality: '75',
+    nextImageExportOptimizer_storePicturesInWEBP: 'true',
+    nextImageExportOptimizer_exportFolderName: 'nextImageExportOptimizer',
+    nextImageExportOptimizer_generateAndUseAvif: 'true',
   },
   reactStrictMode: true,
   experimental: {
