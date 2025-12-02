@@ -126,7 +126,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
               ) : null}
               <div className="p-3">
                 <h3 className="font-medium">
-                  <Link href={`/blogs/${p.slug}/`} className="underline-offset-2 hover:underline">
+                  <Link href={`/blogs/${p.slug}/`} prefetch={true} className="underline-offset-2 hover:underline">
                     {p.title}
                   </Link>
                 </h3>
@@ -164,7 +164,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                 ) : null}
                 <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                   <h3 className="text-base font-semibold">
-                    <Link href={`/blogs/${p.slug}/`} className="underline-offset-2 hover:underline">
+                    <Link href={`/blogs/${p.slug}/`} prefetch={true} className="underline-offset-2 hover:underline">
                       {p.title}
                     </Link>
                   </h3>

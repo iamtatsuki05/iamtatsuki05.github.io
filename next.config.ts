@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
     reactCompiler: true,
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
   },
   // NOTE:
   // GitHub Pages の公式 Action (actions/configure-pages@v5 with static_site_generator: next)
