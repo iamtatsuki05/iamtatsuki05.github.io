@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from 'next-themes';
-import { assetPath, withBasePath, withVersion } from '@/lib/url';
 import { absoluteUrl, siteConfig } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
@@ -49,15 +48,6 @@ export const metadata: Metadata = {
     title: TITLE,
     description: DESCRIPTION,
     images: [{ url: absoluteUrl(siteConfig.defaultOgImage) }],
-  },
-  icons: {
-    icon: [
-      { url: withVersion(withBasePath('/favicon.ico'))!, type: 'image/x-icon' },
-      { url: assetPath('/favicon-32x32.png')!, type: 'image/png', sizes: '32x32' },
-      { url: assetPath('/favicon-16x16.png')!, type: 'image/png', sizes: '16x16' },
-    ],
-    shortcut: assetPath('/favicon-32x32.png'),
-    apple: assetPath('/apple-touch-icon.png'),
   },
   keywords: siteConfig.keywords.ja,
   authors: [{ name: siteConfig.owner, url: BASE_URL }],
