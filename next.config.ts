@@ -1,5 +1,10 @@
 import type { NextConfig } from 'next';
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: process.env.CI !== 'true',
+});
+
 const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
@@ -32,4 +37,4 @@ const nextConfig: NextConfig = {
   // 二重適用でアセットパスが壊れる可能性があるため、明示設定は行いません。
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

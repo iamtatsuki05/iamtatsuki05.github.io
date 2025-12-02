@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && next-image-export-optimizer && bun scripts/generate-rss.ts",
+    "build:analyze": "ANALYZE=true next build",
     "start": "serve out -p 3000",
     "lint": "eslint .",
     "test": "bun run vitest:run && bun run e2e:run",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.1",
+    "@next/bundle-analyzer": "^16.0.6",
     "@storybook/addon-essentials": "8.4.5",
     "@storybook/addon-interactions": "8.4.5",
     "@storybook/blocks": "8.4.5",
@@ -79,7 +81,8 @@
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "webpack-bundle-analyzer": "^5.0.1"
   },
   "browserslist": {
     "production": [

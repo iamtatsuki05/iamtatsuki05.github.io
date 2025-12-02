@@ -1,0 +1,94 @@
+name: Bundle Size Analysis
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  analyze:
+    name: Analyze Bundle Size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Restore next build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lockb') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lockb') }}-
+
+      - name: Build project
+        run: next build
+        env:
+          ANALYZE: true
+
+      - name: Analyze bundle
+        run: npx -y @next/bundle-analyzer@latest
+        continue-on-error: true
+
+      - name: Upload bundle stats (base branch)
+        uses: actions/upload-artifact@v4
+        if: github.event_name == 'push'
+        with:
+          name: bundle-stats-base
+          path: |
+            .next/analyze/client.html
+            .next/analyze/nodejs.html
+          retention-days: 30
+
+      - name: Upload bundle stats (PR)
+        uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
+        with:
+          name: bundle-stats-pr
+          path: |
+            .next/analyze/client.html
+            .next/analyze/nodejs.html
+          retention-days: 7
+
+      - name: Download base branch bundle stats
+        uses: dawidd6/action-download-artifact@v6
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        with:
+          workflow: bundle-size.yml
+          branch: ${{ github.base_ref }}
+          name: bundle-stats-base
+          path: .next/analyze-base
+
+      - name: Compare bundle sizes
+        if: github.event_name == 'pull_request'
+        id: compare
+        run: |
+          echo "## 📦 Bundle Size Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -d ".next/analyze-base" ]; then
+            echo "✅ Comparison with base branch completed" >> $GITHUB_STEP_SUMMARY
+            echo "Check the artifacts for detailed HTML reports" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No base branch data available for comparison" >> $GITHUB_STEP_SUMMARY
+            echo "This is normal for the first PR after setting up bundle analysis" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Download PR bundle stats to view detailed analysis" >> $GITHUB_STEP_SUMMARY
