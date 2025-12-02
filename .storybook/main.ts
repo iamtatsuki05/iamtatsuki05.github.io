@@ -7,7 +7,7 @@ const config: StorybookConfig = {
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
   ],
-  staticDirs: ['../public'],
+  staticDirs: ['../public', '../src/app'],
   framework: {
     name: '@storybook/nextjs',
     options: {
