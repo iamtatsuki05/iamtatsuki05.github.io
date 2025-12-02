@@ -35,14 +35,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lockb') }}-
 
-      - name: Build project
-        run: next build
+      - name: Build and analyze bundle
+        run: bun run build:analyze
         env:
-          ANALYZE: true
-
-      - name: Analyze bundle
-        run: npx -y @next/bundle-analyzer@latest
-        continue-on-error: true
+          NODE_ENV: production
 
       - name: Upload bundle stats (base branch)
         uses: actions/upload-artifact@v4
