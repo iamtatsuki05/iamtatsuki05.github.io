@@ -28,6 +28,7 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
           key={n.href}
           href={locale ? localizedPath(n.href, locale) : n.href}
           onClick={onNavigate}
+          prefetch={true}
           className={clsx(
             baseClass,
             isActive(n.href) && 'border-purple-300 bg-purple-50 dark:border-amber-300/60 dark:bg-[#161028]',

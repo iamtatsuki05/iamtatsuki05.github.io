@@ -9,6 +9,9 @@ src/data/og-cache.json
 cypress/screenshots
 cypress/downloads
 
+# bundle analyzer
+.next/analyze/
+
 # next-image-export-optimizer
 /public/nextImageExportOptimizer
 /public/next-image-export-optimizer-hashes.json
