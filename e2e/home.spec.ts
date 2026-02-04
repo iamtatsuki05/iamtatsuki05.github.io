@@ -137,3 +137,24 @@ test.describe('Homepage theme toggle', () => {
     await expect(html).toHaveClass(/light/);
   });
 });
+
+test.describe('Homepage theme toggle with system preference', () => {
+  test('follows dark system preference and toggles to light mode', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.addInitScript(() => {
+      window.localStorage.removeItem('theme');
+    });
+    await page.goto('/');
+
+    const html = page.locator('html');
+    const toggle = page.getByRole('button', { name: 'Toggle theme' }).first();
+
+    await expect(toggle).toBeVisible();
+    await expect(html).toHaveClass(/dark/);
+    await expect(toggle).toContainText('🌙');
+
+    await toggle.click();
+    await expect(html).toHaveClass(/light/);
+    await expect(toggle).toContainText('☀️');
+  });
+});
