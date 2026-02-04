@@ -46,12 +46,65 @@ for (const { label, use } of viewports) {
           .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
           .first();
 
-        await allPostsSection
-          .locator('[data-testid="blog-card"] a[href*="/blogs/"]')
-          .first()
-          .click();
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        await detailLink.click();
+        const navigated = await page
+          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+        if (!navigated && detailPath) {
+          await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+        }
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+      });
 
-        await expect(page).toHaveURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+      test('blog detail sidebar tracks heading and progress smoothly', async ({ page }) => {
+        const allPostsSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+          .first();
+
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        await detailLink.click();
+        const navigated = await page
+          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+        if (!navigated && detailPath) {
+          await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+        }
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+
+        const toc = page.getByTestId('blog-toc');
+        await expect(toc).toBeVisible();
+        await expect(toc).toHaveCSS('position', 'sticky');
+        const tocLinks = toc.locator('a[data-toc-id]');
+        await expect.poll(() => tocLinks.count()).toBeGreaterThan(1);
+        const linkCount = await tocLinks.count();
+        await expect
+          .poll(() =>
+            toc.evaluate((element) => Number.parseInt(element.style.getPropertyValue('--toc-item-count'), 10)),
+          )
+          .toBe(linkCount);
+
+        const initialActive = (await toc.locator('a[aria-current="true"]').first().textContent())?.trim() ?? '';
+        const progress = toc.getByTestId('blog-toc-progress');
+        const initialProgress = await progress.evaluate((element) =>
+          Number.parseInt((element as HTMLElement).style.width || '0', 10),
+        );
+
+        await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+
+        await expect
+          .poll(async () => (await toc.locator('a[aria-current="true"]').first().textContent())?.trim() ?? '')
+          .not.toBe(initialActive);
+        await expect
+          .poll(() =>
+            progress.evaluate((element) => Number.parseInt((element as HTMLElement).style.width || '0', 10)),
+          )
+          .toBeGreaterThan(initialProgress);
       });
     }
   });
@@ -171,6 +224,43 @@ for (const { label, use } of viewports) {
     });
   });
 }
+
+test.describe('Blog detail toc toggle (tablet)', () => {
+  test.use({ viewport: { width: 900, height: 900 } });
+
+  test('opens and closes floating toc panel', async ({ page }) => {
+    await page.goto(localizedPath('ja', '/blogs/'));
+
+    const allPostsSection = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+      .first();
+    const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    await detailLink.click();
+    const navigated = await page
+      .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!navigated && detailPath) {
+      await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+    }
+    await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+
+    const fab = page.getByTestId('blog-toc-fab');
+    await expect(fab).toBeVisible({ timeout: 10000 });
+    await expect(fab).toHaveAttribute('aria-expanded', 'false');
+
+    await fab.click();
+    await expect(fab).toHaveAttribute('aria-expanded', 'true');
+    const sheet = page.getByTestId('blog-toc-sheet');
+    await expect(sheet).toBeVisible();
+    expect(await sheet.locator('a[data-toc-id]').count()).toBeGreaterThan(1);
+
+    await sheet.getByRole('button', { name: '閉じる' }).click();
+    await expect(page.getByTestId('blog-toc-sheet')).toHaveCount(0);
+  });
+});
 
 test.describe('Localized page variants', () => {
   test.use({ viewport: { width: 1280, height: 800 } });

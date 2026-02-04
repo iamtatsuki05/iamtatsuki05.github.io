@@ -98,6 +98,7 @@ a:hover {
 .focus-ring { @apply focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand; }
 .prose h2 { @apply mt-10 border-b border-gray-200 dark:border-gray-800 pb-1; }
 .prose h3 { @apply mt-8; }
+.prose :is(h2, h3) { scroll-margin-top: 7rem; }
 .prose ul { @apply list-disc pl-6; }
 .prose ol { @apply list-decimal pl-6; }
 .prose a { @apply underline underline-offset-2; }
