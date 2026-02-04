@@ -4,5 +4,5 @@ export function localizedPath(locale: 'ja' | 'en', path: string = '/'): string {
     return locale === 'ja' ? '/ja/' : '/en/';
   }
   const withSlash = normalized.startsWith('/') ? normalized : `/${normalized}`;
-  return `/${locale}${withSlash}`.replace(/\\+/g, '/');
+  return `/${locale}${withSlash}`.replace(/\/+/g, '/');
 }

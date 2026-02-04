@@ -14,6 +14,8 @@
 bun dev                       # start dev server at http://localhost:3000
 INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
 bun run start                 # serve static out/ on :3000
+bun run e2e:run              # run Playwright E2E tests on Chromium
+bun run e2e:open             # open Playwright UI mode
 bun run storybook             # start Storybook at http://localhost:6006
 bun run storybook:build       # output static build to storybook-static/
 # Telemetry: set STORYBOOK_DISABLE_TELEMETRY=1 to opt out
@@ -43,7 +45,7 @@ bun run storybook:build       # output static build to storybook-static/
 ├── README_JA.md
 ├── bunfig.toml
 ├── compose.yml
-├── cypress
+├── e2e
 ├── node_modules
 ├── public
 │   └── images
