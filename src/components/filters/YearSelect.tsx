@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 type Props = {
   years: string[];
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export function YearSelect({ years, value, onChange, label, allLabel = 'All', className }: Props) {
-  const selectId = 'year-select';
+  const selectId = useId();
   return (
     <div className={className}>
       <label htmlFor={selectId} className="text-sm opacity-70 mr-2">

@@ -132,6 +132,43 @@ for (const { label, use } of viewports) {
       );
       expect(openCalls.length).toBeGreaterThan(0);
     });
+
+    test('keeps filter bar layout stable when opening tag filter', async ({ page }) => {
+      const searchInput = page.getByRole('textbox', { name: 'Search...' });
+      await expect(searchInput).toBeVisible();
+      const before = await searchInput.boundingBox();
+      expect(before).not.toBeNull();
+
+      const typeFilter = page.locator('details').filter({ hasText: 'Types' }).first();
+      const tagFilter = page.locator('details').filter({ hasText: 'Tags' }).first();
+      await expect(typeFilter).toContainText('Types');
+      await expect(tagFilter).toContainText('Tags');
+      await typeFilter.locator('summary').click();
+      await expect(typeFilter).toHaveAttribute('open', '');
+
+      await tagFilter.locator('summary').click();
+      await expect(typeFilter).not.toHaveAttribute('open', '');
+      await expect(tagFilter).toHaveAttribute('open', '');
+      const panel = tagFilter.locator('summary + div');
+      await expect(tagFilter.locator('button').first()).toBeVisible();
+      const viewport = page.viewportSize();
+      expect(viewport).not.toBeNull();
+      await expect
+        .poll(async () => (await panel.boundingBox())?.x ?? Number.NEGATIVE_INFINITY)
+        .toBeGreaterThanOrEqual(-1);
+      await expect
+        .poll(async () => {
+          const box = await panel.boundingBox();
+          if (!box) return Number.POSITIVE_INFINITY;
+          return box.x + box.width;
+        })
+        .toBeLessThanOrEqual((viewport?.width || 0) + 1);
+
+      const after = await searchInput.boundingBox();
+      expect(after).not.toBeNull();
+      expect(Math.abs((after?.y || 0) - (before?.y || 0))).toBeLessThanOrEqual(1);
+      expect(Math.abs((after?.width || 0) - (before?.width || 0))).toBeLessThanOrEqual(1);
+    });
   });
 }
 

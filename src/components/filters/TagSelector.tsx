@@ -1,4 +1,5 @@
 import React from 'react';
+import { FilterDisclosure } from './FilterDisclosure';
 
 type Props = {
   tags: string[];
@@ -10,26 +11,24 @@ type Props = {
 
 export function TagSelector({ tags, selected, onToggle, label, className }: Props) {
   return (
-    <details className={className}>
-      <summary className="cursor-pointer select-none text-sm opacity-80">
-        {label} ({tags.length})
-      </summary>
-      <div className="mt-2 flex flex-wrap gap-2">
+    <FilterDisclosure label={label} count={tags.length} className={className} panelClassName="max-h-56 overflow-y-auto">
+      <div className="flex flex-wrap gap-2">
         {tags.map((tag) => {
           const active = selected.has(tag);
           return (
             <button
+              type="button"
               key={tag}
               onClick={() => onToggle(tag)}
               aria-pressed={active}
               aria-label={`Filter by ${tag} tag`}
-              className={`px-2 py-0.5 rounded-sm text-sm border ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
+              className={`rounded-sm border px-2 py-0.5 text-sm ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
             >
               #{tag}
             </button>
           );
         })}
       </div>
-    </details>
+    </FilterDisclosure>
   );
 }
