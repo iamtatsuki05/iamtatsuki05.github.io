@@ -199,3 +199,14 @@ test.describe('Default locale fallback', () => {
     await expect(page.getByRole('heading', { level: 1, name: '📚 公開物' })).toBeVisible();
   });
 });
+
+test.describe('Special route pages', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('renders custom not-found page', async ({ page }) => {
+    const response = await page.goto('/ja/this-path-does-not-exist/');
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole('heading', { level: 1, name: 'ページが見つかりません' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'ホームへ戻る' })).toHaveAttribute('href', '/');
+  });
+});
