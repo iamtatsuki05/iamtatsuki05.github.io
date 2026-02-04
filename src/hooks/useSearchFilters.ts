@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
+import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
 
 type Options<T> = {
   fuseKeys: string[];
@@ -30,25 +31,17 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     }
   }, [q, fuse, fuseLoading, items, fuseKeys, threshold]);
 
-  const years = useMemo(() => {
-    const yearSet = new Set<string>();
-    for (const item of items) {
-      const y = (extractYear(item) || '').slice(0, 4);
-      if (y) yearSet.add(y);
-    }
-    return Array.from(yearSet).sort((a, b) => (a < b ? 1 : -1));
-  }, [items, extractYear]);
+  const metadata = useMemo(
+    () =>
+      buildSearchFilterMetadata(items, {
+        extractYear,
+        extractTags,
+      }),
+    [items, extractYear, extractTags],
+  );
 
-  const allTags = useMemo(() => {
-    const tagSet = new Set<string>();
-    for (const item of items) {
-      const tags = extractTags(item);
-      for (const tag of tags) {
-        tagSet.add(tag);
-      }
-    }
-    return Array.from(tagSet).sort();
-  }, [items, extractTags]);
+  const years = metadata.years;
+  const allTags = metadata.tags;
 
   const filtered = useMemo(() => {
     let result = items;

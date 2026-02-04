@@ -41,6 +41,49 @@ describe('PublicationsClient', () => {
     expect(getByText('Paper 1')).toBeInTheDocument();
   });
 
+  it('builds type filter options from publication metadata', async () => {
+    const { render } = await import('@testing-library/react');
+    const { within } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+    const { container, getByText, getAllByRole, queryByText } = render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    const typeSummary = container.querySelectorAll('summary')[0];
+    if (!typeSummary) throw new Error('Type filter summary is missing');
+    await user.click(typeSummary);
+    const typeDetails = typeSummary.closest('details');
+    if (!typeDetails) throw new Error('Type filter details is missing');
+    const typeFilter = within(typeDetails);
+
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    expect(typeFilter.getByText('📄 Papers')).toBeInTheDocument();
+    expect(typeFilter.getByText('📝 Technical Articles')).toBeInTheDocument();
+    expect(queryByText('🎤 Talks')).toBeNull();
+  });
+
+  it('keeps only one filter disclosure open at a time', async () => {
+    const { render } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+    const { container } = render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const summaries = container.querySelectorAll('summary');
+    const disclosures = container.querySelectorAll('details[data-filter-disclosure="true"]');
+    if (summaries.length < 2 || disclosures.length < 2) throw new Error('Filter disclosures are missing');
+
+    const user = userEvent.default.setup();
+    await user.click(summaries[0]);
+    expect(disclosures[0]).toHaveAttribute('open');
+    expect(disclosures[1]).not.toHaveAttribute('open');
+
+    await user.click(summaries[1]);
+    expect(disclosures[1]).toHaveAttribute('open');
+    expect(disclosures[0]).not.toHaveAttribute('open');
+  });
+
   it('hides preview images on mobile to reduce initial downloads', async () => {
     const { render } = await import('@testing-library/react');
     const { container } = render(<PublicationsClient items={items} locale="ja" />, {
