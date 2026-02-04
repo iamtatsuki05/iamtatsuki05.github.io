@@ -14,6 +14,8 @@
 bun dev                       # http://localhost:3000 で開発
 INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
 bun run start                 # :3000 で out/ を配信
+bun run e2e:run              # Playwright E2E を Chromium で実行
+bun run e2e:open             # Playwright UI モードで実行
 bun run storybook             # http://localhost:6006 で Storybook
 bun run storybook:build       # storybook-static/ に静的ビルド
 # テレメトリ: 参加したくない場合は STORYBOOK_DISABLE_TELEMETRY=1 を設定
@@ -43,7 +45,7 @@ bun run storybook:build       # storybook-static/ に静的ビルド
 ├── README_JA.md
 ├── bunfig.toml
 ├── compose.yml
-├── cypress
+├── e2e
 ├── node_modules
 ├── public
 │   └── images
