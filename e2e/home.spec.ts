@@ -20,6 +20,13 @@ for (const { label, use } of viewports) {
       await page.goto(localizedPath('ja'));
     });
 
+    test('shows segmented language switch with current locale highlighted', async ({ page }) => {
+      const languageSwitch = page.getByRole('group', { name: 'Language switch' }).first();
+      await expect(languageSwitch).toBeVisible();
+      await expect(languageSwitch.getByRole('link', { name: 'JA' })).toHaveAttribute('aria-current', 'true');
+      await expect(languageSwitch.getByRole('link', { name: 'EN' })).toBeVisible();
+    });
+
     test('shows main hero and contact info', async ({ page }) => {
       await expect(page.getByRole('heading', { level: 1, name: 'ホームページ' })).toBeVisible();
       await expect(page.getByText('自然言語処理')).toBeVisible();
@@ -105,6 +112,13 @@ for (const { label, use } of viewports) {
 
     test.beforeEach(async ({ page }) => {
       await page.goto(localizedPath('en'));
+    });
+
+    test('shows segmented language switch with current locale highlighted', async ({ page }) => {
+      const languageSwitch = page.getByRole('group', { name: 'Language switch' }).first();
+      await expect(languageSwitch).toBeVisible();
+      await expect(languageSwitch.getByRole('link', { name: 'EN' })).toHaveAttribute('aria-current', 'true');
+      await expect(languageSwitch.getByRole('link', { name: 'JA' })).toBeVisible();
     });
 
     test('shows localized content', async ({ page }) => {
