@@ -1,11 +1,16 @@
 import type { Locale } from '@/lib/i18n';
+import { SUPPORTED_ROUTE_LOCALES, localeToRouteLocale, resolveLocale, SUPPORTED_LOCALES } from '@/lib/i18n';
 
-const LOCALE_PREFIX = /^\/(ja|en)(\/|$)/;
+const ROUTE_PREFIXES = [...SUPPORTED_ROUTE_LOCALES, ...SUPPORTED_LOCALES];
+const LOCALE_PREFIX = new RegExp(`^/(${ROUTE_PREFIXES.join('|')})(/|$)`, 'i');
+const LOCALE_ROOTS = new Set(
+  ROUTE_PREFIXES.map((segment) => `/${segment.toLowerCase()}/`),
+);
 
 export function extractLocaleFromPath(pathname: string): Locale | null {
   const m = pathname.match(LOCALE_PREFIX);
   if (!m) return null;
-  return m[1] === 'en' ? 'en' : 'ja';
+  return resolveLocale(m[1]);
 }
 
 export function stripLocalePrefix(pathname: string): string {
@@ -14,11 +19,12 @@ export function stripLocalePrefix(pathname: string): string {
 
 export function localizedPath(path: string, locale: Locale): string {
   const normalized = path.endsWith('/') ? path : `${path}/`;
-  if (normalized === '/' || normalized === '/ja/' || normalized === '/en/') {
-    return locale === 'ja' ? '/ja/' : '/en/';
+  const lower = normalized.toLowerCase();
+  if (lower === '/' || LOCALE_ROOTS.has(lower)) {
+    return `/${localeToRouteLocale(locale)}/`;
   }
   const clean = normalized.startsWith('/') ? normalized : `/${normalized}`;
-  return `/${locale}${clean}`.replace(/\/+/g, '/');
+  return `/${localeToRouteLocale(locale)}${clean}`.replace(/\/+/g, '/');
 }
 
 export function isTranslatablePath(pathname: string): boolean {

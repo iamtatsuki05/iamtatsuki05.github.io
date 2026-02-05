@@ -6,8 +6,6 @@ out
 data/og-cache.json
 src/data/og-cache.json
 .cache
-cypress/screenshots
-cypress/downloads
 
 # bundle analyzer
 .next/analyze/
@@ -25,6 +23,8 @@ cypress/downloads
 
 # testing
 coverage/
+playwright-report/
+test-results/
 
 # storybook
 storybook-static/

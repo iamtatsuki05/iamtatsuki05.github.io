@@ -7,12 +7,12 @@ afterEach(() => {
 });
 
 describe('Footer locale-aware links', () => {
-  it('uses en prefix when pathname is /en/blogs/', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/en/blogs/' }));
+  it('uses en prefix when pathname is /en-US/blogs/', async () => {
+    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/blogs/' }));
     const { Footer } = await import('@/components/site/Footer');
     const { render } = await import('@testing-library/react');
     const { getByText } = render(<Footer />);
-    expect(getByText(/Blog/).getAttribute('href')).toBe('/en/blogs/');
+    expect(getByText(/Blog/).getAttribute('href')).toBe('/en-US/blogs/');
   });
 
   it('uses ja prefix by default', async () => {
@@ -20,6 +20,6 @@ describe('Footer locale-aware links', () => {
     const { Footer } = await import('@/components/site/Footer');
     const { render } = await import('@testing-library/react');
     const { getByText } = render(<Footer />);
-    expect(getByText(/Links/).getAttribute('href')).toBe('/ja/links/');
+    expect(getByText(/Links/).getAttribute('href')).toBe('/ja-JP/links/');
   });
 });

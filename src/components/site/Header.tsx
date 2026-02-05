@@ -7,13 +7,14 @@ import { useEffect, useState, useMemo } from 'react';
 import { NavLinks } from '@/components/site/NavLinks';
 import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
+import { localeToRouteLocale } from '@/lib/i18n';
 import { MobileMenu } from '@/components/site/MobileMenu';
 
 export function Header() {
   const pathname = usePathname() || '';
   const [open, setOpen] = useState(false);
   const locale = extractLocaleFromPath(pathname) || 'ja';
-  const localePrefix = locale === 'ja' ? '/ja' : '/en';
+  const localePrefix = `/${localeToRouteLocale(locale)}`;
   const activePath = pathname;
 
   // メニュー表示中はスクロールを固定

@@ -23,3 +23,11 @@ export const Mobile: Story = {
     viewport: { defaultViewport: 'mobile2' },
   },
 };
+
+export const NonTranslatablePage: Story = {
+  parameters: {
+    nextjs: {
+      navigation: { pathname: '/ja-JP/blogs/example-post/' },
+    },
+  },
+};

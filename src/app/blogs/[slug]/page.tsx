@@ -66,7 +66,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   });
 
   return (
-    <div className="lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(240px,1fr)] lg:gap-8">
+    <div className="mx-auto lg:grid lg:max-w-[1200px] lg:grid-cols-[minmax(0,1fr)_clamp(15rem,24vw,20rem)] lg:items-start lg:gap-8">
       <article id="blog-article" className="prose dark:prose-invert max-w-none">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
         {headerImage ? (

@@ -53,7 +53,10 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
           activePath={activePath}
           localePrefix={localePrefix}
           orientation="vertical"
-          onNavigate={onClose}
+          onNavigate={() => {
+            // Safari系で Link 遷移より先にアンマウントされると遷移が中断されるため1tick遅らせる
+            window.setTimeout(onClose, 0);
+          }}
         />
       </div>
     </div>,
