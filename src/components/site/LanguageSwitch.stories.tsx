@@ -27,7 +27,7 @@ export const Mobile: Story = {
 export const NonTranslatablePage: Story = {
   parameters: {
     nextjs: {
-      navigation: { pathname: '/ja/blogs/example-post/' },
+      navigation: { pathname: '/ja-JP/blogs/example-post/' },
     },
   },
 };

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { Locale } from '@/lib/i18n';
 import { PublicationsPage as PublicationsPageView } from '@/app/(site)/_components/PublicationsPage';
-import { buildPageMetadata, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, defaultLanguageAlternates, absoluteUrl } from '@/lib/seo';
+import { buildPageMetadata, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, buildLanguageAlternates, absoluteUrl } from '@/lib/seo';
 import { publicationsPageCopy } from '@/app/(site)/_config/pageCopy';
 import { getPageMeta } from '@/lib/seo/metaConfig';
 import { getAllPublications } from '@/lib/content/publication';
@@ -15,7 +15,7 @@ export const metadata: Metadata = buildPageMetadata({
   description: pageMeta.metadataDescription,
   locale: DEFAULT_LOCALE,
   path: pageMeta.path,
-  languageAlternates: defaultLanguageAlternates,
+  languageAlternates: buildLanguageAlternates(pageMeta.path),
 });
 
 export default async function PublicationsPage() {

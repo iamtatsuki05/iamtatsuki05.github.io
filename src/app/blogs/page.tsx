@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import type { Locale } from '@/lib/i18n';
 import { getAllPosts } from '@/lib/content/blog';
 import { BlogsClient } from './sections/BlogsClient';
-import { buildPageMetadata, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, defaultLanguageAlternates, absoluteUrl } from '@/lib/seo';
+import { buildPageMetadata, buildCollectionPageJsonLd, buildBreadcrumbJsonLd, buildLanguageAlternates, absoluteUrl } from '@/lib/seo';
 import { blogsPageCopy } from '@/app/(site)/_config/pageCopy';
 import { getPageMeta } from '@/lib/seo/metaConfig';
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = buildPageMetadata({
   description: pageMeta.metadataDescription,
   locale: DEFAULT_LOCALE,
   path: pageMeta.path,
-  languageAlternates: defaultLanguageAlternates,
+  languageAlternates: buildLanguageAlternates(pageMeta.path),
 });
 
 export default async function BlogIndex() {

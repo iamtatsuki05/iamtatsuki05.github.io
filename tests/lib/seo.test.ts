@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
+import { buildArticleJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
 
 const ORIGINAL_SITE_URL = process.env.SITE_URL;
 
@@ -25,15 +25,25 @@ describe('buildPageMetadata', () => {
       keywords: ['custom'],
       languageAlternates: {
         'en-US': '/test/',
-        'ja-JP': '/ja/test/',
+        'ja-JP': '/ja-JP/test/',
       },
     });
 
     expect(metadata.alternates?.canonical).toBe('https://example.com/test/');
-    expect(metadata.alternates?.languages?.['ja-JP']).toBe('https://example.com/ja/test/');
+    expect(metadata.alternates?.languages?.['ja-JP']).toBe('https://example.com/ja-JP/test/');
     expect(metadata.openGraph?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.twitter?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.keywords).toContain('custom');
+  });
+});
+
+describe('buildLanguageAlternates', () => {
+  it('locale付きパスから各言語のhreflangを生成する', () => {
+    const alternates = buildLanguageAlternates('/ja-JP/blogs/');
+
+    expect(alternates['ja-JP']).toBe('/ja-JP/blogs/');
+    expect(alternates['en-US']).toBe('/en-US/blogs/');
+    expect(alternates['x-default']).toBe('/blogs/');
   });
 });
 

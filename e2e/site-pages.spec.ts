@@ -239,13 +239,13 @@ test.describe('Blog detail toc toggle (tablet)', () => {
     const detailPath = await detailLink.getAttribute('href');
     await detailLink.click();
     const navigated = await page
-      .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+      .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
       .then(() => true)
       .catch(() => false);
     if (!navigated && detailPath) {
       await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
     }
-    await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+    await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
     const fab = page.getByTestId('blog-toc-fab');
     await expect(fab).toBeVisible({ timeout: 10000 });
@@ -266,12 +266,12 @@ test.describe('Localized page variants', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test('renders the Japanese blog index', async ({ page }) => {
-    await page.goto('/ja/blogs/');
+    await page.goto('/ja-JP/blogs/');
     await expect(page.getByRole('heading', { level: 1, name: '📝 ブログ' })).toBeVisible();
   });
 
   test('renders the English blog index', async ({ page }) => {
-    await page.goto('/en/blogs/');
+    await page.goto('/en-US/blogs/');
     await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
   });
 });
@@ -294,7 +294,7 @@ test.describe('Special route pages', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test('renders custom not-found page', async ({ page }) => {
-    const response = await page.goto('/ja/this-path-does-not-exist/');
+    const response = await page.goto('/ja-JP/this-path-does-not-exist/');
     expect(response?.status()).toBe(404);
     await expect(page.getByRole('heading', { level: 1, name: 'ページが見つかりません' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'ホームへ戻る' })).toHaveAttribute('href', '/');

@@ -131,7 +131,7 @@ export const English: Story = {
   parameters: {
     nextjs: {
       appDirectory: true,
-      navigation: { pathname: '/en/' },
+      navigation: { pathname: '/en-US/' },
     },
   },
 };

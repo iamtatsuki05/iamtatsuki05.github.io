@@ -8,7 +8,7 @@ afterEach(() => {
 
 describe('LanguageSwitch', () => {
   it('translatable pathでは言語リンクを表示する', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/en/links/' }));
+    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/links/' }));
     const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
     const { render, screen } = await import('@testing-library/react');
 
@@ -17,14 +17,14 @@ describe('LanguageSwitch', () => {
     const jaLink = screen.getByRole('link', { name: 'JA' });
     const enLink = screen.getByRole('link', { name: 'EN' });
 
-    expect(jaLink.getAttribute('href')).toBe('/ja/links/');
-    expect(enLink.getAttribute('href')).toBe('/en/links/');
+    expect(jaLink.getAttribute('href')).toBe('/ja-JP/links/');
+    expect(enLink.getAttribute('href')).toBe('/en-US/links/');
     expect(enLink.getAttribute('aria-current')).toBe('true');
     expect(jaLink.getAttribute('aria-current')).toBeNull();
   });
 
   it('非対応ページではリンクではなく固定表示になる', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/ja/blogs/example-post/' }));
+    vi.doMock('next/navigation', () => ({ usePathname: () => '/ja-JP/blogs/example-post/' }));
     const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
     const { render, screen } = await import('@testing-library/react');
 
