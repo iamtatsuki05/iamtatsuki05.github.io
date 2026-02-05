@@ -68,7 +68,7 @@ bun run storybook:build       # output static build to storybook-static/
 │   └── types
 ├── tests
 ├── package.json
-├── eslint.config.mjs
+├── biome.json
 ├── next.config.mjs
 ├── next-sitemap.config.mts
 ├── postcss.config.js
