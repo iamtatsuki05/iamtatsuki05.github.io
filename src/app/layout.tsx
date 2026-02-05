@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from 'next-themes';
-import { absoluteUrl, siteConfig } from '@/lib/seo';
+import { absoluteUrl, siteConfig, buildPersonJsonLd, buildWebsiteJsonLd } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
 
@@ -13,6 +13,7 @@ const SITE_NAME = siteConfig.siteName.ja;
 const TITLE = siteConfig.defaultTitle.ja;
 const DESCRIPTION = siteConfig.description.ja;
 const BASE_URL = absoluteUrl('/');
+const structuredData = JSON.stringify([buildPersonJsonLd(), buildWebsiteJsonLd()]);
 
 export const metadata: Metadata = {
   title: {
@@ -24,8 +25,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: BASE_URL,
     languages: {
-      'ja-JP': absoluteUrl('/ja/'),
-      'en-US': absoluteUrl('/en/'),
+      'ja-JP': absoluteUrl('/ja-JP/'),
+      'en-US': absoluteUrl('/en-US/'),
       'x-default': BASE_URL,
     },
     types: {
@@ -94,6 +95,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://platform.twitter.com" />
         <link rel="dns-prefetch" href="https://www.instagram.com" />
         <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
       </head>
       <body suppressHydrationWarning className={`${inter.className} min-h-screen flex flex-col`}>
         <NuqsAdapter>

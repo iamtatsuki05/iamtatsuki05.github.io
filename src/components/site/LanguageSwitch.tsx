@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { LOCALE_UI_LABELS } from '@/lib/i18n';
 import { extractLocaleFromPath, isTranslatablePath, localizedPath, stripLocalePrefix } from '@/lib/routing';
 
 export function LanguageSwitch() {
@@ -14,8 +15,8 @@ export function LanguageSwitch() {
   const toJa = localizedPath(normalized, 'ja');
   const toEn = localizedPath(normalized, 'en');
   const options = [
-    { locale: 'ja', href: toJa, label: 'JA' },
-    { locale: 'en', href: toEn, label: 'EN' },
+    { locale: 'ja', href: toJa, label: LOCALE_UI_LABELS.ja },
+    { locale: 'en', href: toEn, label: LOCALE_UI_LABELS.en },
   ] as const;
 
   const baseOptionClass = 'inline-flex min-w-10 items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] no-underline hover:no-underline transition-colors focus-ring';

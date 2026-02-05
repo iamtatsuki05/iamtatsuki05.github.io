@@ -3,6 +3,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import type { NavDisplayItem } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath, stripLocalePrefix } from '@/lib/routing';
+import { resolveLocale } from '@/lib/i18n';
 
 type Props = {
   items: NavDisplayItem[];
@@ -13,7 +14,8 @@ type Props = {
 };
 
 export function NavLinks({ items, activePath, localePrefix, orientation = 'horizontal', onNavigate }: Props) {
-  const locale = extractLocaleFromPath(activePath) || (localePrefix === '/en' ? 'en' : null);
+  const fallbackLocale = localePrefix ? resolveLocale(localePrefix.replace('/', '')) : null;
+  const locale = extractLocaleFromPath(activePath) || fallbackLocale;
   const normalizedActive = stripLocalePrefix(activePath.endsWith('/') ? activePath : `${activePath}/`);
   const isActive = (href: string) => normalizedActive === (href.endsWith('/') ? href : `${href}/`);
 
