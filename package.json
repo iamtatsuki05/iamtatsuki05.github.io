@@ -74,7 +74,7 @@
     "jsdom": "26.1.0",
     "postcss": "8.5.6",
     "serve": "14.2.5",
-    "storybook": "8.4.5",
+    "storybook": "8.6.17",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "5.1.4",
