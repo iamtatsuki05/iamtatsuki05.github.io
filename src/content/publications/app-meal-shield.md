@@ -1,7 +1,7 @@
 ---
 title: Meal Shield
 type: app
-publishedAt: 2024-10-01
+publishedAt: 2024-07-25
 publisher: GitHub
 links:
   - { kind: code, url: https://github.com/al22-1B-01/meal_shield }
