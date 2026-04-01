@@ -33,8 +33,8 @@ export const siteConfig = {
     huggingface: 'https://huggingface.co/iamtatsuki05',
   },
   affiliation: {
-    name: 'Shibaura Institute of Technology, Sugimoto Laboratory',
-    url: 'http://www.lang.ise.shibaura-it.ac.jp/',
+    name: 'Program of Information Science and Engineering, Nara Institute of Science and Technology (NAIST)',
+    url: 'https://www.naist.jp/en/',
   },
   twitterHandle: '@iam_tatsuki05',
   defaultOgImage: '/favicon.ico',
