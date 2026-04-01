@@ -12,7 +12,7 @@ const meta = {
     title: 'ホームページ',
     alias: '氏名：岡田 龍樹 | Tatsuki Okada',
     handle: 'ハンドルネーム: iamtatsuki05 | iam_tatsuki05',
-    affiliation: '所属：芝浦工業大学 [杉本研究室](http://www.lang.ise.shibaura-it.ac.jp/)',
+    affiliation: '所属：[奈良先端科学技術大学院大学](https://www.naist.jp/) 情報科学研究科',
     intro: '自然言語処理 | 機械学習 | ソフトウェア のエンジニアをしています。\nちいかわのハチワレが好きで、かわいいキャラクター全般が好きです。仮想通貨、株、テクノロジーにも興味があります。',
   },
   render: (args) => (
