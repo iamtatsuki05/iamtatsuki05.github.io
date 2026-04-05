@@ -25,7 +25,8 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     const toggle = await screen.findByRole('button', { name: 'Toggle theme' });
-    expect(toggle).toHaveTextContent('🌙');
+    expect(toggle).toHaveAttribute('data-theme', 'dark');
+    expect(toggle).toHaveAttribute('data-next-theme', 'light');
 
     fireEvent.click(toggle);
     expect(setTheme).toHaveBeenCalledWith('light');
@@ -42,7 +43,8 @@ describe('ThemeToggle', () => {
     render(<ThemeToggle />);
 
     const toggle = await screen.findByRole('button', { name: 'Toggle theme' });
-    expect(toggle).toHaveTextContent('☀️');
+    expect(toggle).toHaveAttribute('data-theme', 'light');
+    expect(toggle).toHaveAttribute('data-next-theme', 'dark');
 
     fireEvent.click(toggle);
     expect(setTheme).toHaveBeenCalledWith('dark');

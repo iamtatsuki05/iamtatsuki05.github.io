@@ -176,10 +176,10 @@ test.describe('Homepage theme toggle with system preference', () => {
 
     await expect(toggle).toBeVisible();
     await expect(html).toHaveClass(/dark/);
-    await expect(toggle).toContainText('🌙');
+    await expect(toggle).toHaveAttribute('data-theme', 'dark');
 
     await toggle.click();
     await expect(html).toHaveClass(/light/);
-    await expect(toggle).toContainText('☀️');
+    await expect(toggle).toHaveAttribute('data-theme', 'light');
   });
 });
