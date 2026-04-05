@@ -10,6 +10,7 @@ import { FilterBar } from '@/components/filters/FilterBar';
 import { resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
+import { useInitialReveal } from '@/hooks/useInitialReveal';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -28,6 +29,7 @@ type Post = {
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
   const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const areCardsVisible = useInitialReveal(56);
 
   const {
     q,
@@ -114,9 +116,14 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
       <SectionShell tone="amber">
         <SectionHeader title={t.latest} tone="amber" />
-        <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
+        <ul className="content-reveal-list grid gap-3 sm:grid-cols-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-latest-list">
           {latest.map((p, index) => (
-            <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
+            <li
+              key={p.slug}
+              className="content-reveal-card card overflow-hidden"
+              data-testid="blog-latest-card"
+              style={areCardsVisible ? { transitionDelay: `${100 + index * 34}ms` } : undefined}
+            >
               {p.headerImage ? (
                 <div
                   className="relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
@@ -154,9 +161,14 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         {items.length === 0 ? (
           <p className="opacity-70">{t.noResult}</p>
         ) : (
-          <ul className="space-y-2" data-testid="blog-all-list">
+          <ul className="content-reveal-list space-y-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-all-list">
             {items.map((p, index) => (
-              <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
+              <li
+                key={p.slug}
+                className="content-reveal-card card p-3 gap-3 items-start sm:flex"
+                data-testid="blog-card"
+                style={areCardsVisible ? { transitionDelay: `${140 + index * 22}ms` } : undefined}
+              >
                 {p.headerImage ? (
                   <div
                     className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"

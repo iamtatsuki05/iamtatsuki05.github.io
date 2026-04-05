@@ -1,5 +1,6 @@
 import React from 'react';
-import { describe, it } from 'vitest';
+import { act, screen } from '@testing-library/react';
+import { describe, it, vi } from 'vitest';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
 
@@ -75,5 +76,25 @@ describe('BlogsClient', () => {
       expect(el.className).toContain('hidden');
       expect(el.className).toContain('sm:block');
     });
+  });
+
+  it('reveals blog lists after the initial enter delay', async () => {
+    vi.useFakeTimers();
+    const { render } = await import('@testing-library/react');
+
+    render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    expect(screen.getByTestId('blog-latest-list')).toHaveAttribute('data-state', 'hidden');
+    expect(screen.getByTestId('blog-all-list')).toHaveAttribute('data-state', 'hidden');
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expect(screen.getByTestId('blog-latest-list')).toHaveAttribute('data-state', 'open');
+    expect(screen.getByTestId('blog-all-list')).toHaveAttribute('data-state', 'open');
+    vi.useRealTimers();
   });
 });

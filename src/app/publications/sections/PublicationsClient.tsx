@@ -11,6 +11,7 @@ import { resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
+import { useInitialReveal } from '@/hooks/useInitialReveal';
 
 type Item = {
   slug: string;
@@ -29,6 +30,7 @@ type Item = {
 const publicationTypeOrder: Item['type'][] = ['paper', 'app', 'article', 'talk', 'slide', 'media'];
 
 export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; locale?: 'ja' | 'en' }) {
+  const areCardsVisible = useInitialReveal(56);
   const [selectedTypes, setSelectedTypes] = useQueryState(
     'types',
     parseAsArrayOf(parseAsStringEnum(publicationTypeOrder)).withDefault(publicationTypeOrder),
@@ -179,7 +181,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         return (
           <SectionShell key={type} tone={tone}>
             <SectionHeader title={typeLabels[type]} tone={tone} />
-            <ul className="space-y-3">
+            <ul className="content-reveal-list space-y-3" data-state={areCardsVisible ? 'open' : 'hidden'}>
               {arr.map((i, index) => {
                 const primaryLink = i.links[0]?.url;
                 const isFirstImage = index === 0 && Boolean(i.headerImage);
@@ -195,7 +197,8 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                   <li
                     key={i.slug}
                     data-testid="publication-card"
-                    className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
+                    className={`content-reveal-card card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
+                    style={areCardsVisible ? { transitionDelay: `${100 + index * 24}ms` } : undefined}
                     {...clickableProps}
                   >
                     {i.headerImage ? (

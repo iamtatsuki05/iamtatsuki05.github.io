@@ -520,6 +520,21 @@
     color: rgb(254 202 202);
   }
 
+  .content-reveal-card {
+    opacity: 0;
+    transform: translate3d(0, 0.95rem, 0) scale(0.985);
+    transition:
+      opacity 260ms ease,
+      transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease;
+    will-change: opacity, transform;
+  }
+
+  .content-reveal-list[data-state='open'] > .content-reveal-card {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
   .blog-toc-desktop {
     opacity: 0;
     transform: translate3d(0, 0.9rem, 0) scale(0.975);
@@ -786,6 +801,7 @@
   .blog-action-button::after,
   .blog-action-button__badge,
   .blog-copy-button__icon-svg,
+  .content-reveal-card,
   .blog-toc-desktop,
   .blog-toc-desktop__link,
   .blog-toc-fab,

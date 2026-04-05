@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ContentCardList } from '@/components/home/sections/ContentCardList';
 
 describe('ContentCardList', () => {
@@ -24,5 +25,24 @@ describe('ContentCardList', () => {
     const plain = screen.getByText('Plain').closest('div');
     expect(plain?.tagName.toLowerCase()).toBe('div');
   });
-});
 
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('reveals cards after the initial enter delay', () => {
+    vi.useFakeTimers();
+
+    render(<ContentCardList items={items} listTestId="list" cardTestId="card" />);
+
+    const list = screen.getByTestId('list');
+    expect(list).toHaveAttribute('data-state', 'hidden');
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expect(list).toHaveAttribute('data-state', 'open');
+  });
+});
