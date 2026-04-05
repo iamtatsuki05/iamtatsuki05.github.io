@@ -67,8 +67,8 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   });
 
   return (
-    <div className="mx-auto lg:grid lg:max-w-[1200px] lg:grid-cols-[minmax(0,1fr)_clamp(15rem,24vw,20rem)] lg:items-start lg:gap-8">
-      <article id="blog-article" className="prose dark:prose-invert max-w-none">
+    <div className="mx-auto w-full lg:grid lg:max-w-[1560px] lg:grid-cols-[minmax(0,1fr)_minmax(0,56rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+      <article id="blog-article" className="prose dark:prose-invert w-full max-w-none lg:col-start-2">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
         {headerImage ? (
           <div className="relative mb-4 aspect-[16/9] w-full overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
@@ -97,7 +97,10 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
         <CodeCopyClient />
         <EmbedsClient />
       </article>
-      <BlogToc containerId="blog-article" />
+      <BlogToc
+        containerId="blog-article"
+        className="min-[1440px]:col-start-3 min-[1440px]:justify-self-start min-[1440px]:w-full min-[1440px]:max-w-[clamp(14rem,24vw,20rem)]"
+      />
     </div>
   );
 }

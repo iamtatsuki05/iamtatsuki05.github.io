@@ -60,6 +60,8 @@ for (const { label, use } of viewports) {
       });
 
       test('blog detail sidebar tracks heading and progress smoothly', async ({ page }) => {
+        await page.setViewportSize({ width: 1440, height: 900 });
+
         const allPostsSection = page
           .locator('section')
           .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
