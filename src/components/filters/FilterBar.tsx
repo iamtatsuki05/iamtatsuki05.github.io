@@ -10,6 +10,7 @@ export type FilterBarActiveFilter = {
 type Props = {
   query: string;
   onQueryChange: (value: string) => void;
+  onSearchIntent?: () => void;
   placeholder: string;
   onClear?: () => void;
   children?: React.ReactNode;
@@ -25,6 +26,7 @@ type Props = {
 export function FilterBar({
   query,
   onQueryChange,
+  onSearchIntent,
   placeholder,
   onClear,
   children,
@@ -70,6 +72,12 @@ export function FilterBar({
             aria-label={placeholder}
             aria-keyshortcuts="/"
             value={query}
+            onFocus={() => {
+              onSearchIntent?.();
+            }}
+            onPointerEnter={() => {
+              onSearchIntent?.();
+            }}
             onChange={(e) => onQueryChange(e.target.value)}
             onKeyDown={(event) => {
               if (event.key === 'Escape' && query) {

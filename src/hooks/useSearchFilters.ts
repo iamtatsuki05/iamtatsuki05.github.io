@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
 import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
@@ -41,6 +41,7 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
   const pendingQRef = useRef<string | null>(null);
   const pendingYearsRef = useRef<string | null>(null);
   const pendingTagsRef = useRef<string | null>(null);
+  const fuseLoadPromiseRef = useRef<Promise<void> | null>(null);
   const yearSet = useMemo(() => new Set(localYears), [localYears]);
   const tagSet = useMemo(() => new Set(localTags), [localTags]);
 
@@ -76,16 +77,54 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     setLocalTags(nextTags);
   }, [tags]);
 
-  // Fuse.js を検索が実行されたときのみ動的にロード
-  useEffect(() => {
-    if (localQ && !fuse && !fuseLoading) {
-      setFuseLoading(true);
-      import('fuse.js').then(({ default: FuseClass }) => {
+  const loadFuse = useCallback(() => {
+    if (fuse) return Promise.resolve();
+    if (fuseLoadPromiseRef.current) return fuseLoadPromiseRef.current;
+
+    setFuseLoading(true);
+    const pending = import('fuse.js')
+      .then(({ default: FuseClass }) => {
         setFuse(new FuseClass(items, { keys: fuseKeys, threshold }));
+      })
+      .finally(() => {
+        fuseLoadPromiseRef.current = null;
         setFuseLoading(false);
       });
+
+    fuseLoadPromiseRef.current = pending;
+    return pending;
+  }, [fuse, items, fuseKeys, threshold]);
+
+  useEffect(() => {
+    if (!localQ || fuse) return;
+    void loadFuse();
+  }, [fuse, loadFuse, localQ]);
+
+  useEffect(() => {
+    if (fuse || typeof window === 'undefined') return;
+
+    let cancelled = false;
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+
+    const preload = () => {
+      if (!cancelled) void loadFuse();
+    };
+
+    if (typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(preload, { timeout: 2500 });
+    } else {
+      timeoutId = window.setTimeout(preload, 1200);
     }
-  }, [localQ, fuse, fuseLoading, items, fuseKeys, threshold]);
+
+    return () => {
+      cancelled = true;
+      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
+  }, [fuse, loadFuse]);
 
   const metadata = useMemo(
     () =>
@@ -161,6 +200,9 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     },
     fuseLoading: Boolean(localQ) && fuseLoading && !fuse,
     fuse,
+    preloadSearch: () => {
+      void loadFuse();
+    },
     years,
     allTags,
     filtered,

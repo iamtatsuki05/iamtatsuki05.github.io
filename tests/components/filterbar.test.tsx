@@ -45,4 +45,15 @@ describe('FilterBar', () => {
 
     expect(onQueryChange).toHaveBeenCalledWith('');
   });
+
+  it('notifies search intent on focus and pointer enter', () => {
+    const onSearchIntent = vi.fn();
+    render(<FilterBar query="" onQueryChange={() => {}} onSearchIntent={onSearchIntent} placeholder="Search..." />);
+
+    const input = screen.getByRole('textbox', { name: 'Search...' });
+    fireEvent.focus(input);
+    fireEvent.pointerEnter(input);
+
+    expect(onSearchIntent).toHaveBeenCalledTimes(2);
+  });
 });

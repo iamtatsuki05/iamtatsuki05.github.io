@@ -55,6 +55,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     filtered,
     clearFilters,
     fuseLoading,
+    preloadSearch,
   } = useSearchFilters(items, {
     fuseKeys: ['title', 'tags', 'venue', 'publisher'],
     extractYear: (i) => i.publishedAt,
@@ -217,6 +218,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       <FilterBar
         query={q}
         onQueryChange={setQ}
+        onSearchIntent={preloadSearch}
         placeholder={t.search}
         onClear={() => {
           clearFilters();

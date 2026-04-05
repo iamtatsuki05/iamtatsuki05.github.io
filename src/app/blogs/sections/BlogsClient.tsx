@@ -44,6 +44,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
     filtered,
     clearFilters,
     fuseLoading,
+    preloadSearch,
   } = useSearchFilters(posts, {
     fuseKeys: ['title', 'summary', 'tags'],
     extractYear: (p) => p.date,
@@ -150,6 +151,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
       <FilterBar
         query={q}
         onQueryChange={setQ}
+        onSearchIntent={preloadSearch}
         placeholder={t.search}
         onClear={() => {
           clearFilters();
