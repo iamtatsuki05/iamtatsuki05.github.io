@@ -357,6 +357,11 @@ for (const { label, use } of viewports) {
         const clearSearch = page.getByRole('button', { name: 'Clear Search' });
         await clearSearch.click();
         await expect(page.getByTestId('filter-empty-state')).toHaveCount(0);
+
+        await searchInput.fill('Encoder');
+        await expect(page.getByTestId('filter-result-summary')).toContainText('of');
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.locator('mark.search-highlight').filter({ hasText: 'Encoder' }).first()).toBeVisible();
       });
 
       test('shows removable active filter chips when narrowing publications', async ({ page }) => {

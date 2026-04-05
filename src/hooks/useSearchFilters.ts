@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
 import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
+import { tokenizeSearchQuery } from '@/lib/search/queryTokens';
 
 type Options<T> = {
   fuseKeys: string[];
@@ -104,11 +105,7 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
       if (fuse) {
         result = fuse.search(localQ).map((r) => r.item);
       } else {
-        const normalizedTokens = localQ
-          .trim()
-          .toLocaleLowerCase()
-          .split(/\s+/)
-          .filter(Boolean);
+        const normalizedTokens = tokenizeSearchQuery(localQ);
 
         if (normalizedTokens.length) {
           result = result.filter((item) => {

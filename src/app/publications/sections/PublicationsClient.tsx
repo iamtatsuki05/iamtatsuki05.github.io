@@ -10,6 +10,7 @@ import { FilterBar } from '@/components/filters/FilterBar';
 import { formatClearFilterLabel, formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
+import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
 
@@ -324,20 +325,23 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                       </div>
                     ) : null}
                     <div className="flex-1 min-w-0 mt-2 sm:mt-0">
-                      <h3 className="text-base font-semibold">{i.title}</h3>
+                      <h3 className="text-base font-semibold">
+                        <SearchHighlight text={i.title} query={q} />
+                      </h3>
                       <p className="text-xs opacity-70">
-                        {(i.publishedAt || '').slice(0, 10)} ・ {i.venue || i.publisher}
+                        {(i.publishedAt || '').slice(0, 10)} ・{' '}
+                        <SearchHighlight text={i.venue || i.publisher || ''} query={q} />
                       </p>
                       {i.abstract ? (
                         <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                          {i.abstract}
+                          <SearchHighlight text={i.abstract} query={q} />
                         </p>
                       ) : null}
                       {i.tags?.length ? (
                         <div className="flex flex-wrap gap-2 mt-1 text-xs opacity-70">
                           {i.tags.map((t) => (
                             <span key={t} className="px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-gray-800">
-                              #{t}
+                              #<SearchHighlight text={t} query={q} />
                             </span>
                           ))}
                         </div>

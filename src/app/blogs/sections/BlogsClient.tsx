@@ -10,6 +10,7 @@ import { FilterBar } from '@/components/filters/FilterBar';
 import { formatClearFilterLabel, formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
+import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
 
 const INITIAL_VISIBLE_COUNT = 10;
@@ -220,12 +221,14 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                     href={`/blogs/${p.slug}/`}
                     className="blog-linked-card__title-link underline-offset-2 hover:underline"
                   >
-                    {p.title}
+                    <SearchHighlight text={p.title} query={q} />
                   </Link>
                 </h3>
               <p className="text-xs opacity-70 mt-1">{formatDate(p.date, locale)}</p>
                 {p.summary && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-2">{p.summary}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-2">
+                    <SearchHighlight text={p.summary} query={q} />
+                  </p>
                 )}
               </div>
             </li>
@@ -283,13 +286,19 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                       href={`/blogs/${p.slug}/`}
                       className="blog-linked-card__title-link underline-offset-2 hover:underline"
                     >
-                      {p.title}
+                      <SearchHighlight text={p.title} query={q} />
                     </Link>
                   </h3>
                   <p className="text-xs opacity-70">{formatDate(p.date, locale)}</p>
-                  {p.summary && <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{p.summary}</p>}
+                  {p.summary && (
+                    <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                      <SearchHighlight text={p.summary} query={q} />
+                    </p>
+                  )}
                   {p.tags?.length ? (
-                    <div className="mt-1 text-xs opacity-70 truncate">{p.tags.join(', ')}</div>
+                    <div className="mt-1 text-xs opacity-70 truncate">
+                      <SearchHighlight text={p.tags.join(', ')} query={q} />
+                    </div>
                   ) : null}
                 </div>
               </li>

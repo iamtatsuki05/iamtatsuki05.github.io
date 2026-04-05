@@ -160,4 +160,20 @@ describe('PublicationsClient', () => {
     expect(input).toHaveValue('');
     expect(screen.queryByTestId('filter-empty-state')).toBeNull();
   });
+
+  it('highlights matching publication metadata fragments', async () => {
+    const { render, screen, waitFor } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    await user.type(screen.getByRole('textbox', { name: 'Search...' }), 'conf');
+
+    await waitFor(() => {
+      expect(screen.getByText('Conf', { selector: 'mark.search-highlight' })).toBeInTheDocument();
+    });
+  });
 });
