@@ -74,8 +74,9 @@ describe('FilterDisclosure', () => {
 
     const root = document.querySelector('[data-filter-bar-root="true"]');
     const summary = screen.getByText('Tags').closest('summary');
+    const details = summary?.closest('details');
     const panel = document.querySelector('.filter-disclosure__panel');
-    if (!root || !summary || !panel) {
+    if (!root || !summary || !details || !panel) {
       throw new Error('Filter disclosure elements are missing');
     }
 
@@ -91,14 +92,31 @@ describe('FilterDisclosure', () => {
       toJSON: () => ({}),
     });
 
-    vi.spyOn(panel, 'getBoundingClientRect').mockReturnValue({
-      x: 40,
+    vi.spyOn(details, 'getBoundingClientRect').mockReturnValue({
+      x: 60,
       y: 56,
-      width: 320,
+      width: 80,
+      height: 40,
+      top: 56,
+      left: 60,
+      right: 140,
+      bottom: 96,
+      toJSON: () => ({}),
+    });
+
+    Object.defineProperty(panel, 'offsetWidth', {
+      configurable: true,
+      value: 164,
+    });
+
+    vi.spyOn(panel, 'getBoundingClientRect').mockReturnValue({
+      x: 60,
+      y: 56,
+      width: 157.44,
       height: 120,
       top: 56,
-      left: 40,
-      right: 360,
+      left: 60,
+      right: 217.44,
       bottom: 176,
       toJSON: () => ({}),
     });
@@ -106,6 +124,6 @@ describe('FilterDisclosure', () => {
     await user.click(summary);
 
     expect(panel.style.getPropertyValue('--filter-disclosure-max-width')).toBe('164px');
-    expect(Number.parseFloat(panel.style.getPropertyValue('--filter-disclosure-offset-x'))).toBeLessThan(0);
+    expect(Number.parseFloat(panel.style.getPropertyValue('--filter-disclosure-offset-x'))).toBeCloseTo(-12, 4);
   });
 });

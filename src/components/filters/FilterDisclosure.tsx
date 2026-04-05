@@ -39,12 +39,18 @@ export function FilterDisclosure({ label, count, className, panelClassName, chil
     const maxWidth = Math.max(maxRight - minLeft, 0);
 
     panel.style.setProperty('--filter-disclosure-max-width', `${maxWidth}px`);
+    const detailsRect = details.getBoundingClientRect();
+    const panelWidth = panel.offsetWidth;
+    let nextOffset = Number.parseFloat(panel.style.getPropertyValue('--filter-disclosure-offset-x') || '0');
 
-    const rect = panel.getBoundingClientRect();
-    let nextOffset = 0;
+    if (!Number.isFinite(nextOffset)) nextOffset = 0;
 
-    if (rect.left < minLeft) nextOffset += minLeft - rect.left;
-    if (rect.right > maxRight) nextOffset += maxRight - rect.right;
+    const projectedLeft = detailsRect.left + nextOffset;
+    if (projectedLeft < minLeft) nextOffset += minLeft - projectedLeft;
+
+    const projectedRight = detailsRect.left + nextOffset + panelWidth;
+    if (projectedRight > maxRight) nextOffset += maxRight - projectedRight;
+
     panel.style.setProperty('--filter-disclosure-offset-x', `${nextOffset}px`);
   }, []);
 
