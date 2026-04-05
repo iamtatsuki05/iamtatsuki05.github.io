@@ -137,4 +137,27 @@ describe('PublicationsClient', () => {
     await user.click(chip);
     expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('2 items');
   });
+
+  it('offers quick recovery actions when no publication results remain', async () => {
+    const { render, screen, waitFor } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    const input = screen.getByRole('textbox', { name: 'Search...' });
+    await user.type(input, 'zzzz');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('filter-empty-state')).toHaveTextContent('No items found');
+    });
+
+    const clearSearch = screen.getByRole('button', { name: 'Clear Search' });
+    await user.click(clearSearch);
+
+    expect(input).toHaveValue('');
+    expect(screen.queryByTestId('filter-empty-state')).toBeNull();
+  });
 });

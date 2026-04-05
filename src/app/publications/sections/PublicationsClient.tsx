@@ -7,7 +7,7 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterDisclosure } from '@/components/filters/FilterDisclosure';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
+import { formatClearFilterLabel, formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
@@ -158,6 +158,45 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
 
     return filters;
   }, [availableTypeSet, availableTypes, items.length, locale, q, selectedTypeSet, setQ, setSelectedTypes, setTagSet, setYearSet, tagSet, typeLabels, yearSet]);
+  const emptyStateActions = useMemo(() => {
+    const actions = [];
+
+    if (q) {
+      actions.push({
+        key: 'clear-search',
+        label: formatClearFilterLabel(locale, t.searchKeyword),
+        onClick: () => setQ(''),
+      });
+    }
+
+    if (yearSet.size) {
+      actions.push({
+        key: 'clear-years',
+        label: formatClearFilterLabel(locale, t.year),
+        onClick: () => setYearSet(new Set()),
+      });
+    }
+
+    if (tagSet.size) {
+      actions.push({
+        key: 'clear-tags',
+        label: formatClearFilterLabel(locale, t.tags),
+        onClick: () => setTagSet(new Set()),
+      });
+    }
+
+    if (selectedTypeSet.size !== availableTypes.length) {
+      actions.push({
+        key: 'clear-types',
+        label: formatClearFilterLabel(locale, t.types),
+        onClick: () => {
+          void setSelectedTypes(null);
+        },
+      });
+    }
+
+    return actions;
+  }, [availableTypes.length, locale, q, selectedTypeSet.size, setQ, setSelectedTypes, setTagSet, setYearSet, t.searchKeyword, t.tags, t.types, t.year, tagSet.size, yearSet.size]);
 
   const openInNewTab = (url?: string) => {
     if (!url || typeof window === 'undefined') return;
@@ -327,7 +366,23 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       })}
 
       {typeFiltered.length === 0 && (
-        <p className="opacity-70">{t.noResult}</p>
+        <div className="search-empty-state space-y-3" data-testid="filter-empty-state">
+          <p className="opacity-70">{t.noResult}</p>
+          {emptyStateActions.length ? (
+            <div className="search-empty-actions">
+              {emptyStateActions.map((action) => (
+                <button
+                  key={action.key}
+                  type="button"
+                  onClick={action.onClick}
+                  className="search-empty-action ui-cta"
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
       )}
     </div>
   );

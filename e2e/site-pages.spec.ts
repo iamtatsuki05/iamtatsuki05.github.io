@@ -340,6 +340,25 @@ for (const { label, use } of viewports) {
     });
 
     if (label === 'desktop') {
+      test('supports search shortcuts and quick recovery actions', async ({ page }) => {
+        const searchInput = page.getByRole('textbox', { name: 'Search...' });
+        await page.locator('body').click({ position: { x: 12, y: 12 } });
+        await page.keyboard.press('/');
+        await expect(searchInput).toBeFocused();
+
+        await page.keyboard.type('zzzz');
+        await expect(page.getByTestId('filter-empty-state')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Clear Search' })).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await expect(searchInput).toHaveValue('');
+
+        await searchInput.fill('zzzz');
+        const clearSearch = page.getByRole('button', { name: 'Clear Search' });
+        await clearSearch.click();
+        await expect(page.getByTestId('filter-empty-state')).toHaveCount(0);
+      });
+
       test('shows removable active filter chips when narrowing publications', async ({ page }) => {
         const tagFilter = page.locator('details').filter({ hasText: 'Tags' }).first();
         await expect(tagFilter).toContainText('Tags');

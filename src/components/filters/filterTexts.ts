@@ -62,3 +62,7 @@ export function formatSearchChipLabel(locale: Locale, query: string) {
 export function formatRemoveFilterAriaLabel(locale: Locale, label: string) {
   return locale === 'ja' ? `${label}を解除` : `Remove ${label}`;
 }
+
+export function formatClearFilterLabel(locale: Locale, label: string) {
+  return locale === 'ja' ? `${label}をクリア` : `Clear ${label}`;
+}

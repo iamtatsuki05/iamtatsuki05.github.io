@@ -7,7 +7,7 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
+import { formatClearFilterLabel, formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
@@ -114,6 +114,35 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
     return filters;
   }, [locale, q, setQ, setTagSet, setYearSet, tagSet, yearSet]);
+  const emptyStateActions = useMemo(() => {
+    const actions = [];
+
+    if (q) {
+      actions.push({
+        key: 'clear-search',
+        label: formatClearFilterLabel(locale, t.searchKeyword),
+        onClick: () => setQ(''),
+      });
+    }
+
+    if (yearSet.size) {
+      actions.push({
+        key: 'clear-years',
+        label: formatClearFilterLabel(locale, t.year),
+        onClick: () => setYearSet(new Set()),
+      });
+    }
+
+    if (tagSet.size) {
+      actions.push({
+        key: 'clear-tags',
+        label: formatClearFilterLabel(locale, t.tags),
+        onClick: () => setTagSet(new Set()),
+      });
+    }
+
+    return actions;
+  }, [locale, q, setQ, setTagSet, setYearSet, t.searchKeyword, t.tags, t.year, tagSet.size, yearSet.size]);
 
   return (
     <div className="space-y-6">
@@ -207,7 +236,23 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
       <SectionShell tone="lilac">
         <SectionHeader title={t.allPosts} tone="lilac" />
         {filtered.length === 0 ? (
-          <p className="opacity-70">{t.noResult}</p>
+          <div className="search-empty-state space-y-3" data-testid="filter-empty-state">
+            <p className="opacity-70">{t.noResult}</p>
+            {emptyStateActions.length ? (
+              <div className="search-empty-actions">
+                {emptyStateActions.map((action) => (
+                  <button
+                    key={action.key}
+                    type="button"
+                    onClick={action.onClick}
+                    className="search-empty-action ui-cta"
+                  >
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
         ) : (
           <ul className="content-reveal-list space-y-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-all-list">
             {items.map((p, index) => (
