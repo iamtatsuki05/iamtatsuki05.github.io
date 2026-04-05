@@ -294,24 +294,44 @@ for (const { label, use } of viewports) {
       await expect(tagFilter).toHaveAttribute('open', '');
       const panel = tagFilter.locator('summary + div');
       await expect(tagFilter.locator('button').first()).toBeVisible();
-      const viewport = page.viewportSize();
-      expect(viewport).not.toBeNull();
+      const filterBar = page.locator('[data-filter-bar-root]').first();
+      const filterBarBox = await filterBar.boundingBox();
+      expect(filterBarBox).not.toBeNull();
       await expect
         .poll(async () => (await panel.boundingBox())?.x ?? Number.NEGATIVE_INFINITY)
-        .toBeGreaterThanOrEqual(-1);
+        .toBeGreaterThanOrEqual((filterBarBox?.x || 0) - 1);
       await expect
         .poll(async () => {
           const box = await panel.boundingBox();
           if (!box) return Number.POSITIVE_INFINITY;
           return box.x + box.width;
         })
-        .toBeLessThanOrEqual((viewport?.width || 0) + 1);
+        .toBeLessThanOrEqual((filterBarBox?.x || 0) + (filterBarBox?.width || 0) + 1);
 
       const after = await searchInput.boundingBox();
       expect(after).not.toBeNull();
       expect(Math.abs((after?.y || 0) - (before?.y || 0))).toBeLessThanOrEqual(1);
       expect(Math.abs((after?.width || 0) - (before?.width || 0))).toBeLessThanOrEqual(1);
     });
+
+    if (label === 'desktop') {
+      test('supports selecting multiple years in the publication filter', async ({ page }) => {
+        const yearFilter = page.locator('details').filter({ hasText: 'Year' }).first();
+        await expect(yearFilter).toContainText('Year');
+
+        await yearFilter.locator('summary').click();
+        await expect(yearFilter).toHaveAttribute('open', '');
+        await yearFilter.getByRole('button', { name: '2026' }).click();
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.getByText(/数学推論能力向上/)).not.toBeVisible();
+        await expect(page.getByText(/DeNAでの2週間インターンシップ体験記/)).not.toBeVisible();
+
+        await yearFilter.getByRole('button', { name: '2025' }).click();
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.getByText(/数学推論能力向上/)).toBeVisible();
+        await expect(page.getByText(/DeNAでの2週間インターンシップ体験記/)).not.toBeVisible();
+      });
+    }
   });
 }
 

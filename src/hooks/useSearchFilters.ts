@@ -11,11 +11,12 @@ type Options<T> = {
 };
 
 export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, extractYear, extractTags }: Options<T>) {
-  const [{ q, year, tags }, setFilters] = useQueryStates({
+  const [{ q, year: selectedYears, tags }, setFilters] = useQueryStates({
     q: parseAsString.withDefault(''),
-    year: parseAsString.withDefault(''),
+    year: parseAsArrayOf(parseAsString).withDefault([]),
     tags: parseAsArrayOf(parseAsString).withDefault([]),
   });
+  const yearSet = useMemo(() => new Set(selectedYears || []), [selectedYears]);
   const tagSet = useMemo(() => new Set(tags || []), [tags]);
   const [fuse, setFuse] = useState<Fuse<T> | null>(null);
   const [fuseLoading, setFuseLoading] = useState(false);
@@ -49,10 +50,15 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     if (q && fuse) {
       result = fuse.search(q).map((r) => r.item);
     }
-    if (year) result = result.filter((item) => (extractYear(item) || '').startsWith(year));
+    if (yearSet.size) {
+      result = result.filter((item) => {
+        const itemYear = (extractYear(item) || '').slice(0, 4);
+        return yearSet.has(itemYear);
+      });
+    }
     if (tagSet.size) result = result.filter((item) => extractTags(item).some((tag) => tagSet.has(tag)));
     return result;
-  }, [items, fuse, q, year, tagSet, extractYear, extractTags]);
+  }, [items, fuse, q, yearSet, tagSet, extractYear, extractTags]);
 
   const clearFilters = () => {
     setFilters({ q: null, year: null, tags: null });
@@ -63,9 +69,9 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     setQ: (value: string) => {
       void setFilters({ q: value || null });
     },
-    year,
-    setYear: (value: string) => {
-      void setFilters({ year: value || null });
+    yearSet,
+    setYearSet: (next: Set<string>) => {
+      void setFilters({ year: next.size ? Array.from(next) : null });
     },
     tagSet,
     setTagSet: (next: Set<string>) => {

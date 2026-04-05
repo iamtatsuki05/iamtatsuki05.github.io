@@ -13,7 +13,7 @@ const VIEWPORT_MARGIN = 8;
 export function FilterDisclosure({ label, count, className, panelClassName, children }: Props) {
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [offsetX, setOffsetX] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const closeSiblingDisclosures = useCallback(() => {
     const current = detailsRef.current;
@@ -27,18 +27,25 @@ export function FilterDisclosure({ label, count, className, panelClassName, chil
   }, []);
 
   const adjustPanelPosition = useCallback(() => {
+    const details = detailsRef.current;
     const panel = panelRef.current;
-    if (!panel) return;
+    if (!details || !panel) return;
+
+    const boundary =
+      details.closest<HTMLElement>('[data-filter-bar-root="true"]') ?? details.parentElement ?? document.body;
+    const boundaryRect = boundary.getBoundingClientRect();
+    const minLeft = Math.max(boundaryRect.left + VIEWPORT_MARGIN, VIEWPORT_MARGIN);
+    const maxRight = Math.min(boundaryRect.right - VIEWPORT_MARGIN, window.innerWidth - VIEWPORT_MARGIN);
+    const maxWidth = Math.max(maxRight - minLeft, 0);
+
+    panel.style.setProperty('--filter-disclosure-max-width', `${maxWidth}px`);
 
     const rect = panel.getBoundingClientRect();
-    const minLeft = VIEWPORT_MARGIN;
-    const maxRight = window.innerWidth - VIEWPORT_MARGIN;
     let nextOffset = 0;
 
     if (rect.left < minLeft) nextOffset += minLeft - rect.left;
     if (rect.right > maxRight) nextOffset += maxRight - rect.right;
-
-    setOffsetX(nextOffset);
+    panel.style.setProperty('--filter-disclosure-offset-x', `${nextOffset}px`);
   }, []);
 
   useEffect(() => {
@@ -54,37 +61,39 @@ export function FilterDisclosure({ label, count, className, panelClassName, chil
   }, [adjustPanelPosition]);
 
   const handleToggle = () => {
-    if (!detailsRef.current?.open) {
-      setOffsetX(0);
+    const open = Boolean(detailsRef.current?.open);
+    setIsOpen(open);
+
+    if (!open) {
+      panelRef.current?.style.setProperty('--filter-disclosure-offset-x', '0px');
+      panelRef.current?.style.removeProperty('--filter-disclosure-max-width');
       return;
     }
 
     closeSiblingDisclosures();
-    window.requestAnimationFrame(() => {
-      adjustPanelPosition();
-    });
+    adjustPanelPosition();
   };
 
   return (
     <details
       ref={detailsRef}
       data-filter-disclosure="true"
+      data-state={isOpen ? 'open' : 'closed'}
       onToggle={handleToggle}
-      className={`relative ${className || ''}`}
+      className={`filter-disclosure relative ${className || ''}`}
     >
       <summary
-        className="relative z-30 inline-flex cursor-pointer list-none items-center gap-1 rounded-sm border border-gray-300/80 px-2 py-1 text-sm opacity-80 hover:opacity-100 dark:border-gray-700 [&::-webkit-details-marker]:hidden"
+        className="filter-disclosure__summary relative z-30 inline-flex cursor-pointer list-none items-center gap-1 rounded-full px-2.5 py-1.5 text-sm [&::-webkit-details-marker]:hidden"
       >
         <span>{label}</span>
-        {typeof count === 'number' ? <span className="tabular-nums opacity-70">({count})</span> : null}
-        <span aria-hidden={true} className="text-xs leading-none">
+        {typeof count === 'number' ? <span className="filter-disclosure__count tabular-nums">({count})</span> : null}
+        <span aria-hidden={true} className="filter-disclosure__chevron text-xs leading-none">
           ▾
         </span>
       </summary>
       <div
         ref={panelRef}
-        style={offsetX ? { transform: `translateX(${offsetX}px)` } : undefined}
-        className={`absolute left-0 z-20 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-900 ${panelClassName || ''}`}
+        className={`filter-disclosure__panel absolute left-0 z-20 mt-2 rounded-2xl p-2 ${panelClassName || ''}`}
       >
         {children}
       </div>

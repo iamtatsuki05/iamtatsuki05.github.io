@@ -32,8 +32,8 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   const {
     q,
     setQ,
-    year,
-    setYear,
+    yearSet,
+    setYearSet,
     tagSet,
     setTagSet,
     years: allYears,
@@ -82,13 +82,20 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           clearFilters();
         }}
         clearLabel={t.clear}
-        hasActiveFilters={Boolean(year || tagSet.size)}
+        hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
       >
         <YearSelect
           years={allYears}
-          value={year}
-          onChange={setYear}
+          selected={yearSet}
+          onToggle={(year) => {
+            const next = new Set(yearSet);
+            if (next.has(year)) next.delete(year);
+            else next.add(year);
+            setYearSet(next);
+          }}
+          onClear={() => setYearSet(new Set())}
           label={t.year}
+          allLabel={t.all}
         />
 
         <TagSelector

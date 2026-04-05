@@ -6,7 +6,7 @@ import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
 const sample = Array.from({ length: 12 }).map((_, i) => ({
   slug: `post-${i}`,
   title: `Sample ${i}`,
-  date: `2025-01-${(i + 1).toString().padStart(2, '0')}`,
+  date: `${i % 2 === 0 ? '2025' : '2024'}-01-${(i + 1).toString().padStart(2, '0')}`,
   tags: i % 2 === 0 ? ['a'] : ['b'],
   summary: 'hello',
   headerImage: 'https://example.com/sample.png',
@@ -45,6 +45,24 @@ describe('BlogsClient', () => {
     });
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
     expect(queryByText('Sample 1')).toBeNull();
+  });
+  it('supports selecting multiple years from the year filter', async () => {
+    const { render, screen } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+    const { getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    const yearSummary = screen.getByText('Year').closest('summary');
+    if (!yearSummary) throw new Error('Year filter summary is missing');
+
+    await user.click(yearSummary);
+    await user.click(screen.getByRole('button', { name: '2025' }));
+    await user.click(screen.getByRole('button', { name: '2024' }));
+
+    expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
+    expect(getAllByText('Sample 1').length).toBeGreaterThan(0);
   });
   it('hides preview images on mobile to reduce initial downloads', async () => {
     const { render } = await import('@testing-library/react');

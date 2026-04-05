@@ -1,4 +1,4 @@
-export type FilterTextKey = 'search' | 'latest' | 'allPosts' | 'noResult' | 'year' | 'tags' | 'clear' | 'types';
+export type FilterTextKey = 'search' | 'latest' | 'allPosts' | 'noResult' | 'year' | 'tags' | 'clear' | 'types' | 'all';
 
 export type FilterTextDict = Record<FilterTextKey, string>;
 
@@ -11,6 +11,7 @@ export const filterTextJa: FilterTextDict = {
   tags: 'タグ',
   clear: 'クリア',
   types: '種類',
+  all: 'すべて',
 };
 
 export const filterTextEn: FilterTextDict = {
@@ -22,6 +23,7 @@ export const filterTextEn: FilterTextDict = {
   tags: 'Tags',
   clear: 'Clear',
   types: 'Types',
+  all: 'All',
 };
 
 export function resolveFilterText(locale: 'ja' | 'en'): FilterTextDict {

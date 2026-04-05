@@ -43,8 +43,8 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
   const {
     q,
     setQ,
-    year,
-    setYear,
+    yearSet,
+    setYearSet,
     tagSet,
     setTagSet,
     years,
@@ -118,13 +118,20 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           void setSelectedTypes(null);
         }}
         clearLabel={t.clear}
-        hasActiveFilters={Boolean(year || tagSet.size || selectedTypeSet.size !== availableTypes.length)}
+        hasActiveFilters={Boolean(yearSet.size || tagSet.size || selectedTypeSet.size !== availableTypes.length)}
       >
         <YearSelect
           years={years}
-          value={year}
-          onChange={setYear}
+          selected={yearSet}
+          onToggle={(year) => {
+            const next = new Set(yearSet);
+            if (next.has(year)) next.delete(year);
+            else next.add(year);
+            setYearSet(next);
+          }}
+          onClear={() => setYearSet(new Set())}
           label={t.year}
+          allLabel={t.all}
         />
 
         <FilterDisclosure label={t.types} count={availableTypes.length} className="ml-2" panelClassName="max-h-56 overflow-y-auto">

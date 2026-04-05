@@ -24,7 +24,7 @@ export function FilterBar({
   const showClear = Boolean(hasActiveFilters) || Boolean(query);
 
   return (
-    <div className={`flex flex-wrap items-center gap-3 ${className || ''}`}>
+    <div data-filter-bar-root="true" className={`flex flex-wrap items-center gap-3 ${className || ''}`}>
       <input
         aria-label={placeholder}
         value={query}

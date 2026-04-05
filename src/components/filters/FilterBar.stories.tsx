@@ -20,7 +20,7 @@ const meta = {
 
 function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
   const [query, setQuery] = useState('');
-  const [year, setYear] = useState('');
+  const [yearSet, setYearSet] = useState<Set<string>>(new Set());
   const [tagSet, setTagSet] = useState<Set<string>>(new Set());
   const tags = ['nlp', 'ml', 'dev'];
   const years = ['2025', '2024', '2023'];
@@ -32,12 +32,24 @@ function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
       onQueryChange={setQuery}
       onClear={() => {
         setQuery('');
-        setYear('');
+        setYearSet(new Set());
         setTagSet(new Set());
       }}
-      hasActiveFilters={Boolean(year || tagSet.size)}
+      hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
     >
-      <YearSelect years={years} value={year} onChange={setYear} label="Year" />
+      <YearSelect
+        years={years}
+        selected={yearSet}
+        onToggle={(year) => {
+          const next = new Set(yearSet);
+          if (next.has(year)) next.delete(year);
+          else next.add(year);
+          setYearSet(next);
+        }}
+        onClear={() => setYearSet(new Set())}
+        label="Year"
+        allLabel="All"
+      />
       <TagSelector
         tags={tags}
         selected={tagSet}

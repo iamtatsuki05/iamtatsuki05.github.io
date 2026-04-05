@@ -50,7 +50,10 @@ describe('PublicationsClient', () => {
     });
 
     const user = userEvent.default.setup();
-    const typeSummary = container.querySelectorAll('summary')[0];
+    const typeDisclosure = Array.from(container.querySelectorAll('details[data-filter-disclosure="true"]')).find((node) =>
+      node.textContent?.includes('Types'),
+    );
+    const typeSummary = typeDisclosure?.querySelector('summary');
     if (!typeSummary) throw new Error('Type filter summary is missing');
     await user.click(typeSummary);
     const typeDetails = typeSummary.closest('details');
@@ -70,18 +73,26 @@ describe('PublicationsClient', () => {
       wrapper: Wrapper,
     });
 
-    const summaries = container.querySelectorAll('summary');
-    const disclosures = container.querySelectorAll('details[data-filter-disclosure="true"]');
-    if (summaries.length < 2 || disclosures.length < 2) throw new Error('Filter disclosures are missing');
+    const typeDisclosure = Array.from(container.querySelectorAll('details[data-filter-disclosure="true"]')).find((node) =>
+      node.textContent?.includes('Types'),
+    );
+    const tagDisclosure = Array.from(container.querySelectorAll('details[data-filter-disclosure="true"]')).find((node) =>
+      node.textContent?.includes('Tags'),
+    );
+    const typeSummary = typeDisclosure?.querySelector('summary');
+    const tagSummary = tagDisclosure?.querySelector('summary');
+    if (!typeSummary || !tagSummary || !typeDisclosure || !tagDisclosure) {
+      throw new Error('Filter disclosures are missing');
+    }
 
     const user = userEvent.default.setup();
-    await user.click(summaries[0]);
-    expect(disclosures[0]).toHaveAttribute('open');
-    expect(disclosures[1]).not.toHaveAttribute('open');
+    await user.click(typeSummary);
+    expect(typeDisclosure).toHaveAttribute('open');
+    expect(tagDisclosure).not.toHaveAttribute('open');
 
-    await user.click(summaries[1]);
-    expect(disclosures[1]).toHaveAttribute('open');
-    expect(disclosures[0]).not.toHaveAttribute('open');
+    await user.click(tagSummary);
+    expect(tagDisclosure).toHaveAttribute('open');
+    expect(typeDisclosure).not.toHaveAttribute('open');
   });
 
   it('hides preview images on mobile to reduce initial downloads', async () => {
