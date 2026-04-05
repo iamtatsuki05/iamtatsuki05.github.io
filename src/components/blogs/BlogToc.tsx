@@ -13,6 +13,7 @@ type Props = {
 };
 
 const ACTIVE_OFFSET = 136;
+const DESKTOP_TOC_ENTER_DELAY_MS = 36;
 const FLOATING_TOC_ENTER_DELAY_MS = 16;
 const FLOATING_TOC_ANIMATION_MS = 280;
 
@@ -48,10 +49,12 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [isDesktopVisible, setIsDesktopVisible] = useState(false);
   const [isFloatingOpen, setIsFloatingOpen] = useState(false);
   const [isFloatingRendered, setIsFloatingRendered] = useState(false);
   const [isFloatingVisible, setIsFloatingVisible] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const hasAnimatedDesktopRef = useRef(false);
   const desktopListRef = useRef<HTMLUListElement>(null);
   const floatingListRef = useRef<HTMLUListElement>(null);
 
@@ -147,6 +150,26 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
   }, [activeId, isFloatingOpen]);
 
   useEffect(() => {
+    if (!items.length) {
+      setIsDesktopVisible(false);
+      return;
+    }
+
+    if (prefersReducedMotion || hasAnimatedDesktopRef.current) {
+      setIsDesktopVisible(true);
+      return;
+    }
+
+    setIsDesktopVisible(false);
+    const timer = window.setTimeout(() => {
+      hasAnimatedDesktopRef.current = true;
+      setIsDesktopVisible(true);
+    }, DESKTOP_TOC_ENTER_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [items.length, prefersReducedMotion]);
+
+  useEffect(() => {
     if (!isFloatingRendered) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsFloatingOpen(false);
@@ -197,6 +220,7 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
 
   const tocStyle = { '--toc-item-count': String(items.length) } as React.CSSProperties;
   const handleFloatingClose = () => setIsFloatingOpen(false);
+  const desktopState = isDesktopVisible ? 'open' : 'hidden';
   const floatingState = isFloatingVisible ? 'open' : 'closed';
   const text = tocText[locale];
 
@@ -204,9 +228,10 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
     <>
       <aside
         data-testid="blog-toc"
+        data-state={desktopState}
         style={tocStyle}
         className={clsx(
-          'hidden rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/60 p-4 text-base text-gray-800 shadow-lg shadow-purple-100/30 backdrop-blur-sm min-[1440px]:block min-[1440px]:self-start',
+          'blog-toc-desktop hidden rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/60 p-4 text-base text-gray-800 shadow-lg shadow-purple-100/30 backdrop-blur-sm min-[1440px]:block min-[1440px]:self-start',
           'dark:border-purple-500/35 dark:from-[#130d24] dark:to-[#0f172a]/95 dark:text-gray-100 dark:shadow-purple-900/40',
           'sticky top-24 max-h-[min(calc(100vh-7rem),calc(7.5rem+var(--toc-item-count)*2.5rem))] overflow-y-auto overscroll-contain',
           className,
@@ -226,14 +251,19 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
           />
         </div>
         <ul ref={desktopListRef} className="space-y-1.5">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <li key={item.id} className={item.level === 3 ? 'pl-3 text-sm' : ''}>
               <a
                 data-toc-id={item.id}
                 aria-current={activeId === item.id ? 'true' : undefined}
                 href={`#${item.id}`}
+                style={
+                  !prefersReducedMotion && isDesktopVisible
+                    ? { transitionDelay: `${100 + index * 28}ms` }
+                    : undefined
+                }
                 className={clsx(
-                  'flex items-center gap-2 truncate rounded-lg border border-transparent px-2 py-1.5 underline-offset-2 transition motion-reduce:transition-none',
+                  'blog-toc-desktop__link flex items-center gap-2 truncate rounded-lg border border-transparent px-2 py-1.5 underline-offset-2 transition motion-reduce:transition-none',
                   item.level === 3 ? 'text-sm' : 'text-base',
                   activeId === item.id
                     ? 'bg-purple-100/80 text-purple-900 shadow-sm shadow-purple-200/50 dark:border-purple-500/40 dark:bg-[#21163a] dark:text-purple-100'

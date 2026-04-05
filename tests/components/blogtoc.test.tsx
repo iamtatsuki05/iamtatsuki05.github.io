@@ -88,6 +88,20 @@ describe('BlogToc', () => {
     expect(within(toc).getByTestId('blog-toc-progress')).toHaveClass('motion-reduce:transition-none');
   });
 
+  it('reveals desktop toc after the initial enter delay', () => {
+    vi.useFakeTimers();
+    render(<BlogToc containerId="blog-article" />);
+
+    const toc = screen.getByTestId('blog-toc');
+    expect(toc).toHaveAttribute('data-state', 'hidden');
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expect(toc).toHaveAttribute('data-state', 'open');
+  });
+
   it('updates active heading and reading progress while scrolling', async () => {
     render(<BlogToc containerId="blog-article" />);
     const toc = await screen.findByTestId('blog-toc');
