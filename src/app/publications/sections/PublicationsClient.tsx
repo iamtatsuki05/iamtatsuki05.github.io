@@ -7,7 +7,7 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterDisclosure } from '@/components/filters/FilterDisclosure';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { resolveFilterText } from '@/components/filters/filterTexts';
+import { formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
@@ -53,6 +53,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     allTags,
     filtered,
     clearFilters,
+    fuseLoading,
   } = useSearchFilters(items, {
     fuseKeys: ['title', 'tags', 'venue', 'publisher'],
     extractYear: (i) => i.publishedAt,
@@ -95,6 +96,68 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         media: '📰 Media',
         app: '📱 Apps',
       };
+  const resultLabel = useMemo(
+    () => formatFilterResultCount(locale, typeFiltered.length, items.length),
+    [items.length, locale, typeFiltered.length],
+  );
+  const activeFilters = useMemo(() => {
+    const filters = [];
+
+    if (q) {
+      const label = formatSearchChipLabel(locale, q);
+      filters.push({
+        key: `q:${q}`,
+        label,
+        ariaLabel: formatRemoveFilterAriaLabel(locale, label),
+        onRemove: () => setQ(''),
+      });
+    }
+
+    for (const year of Array.from(yearSet).sort((a, b) => (a < b ? 1 : -1))) {
+      filters.push({
+        key: `year:${year}`,
+        label: year,
+        ariaLabel: formatRemoveFilterAriaLabel(locale, year),
+        onRemove: () => setYearSet((prev) => {
+          prev.delete(year);
+          return prev;
+        }),
+      });
+    }
+
+    for (const tag of Array.from(tagSet).sort()) {
+      const label = `#${tag}`;
+      filters.push({
+        key: `tag:${tag}`,
+        label,
+        ariaLabel: formatRemoveFilterAriaLabel(locale, label),
+        onRemove: () => setTagSet((prev) => {
+          prev.delete(tag);
+          return prev;
+        }),
+      });
+    }
+
+    if (selectedTypeSet.size !== availableTypes.length) {
+      for (const type of availableTypes.filter((candidate) => selectedTypeSet.has(candidate))) {
+        const label = typeLabels[type];
+        filters.push({
+          key: `type:${type}`,
+          label,
+          ariaLabel: formatRemoveFilterAriaLabel(locale, label),
+          onRemove: () =>
+            void setSelectedTypes((prev) => {
+              const source = prev ?? availableTypes;
+              const next = new Set(source.filter((value): value is Item['type'] => availableTypeSet.has(value)));
+              next.delete(type);
+              return Array.from(next);
+            }),
+        });
+      }
+    }
+
+    return filters;
+  }, [availableTypeSet, availableTypes, items.length, locale, q, selectedTypeSet, setQ, setSelectedTypes, setTagSet, setYearSet, tagSet, typeLabels, yearSet]);
 
   const openInNewTab = (url?: string) => {
     if (!url || typeof window === 'undefined') return;
@@ -121,16 +184,20 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         }}
         clearLabel={t.clear}
         hasActiveFilters={Boolean(yearSet.size || tagSet.size || selectedTypeSet.size !== availableTypes.length)}
+        isSearchLoading={fuseLoading}
+        searchLoadingLabel={t.searching}
+        resultLabel={resultLabel}
+        activeFilters={activeFilters}
       >
         <YearSelect
           years={years}
           selected={yearSet}
-          onToggle={(year) => {
-            const next = new Set(yearSet);
-            if (next.has(year)) next.delete(year);
-            else next.add(year);
-            setYearSet(next);
-          }}
+          onToggle={(year) =>
+            setYearSet((prev) => {
+              if (prev.has(year)) prev.delete(year);
+              else prev.add(year);
+              return prev;
+            })}
           onClear={() => setYearSet(new Set())}
           label={t.year}
           allLabel={t.all}
@@ -162,12 +229,12 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         <TagSelector
           tags={allTags}
           selected={tagSet}
-          onToggle={(tag) => {
-            const next = new Set(tagSet);
-            if (next.has(tag)) next.delete(tag);
-            else next.add(tag);
-            setTagSet(next);
-          }}
+          onToggle={(tag) =>
+            setTagSet((prev) => {
+              if (prev.has(tag)) prev.delete(tag);
+              else prev.add(tag);
+              return prev;
+            })}
           label={t.tags}
           className="ml-2"
         />

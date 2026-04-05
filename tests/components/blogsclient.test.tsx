@@ -27,17 +27,28 @@ describe('BlogsClient', () => {
     expect(getAllByText('🗂 All Posts').length).toBeGreaterThan(0);
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
   });
-  it('filters by search query', async () => {
+  it('filters by search query and shows result summary with removable chips', async () => {
     const { render } = await import('@testing-library/react');
     const userEvent = await import('@testing-library/user-event');
-    const { getByPlaceholderText, findAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+    const { waitFor } = await import('@testing-library/react');
+    const { getByPlaceholderText, getByTestId, getByRole, queryByRole, queryByText } = render(<BlogsClient posts={sample} locale="en" />, {
       wrapper: Wrapper,
     });
     const input = getByPlaceholderText('Search...') as HTMLInputElement;
     const user = userEvent.default.setup();
-    await user.type(input, 'Sample 11');
-    const results = await findAllByText('Sample 11');
-    expect(results.length).toBeGreaterThan(0);
+    await user.type(input, 'zzzz');
+    await waitFor(() => {
+      expect(getByTestId('filter-result-summary')).toHaveTextContent('0 of 12 items');
+      expect(queryByText('Sample 0')).toBeNull();
+    });
+
+    const chip = getByRole('button', { name: 'Remove Search: zzzz' });
+    expect(chip).toHaveTextContent('Search: zzzz');
+
+    await user.click(chip);
+    expect(input).toHaveValue('');
+    expect(getByTestId('filter-result-summary')).toHaveTextContent('12 items');
+    expect(queryByRole('button', { name: 'Remove Search: zzzz' })).toBeNull();
   });
   it('applies tag filter from query params', async () => {
     const { render } = await import('@testing-library/react');
@@ -50,7 +61,7 @@ describe('BlogsClient', () => {
   it('supports selecting multiple years from the year filter', async () => {
     const { render, screen } = await import('@testing-library/react');
     const userEvent = await import('@testing-library/user-event');
-    const { getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+    render(<BlogsClient posts={sample} locale="en" />, {
       wrapper: Wrapper,
     });
 
@@ -59,11 +70,14 @@ describe('BlogsClient', () => {
     if (!yearSummary) throw new Error('Year filter summary is missing');
 
     await user.click(yearSummary);
-    await user.click(screen.getByRole('button', { name: '2025' }));
-    await user.click(screen.getByRole('button', { name: '2024' }));
+    const year2025 = screen.getByRole('button', { name: '2025' });
+    const year2024 = screen.getByRole('button', { name: '2024' });
+    await user.click(year2025);
+    await user.click(year2024);
 
-    expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
-    expect(getAllByText('Sample 1').length).toBeGreaterThan(0);
+    expect(year2025).toHaveAttribute('aria-pressed', 'true');
+    expect(year2024).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('12 items');
   });
   it('hides preview images on mobile to reduce initial downloads', async () => {
     const { render } = await import('@testing-library/react');

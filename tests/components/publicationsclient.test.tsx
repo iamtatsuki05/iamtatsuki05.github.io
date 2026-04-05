@@ -107,4 +107,34 @@ describe('PublicationsClient', () => {
       expect(el.className).toContain('sm:block');
     });
   });
+
+  it('shows result summary and removable chips for active filters', async () => {
+    const { render, screen, within } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('2 items');
+
+    const user = userEvent.default.setup();
+    const tagDisclosure = Array.from(document.querySelectorAll('details[data-filter-disclosure="true"]')).find((node) =>
+      node.textContent?.includes('Tags'),
+    );
+    const tagSummary = tagDisclosure?.querySelector('summary');
+    if (!tagSummary || !tagDisclosure) throw new Error('Tag filter is missing');
+
+    await user.click(tagSummary);
+    const tagFilter = within(tagDisclosure);
+    await user.click(tagFilter.getByRole('button', { name: 'Filter by llm tag' }));
+
+    expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('1 of 2 items');
+
+    const chip = screen.getByRole('button', { name: 'Remove #llm' });
+    expect(chip).toHaveTextContent('#llm');
+
+    await user.click(chip);
+    expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('2 items');
+  });
 });

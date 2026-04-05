@@ -7,7 +7,7 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { resolveFilterText } from '@/components/filters/filterTexts';
+import { formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
@@ -42,6 +42,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
     allTags,
     filtered,
     clearFilters,
+    fuseLoading,
   } = useSearchFilters(posts, {
     fuseKeys: ['title', 'summary', 'tags'],
     extractYear: (p) => p.date,
@@ -73,6 +74,46 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   const items = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
 
   const t = useMemo(() => resolveFilterText(locale), [locale]);
+  const resultLabel = useMemo(() => formatFilterResultCount(locale, filtered.length, posts.length), [filtered.length, locale, posts.length]);
+  const activeFilters = useMemo(() => {
+    const filters = [];
+
+    if (q) {
+      filters.push({
+        key: `q:${q}`,
+        label: formatSearchChipLabel(locale, q),
+        ariaLabel: formatRemoveFilterAriaLabel(locale, formatSearchChipLabel(locale, q)),
+        onRemove: () => setQ(''),
+      });
+    }
+
+    for (const year of Array.from(yearSet).sort((a, b) => (a < b ? 1 : -1))) {
+      filters.push({
+        key: `year:${year}`,
+        label: year,
+        ariaLabel: formatRemoveFilterAriaLabel(locale, year),
+        onRemove: () => setYearSet((prev) => {
+          prev.delete(year);
+          return prev;
+        }),
+      });
+    }
+
+    for (const tag of Array.from(tagSet).sort()) {
+      const label = `#${tag}`;
+      filters.push({
+        key: `tag:${tag}`,
+        label,
+        ariaLabel: formatRemoveFilterAriaLabel(locale, label),
+        onRemove: () => setTagSet((prev) => {
+          prev.delete(tag);
+          return prev;
+        }),
+      });
+    }
+
+    return filters;
+  }, [locale, q, setQ, setTagSet, setYearSet, tagSet, yearSet]);
 
   return (
     <div className="space-y-6">
@@ -85,16 +126,20 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         }}
         clearLabel={t.clear}
         hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
+        isSearchLoading={fuseLoading}
+        searchLoadingLabel={t.searching}
+        resultLabel={resultLabel}
+        activeFilters={activeFilters}
       >
         <YearSelect
           years={allYears}
           selected={yearSet}
-          onToggle={(year) => {
-            const next = new Set(yearSet);
-            if (next.has(year)) next.delete(year);
-            else next.add(year);
-            setYearSet(next);
-          }}
+          onToggle={(year) =>
+            setYearSet((prev) => {
+              if (prev.has(year)) prev.delete(year);
+              else prev.add(year);
+              return prev;
+            })}
           onClear={() => setYearSet(new Set())}
           label={t.year}
           allLabel={t.all}
@@ -103,12 +148,12 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         <TagSelector
           tags={allTags}
           selected={tagSet}
-          onToggle={(tag) => {
-            const next = new Set(tagSet);
-            if (next.has(tag)) next.delete(tag);
-            else next.add(tag);
-            setTagSet(next);
-          }}
+          onToggle={(tag) =>
+            setTagSet((prev) => {
+              if (prev.has(tag)) prev.delete(tag);
+              else prev.add(tag);
+              return prev;
+            })}
           label={t.tags}
           className="ml-2"
         />
@@ -161,7 +206,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
       <SectionShell tone="lilac">
         <SectionHeader title={t.allPosts} tone="lilac" />
-        {items.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="opacity-70">{t.noResult}</p>
         ) : (
           <ul className="content-reveal-list space-y-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-all-list">

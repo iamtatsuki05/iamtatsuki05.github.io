@@ -340,6 +340,24 @@ for (const { label, use } of viewports) {
     });
 
     if (label === 'desktop') {
+      test('shows removable active filter chips when narrowing publications', async ({ page }) => {
+        const tagFilter = page.locator('details').filter({ hasText: 'Tags' }).first();
+        await expect(tagFilter).toContainText('Tags');
+
+        await tagFilter.locator('summary').click();
+        const firstTagButton = tagFilter.locator('button').first();
+        const chipLabel = ((await firstTagButton.textContent()) || '').trim();
+        expect(chipLabel.length).toBeGreaterThan(0);
+
+        await firstTagButton.click();
+        await expect(page.getByTestId('filter-result-summary')).toBeVisible();
+
+        const chip = page.getByTestId('filter-active-chip').filter({ hasText: chipLabel }).first();
+        await expect(chip).toBeVisible();
+        await chip.click();
+        await expect(chip).toHaveCount(0);
+      });
+
       test('supports selecting multiple years in the publication filter', async ({ page }) => {
         const yearFilter = page.locator('details').filter({ hasText: 'Year' }).first();
         await expect(yearFilter).toContainText('Year');

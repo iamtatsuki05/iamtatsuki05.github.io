@@ -36,6 +36,21 @@ function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
         setTagSet(new Set());
       }}
       hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
+      searchLoadingLabel="Searching..."
+      resultLabel={query || yearSet.size || tagSet.size ? '3 of 12 items' : '12 items'}
+      activeFilters={[
+        ...(query ? [{ key: 'query', label: `Search: ${query}`, onRemove: () => setQuery('') }] : []),
+        ...Array.from(yearSet).map((year) => ({ key: `year:${year}`, label: year, onRemove: () => {
+          const next = new Set(yearSet);
+          next.delete(year);
+          setYearSet(next);
+        } })),
+        ...Array.from(tagSet).map((tag) => ({ key: `tag:${tag}`, label: `#${tag}`, onRemove: () => {
+          const next = new Set(tagSet);
+          next.delete(tag);
+          setTagSet(next);
+        } })),
+      ]}
     >
       <YearSelect
         years={years}
