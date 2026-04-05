@@ -120,13 +120,13 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
           {latest.map((p, index) => (
             <li
               key={p.slug}
-              className="content-reveal-card card overflow-hidden"
+              className="content-reveal-card card blog-linked-card overflow-hidden"
               data-testid="blog-latest-card"
               style={areCardsVisible ? { transitionDelay: `${100 + index * 34}ms` } : undefined}
             >
               {p.headerImage ? (
                 <div
-                  className="relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
+                  className="blog-linked-card__media relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
                   data-testid="blog-image"
                 >
                   <Image
@@ -142,7 +142,10 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
               ) : null}
               <div className="p-3">
                 <h3 className="font-medium">
-                  <Link href={`/blogs/${p.slug}/`} prefetch={true} className="underline-offset-2 hover:underline">
+                  <Link
+                    href={`/blogs/${p.slug}/`}
+                    className="blog-linked-card__title-link underline-offset-2 hover:underline"
+                  >
                     {p.title}
                   </Link>
                 </h3>
@@ -165,13 +168,13 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
             {items.map((p, index) => (
               <li
                 key={p.slug}
-                className="content-reveal-card card p-3 gap-3 items-start sm:flex"
+                className="content-reveal-card card blog-linked-card p-3 gap-3 items-start sm:flex"
                 data-testid="blog-card"
                 style={areCardsVisible ? { transitionDelay: `${140 + index * 22}ms` } : undefined}
               >
                 {p.headerImage ? (
                   <div
-                    className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
+                    className="blog-linked-card__media relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
                     data-testid="blog-image"
                   >
                     <Image
@@ -186,7 +189,10 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                 ) : null}
                 <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                   <h3 className="text-base font-semibold">
-                    <Link href={`/blogs/${p.slug}/`} prefetch={true} className="underline-offset-2 hover:underline">
+                    <Link
+                      href={`/blogs/${p.slug}/`}
+                      className="blog-linked-card__title-link underline-offset-2 hover:underline"
+                    >
                       {p.title}
                     </Link>
                   </h3>

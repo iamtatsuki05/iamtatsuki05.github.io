@@ -40,6 +40,29 @@ for (const { label, use } of viewports) {
     });
 
     if (label === 'desktop') {
+      test('reacts across the whole latest card when hovering the title link', async ({ page }) => {
+        const latestSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '✨ 最新' }) })
+          .first();
+
+        const latestCard = latestSection.locator('[data-testid="blog-latest-card"]').first();
+        const titleLink = latestCard.locator('a[href*="/blogs/"]').first();
+        const mediaImage = latestCard.locator('.blog-linked-card__media img').first();
+
+        await expect(latestCard).toBeVisible();
+        await expect(titleLink).toBeVisible();
+        await expect(mediaImage).toBeVisible();
+        await page.waitForTimeout(450);
+
+        const beforeTransform = await mediaImage.evaluate((element) => getComputedStyle(element).transform);
+        await titleLink.hover();
+
+        await expect
+          .poll(() => mediaImage.evaluate((element) => getComputedStyle(element).transform))
+          .not.toBe(beforeTransform);
+      });
+
       test('navigates to detail when clicking a blog card', async ({ page }) => {
         const allPostsSection = page
           .locator('section')

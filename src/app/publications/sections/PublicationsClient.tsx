@@ -197,7 +197,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                   <li
                     key={i.slug}
                     data-testid="publication-card"
-                    className={`content-reveal-card card p-3 gap-3 items-start sm:flex ${primaryLink ? 'cursor-pointer' : ''}`}
+                    className={`content-reveal-card card p-3 gap-3 items-start sm:flex ${primaryLink ? 'pressable-card cursor-pointer' : ''}`}
                     style={areCardsVisible ? { transitionDelay: `${100 + index * 24}ms` } : undefined}
                     {...clickableProps}
                   >

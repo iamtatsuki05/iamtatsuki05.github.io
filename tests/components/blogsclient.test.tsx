@@ -97,4 +97,25 @@ describe('BlogsClient', () => {
     expect(screen.getByTestId('blog-all-list')).toHaveAttribute('data-state', 'open');
     vi.useRealTimers();
   });
+
+  it('adds linked-card classes so title hover can affect the whole card', async () => {
+    const { render } = await import('@testing-library/react');
+
+    render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const latestCard = screen.getAllByTestId('blog-latest-card')[0];
+    const latestTitleLink = latestCard.querySelector('a[href*="/blogs/"]');
+    const latestMedia = latestCard.querySelector('.blog-linked-card__media');
+
+    expect(latestCard).toHaveClass('blog-linked-card');
+    expect(latestTitleLink).toHaveClass('blog-linked-card__title-link');
+    expect(latestMedia).toBeTruthy();
+
+    const allCard = screen.getAllByTestId('blog-card')[0];
+    const allTitleLink = allCard.querySelector('a[href*="/blogs/"]');
+    expect(allCard).toHaveClass('blog-linked-card');
+    expect(allTitleLink).toHaveClass('blog-linked-card__title-link');
+  });
 });
