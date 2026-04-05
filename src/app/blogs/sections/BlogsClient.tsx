@@ -49,6 +49,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
     fuseKeys: ['title', 'summary', 'tags'],
     extractYear: (p) => p.date,
     extractTags: (p) => p.tags || [],
+    extractSortValue: (p) => p.date,
   });
 
   useEffect(() => {

@@ -9,6 +9,7 @@ type Options<T> = {
   threshold?: number;
   extractYear: (item: T) => string | undefined;
   extractTags: (item: T) => string[];
+  extractSortValue?: (item: T) => string | number | undefined;
 };
 
 type SetUpdater<T> = T | ((prev: T) => T);
@@ -25,7 +26,34 @@ function readSearchField(item: unknown, key: string): string[] {
   return [];
 }
 
-export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, extractYear, extractTags }: Options<T>) {
+function compareSearchSortValues<T>(
+  left: T,
+  right: T,
+  extractSortValue?: (item: T) => string | number | undefined,
+) {
+  if (!extractSortValue) return 0;
+
+  const leftValue = extractSortValue(left);
+  const rightValue = extractSortValue(right);
+
+  if (leftValue == null && rightValue == null) return 0;
+  if (leftValue == null) return 1;
+  if (rightValue == null) return -1;
+
+  if (typeof leftValue === 'number' && typeof rightValue === 'number') {
+    return rightValue - leftValue;
+  }
+
+  const leftText = String(leftValue);
+  const rightText = String(rightValue);
+  if (leftText === rightText) return 0;
+  return leftText < rightText ? 1 : -1;
+}
+
+export function useSearchFilters<T>(
+  items: T[],
+  { fuseKeys, threshold = 0.35, extractYear, extractTags, extractSortValue }: Options<T>,
+) {
   const [{ q, year: selectedYears, tags }, setFilters] = useQueryStates({
     q: parseAsString.withDefault(''),
     year: parseAsArrayOf(parseAsString).withDefault([]),
@@ -84,7 +112,7 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     setFuseLoading(true);
     const pending = import('fuse.js')
       .then(({ default: FuseClass }) => {
-        setFuse(new FuseClass(items, { keys: fuseKeys, threshold }));
+        setFuse(new FuseClass(items, { keys: fuseKeys, threshold, includeScore: true }));
       })
       .finally(() => {
         fuseLoadPromiseRef.current = null;
@@ -142,7 +170,14 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     let result = items;
     if (localQ) {
       if (fuse) {
-        result = fuse.search(localQ).map((r) => r.item);
+        result = fuse
+          .search(localQ)
+          .sort((left, right) => {
+            const scoreDiff = (left.score ?? 1) - (right.score ?? 1);
+            if (scoreDiff !== 0) return scoreDiff;
+            return compareSearchSortValues(left.item, right.item, extractSortValue);
+          })
+          .map((entry) => entry.item);
       } else {
         const normalizedTokens = tokenizeSearchQuery(localQ);
 
@@ -155,6 +190,8 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
 
             return normalizedTokens.every((token) => haystack.includes(token));
           });
+
+          result = [...result].sort((left, right) => compareSearchSortValues(left, right, extractSortValue));
         }
       }
     }
@@ -166,7 +203,7 @@ export function useSearchFilters<T>(items: T[], { fuseKeys, threshold = 0.35, ex
     }
     if (tagSet.size) result = result.filter((item) => extractTags(item).some((tag) => tagSet.has(tag)));
     return result;
-  }, [items, fuse, localQ, yearSet, tagSet, extractYear, extractTags]);
+  }, [items, fuse, localQ, yearSet, tagSet, extractSortValue, extractYear, extractTags]);
 
   const clearFilters = () => {
     setFilters({ q: null, year: null, tags: null });

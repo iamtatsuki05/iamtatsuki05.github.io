@@ -67,6 +67,40 @@ describe('BlogsClient', () => {
       expect(screen.getAllByText('hello', { selector: 'mark.search-highlight' }).length).toBeGreaterThan(0);
     });
   });
+  it('prefers newer posts when search relevance ties', async () => {
+    const { render, screen, within, waitFor } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    const posts = [
+      {
+        slug: 'older',
+        title: 'Older post',
+        date: '2024-01-01',
+        tags: ['a'],
+        summary: 'common phrase',
+      },
+      {
+        slug: 'newer',
+        title: 'Newer post',
+        date: '2025-01-01',
+        tags: ['a'],
+        summary: 'common phrase',
+      },
+    ];
+
+    render(<BlogsClient posts={posts} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    await user.type(screen.getByRole('textbox', { name: 'Search...' }), 'common');
+
+    await waitFor(() => {
+      const cards = screen.getAllByTestId('blog-card');
+      expect(within(cards[0]).getByRole('link')).toHaveTextContent('Newer post');
+      expect(within(cards[1]).getByRole('link')).toHaveTextContent('Older post');
+    });
+  });
   it('applies tag filter from query params', async () => {
     const { render } = await import('@testing-library/react');
     const { getAllByText, queryByText } = render(<BlogsClient posts={sample} locale="en" />, {

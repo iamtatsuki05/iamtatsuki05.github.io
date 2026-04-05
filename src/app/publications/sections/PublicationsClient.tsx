@@ -60,6 +60,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     fuseKeys: ['title', 'tags', 'venue', 'publisher'],
     extractYear: (i) => i.publishedAt,
     extractTags: (i) => i.tags || [],
+    extractSortValue: (i) => i.publishedAt,
   });
 
   const selectedTypeSet = useMemo(() => {

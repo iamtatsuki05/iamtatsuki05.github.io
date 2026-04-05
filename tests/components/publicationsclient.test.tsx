@@ -176,4 +176,43 @@ describe('PublicationsClient', () => {
       expect(screen.getByText('Conf', { selector: 'mark.search-highlight' })).toBeInTheDocument();
     });
   });
+
+  it('prefers newer publications when search relevance ties', async () => {
+    const { render, screen, waitFor, within } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    const publicationItems = [
+      {
+        slug: 'older-paper',
+        title: 'Older paper',
+        type: 'paper' as const,
+        tags: ['llm'],
+        publishedAt: '2024-01-01',
+        venue: 'Conf',
+        links: [{ kind: 'pdf', url: 'https://example.com/older.pdf' }],
+      },
+      {
+        slug: 'newer-paper',
+        title: 'Newer paper',
+        type: 'paper' as const,
+        tags: ['llm'],
+        publishedAt: '2025-01-01',
+        venue: 'Conf',
+        links: [{ kind: 'pdf', url: 'https://example.com/newer.pdf' }],
+      },
+    ];
+
+    render(<PublicationsClient items={publicationItems} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    await user.type(screen.getByRole('textbox', { name: 'Search...' }), 'conf');
+
+    await waitFor(() => {
+      const cards = screen.getAllByTestId('publication-card');
+      expect(within(cards[0]).getByText('Newer paper')).toBeInTheDocument();
+      expect(within(cards[1]).getByText('Older paper')).toBeInTheDocument();
+    });
+  });
 });
