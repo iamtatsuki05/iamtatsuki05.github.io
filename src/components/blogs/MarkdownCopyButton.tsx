@@ -89,13 +89,51 @@ export function MarkdownCopyButton({ markdown, className }: Props) {
       type="button"
       onClick={handleCopy}
       disabled={disabled}
+      data-status={status}
       className={clsx(
-        'rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 disabled:cursor-not-allowed disabled:opacity-60 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30',
+        'blog-action-button blog-copy-button',
         className,
       )}
       aria-label={text.aria}
     >
-      {text[status]}
+      <span className="blog-action-button__label">{text[status]}</span>
+      <span aria-hidden={true} className="blog-copy-button__icon">
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="blog-copy-button__icon-svg blog-copy-button__icon-svg--copy"
+        >
+          <rect x="7" y="4.5" width="8.5" height="10.5" rx="2" />
+          <path d="M5.5 12.5h-1A2.5 2.5 0 0 1 2 10V5.5A2.5 2.5 0 0 1 4.5 3h4" />
+        </svg>
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="blog-copy-button__icon-svg blog-copy-button__icon-svg--success"
+        >
+          <path d="M4.5 10.5 8 14l7.5-8" />
+        </svg>
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="blog-copy-button__icon-svg blog-copy-button__icon-svg--failure"
+        >
+          <path d="m6 6 8 8" />
+          <path d="m14 6-8 8" />
+        </svg>
+      </span>
     </button>
   );
 }

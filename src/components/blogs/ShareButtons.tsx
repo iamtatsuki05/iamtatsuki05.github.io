@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import type { Locale } from '@/lib/i18n';
 import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
@@ -33,9 +33,32 @@ const shareText: Record<
 
 export function ShareButtons({ url, title, className }: Props) {
   const locale = useResolvedPreferredLocale();
+  const [activeAction, setActiveAction] = useState<'share' | 'x' | 'linkedin' | null>(null);
+  const resetTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    };
+  }, []);
+
+  const triggerFeedback = (action: 'share' | 'x' | 'linkedin') => {
+    if (typeof window === 'undefined') return;
+    if (resetTimerRef.current !== null) {
+      window.clearTimeout(resetTimerRef.current);
+    }
+    setActiveAction(action);
+    resetTimerRef.current = window.setTimeout(() => {
+      setActiveAction(null);
+      resetTimerRef.current = null;
+    }, 520);
+  };
 
   const handleShare = async () => {
     if (typeof navigator === 'undefined') return;
+    triggerFeedback('share');
     if (navigator.share) {
       try {
         await navigator.share({ url, title });
@@ -53,29 +76,40 @@ export function ShareButtons({ url, title, className }: Props) {
   const text = shareText[locale];
 
   return (
-    <div className={clsx('flex flex-wrap gap-3', className)}>
+    <div className={clsx('blog-share-actions flex flex-wrap gap-3', className)}>
       <button
         type="button"
         onClick={handleShare}
-        className="rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
+        data-state={activeAction === 'share' ? 'active' : 'idle'}
+        data-variant="share"
+        className="blog-action-button blog-action-button--share"
       >
-        {text.share}
+        <span className="blog-action-button__label">{text.share}</span>
+        <span aria-hidden={true} className="blog-action-button__badge" />
       </button>
       <a
         href={xUrl}
         target="_blank"
         rel="noreferrer"
-        className="rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
+        onClick={() => triggerFeedback('x')}
+        data-state={activeAction === 'x' ? 'active' : 'idle'}
+        data-variant="x"
+        className="blog-action-button blog-action-button--share"
       >
-        {text.shareOnX}
+        <span className="blog-action-button__label">{text.shareOnX}</span>
+        <span aria-hidden={true} className="blog-action-button__badge" />
       </a>
       <a
         href={linkedInUrl}
         target="_blank"
         rel="noreferrer"
-        className="rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
+        onClick={() => triggerFeedback('linkedin')}
+        data-state={activeAction === 'linkedin' ? 'active' : 'idle'}
+        data-variant="linkedin"
+        className="blog-action-button blog-action-button--share"
       >
-        {text.shareOnLinkedIn}
+        <span className="blog-action-button__label">{text.shareOnLinkedIn}</span>
+        <span aria-hidden={true} className="blog-action-button__badge" />
       </a>
     </div>
   );

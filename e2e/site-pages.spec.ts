@@ -145,6 +145,7 @@ for (const { label, use } of viewports) {
         await expect(copyButton).toBeVisible();
         await copyButton.click();
         await expect(copyButton).toContainText('コピーしました');
+        await expect(copyButton).toHaveAttribute('data-status', 'success');
         await expect
           .poll(() => page.evaluate(() => (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ || ''))
           .toContain('---');
@@ -195,6 +196,7 @@ for (const { label, use } of viewports) {
         await expect(page.locator('article.prose p').first()).toContainText('2025-');
         await copyButton.click();
         await expect(copyButton).toContainText('Copied');
+        await expect(copyButton).toHaveAttribute('data-status', 'success');
       });
     }
   });

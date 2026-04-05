@@ -19,6 +19,7 @@ describe('MarkdownCopyButton', () => {
     await user.click(button);
 
     await waitFor(() => expect(button).toHaveTextContent('コピーしました'));
+    expect(button).toHaveAttribute('data-status', 'success');
   });
 
   it('uses the stored english locale for button labels', async () => {
@@ -37,6 +38,7 @@ describe('MarkdownCopyButton', () => {
     await user.click(button);
 
     await waitFor(() => expect(button).toHaveTextContent('Copied'));
+    expect(button).toHaveAttribute('data-status', 'success');
   });
 
   it('is disabled when markdown is empty', async () => {
