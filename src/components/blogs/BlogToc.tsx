@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
+import type { Locale } from '@/lib/i18n';
+import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
 type TocItem = { id: string; text: string; level: number };
 
@@ -12,11 +14,35 @@ type Props = {
 
 const ACTIVE_OFFSET = 136;
 
+const tocText: Record<
+  Locale,
+  {
+    title: string;
+    openAria: string;
+    closeAria: string;
+    close: string;
+  }
+> = {
+  ja: {
+    title: '目次',
+    openAria: '目次を開く',
+    closeAria: '目次を閉じる',
+    close: '閉じる',
+  },
+  en: {
+    title: 'Contents',
+    openAria: 'Open table of contents',
+    closeAria: 'Close table of contents',
+    close: 'Close',
+  },
+};
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
 export function BlogToc({ containerId = 'blog-article', className }: Props) {
+  const locale = useResolvedPreferredLocale();
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
@@ -117,6 +143,7 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
 
   const tocStyle = { '--toc-item-count': String(items.length) } as React.CSSProperties;
   const handleFloatingClose = () => setIsFloatingOpen(false);
+  const text = tocText[locale];
 
   return (
     <>
@@ -124,14 +151,14 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
         data-testid="blog-toc"
         style={tocStyle}
         className={clsx(
-          'hidden rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/60 p-4 text-base text-gray-800 shadow-lg shadow-purple-100/30 backdrop-blur-sm lg:block lg:self-start',
+          'hidden rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/60 p-4 text-base text-gray-800 shadow-lg shadow-purple-100/30 backdrop-blur-sm min-[1440px]:block min-[1440px]:self-start',
           'dark:border-purple-500/35 dark:from-[#130d24] dark:to-[#0f172a]/95 dark:text-gray-100 dark:shadow-purple-900/40',
           'sticky top-24 max-h-[min(calc(100vh-7rem),calc(7.5rem+var(--toc-item-count)*2.5rem))] overflow-y-auto overscroll-contain',
           className,
         )}
       >
         <p className="mb-1 text-sm font-semibold uppercase tracking-wide text-purple-700 dark:text-purple-200">
-          目次
+          {text.title}
           <span className="ml-2 rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-bold text-purple-700 dark:bg-purple-500/20 dark:text-purple-100">
             {items.length}
           </span>
@@ -176,39 +203,39 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
         data-testid="blog-toc-fab"
         aria-controls="blog-toc-sheet"
         aria-expanded={isFloatingOpen}
-        aria-label={isFloatingOpen ? '目次を閉じる' : '目次を開く'}
+        aria-label={isFloatingOpen ? text.closeAria : text.openAria}
         onClick={() => setIsFloatingOpen((prev) => !prev)}
         className={clsx(
-          'fixed top-24 right-5 z-40 hidden rounded-full border border-purple-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-purple-800 shadow-lg shadow-purple-200/60 backdrop-blur-sm transition hover:bg-purple-50 motion-reduce:transition-none md:inline-flex lg:hidden dark:border-purple-500/50 dark:bg-[#171126]/95 dark:text-purple-100 dark:hover:bg-[#21163a]',
+          'fixed top-24 right-5 z-40 hidden rounded-full border border-purple-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-purple-800 shadow-lg shadow-purple-200/60 backdrop-blur-sm transition hover:bg-purple-50 motion-reduce:transition-none md:max-[1439px]:inline-flex dark:border-purple-500/50 dark:bg-[#171126]/95 dark:text-purple-100 dark:hover:bg-[#21163a]',
           isFloatingOpen && 'pointer-events-none opacity-0',
         )}
       >
-        目次
+        {text.title}
       </button>
 
       {isFloatingOpen ? (
         <>
           <button
             type="button"
-            aria-label="目次を閉じる"
+            aria-label={text.closeAria}
             onClick={handleFloatingClose}
-            className="fixed inset-0 z-40 hidden bg-black/30 md:block lg:hidden"
+            className="fixed inset-0 z-40 hidden bg-black/30 md:max-[1439px]:block"
           />
           <section
             id="blog-toc-sheet"
             data-testid="blog-toc-sheet"
-            className="fixed top-36 right-4 left-4 z-50 hidden max-h-[calc(100vh-11rem)] overflow-y-auto overscroll-contain rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/80 p-4 shadow-2xl shadow-purple-300/25 backdrop-blur-sm md:left-auto md:w-[min(22rem,calc(100vw-2rem))] md:block lg:hidden dark:border-purple-500/35 dark:from-[#130d24] dark:to-[#111a2d]/95"
+            className="fixed top-36 right-4 left-4 z-50 hidden max-h-[calc(100vh-11rem)] overflow-y-auto overscroll-contain rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/80 p-4 shadow-2xl shadow-purple-300/25 backdrop-blur-sm md:left-auto md:w-[min(22rem,calc(100vw-2rem))] md:max-[1439px]:block dark:border-purple-500/35 dark:from-[#130d24] dark:to-[#111a2d]/95"
           >
             <div className="mb-3 flex items-center justify-between">
               <p className="text-sm font-semibold uppercase tracking-wide text-purple-700 dark:text-purple-200">
-                目次
+                {text.title}
               </p>
               <button
                 type="button"
                 onClick={handleFloatingClose}
                 className="rounded-md px-2 py-1 text-xs text-gray-700 hover:bg-purple-100 dark:text-gray-200 dark:hover:bg-[#2d2445]"
               >
-                閉じる
+                {text.close}
               </button>
             </div>
             <ul ref={floatingListRef} className="space-y-1.5">

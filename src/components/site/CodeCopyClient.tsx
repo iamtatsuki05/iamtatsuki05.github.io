@@ -1,49 +1,79 @@
 "use client";
 import { useEffect } from 'react';
+import type { Locale } from '@/lib/i18n';
+import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
 export function CodeCopyClient({ enabled = true }: { enabled?: boolean } = {}) {
+  const locale = useResolvedPreferredLocale();
+
   useEffect(() => {
     if (!enabled) return;
+    const text = locale === 'ja'
+      ? {
+          default: 'コピー',
+          success: 'コピーしました',
+          failure: 'コピーに失敗しました',
+          aria: 'コードをコピー',
+        }
+      : {
+          default: 'Copy',
+          success: 'Copied',
+          failure: 'Failed',
+          aria: 'Copy code',
+        };
     const pres = Array.from(document.querySelectorAll<HTMLElement>('article.prose pre'));
     pres.forEach((pre) => {
-      if (pre.dataset.copyReady === '1') return;
-      pre.dataset.copyReady = '1';
       const code = pre.querySelector('code');
       if (!code) return;
-      const btn = document.createElement('button');
-      btn.className = 'code-copy-btn';
-      btn.type = 'button';
-      btn.setAttribute('aria-label', 'Copy code');
-      btn.textContent = 'Copy';
-      btn.addEventListener('click', async () => {
-        try {
-          const text = code.innerText;
-          if (navigator.clipboard?.writeText) {
-            await navigator.clipboard.writeText(text);
-          } else {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
+      let btn = pre.querySelector<HTMLButtonElement>('.code-copy-btn');
+      if (!btn) {
+        const newBtn = document.createElement('button');
+        newBtn.className = 'code-copy-btn';
+        newBtn.type = 'button';
+        newBtn.addEventListener('click', async () => {
+          const current = newBtn;
+          const defaultText = current.dataset.labelDefault || 'Copy';
+          const successText = current.dataset.labelSuccess || 'Copied';
+          const failureText = current.dataset.labelFailure || 'Failed';
+
+          try {
+            const codeText = code.innerText;
+            if (navigator.clipboard?.writeText) {
+              await navigator.clipboard.writeText(codeText);
+            } else {
+              const ta = document.createElement('textarea');
+              ta.value = codeText;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              document.body.removeChild(ta);
+            }
+            current.textContent = successText;
+            current.classList.add('copied');
+            setTimeout(() => {
+              current.textContent = current.dataset.labelDefault || defaultText;
+              current.classList.remove('copied');
+            }, 1400);
+          } catch {
+            current.textContent = failureText;
+            setTimeout(() => {
+              current.textContent = current.dataset.labelDefault || defaultText;
+            }, 1200);
           }
-          const prev = btn.textContent;
-          btn.textContent = 'Copied';
-          btn.classList.add('copied');
-          setTimeout(() => {
-            btn.textContent = prev || 'Copy';
-            btn.classList.remove('copied');
-          }, 1400);
-        } catch {
-          btn.textContent = 'Failed';
-          setTimeout(() => (btn.textContent = 'Copy'), 1200);
-        }
-      });
-      pre.appendChild(btn);
+        });
+        pre.appendChild(newBtn);
+        btn = newBtn;
+      }
+      btn.dataset.labelDefault = text.default;
+      btn.dataset.labelSuccess = text.success;
+      btn.dataset.labelFailure = text.failure;
+      btn.setAttribute('aria-label', text.aria);
+      if (!btn.classList.contains('copied')) {
+        btn.textContent = text.default;
+      }
     });
-  }, [enabled]);
+  }, [enabled, locale]);
   return null;
 }

@@ -11,6 +11,6 @@ describe('content/blog', () => {
     const posts = await getAllPosts();
     const post = await getPostBySlug(posts[0].slug);
     expect(post?.html).toBeTypeOf('string');
+    expect(post?.markdown).toContain('---');
   });
 });
-

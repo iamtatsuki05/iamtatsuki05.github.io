@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
+import type { Locale } from '@/lib/i18n';
+import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
 type Props = {
   url: string;
@@ -9,7 +11,29 @@ type Props = {
   className?: string;
 };
 
+const shareText: Record<
+  Locale,
+  {
+    share: string;
+    shareOnX: string;
+    shareOnLinkedIn: string;
+  }
+> = {
+  ja: {
+    share: '共有',
+    shareOnX: 'Xでシェア',
+    shareOnLinkedIn: 'LinkedInでシェア',
+  },
+  en: {
+    share: 'Share',
+    shareOnX: 'Share on X',
+    shareOnLinkedIn: 'Share on LinkedIn',
+  },
+};
+
 export function ShareButtons({ url, title, className }: Props) {
+  const locale = useResolvedPreferredLocale();
+
   const handleShare = async () => {
     if (typeof navigator === 'undefined') return;
     if (navigator.share) {
@@ -26,6 +50,7 @@ export function ShareButtons({ url, title, className }: Props) {
 
   const xUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  const text = shareText[locale];
 
   return (
     <div className={clsx('flex flex-wrap gap-3', className)}>
@@ -34,7 +59,7 @@ export function ShareButtons({ url, title, className }: Props) {
         onClick={handleShare}
         className="rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
       >
-        共有
+        {text.share}
       </button>
       <a
         href={xUrl}
@@ -42,7 +67,7 @@ export function ShareButtons({ url, title, className }: Props) {
         rel="noreferrer"
         className="rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
       >
-        Xでシェア
+        {text.shareOnX}
       </a>
       <a
         href={linkedInUrl}
@@ -50,7 +75,7 @@ export function ShareButtons({ url, title, className }: Props) {
         rel="noreferrer"
         className="rounded-full border border-purple-200/70 bg-white px-3 py-1 text-sm text-gray-900 shadow-sm shadow-purple-100 transition hover:-translate-y-0.5 hover:shadow-md hover:shadow-purple-200 dark:border-amber-400/40 dark:bg-[#0f172a] dark:text-purple-50 dark:shadow-amber-900/30 dark:hover:shadow-amber-700/30"
       >
-        LinkedInでシェア
+        {text.shareOnLinkedIn}
       </a>
     </div>
   );

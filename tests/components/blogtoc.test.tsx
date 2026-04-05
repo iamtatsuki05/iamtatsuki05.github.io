@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BlogToc } from '@/components/blogs/BlogToc';
+import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';
 
 function createRect(top: number, height: number = 40): DOMRect {
   return {
@@ -71,6 +72,7 @@ describe('BlogToc', () => {
   });
 
   afterEach(() => {
+    window.localStorage.clear();
     vi.restoreAllMocks();
   });
 
@@ -129,5 +131,22 @@ describe('BlogToc', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
     });
+  });
+
+  it('uses english labels when english locale is stored', async () => {
+    window.localStorage.setItem(LOCALE_PREFERENCE_STORAGE_KEY, 'en');
+    render(<BlogToc containerId="blog-article" />);
+
+    const toc = await screen.findByTestId('blog-toc');
+    expect(within(toc).getByText('Contents')).toBeInTheDocument();
+
+    const fab = screen.getByTestId('blog-toc-fab');
+    expect(fab).toHaveTextContent('Contents');
+    expect(fab).toHaveAttribute('aria-label', 'Open table of contents');
+
+    const user = userEvent.setup();
+    await user.click(fab);
+    const sheet = screen.getByTestId('blog-toc-sheet');
+    expect(within(sheet).getByRole('button', { name: 'Close' })).toBeInTheDocument();
   });
 });
