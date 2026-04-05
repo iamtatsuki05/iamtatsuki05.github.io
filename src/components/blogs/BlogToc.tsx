@@ -13,6 +13,8 @@ type Props = {
 };
 
 const ACTIVE_OFFSET = 136;
+const FLOATING_TOC_ENTER_DELAY_MS = 16;
+const FLOATING_TOC_ANIMATION_MS = 280;
 
 const tocText: Record<
   Locale,
@@ -47,8 +49,22 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [isFloatingOpen, setIsFloatingOpen] = useState(false);
+  const [isFloatingRendered, setIsFloatingRendered] = useState(false);
+  const [isFloatingVisible, setIsFloatingVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const desktopListRef = useRef<HTMLUListElement>(null);
   const floatingListRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener('change', updatePreference);
+    return () => mediaQuery.removeEventListener('change', updatePreference);
+  }, []);
 
   useEffect(() => {
     const root = document.getElementById(containerId);
@@ -131,18 +147,57 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
   }, [activeId, isFloatingOpen]);
 
   useEffect(() => {
-    if (!isFloatingOpen) return;
+    if (!isFloatingRendered) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsFloatingOpen(false);
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isFloatingOpen]);
+  }, [isFloatingRendered]);
+
+  useEffect(() => {
+    let enterTimer: number | undefined;
+    let exitTimer: number | undefined;
+
+    if (isFloatingOpen) {
+      setIsFloatingRendered(true);
+      if (prefersReducedMotion) {
+        setIsFloatingVisible(true);
+      } else {
+        enterTimer = window.setTimeout(() => setIsFloatingVisible(true), FLOATING_TOC_ENTER_DELAY_MS);
+      }
+    } else if (isFloatingRendered) {
+      setIsFloatingVisible(false);
+      if (prefersReducedMotion) {
+        setIsFloatingRendered(false);
+      } else {
+        exitTimer = window.setTimeout(() => setIsFloatingRendered(false), FLOATING_TOC_ANIMATION_MS);
+      }
+    }
+
+    return () => {
+      if (enterTimer) window.clearTimeout(enterTimer);
+      if (exitTimer) window.clearTimeout(exitTimer);
+    };
+  }, [isFloatingOpen, isFloatingRendered, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (!isFloatingRendered) return;
+
+    const { body } = document;
+    const previousOverflow = body.style.overflow;
+    body.style.overflow = 'hidden';
+
+    return () => {
+      body.style.overflow = previousOverflow;
+    };
+  }, [isFloatingRendered]);
 
   if (!items.length) return null;
 
   const tocStyle = { '--toc-item-count': String(items.length) } as React.CSSProperties;
   const handleFloatingClose = () => setIsFloatingOpen(false);
+  const floatingState = isFloatingVisible ? 'open' : 'closed';
   const text = tocText[locale];
 
   return (
@@ -201,53 +256,64 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
       <button
         type="button"
         data-testid="blog-toc-fab"
+        data-state={isFloatingRendered ? 'hidden' : 'idle'}
         aria-controls="blog-toc-sheet"
         aria-expanded={isFloatingOpen}
         aria-label={isFloatingOpen ? text.closeAria : text.openAria}
         onClick={() => setIsFloatingOpen((prev) => !prev)}
         className={clsx(
-          'fixed top-24 right-5 z-40 hidden rounded-full border border-purple-300/80 bg-white/95 px-4 py-2 text-sm font-semibold text-purple-800 shadow-lg shadow-purple-200/60 backdrop-blur-sm transition hover:bg-purple-50 motion-reduce:transition-none md:max-[1439px]:inline-flex dark:border-purple-500/50 dark:bg-[#171126]/95 dark:text-purple-100 dark:hover:bg-[#21163a]',
-          isFloatingOpen && 'pointer-events-none opacity-0',
+          'blog-toc-fab fixed top-24 right-5 z-40 hidden md:max-[1439px]:inline-flex',
+          isFloatingRendered && 'pointer-events-none',
         )}
       >
         {text.title}
       </button>
 
-      {isFloatingOpen ? (
+      {isFloatingRendered ? (
         <>
           <button
             type="button"
             aria-label={text.closeAria}
             onClick={handleFloatingClose}
-            className="fixed inset-0 z-40 hidden bg-black/30 md:max-[1439px]:block"
+            data-state={floatingState}
+            className="blog-toc-overlay fixed inset-0 z-40 hidden md:max-[1439px]:block"
           />
           <section
             id="blog-toc-sheet"
             data-testid="blog-toc-sheet"
-            className="fixed top-36 right-4 left-4 z-50 hidden max-h-[calc(100vh-11rem)] overflow-y-auto overscroll-contain rounded-2xl border border-purple-200/70 bg-linear-to-b from-white/95 to-purple-50/80 p-4 shadow-2xl shadow-purple-300/25 backdrop-blur-sm md:left-auto md:w-[min(22rem,calc(100vw-2rem))] md:max-[1439px]:block dark:border-purple-500/35 dark:from-[#130d24] dark:to-[#111a2d]/95"
+            role="dialog"
+            aria-modal="true"
+            aria-hidden={!isFloatingOpen}
+            data-state={floatingState}
+            className="blog-toc-sheet fixed top-36 right-4 left-4 z-50 hidden max-h-[calc(100vh-11rem)] overflow-y-auto overscroll-contain md:left-auto md:w-[min(22rem,calc(100vw-2rem))] md:max-[1439px]:block"
           >
-            <div className="mb-3 flex items-center justify-between">
+            <div className="blog-toc-sheet__header">
               <p className="text-sm font-semibold uppercase tracking-wide text-purple-700 dark:text-purple-200">
                 {text.title}
               </p>
               <button
                 type="button"
                 onClick={handleFloatingClose}
-                className="rounded-md px-2 py-1 text-xs text-gray-700 hover:bg-purple-100 dark:text-gray-200 dark:hover:bg-[#2d2445]"
+                className="blog-toc-sheet__close"
               >
                 {text.close}
               </button>
             </div>
-            <ul ref={floatingListRef} className="space-y-1.5">
-              {items.map((item) => (
+            <ul ref={floatingListRef} className="blog-toc-sheet__list space-y-1.5">
+              {items.map((item, index) => (
                 <li key={item.id} className={item.level === 3 ? 'pl-3 text-sm' : ''}>
                   <a
                     data-toc-id={item.id}
                     aria-current={activeId === item.id ? 'true' : undefined}
                     href={`#${item.id}`}
                     onClick={handleFloatingClose}
+                    style={
+                      !prefersReducedMotion && isFloatingVisible
+                        ? { transitionDelay: `${130 + index * 35}ms` }
+                        : undefined
+                    }
                     className={clsx(
-                      'flex items-center gap-2 truncate rounded-lg border border-transparent px-2 py-1.5 underline-offset-2 transition motion-reduce:transition-none',
+                      'blog-toc-sheet__link flex items-center gap-2 truncate rounded-lg border border-transparent px-2 py-1.5 underline-offset-2 transition motion-reduce:transition-none',
                       item.level === 3 ? 'text-sm' : 'text-base',
                       activeId === item.id
                         ? 'bg-purple-100/80 text-purple-900 shadow-sm shadow-purple-200/50 dark:border-purple-500/40 dark:bg-[#21163a] dark:text-purple-100'

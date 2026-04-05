@@ -345,9 +345,11 @@ test.describe('Blog detail toc toggle (tablet)', () => {
     await expect(fab).toHaveAttribute('aria-expanded', 'true');
     const sheet = page.getByTestId('blog-toc-sheet');
     await expect(sheet).toBeVisible();
+    await expect(sheet).toHaveAttribute('data-state', 'open');
     expect(await sheet.locator('a[data-toc-id]').count()).toBeGreaterThan(1);
 
     await sheet.getByRole('button', { name: '閉じる' }).click();
+    await expect(sheet).toHaveAttribute('data-state', 'closed');
     await expect(page.getByTestId('blog-toc-sheet')).toHaveCount(0);
   });
 });

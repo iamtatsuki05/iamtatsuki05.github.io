@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BlogToc } from '@/components/blogs/BlogToc';
 import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';
@@ -73,6 +73,7 @@ describe('BlogToc', () => {
 
   afterEach(() => {
     window.localStorage.clear();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -114,23 +115,43 @@ describe('BlogToc', () => {
     expect(screen.queryByTestId('blog-toc')).not.toBeInTheDocument();
   });
 
-  it('toggles floating toc panel with fab on medium viewport', async () => {
-    const user = userEvent.setup();
+  it('toggles floating toc panel with fab on medium viewport', () => {
+    vi.useFakeTimers();
     render(<BlogToc containerId="blog-article" />);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     const fab = screen.getByTestId('blog-toc-fab');
     expect(fab).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
 
-    await user.click(fab);
+    fireEvent.click(fab);
     expect(fab).toHaveAttribute('aria-expanded', 'true');
     const sheet = screen.getByTestId('blog-toc-sheet');
+    expect(sheet).toHaveAttribute('data-state', 'closed');
+
+    act(() => {
+      vi.advanceTimersByTime(16);
+    });
+
+    expect(sheet).toHaveAttribute('data-state', 'open');
     expect(within(sheet).getByRole('link', { name: 'セクション1' })).toBeInTheDocument();
 
-    await user.click(within(sheet).getByRole('button', { name: '閉じる' }));
-    await waitFor(() => {
-      expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
+    fireEvent.click(within(sheet).getByRole('button', { name: '閉じる' }));
+    expect(sheet).toHaveAttribute('data-state', 'closed');
+
+    act(() => {
+      vi.advanceTimersByTime(279);
     });
+
+    expect(screen.getByTestId('blog-toc-sheet')).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
   });
 
   it('uses english labels when english locale is stored', async () => {
