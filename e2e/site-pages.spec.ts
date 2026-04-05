@@ -354,6 +354,43 @@ test.describe('Blog detail toc toggle (tablet)', () => {
   });
 });
 
+test.describe('Blog detail toc toggle (mobile)', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('shows and toggles floating toc panel', async ({ page }) => {
+    await page.goto(localizedPath('ja', '/blogs/'));
+
+    const allPostsSection = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+      .first();
+    const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    await detailLink.click();
+    const navigated = await page
+      .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!navigated && detailPath) {
+      await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+    }
+    await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
+
+    const fab = page.getByTestId('blog-toc-fab');
+    await expect(fab).toBeVisible({ timeout: 10000 });
+    await expect(fab).toHaveText('目次');
+
+    await fab.click();
+    const sheet = page.getByTestId('blog-toc-sheet');
+    await expect(sheet).toBeVisible();
+    await expect(sheet).toHaveAttribute('data-state', 'open');
+
+    await sheet.getByRole('button', { name: '閉じる' }).click();
+    await expect(sheet).toHaveAttribute('data-state', 'closed');
+    await expect(page.getByTestId('blog-toc-sheet')).toHaveCount(0);
+  });
+});
+
 test.describe('Localized page variants', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 

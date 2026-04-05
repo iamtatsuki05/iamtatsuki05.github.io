@@ -262,7 +262,7 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
         aria-label={isFloatingOpen ? text.closeAria : text.openAria}
         onClick={() => setIsFloatingOpen((prev) => !prev)}
         className={clsx(
-          'blog-toc-fab fixed top-24 right-5 z-40 hidden md:max-[1439px]:inline-flex',
+          'blog-toc-fab fixed top-24 right-5 z-40 hidden max-[1439px]:inline-flex',
           isFloatingRendered && 'pointer-events-none',
         )}
       >
@@ -276,7 +276,7 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
             aria-label={text.closeAria}
             onClick={handleFloatingClose}
             data-state={floatingState}
-            className="blog-toc-overlay fixed inset-0 z-40 hidden md:max-[1439px]:block"
+            className="blog-toc-overlay fixed inset-0 z-40 hidden max-[1439px]:block"
           />
           <section
             id="blog-toc-sheet"
@@ -285,7 +285,7 @@ export function BlogToc({ containerId = 'blog-article', className }: Props) {
             aria-modal="true"
             aria-hidden={!isFloatingOpen}
             data-state={floatingState}
-            className="blog-toc-sheet fixed top-36 right-4 left-4 z-50 hidden max-h-[calc(100vh-11rem)] overflow-y-auto overscroll-contain md:left-auto md:w-[min(22rem,calc(100vw-2rem))] md:max-[1439px]:block"
+            className="blog-toc-sheet fixed top-36 right-4 left-4 z-50 hidden max-h-[calc(100vh-11rem)] overflow-y-auto overscroll-contain sm:left-auto sm:w-[min(22rem,calc(100vw-2rem))] max-[1439px]:block"
           >
             <div className="blog-toc-sheet__header">
               <p className="text-sm font-semibold uppercase tracking-wide text-purple-700 dark:text-purple-200">
