@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
 import type { Locale } from '@/lib/i18n';
-import { resolvePreferredLocaleFromPath } from '@/lib/localePreference';
+import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
 type Props = {
   url: string;
@@ -33,12 +32,7 @@ const shareText: Record<
 };
 
 export function ShareButtons({ url, title, className }: Props) {
-  const pathname = usePathname() || '';
-  const [locale, setLocale] = useState<Locale>('ja');
-
-  useEffect(() => {
-    setLocale(resolvePreferredLocaleFromPath(pathname));
-  }, [pathname]);
+  const locale = useResolvedPreferredLocale();
 
   const handleShare = async () => {
     if (typeof navigator === 'undefined') return;

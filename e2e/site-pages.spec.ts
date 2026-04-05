@@ -191,6 +191,8 @@ for (const { label, use } of viewports) {
         await expect(page.getByRole('button', { name: 'Share' })).toBeVisible();
         await expect(page.getByRole('link', { name: 'Share on X' })).toBeVisible();
         await expect(page.getByRole('link', { name: 'Share on LinkedIn' })).toBeVisible();
+        await expect(page.getByTestId('blog-toc-fab')).toContainText('Contents');
+        await expect(page.locator('article.prose p').first()).toContainText('2025-');
         await copyButton.click();
         await expect(copyButton).toContainText('Copied');
       });

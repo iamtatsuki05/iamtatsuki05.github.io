@@ -2,9 +2,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
 import type { Locale } from '@/lib/i18n';
-import { resolvePreferredLocaleFromPath } from '@/lib/localePreference';
+import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
 type Props = {
   markdown: string;
@@ -35,15 +34,10 @@ const copyText: Record<
 };
 
 export function MarkdownCopyButton({ markdown, className }: Props) {
-  const pathname = usePathname() || '';
-  const [locale, setLocale] = useState<Locale>('ja');
+  const locale = useResolvedPreferredLocale();
   const [status, setStatus] = useState<'default' | 'success' | 'failure'>('default');
   const resetTimerRef = useRef<number | null>(null);
   const disabled = markdown.length === 0;
-
-  useEffect(() => {
-    setLocale(resolvePreferredLocaleFromPath(pathname));
-  }, [pathname]);
 
   useEffect(() => {
     return () => {

@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
-import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
 import { absoluteUrl } from '@/lib/seo';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
@@ -11,6 +10,7 @@ import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
 import { ShareButtons } from '@/components/blogs/ShareButtons';
 import { BlogToc } from '@/components/blogs/BlogToc';
 import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
+import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
 
 type Params = { slug: string };
 
@@ -85,10 +85,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
           </div>
         ) : null}
         <h1>{title}</h1>
-        <p className="mt-0! text-sm opacity-70">
-          {formatDate(date, 'ja')}
-          {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
-        </p>
+        <BlogPostMeta date={date} updated={updated} />
         <div className="my-4 flex flex-wrap items-center gap-3">
           <ShareButtons url={shareUrl} title={title} className="my-0" />
           <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" />
