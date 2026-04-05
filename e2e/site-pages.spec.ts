@@ -106,6 +106,92 @@ for (const { label, use } of viewports) {
           )
           .toBeGreaterThan(initialProgress);
       });
+
+      test('copies the full article as markdown from the detail header', async ({ page, browserName }) => {
+        test.skip(browserName !== 'chromium', 'clipboard content is verified in Chromium only');
+
+        await page.addInitScript(() => {
+          Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: {
+              writeText: async (text: string) => {
+                (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ = text;
+              },
+            },
+          });
+        });
+        await page.goto(localizedPath('ja', '/blogs/'));
+
+        const allPostsSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+          .first();
+
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        await detailLink.click();
+        const navigated = await page
+          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+        if (!navigated && detailPath) {
+          await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+        }
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+
+        const copyButton = page.getByRole('button', { name: '記事のMarkdownをコピー' });
+        await expect(copyButton).toBeVisible();
+        await copyButton.click();
+        await expect(copyButton).toContainText('コピーしました');
+        await expect
+          .poll(() => page.evaluate(() => (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ || ''))
+          .toContain('---');
+        await expect
+          .poll(() => page.evaluate(() => (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ || ''))
+          .toContain('## ');
+      });
+
+      test('keeps english copy labels after entering a blog detail from english pages', async ({ page, browserName }) => {
+        test.skip(browserName !== 'chromium', 'clipboard content is verified in Chromium only');
+
+        await page.addInitScript(() => {
+          Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: {
+              writeText: async (text: string) => {
+                (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ = text;
+              },
+            },
+          });
+        });
+        await page.goto(localizedPath('en', '/blogs/'));
+
+        const allPostsSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 All Posts' }) })
+          .first();
+
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        await detailLink.click();
+        const navigated = await page
+          .waitForURL(/\/blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+        if (!navigated && detailPath) {
+          await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+        }
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/blogs\/[\w-]+\/?$/);
+
+        const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
+        await expect(copyButton).toBeVisible();
+        await expect(copyButton).toContainText('Copy Markdown');
+        await expect(page.getByRole('button', { name: 'Share' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Share on X' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Share on LinkedIn' })).toBeVisible();
+        await copyButton.click();
+        await expect(copyButton).toContainText('Copied');
+      });
     }
   });
 

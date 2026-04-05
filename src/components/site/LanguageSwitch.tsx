@@ -4,11 +4,19 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LOCALE_UI_LABELS } from '@/lib/i18n';
 import { extractLocaleFromPath, isTranslatablePath, localizedPath, stripLocalePrefix } from '@/lib/routing';
+import { writePreferredLocale } from '@/lib/localePreference';
 
 export function LanguageSwitch() {
   const pathname = usePathname() || '';
   const currentLocale = extractLocaleFromPath(pathname) || 'ja';
   const isTranslatable = isTranslatablePath(pathname);
+
+  React.useEffect(() => {
+    const locale = extractLocaleFromPath(pathname);
+    if (locale) {
+      writePreferredLocale(locale);
+    }
+  }, [pathname]);
 
   const bare = stripLocalePrefix(pathname);
   const normalized = bare.endsWith('/') ? bare : `${bare}/`;

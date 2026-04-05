@@ -10,6 +10,7 @@ import { EmbedsClient } from '@/components/site/EmbedsClient';
 import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
 import { ShareButtons } from '@/components/blogs/ShareButtons';
 import { BlogToc } from '@/components/blogs/BlogToc';
+import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
 
 type Params = { slug: string };
 
@@ -52,7 +53,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
-  const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags } = post;
+  const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags, markdown } = post;
   const shareUrl = absoluteUrl(`/blogs/${slug}/`);
   const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
   const articleJsonLd = buildArticleJsonLd({
@@ -88,7 +89,10 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
           {formatDate(date, 'ja')}
           {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
         </p>
-        <ShareButtons url={shareUrl} title={title} className="my-4" />
+        <div className="my-4 flex flex-wrap items-center gap-3">
+          <ShareButtons url={shareUrl} title={title} className="my-0" />
+          <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" />
+        </div>
         <div dangerouslySetInnerHTML={{ __html: html || '' }} />
         <CodeCopyClient />
         <EmbedsClient />

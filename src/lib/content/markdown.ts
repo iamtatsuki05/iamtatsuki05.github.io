@@ -20,12 +20,14 @@ import rehypeExternalLinks from './rehype-external-links';
 export type ParsedMarkdown<T> = {
   frontmatter: T;
   contentHtml: string;
+  raw: string;
 };
 
 export async function parseMarkdownFile<T>(filePath: string): Promise<{
   data: T;
   contentHtml: string;
   headings: { id: string; title: string; level: number }[];
+  raw: string;
 }> {
   const stat = await fs.stat(filePath);
   const cacheKey = `markdown:${filePath}:${stat.mtimeMs}`;
@@ -66,7 +68,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(rehypePrism)
       .use(rehypeStringify)
       .process(content);
-    return { data: data as T, contentHtml: String(file), headings };
+    return { data: data as T, contentHtml: String(file), headings, raw };
   });
 }
 
