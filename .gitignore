@@ -30,5 +30,9 @@ test-results/
 storybook-static/
 
 # custom scripts output
-public/images/
+public/images/*
+!public/images/hobbies/
+!public/images/hobbies/**
+public/images/hobbies/nextImageExportOptimizer/
+public/images/hobbies/next-image-export-optimizer-hashes.json
 .lighthouseci

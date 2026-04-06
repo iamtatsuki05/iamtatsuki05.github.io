@@ -63,3 +63,39 @@ export const publicationsPageCopy: Record<Locale, PublicationsPageCopy> = {
     breadcrumb: '🏠 Home / 📚 Publications',
   },
 };
+
+export type HobbiesPageCopy = PageCopy<{
+  introHeading: string;
+  introBody: string;
+  gridHeading: string;
+  currentFocusLabel: string;
+  emptyStateLabel: string;
+  ctaLabel: string;
+}>;
+
+export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
+  ja: {
+    ...pageMeta.hobbies.ja,
+    heading: '🧸 趣味',
+    breadcrumb: '🏠 Home / 🧸 趣味',
+    introHeading: '趣味について',
+    introBody:
+      'ある日突然ハマり、3ヶ月くらい集中的に没頭してしまいます。各カードから、そのテーマに関連する Blog の絞り込み一覧へ移動できます。',
+    gridHeading: '趣味一覧',
+    currentFocusLabel: '魅力・ハマった理由',
+    emptyStateLabel: '関連するBlog記事は準備中',
+    ctaLabel: 'Blogを見る',
+  },
+  en: {
+    ...pageMeta.hobbies.en,
+    heading: '🧸 Hobbies',
+    breadcrumb: '🏠 Home / 🧸 Hobbies',
+    introHeading: 'What I am Into Lately',
+    introBody:
+      'I sometimes get hooked on something out of nowhere and spend around three months diving into it. Each card takes you to a filtered list of blog posts related to that topic.',
+    gridHeading: 'Hobby List',
+    currentFocusLabel: "Why I'm Into It",
+    emptyStateLabel: 'Related blog posts are coming soon',
+    ctaLabel: 'Open Blog',
+  },
+};

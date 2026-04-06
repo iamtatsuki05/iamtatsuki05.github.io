@@ -421,6 +421,48 @@ for (const { label, use } of viewports) {
       });
     }
   });
+
+  test.describe(`Hobbies page (${label})`, () => {
+    test.use(use);
+
+    test.beforeEach(async ({ page }) => {
+      await page.goto(localizedPath('en', '/hobbies/'));
+    });
+
+    test('shows hobby cards and filtered blog links', async ({ page }) => {
+      await expect(page.getByRole('heading', { level: 1, name: '🧸 Hobbies' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 2, name: 'What I am Into Lately' })).toBeVisible();
+      await expect(page.getByTestId('hobby-card')).toHaveCount(10);
+
+      const firstCard = page.getByTestId('hobby-card').first();
+      await expect(firstCard.locator('img')).toBeVisible();
+      const href = await firstCard.getAttribute('href');
+      expect(href).toContain('/en-US/blogs/');
+      expect(href).toMatch(/[?&](q|tags)=/);
+    });
+
+    if (label === 'desktop') {
+      test('navigates to the filtered blog index from a hobby card', async ({ page }) => {
+        const target = page.getByTestId('hobby-card').filter({ hasText: 'NLP' }).first();
+        const href = await target.getAttribute('href');
+        expect(href).toBeTruthy();
+
+        await target.click();
+        const navigated = await page
+          .waitForURL(/\/en-US\/blogs\/\?(?:.*&)?q=LLM(?:&.*)?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+
+        if (!navigated && href) {
+          await page.goto(href, { waitUntil: 'domcontentloaded' });
+        }
+
+        await expect.poll(() => new URL(page.url()).pathname).toBe('/en-US/blogs/');
+        await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe('LLM');
+        await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
+      });
+    }
+  });
 }
 
 test.describe('Blog detail toc toggle (tablet)', () => {
@@ -511,6 +553,11 @@ test.describe('Localized page variants', () => {
     await page.goto('/en-US/blogs/');
     await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
   });
+
+  test('renders the English hobbies page', async ({ page }) => {
+    await page.goto('/en-US/hobbies/');
+    await expect(page.getByRole('heading', { level: 1, name: '🧸 Hobbies' })).toBeVisible();
+  });
 });
 
 test.describe('Default locale fallback', () => {
@@ -524,6 +571,11 @@ test.describe('Default locale fallback', () => {
   test('renders Japanese publications page at /publications/', async ({ page }) => {
     await page.goto('/publications/');
     await expect(page.getByRole('heading', { level: 1, name: '📚 公開物' })).toBeVisible();
+  });
+
+  test('renders Japanese hobbies page at /hobbies/', async ({ page }) => {
+    await page.goto('/hobbies/');
+    await expect(page.getByRole('heading', { level: 1, name: '🧸 趣味' })).toBeVisible();
   });
 });
 

@@ -279,13 +279,20 @@ export function buildSiteLinksJsonLd() {
       {
         '@type': 'SiteNavigationElement',
         position: 2,
+        name: 'Hobbies',
+        description: '趣味と最近ハマっていること',
+        url: absoluteUrl('/hobbies/'),
+      },
+      {
+        '@type': 'SiteNavigationElement',
+        position: 3,
         name: 'Blog',
         description: '最新の技術ブログと記事',
         url: absoluteUrl('/blogs/'),
       },
       {
         '@type': 'SiteNavigationElement',
-        position: 3,
+        position: 4,
         name: 'Publications',
         description: '学術論文と研究成果',
         url: absoluteUrl('/publications/'),

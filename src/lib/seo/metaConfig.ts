@@ -1,7 +1,7 @@
 import type { Locale } from '@/lib/i18n';
 import { siteConfig } from '@/lib/seo';
 
-export type PageKey = 'home' | 'blogs' | 'links' | 'publications';
+export type PageKey = 'home' | 'blogs' | 'links' | 'publications' | 'hobbies';
 
 export type PageMeta = {
   metadataTitle: string;
@@ -58,6 +58,19 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
       metadataDescription:
         'Academic publications, articles, and talks by Tatsuki Okada in the field of NLP and machine learning.',
       path: '/en-US/publications/',
+    },
+  },
+  hobbies: {
+    ja: {
+      metadataTitle: '趣味',
+      metadataDescription: 'ガジェット、NLP、チャイ、ピアノなど、岡田龍樹の趣味と最近ハマっていることをまとめています。',
+      path: '/ja-JP/hobbies/',
+    },
+    en: {
+      metadataTitle: 'Hobbies',
+      metadataDescription:
+        'A collection of Tatsuki Okada hobbies and current obsessions, from gadgets and NLP to chai, piano, and visual works.',
+      path: '/en-US/hobbies/',
     },
   },
 };

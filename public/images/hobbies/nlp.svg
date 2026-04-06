@@ -1,0 +1,24 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="url(#bg)"/>
+  <circle cx="600" cy="404" r="182" fill="#E0F2FE" fill-opacity="0.94"/>
+  <circle cx="600" cy="404" r="124" stroke="#0F172A" stroke-width="18" stroke-dasharray="14 18"/>
+  <circle cx="466" cy="320" r="26" fill="#0F172A"/>
+  <circle cx="734" cy="320" r="26" fill="#0F172A"/>
+  <circle cx="466" cy="488" r="26" fill="#0F172A"/>
+  <circle cx="734" cy="488" r="26" fill="#0F172A"/>
+  <circle cx="600" cy="404" r="34" fill="#2563EB"/>
+  <path d="M488 336L566 388" stroke="#0F172A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M712 336L634 388" stroke="#0F172A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M488 472L566 420" stroke="#0F172A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M712 472L634 420" stroke="#0F172A" stroke-width="14" stroke-linecap="round"/>
+  <path d="M236 186H450" stroke="#E0F2FE" stroke-width="20" stroke-linecap="round" opacity="0.9"/>
+  <path d="M750 616H964" stroke="#E0F2FE" stroke-width="20" stroke-linecap="round" opacity="0.9"/>
+  <text x="180" y="706" fill="white" font-size="64" font-family="Arial, Helvetica, sans-serif" font-weight="700">NLP / LLM</text>
+  <defs>
+    <linearGradient id="bg" x1="90" y1="68" x2="1122" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.45" stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+</svg>
