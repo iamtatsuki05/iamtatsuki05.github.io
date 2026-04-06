@@ -52,6 +52,21 @@ describe('BlogsClient', () => {
     expect(getByTestId('filter-result-summary')).toHaveTextContent('12 items');
     expect(queryByRole('button', { name: 'Remove Search: zzzz' })).toBeNull();
   });
+  it('matches normalized query variations in blog search', async () => {
+    const { render, screen, waitFor } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const user = userEvent.default.setup();
+    await user.type(screen.getByRole('textbox', { name: 'Search...' }), 'ｈｅｌｌｏ');
+
+    await waitFor(() => {
+      expect(screen.getAllByText('hello', { selector: 'mark.search-highlight' }).length).toBeGreaterThan(0);
+    });
+  });
   it('highlights matching query fragments in blog text', async () => {
     const { render, screen, waitFor } = await import('@testing-library/react');
     const userEvent = await import('@testing-library/user-event');

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
 import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
-import { tokenizeSearchQuery } from '@/lib/search/queryTokens';
+import { normalizeSearchText, tokenizeSearchQuery } from '@/lib/search/queryTokens';
 
 type Options<T> = {
   fuseKeys: string[];
@@ -24,6 +24,10 @@ function readSearchField(item: unknown, key: string): string[] {
   if (value && typeof value === 'object') return Object.values(value).flatMap((entry) => readSearchField({ value: entry }, 'value'));
 
   return [];
+}
+
+function resolveFusePath(path: string | string[]) {
+  return Array.isArray(path) ? path.join('.') : path;
 }
 
 function compareSearchSortValues<T>(
@@ -112,7 +116,14 @@ export function useSearchFilters<T>(
     setFuseLoading(true);
     const pending = import('fuse.js')
       .then(({ default: FuseClass }) => {
-        setFuse(new FuseClass(items, { keys: fuseKeys, threshold, includeScore: true }));
+        setFuse(
+          new FuseClass(items, {
+            keys: fuseKeys,
+            threshold,
+            includeScore: true,
+            getFn: (item, path) => readSearchField(item, resolveFusePath(path)).map((value) => normalizeSearchText(value)),
+          }),
+        );
       })
       .finally(() => {
         fuseLoadPromiseRef.current = null;
@@ -169,9 +180,10 @@ export function useSearchFilters<T>(
   const filtered = useMemo(() => {
     let result = items;
     if (localQ) {
+      const normalizedQuery = normalizeSearchText(localQ);
       if (fuse) {
         result = fuse
-          .search(localQ)
+          .search(normalizedQuery)
           .sort((left, right) => {
             const scoreDiff = (left.score ?? 1) - (right.score ?? 1);
             if (scoreDiff !== 0) return scoreDiff;
@@ -179,16 +191,16 @@ export function useSearchFilters<T>(
           })
           .map((entry) => entry.item);
       } else {
-        const normalizedTokens = tokenizeSearchQuery(localQ);
+        const normalizedTokens = tokenizeSearchQuery(normalizedQuery);
 
         if (normalizedTokens.length) {
           result = result.filter((item) => {
             const haystack = fuseKeys
               .flatMap((key) => readSearchField(item, key))
-              .join(' ')
-              .toLocaleLowerCase();
+              .join(' ');
+            const normalizedHaystack = normalizeSearchText(haystack);
 
-            return normalizedTokens.every((token) => haystack.includes(token));
+            return normalizedTokens.every((token) => normalizedHaystack.includes(token));
           });
 
           result = [...result].sort((left, right) => compareSearchSortValues(left, right, extractSortValue));

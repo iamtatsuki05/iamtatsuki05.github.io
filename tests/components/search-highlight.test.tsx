@@ -17,6 +17,19 @@ describe('SearchHighlight', () => {
     expect(marks[1]).toHaveTextContent('Hello');
   });
 
+  it('highlights normalized query tokens from full-width and hyphenated input', () => {
+    render(
+      <p>
+        <SearchHighlight text="Sample 11 Hello" query="Ｓａｍｐｌｅ－１１" />
+      </p>,
+    );
+
+    const marks = screen.getAllByText(/Sample|11/, { selector: 'mark.search-highlight' });
+    expect(marks).toHaveLength(2);
+    expect(marks[0]).toHaveTextContent('Sample');
+    expect(marks[1]).toHaveTextContent('11');
+  });
+
   it('returns plain text when the query is empty', () => {
     render(
       <p>
