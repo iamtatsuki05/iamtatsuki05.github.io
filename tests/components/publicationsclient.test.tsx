@@ -166,6 +166,7 @@ describe('PublicationsClient', () => {
     const tagFilter = within(tagDisclosure);
     await user.click(tagFilter.getByRole('button', { name: 'Filter by llm tag' }));
 
+    expect(tagSummary).toHaveTextContent('(1)');
     expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('1 of 2 items');
 
     const chip = screen.getByRole('button', { name: 'Remove #llm' });
@@ -250,6 +251,48 @@ describe('PublicationsClient', () => {
       const cards = screen.getAllByTestId('publication-card');
       expect(within(cards[0]).getByText('Newer paper')).toBeInTheDocument();
       expect(within(cards[1]).getByText('Older paper')).toBeInTheDocument();
+    });
+  });
+
+  it('shows publication sort controls while searching and lets the user switch them', async () => {
+    const { render, screen, waitFor } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    const publicationItems = [
+      {
+        slug: 'older-exact',
+        title: 'Encoder',
+        type: 'paper' as const,
+        tags: ['llm'],
+        publishedAt: '2024-01-01',
+        venue: 'Notes',
+        links: [{ kind: 'pdf', url: 'https://example.com/older.pdf' }],
+      },
+      {
+        slug: 'newer-secondary',
+        title: 'System design notes',
+        type: 'paper' as const,
+        tags: ['encoder'],
+        publishedAt: '2025-01-01',
+        venue: 'Notes',
+        links: [{ kind: 'pdf', url: 'https://example.com/newer.pdf' }],
+      },
+    ];
+
+    render(<PublicationsClient items={publicationItems} locale="en" />, {
+      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?q=encoder">{children}</NuqsTestingAdapter>,
+    });
+
+    const user = userEvent.default.setup();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Relevant' })).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Newest' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Newest' })).toHaveAttribute('aria-pressed', 'true');
     });
   });
 });

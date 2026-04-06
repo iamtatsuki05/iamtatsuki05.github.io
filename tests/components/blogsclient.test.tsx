@@ -143,7 +143,46 @@ describe('BlogsClient', () => {
 
     expect(year2025).toHaveAttribute('aria-pressed', 'true');
     expect(year2024).toHaveAttribute('aria-pressed', 'true');
+    expect(yearSummary).toHaveTextContent('(2)');
     expect(screen.getByTestId('filter-result-summary')).toHaveTextContent('12 items');
+  });
+
+  it('shows sort controls while searching and lets the user switch them', async () => {
+    const { render, screen, waitFor } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    const posts = [
+      {
+        slug: 'older-exact',
+        title: 'Encoder',
+        date: '2024-01-01',
+        tags: ['a'],
+        summary: 'general notes',
+      },
+      {
+        slug: 'newer-secondary',
+        title: 'System design notes',
+        date: '2025-01-01',
+        tags: ['encoder'],
+        summary: 'general notes',
+      },
+    ];
+
+    render(<BlogsClient posts={posts} locale="en" />, {
+      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?q=encoder">{children}</NuqsTestingAdapter>,
+    });
+
+    const user = userEvent.default.setup();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Relevant' })).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Newest' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Newest' })).toHaveAttribute('aria-pressed', 'true');
+    });
   });
   it('hides preview images on mobile to reduce initial downloads', async () => {
     const { render } = await import('@testing-library/react');

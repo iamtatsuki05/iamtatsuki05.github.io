@@ -63,6 +63,8 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     clearFilters,
     fuseLoading,
     preloadSearch,
+    sort,
+    setSort,
   } = useSearchFilters(items, {
     fuseKeys: ['title', 'tags', 'venue', 'publisher'],
     extractYear: (i) => i.publishedAt,
@@ -82,11 +84,20 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     for (const it of typeFiltered) {
       (map[it.type] ||= []).push(it);
     }
-    for (const k of Object.keys(map)) {
-      map[k].sort((a, b) => ((a.publishedAt || '') < (b.publishedAt || '') ? 1 : -1));
+    if (!q || sort === 'newest') {
+      for (const k of Object.keys(map)) {
+        map[k].sort((a, b) => ((a.publishedAt || '') < (b.publishedAt || '') ? 1 : -1));
+      }
     }
     return map;
-  }, [typeFiltered]);
+  }, [q, sort, typeFiltered]);
+  const visibleTypes = useMemo(() => {
+    if (q && sort === 'relevant') {
+      return Array.from(new Set(typeFiltered.map((item) => item.type)));
+    }
+
+    return availableTypes.filter((type) => (groups[type] || []).length > 0);
+  }, [availableTypes, groups, q, sort, typeFiltered]);
 
   const t = resolveFilterText(locale);
   const typeLabels: Record<Item['type'], string> = locale === 'ja'
@@ -207,6 +218,26 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
 
     return actions;
   }, [availableTypes.length, locale, q, selectedTypeSet.size, setQ, setSelectedTypes, setTagSet, setYearSet, t.searchKeyword, t.tags, t.types, t.year, tagSet.size, yearSet.size]);
+  const sortControls = q ? (
+    <div className="filter-bar__sort" role="group" aria-label={t.sort}>
+      <button
+        type="button"
+        className="filter-bar__sort-button ui-cta"
+        aria-pressed={sort === 'relevant'}
+        onClick={() => setSort('relevant')}
+      >
+        {t.sortRelevant}
+      </button>
+      <button
+        type="button"
+        className="filter-bar__sort-button ui-cta"
+        aria-pressed={sort === 'newest'}
+        onClick={() => setSort('newest')}
+      >
+        {t.sortNewest}
+      </button>
+    </div>
+  ) : null;
 
   const openInNewTab = (url?: string) => {
     if (!url || typeof window === 'undefined') return;
@@ -238,6 +269,8 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         searchLoadingLabel={t.searching}
         resultLabel={resultLabel}
         activeFilters={activeFilters}
+        sortControls={sortControls}
+        stickyMetaOnMobile
       >
         <YearSelect
           years={years}
@@ -256,6 +289,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         <FilterDisclosure
           label={t.types}
           count={availableTypes.length}
+          selectedCount={selectedTypeSet.size}
           className="ml-2"
           panelClassName="max-h-56 overflow-y-auto"
           autoCloseOnSelect="mobile"
@@ -299,7 +333,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         />
       </FilterBar>
 
-      {availableTypes.map((type) => {
+      {visibleTypes.map((type) => {
         const arr = groups[type] || [];
         if (!arr.length) return null;
         const tone: 'lilac' | 'amber' | 'blue' | 'teal' =

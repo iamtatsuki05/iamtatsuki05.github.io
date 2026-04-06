@@ -11,7 +11,10 @@ export type FilterTextKey =
   | 'types'
   | 'all'
   | 'searching'
-  | 'searchKeyword';
+  | 'searchKeyword'
+  | 'sort'
+  | 'sortRelevant'
+  | 'sortNewest';
 
 export type FilterTextDict = Record<FilterTextKey, string>;
 
@@ -27,6 +30,9 @@ export const filterTextJa: FilterTextDict = {
   all: 'すべて',
   searching: '検索中...',
   searchKeyword: '検索',
+  sort: '並び替え',
+  sortRelevant: '関連順',
+  sortNewest: '新しい順',
 };
 
 export const filterTextEn: FilterTextDict = {
@@ -41,6 +47,9 @@ export const filterTextEn: FilterTextDict = {
   all: 'All',
   searching: 'Searching...',
   searchKeyword: 'Search',
+  sort: 'Sort',
+  sortRelevant: 'Relevant',
+  sortNewest: 'Newest',
 };
 
 export function resolveFilterText(locale: 'ja' | 'en'): FilterTextDict {

@@ -52,6 +52,8 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
     clearFilters,
     fuseLoading,
     preloadSearch,
+    sort,
+    setSort,
   } = useSearchFilters(posts, {
     fuseKeys: ['title', 'summary', 'tags'],
     extractYear: (p) => p.date,
@@ -153,6 +155,26 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
     return actions;
   }, [locale, q, setQ, setTagSet, setYearSet, t.searchKeyword, t.tags, t.year, tagSet.size, yearSet.size]);
+  const sortControls = q ? (
+    <div className="filter-bar__sort" role="group" aria-label={t.sort}>
+      <button
+        type="button"
+        className="filter-bar__sort-button ui-cta"
+        aria-pressed={sort === 'relevant'}
+        onClick={() => setSort('relevant')}
+      >
+        {t.sortRelevant}
+      </button>
+      <button
+        type="button"
+        className="filter-bar__sort-button ui-cta"
+        aria-pressed={sort === 'newest'}
+        onClick={() => setSort('newest')}
+      >
+        {t.sortNewest}
+      </button>
+    </div>
+  ) : null;
 
   return (
     <div className="space-y-6">
@@ -170,6 +192,8 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         searchLoadingLabel={t.searching}
         resultLabel={resultLabel}
         activeFilters={activeFilters}
+        sortControls={sortControls}
+        stickyMetaOnMobile
       >
         <YearSelect
           years={allYears}

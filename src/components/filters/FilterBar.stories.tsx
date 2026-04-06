@@ -38,6 +38,17 @@ function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
       hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
       searchLoadingLabel="Searching..."
       resultLabel={query || yearSet.size || tagSet.size ? '3 of 12 items' : '12 items'}
+      stickyMetaOnMobile
+      sortControls={query ? (
+        <div className="filter-bar__sort" role="group" aria-label="Sort">
+          <button type="button" className="filter-bar__sort-button ui-cta" aria-pressed={true}>
+            Relevant
+          </button>
+          <button type="button" className="filter-bar__sort-button ui-cta" aria-pressed={false}>
+            Newest
+          </button>
+        </div>
+      ) : null}
       activeFilters={[
         ...(query ? [{ key: 'query', label: `Search: ${query}`, onRemove: () => setQuery('') }] : []),
         ...Array.from(yearSet).map((year) => ({ key: `year:${year}`, label: year, onRemove: () => {

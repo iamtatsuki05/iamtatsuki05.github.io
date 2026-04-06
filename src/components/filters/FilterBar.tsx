@@ -21,6 +21,8 @@ type Props = {
   searchLoadingLabel?: string;
   resultLabel?: string;
   activeFilters?: FilterBarActiveFilter[];
+  sortControls?: React.ReactNode;
+  stickyMetaOnMobile?: boolean;
 };
 
 export function FilterBar({
@@ -37,10 +39,12 @@ export function FilterBar({
   searchLoadingLabel = 'Searching...',
   resultLabel,
   activeFilters = [],
+  sortControls,
+  stickyMetaOnMobile = false,
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const showClear = Boolean(hasActiveFilters) || Boolean(query);
-  const showMeta = Boolean(resultLabel) || activeFilters.length > 0;
+  const showMeta = Boolean(resultLabel) || activeFilters.length > 0 || Boolean(sortControls);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -105,14 +109,15 @@ export function FilterBar({
       </div>
 
       {showMeta ? (
-        <div className="filter-bar__meta">
-          {resultLabel ? (
-            <p className="filter-bar__result" data-testid="filter-result-summary" aria-live="polite">
-              {resultLabel}
-            </p>
-          ) : (
-            <span />
-          )}
+        <div className={`filter-bar__meta ${stickyMetaOnMobile ? 'filter-bar__meta--sticky-mobile' : ''}`}>
+          <div className="filter-bar__meta-primary">
+            {resultLabel ? (
+              <p className="filter-bar__result" data-testid="filter-result-summary" aria-live="polite">
+                {resultLabel}
+              </p>
+            ) : null}
+            {sortControls ? sortControls : null}
+          </div>
 
           {activeFilters.length ? (
             <div className="filter-bar__chips">

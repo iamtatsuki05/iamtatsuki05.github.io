@@ -13,7 +13,13 @@ type Props = {
 
 export function YearSelect({ years, selected, onToggle, onClear, label, allLabel = 'All', className }: Props) {
   return (
-    <FilterDisclosure label={label} count={years.length} className={className} autoCloseOnSelect="mobile">
+    <FilterDisclosure
+      label={label}
+      count={years.length}
+      selectedCount={selected.size}
+      className={className}
+      autoCloseOnSelect="mobile"
+    >
       {({ requestCloseIfNeeded }) => (
         <div className="flex flex-wrap gap-2">
           <button

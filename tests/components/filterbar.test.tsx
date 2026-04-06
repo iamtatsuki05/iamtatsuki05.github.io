@@ -56,4 +56,20 @@ describe('FilterBar', () => {
 
     expect(onSearchIntent).toHaveBeenCalledTimes(2);
   });
+
+  it('renders sticky mobile meta and sort controls when provided', () => {
+    const { container } = render(
+      <FilterBar
+        query="enc"
+        onQueryChange={() => {}}
+        placeholder="Search..."
+        resultLabel="1 of 3 items"
+        stickyMetaOnMobile
+        sortControls={<button type="button">Relevant</button>}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Relevant' })).toBeInTheDocument();
+    expect(container.querySelector('.filter-bar__meta')).toHaveClass('filter-bar__meta--sticky-mobile');
+  });
 });

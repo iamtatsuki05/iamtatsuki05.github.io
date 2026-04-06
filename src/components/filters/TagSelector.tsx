@@ -14,6 +14,7 @@ export function TagSelector({ tags, selected, onToggle, label, className }: Prop
     <FilterDisclosure
       label={label}
       count={tags.length}
+      selectedCount={selected.size}
       className={className}
       panelClassName="max-h-56 overflow-y-auto"
       autoCloseOnSelect="mobile"

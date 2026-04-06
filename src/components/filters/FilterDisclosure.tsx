@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 type Props = {
   label: string;
   count?: number;
+  selectedCount?: number;
   className?: string;
   panelClassName?: string;
   autoCloseOnSelect?: 'mobile' | 'always';
@@ -14,10 +15,11 @@ const MOBILE_MEDIA_QUERY = '(max-width: 639px)';
 const MOBILE_MAX_WIDTH = 639;
 const FORCE_CLOSE_EVENT = 'filter-disclosure-force-close';
 
-export function FilterDisclosure({ label, count, className, panelClassName, autoCloseOnSelect, children }: Props) {
+export function FilterDisclosure({ label, count, selectedCount, className, panelClassName, autoCloseOnSelect, children }: Props) {
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const resolvedCount = typeof selectedCount === 'number' && selectedCount > 0 ? selectedCount : count;
 
   const closeSiblingDisclosures = useCallback(() => {
     const current = detailsRef.current;
@@ -139,14 +141,18 @@ export function FilterDisclosure({ label, count, className, panelClassName, auto
         className="filter-disclosure__summary relative z-30 inline-flex cursor-pointer list-none items-center gap-1 rounded-full px-2.5 py-1.5 text-sm [&::-webkit-details-marker]:hidden"
       >
         <span>{label}</span>
-        {typeof count === 'number' ? <span className="filter-disclosure__count tabular-nums">({count})</span> : null}
+        {typeof resolvedCount === 'number' ? (
+          <span className="filter-disclosure__count tabular-nums" data-active={selectedCount && selectedCount > 0 ? 'true' : 'false'}>
+            ({resolvedCount})
+          </span>
+        ) : null}
         <span aria-hidden={true} className="filter-disclosure__chevron text-xs leading-none">
           ▾
         </span>
       </summary>
       <div
         ref={panelRef}
-        className={`filter-disclosure__panel absolute left-0 z-20 mt-2 rounded-2xl p-2 ${panelClassName || ''}`}
+        className={`filter-disclosure__panel absolute left-0 z-30 mt-2 rounded-2xl p-2 ${panelClassName || ''}`}
       >
         {typeof children === 'function' ? children({ requestCloseIfNeeded }) : children}
       </div>

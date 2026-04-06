@@ -29,5 +29,6 @@ describe('YearSelect', () => {
 
     expect(onToggle).toHaveBeenCalledWith('2024');
     expect(onClear).toHaveBeenCalledTimes(1);
+    expect(summary).toHaveTextContent('(1)');
   });
 });

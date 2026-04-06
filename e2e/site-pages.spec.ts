@@ -362,6 +362,10 @@ for (const { label, use } of viewports) {
         await searchInput.fill('Encoder');
         await expect(page.getByTestId('filter-result-summary')).toContainText('of');
         await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Relevant' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Newest' })).toBeVisible();
+        await page.getByRole('button', { name: 'Newest' }).click();
+        await expect(page.getByRole('button', { name: 'Newest' })).toHaveAttribute('aria-pressed', 'true');
         await expect(page.locator('mark.search-highlight').filter({ hasText: 'Encoder' }).first()).toBeVisible();
       });
 
@@ -400,6 +404,10 @@ for (const { label, use } of viewports) {
         await expect(page.getByText(/DeNAでの2週間インターンシップ体験記/)).not.toBeVisible();
       });
     } else {
+      test('keeps filter summary sticky on mobile', async ({ page }) => {
+        await expect(page.locator('.filter-bar__meta')).toHaveCSS('position', 'sticky');
+      });
+
       test('closes the year filter after selection on mobile', async ({ page }) => {
         const yearFilter = page.locator('details').filter({ hasText: 'Year' }).first();
         await expect(yearFilter).toContainText('Year');
