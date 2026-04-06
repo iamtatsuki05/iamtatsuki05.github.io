@@ -20,6 +20,7 @@ export type BlogPost = {
   draft?: boolean;
   html?: string;
   headings?: { id: string; title: string; level: number }[];
+  markdown?: string;
 };
 
 export async function getAllPosts(): Promise<BlogPost[]> {
@@ -62,7 +63,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   return cached(cacheKey, async () => {
     const full = path.join(BLOG_DIR, `${slug}.md`);
     try {
-      const { data, contentHtml, headings } = await parseMarkdownFile(full);
+      const { data, contentHtml, headings, raw } = await parseMarkdownFile(full);
       const parsed = BlogFrontmatter.safeParse(data);
       if (!parsed.success) return null;
       const fm = parsed.data;
@@ -80,6 +81,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
         draft: fm.draft,
         html: contentHtml,
         headings,
+        markdown: raw,
       } satisfies BlogPost;
     } catch {
       return null;

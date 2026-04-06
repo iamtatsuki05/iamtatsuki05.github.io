@@ -19,7 +19,7 @@ export function Card({ as = 'div', href, children, className, target, rel, testI
         href={href}
         target={target}
         rel={rel}
-        className={clsx(base, className)}
+        className={clsx(base, 'pressable-card', className)}
         data-testid={testId}
       >
         {children}
@@ -32,4 +32,3 @@ export function Card({ as = 'div', href, children, className, target, rel, testI
     </div>
   );
 }
-

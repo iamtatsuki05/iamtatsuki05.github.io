@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/site/ThemeToggle';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { NavLinks } from '@/components/site/NavLinks';
 import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
@@ -16,20 +16,6 @@ export function Header() {
   const locale = extractLocaleFromPath(pathname) || 'ja';
   const localePrefix = `/${localeToRouteLocale(locale)}`;
   const activePath = pathname;
-
-  // メニュー表示中はスクロールを固定
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const root = document.body;
-    if (open) {
-      root.style.overflow = 'hidden';
-    } else {
-      root.style.overflow = '';
-    }
-    return () => {
-      root.style.overflow = '';
-    };
-  }, [open]);
 
   const navItems = useMemo(() => resolveNavItems(locale), [locale]);
 
@@ -54,18 +40,17 @@ export function Header() {
           <LanguageSwitch />
           <ThemeToggle />
           <button
-          aria-label="Open menu"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          onClick={() => setOpen(true)}
-          className="px-2 py-1 rounded-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors focus-ring"
+            aria-label="Open menu"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen(true)}
+            className="flex h-11 w-11 items-center justify-center rounded-[1.15rem] border border-white/70 bg-white/75 text-gray-700 shadow-[0_18px_36px_-28px_rgba(192,132,252,0.9)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:border-purple-200 hover:bg-white/90 dark:border-white/10 dark:bg-[#171022]/80 dark:text-gray-100 dark:hover:border-amber-200/30 dark:hover:bg-[#1d1630]/88 focus-ring"
           >
-            {/* Hamburger icon */}
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
+            <span aria-hidden="true" className="flex flex-col items-center gap-1.5">
+              <span className="block h-0.5 w-5 rounded-full bg-current" />
+              <span className="block h-0.5 w-4 rounded-full bg-current" />
+              <span className="block h-0.5 w-5 rounded-full bg-current" />
+            </span>
           </button>
         </div>
       </div>

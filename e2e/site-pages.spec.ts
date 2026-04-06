@@ -40,6 +40,29 @@ for (const { label, use } of viewports) {
     });
 
     if (label === 'desktop') {
+      test('reacts across the whole latest card when hovering the title link', async ({ page }) => {
+        const latestSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '✨ 最新' }) })
+          .first();
+
+        const latestCard = latestSection.locator('[data-testid="blog-latest-card"]').first();
+        const titleLink = latestCard.locator('a[href*="/blogs/"]').first();
+        const mediaImage = latestCard.locator('.blog-linked-card__media img').first();
+
+        await expect(latestCard).toBeVisible();
+        await expect(titleLink).toBeVisible();
+        await expect(mediaImage).toBeVisible();
+        await page.waitForTimeout(450);
+
+        const beforeTransform = await mediaImage.evaluate((element) => getComputedStyle(element).transform);
+        await titleLink.hover();
+
+        await expect
+          .poll(() => mediaImage.evaluate((element) => getComputedStyle(element).transform))
+          .not.toBe(beforeTransform);
+      });
+
       test('navigates to detail when clicking a blog card', async ({ page }) => {
         const allPostsSection = page
           .locator('section')
@@ -60,6 +83,8 @@ for (const { label, use } of viewports) {
       });
 
       test('blog detail sidebar tracks heading and progress smoothly', async ({ page }) => {
+        await page.setViewportSize({ width: 1440, height: 900 });
+
         const allPostsSection = page
           .locator('section')
           .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
@@ -105,6 +130,96 @@ for (const { label, use } of viewports) {
             progress.evaluate((element) => Number.parseInt((element as HTMLElement).style.width || '0', 10)),
           )
           .toBeGreaterThan(initialProgress);
+      });
+
+      test('copies the full article as markdown from the detail header', async ({ page, browserName }) => {
+        test.skip(browserName !== 'chromium', 'clipboard content is verified in Chromium only');
+
+        await page.addInitScript(() => {
+          Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: {
+              writeText: async (text: string) => {
+                (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ = text;
+              },
+            },
+          });
+        });
+        await page.goto(localizedPath('ja', '/blogs/'));
+
+        const allPostsSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+          .first();
+
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        await detailLink.click();
+        const navigated = await page
+          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+        if (!navigated && detailPath) {
+          await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+        }
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+
+        const copyButton = page.getByRole('button', { name: '記事のMarkdownをコピー' });
+        await expect(copyButton).toBeVisible();
+        await copyButton.click();
+        await expect(copyButton).toContainText('コピーしました');
+        await expect(copyButton).toHaveAttribute('data-status', 'success');
+        await expect
+          .poll(() => page.evaluate(() => (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ || ''))
+          .toContain('---');
+        await expect
+          .poll(() => page.evaluate(() => (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ || ''))
+          .toContain('## ');
+      });
+
+      test('keeps english copy labels after entering a blog detail from english pages', async ({ page, browserName }) => {
+        test.skip(browserName !== 'chromium', 'clipboard content is verified in Chromium only');
+
+        await page.addInitScript(() => {
+          Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: {
+              writeText: async (text: string) => {
+                (window as unknown as { __copiedMarkdown__?: string }).__copiedMarkdown__ = text;
+              },
+            },
+          });
+        });
+        await page.goto(localizedPath('en', '/blogs/'));
+
+        const allPostsSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 All Posts' }) })
+          .first();
+
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        await detailLink.click();
+        const navigated = await page
+          .waitForURL(/\/blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false);
+        if (!navigated && detailPath) {
+          await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+        }
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/blogs\/[\w-]+\/?$/);
+
+        const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
+        await expect(copyButton).toBeVisible();
+        await expect(copyButton).toContainText('Copy Markdown');
+        await expect(page.getByRole('button', { name: 'Share' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Share on X' })).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Share on LinkedIn' })).toBeVisible();
+        await expect(page.getByTestId('blog-toc-fab')).toContainText('Contents');
+        await expect(page.locator('article.prose p').first()).toContainText('2025-');
+        await copyButton.click();
+        await expect(copyButton).toContainText('Copied');
+        await expect(copyButton).toHaveAttribute('data-status', 'success');
       });
     }
   });
@@ -204,24 +319,107 @@ for (const { label, use } of viewports) {
       await expect(tagFilter).toHaveAttribute('open', '');
       const panel = tagFilter.locator('summary + div');
       await expect(tagFilter.locator('button').first()).toBeVisible();
-      const viewport = page.viewportSize();
-      expect(viewport).not.toBeNull();
+      const filterBar = page.locator('[data-filter-bar-root]').first();
+      const filterBarBox = await filterBar.boundingBox();
+      expect(filterBarBox).not.toBeNull();
       await expect
         .poll(async () => (await panel.boundingBox())?.x ?? Number.NEGATIVE_INFINITY)
-        .toBeGreaterThanOrEqual(-1);
+        .toBeGreaterThanOrEqual((filterBarBox?.x || 0) - 1);
       await expect
         .poll(async () => {
           const box = await panel.boundingBox();
           if (!box) return Number.POSITIVE_INFINITY;
           return box.x + box.width;
         })
-        .toBeLessThanOrEqual((viewport?.width || 0) + 1);
+        .toBeLessThanOrEqual((filterBarBox?.x || 0) + (filterBarBox?.width || 0) + 1);
 
       const after = await searchInput.boundingBox();
       expect(after).not.toBeNull();
       expect(Math.abs((after?.y || 0) - (before?.y || 0))).toBeLessThanOrEqual(1);
       expect(Math.abs((after?.width || 0) - (before?.width || 0))).toBeLessThanOrEqual(1);
     });
+
+    if (label === 'desktop') {
+      test('supports search shortcuts and quick recovery actions', async ({ page }) => {
+        const searchInput = page.getByRole('textbox', { name: 'Search...' });
+        await page.locator('body').click({ position: { x: 12, y: 12 } });
+        await page.keyboard.press('/');
+        await expect(searchInput).toBeFocused();
+
+        await page.keyboard.type('zzzz');
+        await expect(page.getByTestId('filter-empty-state')).toBeVisible();
+        await expect(page.getByTestId('filter-empty-state')).toContainText('zzzz');
+        await expect(page.getByRole('button', { name: 'Clear Search' })).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await expect(searchInput).toHaveValue('');
+
+        await searchInput.fill('zzzz');
+        const clearSearch = page.getByRole('button', { name: 'Clear Search' });
+        await clearSearch.click();
+        await expect(page.getByTestId('filter-empty-state')).toHaveCount(0);
+
+        await searchInput.fill('Encoder');
+        await expect(page.getByTestId('filter-result-summary')).toContainText('of');
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Relevant' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Newest' })).toBeVisible();
+        await page.getByRole('button', { name: 'Newest' }).click();
+        await expect(page.getByRole('button', { name: 'Newest' })).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('mark.search-highlight').filter({ hasText: 'Encoder' }).first()).toBeVisible();
+      });
+
+      test('shows removable active filter chips when narrowing publications', async ({ page }) => {
+        const tagFilter = page.locator('details').filter({ hasText: 'Tags' }).first();
+        await expect(tagFilter).toContainText('Tags');
+
+        await tagFilter.locator('summary').click();
+        const firstTagButton = tagFilter.locator('button').first();
+        const chipLabel = ((await firstTagButton.textContent()) || '').trim();
+        expect(chipLabel.length).toBeGreaterThan(0);
+
+        await firstTagButton.click();
+        await expect(page.getByTestId('filter-result-summary')).toBeVisible();
+
+        const chip = page.getByTestId('filter-active-chip').filter({ hasText: chipLabel }).first();
+        await expect(chip).toBeVisible();
+        await chip.click();
+        await expect(chip).toHaveCount(0);
+      });
+
+      test('supports selecting multiple years in the publication filter', async ({ page }) => {
+        const yearFilter = page.locator('details').filter({ hasText: 'Year' }).first();
+        await expect(yearFilter).toContainText('Year');
+
+        await yearFilter.locator('summary').click();
+        await expect(yearFilter).toHaveAttribute('open', '');
+        await yearFilter.getByRole('button', { name: '2026' }).click();
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.getByText(/数学推論能力向上/)).not.toBeVisible();
+        await expect(page.getByText(/DeNAでの2週間インターンシップ体験記/)).not.toBeVisible();
+
+        await yearFilter.getByRole('button', { name: '2025' }).click();
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+        await expect(page.getByText(/数学推論能力向上/)).toBeVisible();
+        await expect(page.getByText(/DeNAでの2週間インターンシップ体験記/)).not.toBeVisible();
+      });
+    } else {
+      test('keeps filter summary sticky on mobile', async ({ page }) => {
+        await expect(page.locator('.filter-bar__meta')).toHaveCSS('position', 'sticky');
+      });
+
+      test('closes the year filter after selection on mobile', async ({ page }) => {
+        const yearFilter = page.locator('details').filter({ hasText: 'Year' }).first();
+        await expect(yearFilter).toContainText('Year');
+
+        await yearFilter.locator('summary').click();
+        await expect(yearFilter).toHaveAttribute('open', '');
+
+        await yearFilter.getByRole('button', { name: '2026' }).click();
+        await expect(yearFilter).not.toHaveAttribute('open', '');
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+      });
+    }
   });
 }
 
@@ -255,9 +453,48 @@ test.describe('Blog detail toc toggle (tablet)', () => {
     await expect(fab).toHaveAttribute('aria-expanded', 'true');
     const sheet = page.getByTestId('blog-toc-sheet');
     await expect(sheet).toBeVisible();
+    await expect(sheet).toHaveAttribute('data-state', 'open');
     expect(await sheet.locator('a[data-toc-id]').count()).toBeGreaterThan(1);
 
     await sheet.getByRole('button', { name: '閉じる' }).click();
+    await expect(sheet).toHaveAttribute('data-state', 'closed');
+    await expect(page.getByTestId('blog-toc-sheet')).toHaveCount(0);
+  });
+});
+
+test.describe('Blog detail toc toggle (mobile)', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('shows and toggles floating toc panel', async ({ page }) => {
+    await page.goto(localizedPath('ja', '/blogs/'));
+
+    const allPostsSection = page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+      .first();
+    const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    await detailLink.click();
+    const navigated = await page
+      .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!navigated && detailPath) {
+      await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
+    }
+    await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
+
+    const fab = page.getByTestId('blog-toc-fab');
+    await expect(fab).toBeVisible({ timeout: 10000 });
+    await expect(fab).toHaveText('目次');
+
+    await fab.click();
+    const sheet = page.getByTestId('blog-toc-sheet');
+    await expect(sheet).toBeVisible();
+    await expect(sheet).toHaveAttribute('data-state', 'open');
+
+    await sheet.getByRole('button', { name: '閉じる' }).click();
+    await expect(sheet).toHaveAttribute('data-state', 'closed');
     await expect(page.getByTestId('blog-toc-sheet')).toHaveCount(0);
   });
 });

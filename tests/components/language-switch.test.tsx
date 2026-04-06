@@ -1,7 +1,9 @@
 import React from 'react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
+import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';
 
 afterEach(() => {
+  window.localStorage.clear();
   vi.resetModules();
   vi.doMock('next/navigation', () => ({ usePathname: () => '/' }));
 });
@@ -16,11 +18,23 @@ describe('LanguageSwitch', () => {
 
     const jaLink = screen.getByRole('link', { name: 'JA' });
     const enLink = screen.getByRole('link', { name: 'EN' });
+    const indicator = screen.getByTestId('language-switch-indicator');
 
     expect(jaLink.getAttribute('href')).toBe('/ja-JP/links/');
     expect(enLink.getAttribute('href')).toBe('/en-US/links/');
     expect(enLink.getAttribute('aria-current')).toBe('true');
     expect(jaLink.getAttribute('aria-current')).toBeNull();
+    expect(indicator.getAttribute('data-active-locale')).toBe('en');
+  });
+
+  it('locale付きパスでは選択中言語を保存する', async () => {
+    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/links/' }));
+    const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
+    const { render, waitFor } = await import('@testing-library/react');
+
+    render(<LanguageSwitch />);
+
+    await waitFor(() => expect(window.localStorage.getItem(LOCALE_PREFERENCE_STORAGE_KEY)).toBe('en'));
   });
 
   it('非対応ページではリンクではなく固定表示になる', async () => {
@@ -34,5 +48,6 @@ describe('LanguageSwitch', () => {
     expect(screen.queryByRole('link', { name: 'EN' })).toBeNull();
     expect(screen.getByRole('group', { name: 'Language switch' }).getAttribute('aria-disabled')).toBe('true');
     expect(screen.getByText('JA').getAttribute('aria-current')).toBe('true');
+    expect(screen.getByTestId('language-switch-indicator').getAttribute('data-active-locale')).toBe('ja');
   });
 });

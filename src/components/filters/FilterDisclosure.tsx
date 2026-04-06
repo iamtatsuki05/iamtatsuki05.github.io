@@ -3,17 +3,23 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 type Props = {
   label: string;
   count?: number;
+  selectedCount?: number;
   className?: string;
   panelClassName?: string;
-  children: React.ReactNode;
+  autoCloseOnSelect?: 'mobile' | 'always';
+  children: React.ReactNode | ((actions: { requestCloseIfNeeded: () => void }) => React.ReactNode);
 };
 
 const VIEWPORT_MARGIN = 8;
+const MOBILE_MEDIA_QUERY = '(max-width: 639px)';
+const MOBILE_MAX_WIDTH = 639;
+const FORCE_CLOSE_EVENT = 'filter-disclosure-force-close';
 
-export function FilterDisclosure({ label, count, className, panelClassName, children }: Props) {
+export function FilterDisclosure({ label, count, selectedCount, className, panelClassName, autoCloseOnSelect, children }: Props) {
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [offsetX, setOffsetX] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const resolvedCount = typeof selectedCount === 'number' && selectedCount > 0 ? selectedCount : count;
 
   const closeSiblingDisclosures = useCallback(() => {
     const current = detailsRef.current;
@@ -22,28 +28,78 @@ export function FilterDisclosure({ label, count, className, panelClassName, chil
 
     const opened = parent.querySelectorAll<HTMLDetailsElement>('details[data-filter-disclosure="true"][open]');
     opened.forEach((node) => {
-      if (node !== current && node.parentElement === parent) node.open = false;
+      if (node !== current && node.parentElement === parent) {
+        node.dispatchEvent(new CustomEvent(FORCE_CLOSE_EVENT));
+      }
     });
   }, []);
 
   const adjustPanelPosition = useCallback(() => {
+    const details = detailsRef.current;
     const panel = panelRef.current;
-    if (!panel) return;
+    if (!details || !panel) return;
 
-    const rect = panel.getBoundingClientRect();
-    const minLeft = VIEWPORT_MARGIN;
-    const maxRight = window.innerWidth - VIEWPORT_MARGIN;
-    let nextOffset = 0;
+    const boundary =
+      details.closest<HTMLElement>('[data-filter-bar-root="true"]') ?? details.parentElement ?? document.body;
+    const boundaryRect = boundary.getBoundingClientRect();
+    const minLeft = Math.max(boundaryRect.left + VIEWPORT_MARGIN, VIEWPORT_MARGIN);
+    const maxRight = Math.min(boundaryRect.right - VIEWPORT_MARGIN, window.innerWidth - VIEWPORT_MARGIN);
+    const maxWidth = Math.max(maxRight - minLeft, 0);
 
-    if (rect.left < minLeft) nextOffset += minLeft - rect.left;
-    if (rect.right > maxRight) nextOffset += maxRight - rect.right;
+    panel.style.setProperty('--filter-disclosure-max-width', `${maxWidth}px`);
+    const detailsRect = details.getBoundingClientRect();
+    const panelWidth = panel.offsetWidth;
+    let nextOffset = Number.parseFloat(panel.style.getPropertyValue('--filter-disclosure-offset-x') || '0');
 
-    setOffsetX(nextOffset);
+    if (!Number.isFinite(nextOffset)) nextOffset = 0;
+
+    const projectedLeft = detailsRect.left + nextOffset;
+    if (projectedLeft < minLeft) nextOffset += minLeft - projectedLeft;
+
+    const projectedRight = detailsRect.left + nextOffset + panelWidth;
+    if (projectedRight > maxRight) nextOffset += maxRight - projectedRight;
+
+    panel.style.setProperty('--filter-disclosure-offset-x', `${nextOffset}px`);
   }, []);
+
+  const closeDisclosure = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const shouldAutoCloseOnSelect = useCallback(() => {
+    if (!autoCloseOnSelect) return false;
+    if (autoCloseOnSelect === 'always') return true;
+    if (typeof window === 'undefined') return false;
+
+    const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+    if (viewportWidth <= MOBILE_MAX_WIDTH) return true;
+
+    if (typeof window.matchMedia !== 'function') return false;
+    return Boolean(window.matchMedia(MOBILE_MEDIA_QUERY)?.matches);
+  }, [autoCloseOnSelect]);
+
+  const openDisclosure = useCallback(() => {
+    closeSiblingDisclosures();
+    setIsOpen(true);
+  }, [closeSiblingDisclosures]);
+
+  useEffect(() => {
+    const details = detailsRef.current;
+    if (!details) return;
+
+    const handleForceClose = () => {
+      closeDisclosure();
+    };
+
+    details.addEventListener(FORCE_CLOSE_EVENT, handleForceClose);
+    return () => {
+      details.removeEventListener(FORCE_CLOSE_EVENT, handleForceClose);
+    };
+  }, [closeDisclosure]);
 
   useEffect(() => {
     const handleResize = () => {
-      if (!detailsRef.current?.open) return;
+      if (!isOpen) return;
       adjustPanelPosition();
     };
 
@@ -51,42 +107,54 @@ export function FilterDisclosure({ label, count, className, panelClassName, chil
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [adjustPanelPosition]);
+  }, [adjustPanelPosition, isOpen]);
 
-  const handleToggle = () => {
-    if (!detailsRef.current?.open) {
-      setOffsetX(0);
+  useEffect(() => {
+    if (!isOpen) {
+      panelRef.current?.style.setProperty('--filter-disclosure-offset-x', '0px');
+      panelRef.current?.style.removeProperty('--filter-disclosure-max-width');
       return;
     }
 
-    closeSiblingDisclosures();
-    window.requestAnimationFrame(() => {
-      adjustPanelPosition();
-    });
+    adjustPanelPosition();
+  }, [adjustPanelPosition, isOpen]);
+
+  const requestCloseIfNeeded = () => {
+    if (!shouldAutoCloseOnSelect()) return;
+    closeDisclosure();
   };
 
   return (
     <details
       ref={detailsRef}
+      open={isOpen}
       data-filter-disclosure="true"
-      onToggle={handleToggle}
-      className={`relative ${className || ''}`}
+      data-state={isOpen ? 'open' : 'closed'}
+      className={`filter-disclosure relative ${className || ''}`}
     >
       <summary
-        className="relative z-30 inline-flex cursor-pointer list-none items-center gap-1 rounded-sm border border-gray-300/80 px-2 py-1 text-sm opacity-80 hover:opacity-100 dark:border-gray-700 [&::-webkit-details-marker]:hidden"
+        onClick={(event) => {
+          event.preventDefault();
+          if (isOpen) closeDisclosure();
+          else openDisclosure();
+        }}
+        className="filter-disclosure__summary relative z-30 inline-flex cursor-pointer list-none items-center gap-1 rounded-full px-2.5 py-1.5 text-sm [&::-webkit-details-marker]:hidden"
       >
         <span>{label}</span>
-        {typeof count === 'number' ? <span className="tabular-nums opacity-70">({count})</span> : null}
-        <span aria-hidden={true} className="text-xs leading-none">
+        {typeof resolvedCount === 'number' ? (
+          <span className="filter-disclosure__count tabular-nums" data-active={selectedCount && selectedCount > 0 ? 'true' : 'false'}>
+            ({resolvedCount})
+          </span>
+        ) : null}
+        <span aria-hidden={true} className="filter-disclosure__chevron text-xs leading-none">
           ▾
         </span>
       </summary>
       <div
         ref={panelRef}
-        style={offsetX ? { transform: `translateX(${offsetX}px)` } : undefined}
-        className={`absolute left-0 z-20 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-900 ${panelClassName || ''}`}
+        className={`filter-disclosure__panel absolute left-0 z-30 mt-2 rounded-2xl p-2 ${panelClassName || ''}`}
       >
-        {children}
+        {typeof children === 'function' ? children({ requestCloseIfNeeded }) : children}
       </div>
     </details>
   );

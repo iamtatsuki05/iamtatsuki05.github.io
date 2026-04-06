@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
-import { formatDate } from '@/lib/date';
 import { withBasePath } from '@/lib/url';
 import { absoluteUrl } from '@/lib/seo';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
@@ -10,6 +9,8 @@ import { EmbedsClient } from '@/components/site/EmbedsClient';
 import { buildArticleJsonLd, buildPageMetadata } from '@/lib/seo';
 import { ShareButtons } from '@/components/blogs/ShareButtons';
 import { BlogToc } from '@/components/blogs/BlogToc';
+import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
+import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
 
 type Params = { slug: string };
 
@@ -52,7 +53,7 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
-  const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags } = post;
+  const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags, markdown } = post;
   const shareUrl = absoluteUrl(`/blogs/${slug}/`);
   const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
   const articleJsonLd = buildArticleJsonLd({
@@ -66,8 +67,8 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   });
 
   return (
-    <div className="mx-auto lg:grid lg:max-w-[1200px] lg:grid-cols-[minmax(0,1fr)_clamp(15rem,24vw,20rem)] lg:items-start lg:gap-8">
-      <article id="blog-article" className="prose dark:prose-invert max-w-none">
+    <div className="mx-auto w-full lg:grid lg:max-w-[1560px] lg:grid-cols-[minmax(0,1fr)_minmax(0,56rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+      <article id="blog-article" className="prose dark:prose-invert w-full max-w-none lg:col-start-2">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
         {headerImage ? (
           <div className="relative mb-4 aspect-[16/9] w-full overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
@@ -84,16 +85,19 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
           </div>
         ) : null}
         <h1>{title}</h1>
-        <p className="mt-0! text-sm opacity-70">
-          {formatDate(date, 'ja')}
-          {updated ? `（更新: ${formatDate(updated, 'ja')}）` : ''}
-        </p>
-        <ShareButtons url={shareUrl} title={title} className="my-4" />
+        <BlogPostMeta date={date} updated={updated} />
+        <div className="my-4 flex flex-wrap items-center gap-3">
+          <ShareButtons url={shareUrl} title={title} className="my-0" />
+          <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" />
+        </div>
         <div dangerouslySetInnerHTML={{ __html: html || '' }} />
         <CodeCopyClient />
         <EmbedsClient />
       </article>
-      <BlogToc containerId="blog-article" />
+      <BlogToc
+        containerId="blog-article"
+        className="min-[1440px]:col-start-3 min-[1440px]:justify-self-start min-[1440px]:w-full min-[1440px]:max-w-[clamp(14rem,24vw,20rem)]"
+      />
     </div>
   );
 }

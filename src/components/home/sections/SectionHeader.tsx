@@ -49,9 +49,8 @@ export function SectionHeader({ title, subtitle, ctaLabel, ctaHref, actions, cla
         {ctaLabel && ctaHref ? (
           <Link
             href={ctaHref}
-            prefetch={true}
             className={clsx(
-              'inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm transition hover:-translate-y-0.5 hover:shadow-md',
+              'ui-cta px-3 py-1 text-sm',
               toneMap[tone].cta,
               'shadow-sm',
             )}

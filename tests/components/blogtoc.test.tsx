@@ -1,8 +1,9 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BlogToc } from '@/components/blogs/BlogToc';
+import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';
 
 function createRect(top: number, height: number = 40): DOMRect {
   return {
@@ -71,6 +72,8 @@ describe('BlogToc', () => {
   });
 
   afterEach(() => {
+    window.localStorage.clear();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -83,6 +86,20 @@ describe('BlogToc', () => {
     expect(within(toc).getByRole('link', { name: 'セクション2' })).toBeInTheDocument();
     expect(toc).toHaveStyle('--toc-item-count: 3');
     expect(within(toc).getByTestId('blog-toc-progress')).toHaveClass('motion-reduce:transition-none');
+  });
+
+  it('reveals desktop toc after the initial enter delay', () => {
+    vi.useFakeTimers();
+    render(<BlogToc containerId="blog-article" />);
+
+    const toc = screen.getByTestId('blog-toc');
+    expect(toc).toHaveAttribute('data-state', 'hidden');
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    expect(toc).toHaveAttribute('data-state', 'open');
   });
 
   it('updates active heading and reading progress while scrolling', async () => {
@@ -112,22 +129,59 @@ describe('BlogToc', () => {
     expect(screen.queryByTestId('blog-toc')).not.toBeInTheDocument();
   });
 
-  it('toggles floating toc panel with fab on medium viewport', async () => {
-    const user = userEvent.setup();
+  it('toggles floating toc panel with fab on medium viewport', () => {
+    vi.useFakeTimers();
     render(<BlogToc containerId="blog-article" />);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     const fab = screen.getByTestId('blog-toc-fab');
     expect(fab).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
 
-    await user.click(fab);
+    fireEvent.click(fab);
     expect(fab).toHaveAttribute('aria-expanded', 'true');
     const sheet = screen.getByTestId('blog-toc-sheet');
+    expect(sheet).toHaveAttribute('data-state', 'closed');
+
+    act(() => {
+      vi.advanceTimersByTime(16);
+    });
+
+    expect(sheet).toHaveAttribute('data-state', 'open');
     expect(within(sheet).getByRole('link', { name: 'セクション1' })).toBeInTheDocument();
 
-    await user.click(within(sheet).getByRole('button', { name: '閉じる' }));
-    await waitFor(() => {
-      expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
+    fireEvent.click(within(sheet).getByRole('button', { name: '閉じる' }));
+    expect(sheet).toHaveAttribute('data-state', 'closed');
+
+    act(() => {
+      vi.advanceTimersByTime(279);
     });
+
+    expect(screen.getByTestId('blog-toc-sheet')).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+
+    expect(screen.queryByTestId('blog-toc-sheet')).not.toBeInTheDocument();
+  });
+
+  it('uses english labels when english locale is stored', async () => {
+    window.localStorage.setItem(LOCALE_PREFERENCE_STORAGE_KEY, 'en');
+    render(<BlogToc containerId="blog-article" />);
+
+    const toc = await screen.findByTestId('blog-toc');
+    expect(within(toc).getByText('Contents')).toBeInTheDocument();
+
+    const fab = screen.getByTestId('blog-toc-fab');
+    expect(fab).toHaveTextContent('Contents');
+    expect(fab).toHaveAttribute('aria-label', 'Open table of contents');
+
+    const user = userEvent.setup();
+    await user.click(fab);
+    const sheet = screen.getByTestId('blog-toc-sheet');
+    expect(within(sheet).getByRole('button', { name: 'Close' })).toBeInTheDocument();
   });
 });

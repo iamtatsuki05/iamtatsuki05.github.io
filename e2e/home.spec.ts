@@ -58,15 +58,26 @@ for (const { label, use } of viewports) {
 
     if (label === 'mobile') {
       test('opens and closes the mobile menu', async ({ page }) => {
-        await page.getByRole('button', { name: 'Open menu' }).click();
-        await expect(page.locator('#mobile-menu')).toBeVisible();
+        const menu = page.locator('#mobile-menu');
 
-        const menuLinks = page.locator('#mobile-menu nav a');
+        await page.getByRole('button', { name: 'Open menu' }).click();
+        await expect(menu).toBeVisible();
+        await expect(menu).toHaveAttribute('data-state', 'open');
+
+        await page.getByRole('button', { name: 'Close menu' }).click();
+        await expect(menu).toHaveAttribute('data-state', 'closed');
+        await expect(menu).toHaveCount(0);
+
+        await page.getByRole('button', { name: 'Open menu' }).click();
+        await expect(menu).toBeVisible();
+        await expect(menu).toHaveAttribute('data-state', 'open');
+
+        const menuLinks = menu.locator('nav a');
         await expect(menuLinks).toHaveCount(4);
         await expect(menuLinks.nth(1)).toContainText('Links');
         const targetPath = (await menuLinks.nth(1).getAttribute('href')) || localizedPath('ja', '/links/');
         await menuLinks.nth(1).click();
-        await expect(page.locator('#mobile-menu')).toHaveCount(0);
+        await expect(menu).toHaveCount(0);
         const navigated = await page
           .waitForURL(new RegExp(`${targetPath}$`), { timeout: 3_000 })
           .then(() => true)
@@ -165,10 +176,10 @@ test.describe('Homepage theme toggle with system preference', () => {
 
     await expect(toggle).toBeVisible();
     await expect(html).toHaveClass(/dark/);
-    await expect(toggle).toContainText('🌙');
+    await expect(toggle).toHaveAttribute('data-theme', 'dark');
 
     await toggle.click();
     await expect(html).toHaveClass(/light/);
-    await expect(toggle).toContainText('☀️');
+    await expect(toggle).toHaveAttribute('data-theme', 'light');
   });
 });

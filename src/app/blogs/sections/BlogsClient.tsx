@@ -7,9 +7,22 @@ import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { resolveFilterText } from '@/components/filters/filterTexts';
+import {
+  buildBaseActiveFilters,
+  buildBaseEmptyStateActions,
+  FilterEmptyState,
+  removeSetValue,
+  SearchSortControls,
+  toggleSetValue,
+} from '@/components/filters/filterHelpers';
+import {
+  formatFilterResultCount,
+  resolveFilterText,
+} from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
+import { SearchHighlight } from '@/components/search/SearchHighlight';
+import { useInitialReveal } from '@/hooks/useInitialReveal';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -28,22 +41,28 @@ type Post = {
 export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 'ja' | 'en' }) {
   const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const areCardsVisible = useInitialReveal(56);
 
   const {
     q,
     setQ,
-    year,
-    setYear,
+    yearSet,
+    setYearSet,
     tagSet,
     setTagSet,
     years: allYears,
     allTags,
     filtered,
     clearFilters,
+    fuseLoading,
+    preloadSearch,
+    sort,
+    setSort,
   } = useSearchFilters(posts, {
     fuseKeys: ['title', 'summary', 'tags'],
     extractYear: (p) => p.date,
     extractTags: (p) => p.tags || [],
+    extractSortValue: (p) => p.date,
   });
 
   useEffect(() => {
@@ -71,35 +90,64 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   const items = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
 
   const t = useMemo(() => resolveFilterText(locale), [locale]);
+  const resultLabel = useMemo(
+    () => formatFilterResultCount(locale, filtered.length, posts.length),
+    [filtered.length, locale, posts.length],
+  );
+  const activeFilters = useMemo(() => {
+    return buildBaseActiveFilters({
+      locale,
+      query: q,
+      yearSet,
+      tagSet,
+      onQueryClear: () => setQ(''),
+      onYearRemove: (year) => setYearSet((prev) => removeSetValue(prev, year)),
+      onTagRemove: (tag) => setTagSet((prev) => removeSetValue(prev, tag)),
+    });
+  }, [locale, q, setQ, setTagSet, setYearSet, tagSet, yearSet]);
+  const emptyStateActions = useMemo(() => {
+    return buildBaseEmptyStateActions({
+      locale,
+      query: q,
+      hasYears: yearSet.size > 0,
+      hasTags: tagSet.size > 0,
+      onQueryClear: () => setQ(''),
+      onYearsClear: () => setYearSet(new Set()),
+      onTagsClear: () => setTagSet(new Set()),
+      texts: t,
+    });
+  }, [locale, q, setQ, setTagSet, setYearSet, t, tagSet.size, yearSet.size]);
 
   return (
     <div className="space-y-6">
       <FilterBar
         query={q}
         onQueryChange={setQ}
+        onSearchIntent={preloadSearch}
         placeholder={t.search}
-        onClear={() => {
-          clearFilters();
-        }}
+        onClear={clearFilters}
         clearLabel={t.clear}
-        hasActiveFilters={Boolean(year || tagSet.size)}
+        hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
+        isSearchLoading={fuseLoading}
+        searchLoadingLabel={t.searching}
+        resultLabel={resultLabel}
+        activeFilters={activeFilters}
+        sortControls={<SearchSortControls visible={Boolean(q)} sort={sort} onSortChange={setSort} texts={t} />}
+        stickyMetaOnMobile
       >
         <YearSelect
           years={allYears}
-          value={year}
-          onChange={setYear}
+          selected={yearSet}
+          onToggle={(year) => setYearSet((prev) => toggleSetValue(prev, year))}
+          onClear={() => setYearSet(new Set())}
           label={t.year}
+          allLabel={t.all}
         />
 
         <TagSelector
           tags={allTags}
           selected={tagSet}
-          onToggle={(tag) => {
-            const next = new Set(tagSet);
-            if (next.has(tag)) next.delete(tag);
-            else next.add(tag);
-            setTagSet(next);
-          }}
+          onToggle={(tag) => setTagSet((prev) => toggleSetValue(prev, tag))}
           label={t.tags}
           className="ml-2"
         />
@@ -107,12 +155,17 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
       <SectionShell tone="amber">
         <SectionHeader title={t.latest} tone="amber" />
-        <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
+        <ul className="content-reveal-list grid gap-3 sm:grid-cols-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-latest-list">
           {latest.map((p, index) => (
-            <li key={p.slug} className="card overflow-hidden" data-testid="blog-latest-card">
+            <li
+              key={p.slug}
+              className="content-reveal-card card blog-linked-card overflow-hidden"
+              data-testid="blog-latest-card"
+              style={areCardsVisible ? { transitionDelay: `${100 + index * 34}ms` } : undefined}
+            >
               {p.headerImage ? (
                 <div
-                  className="relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
+                  className="blog-linked-card__media relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
                   data-testid="blog-image"
                 >
                   <Image
@@ -128,13 +181,18 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
               ) : null}
               <div className="p-3">
                 <h3 className="font-medium">
-                  <Link href={`/blogs/${p.slug}/`} prefetch={true} className="underline-offset-2 hover:underline">
-                    {p.title}
+                  <Link
+                    href={`/blogs/${p.slug}/`}
+                    className="blog-linked-card__title-link underline-offset-2 hover:underline"
+                  >
+                    <SearchHighlight text={p.title} query={q} />
                   </Link>
                 </h3>
               <p className="text-xs opacity-70 mt-1">{formatDate(p.date, locale)}</p>
                 {p.summary && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-2">{p.summary}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-2">
+                    <SearchHighlight text={p.summary} query={q} />
+                  </p>
                 )}
               </div>
             </li>
@@ -144,15 +202,20 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
       <SectionShell tone="lilac">
         <SectionHeader title={t.allPosts} tone="lilac" />
-        {items.length === 0 ? (
-          <p className="opacity-70">{t.noResult}</p>
+        {filtered.length === 0 ? (
+          <FilterEmptyState locale={locale} query={q} actions={emptyStateActions} />
         ) : (
-          <ul className="space-y-2" data-testid="blog-all-list">
+          <ul className="content-reveal-list space-y-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-all-list">
             {items.map((p, index) => (
-              <li key={p.slug} className="card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
+              <li
+                key={p.slug}
+                className="content-reveal-card card blog-linked-card p-3 gap-3 items-start sm:flex"
+                data-testid="blog-card"
+                style={areCardsVisible ? { transitionDelay: `${140 + index * 22}ms` } : undefined}
+              >
                 {p.headerImage ? (
                   <div
-                    className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
+                    className="blog-linked-card__media relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
                     data-testid="blog-image"
                   >
                     <Image
@@ -167,14 +230,23 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                 ) : null}
                 <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                   <h3 className="text-base font-semibold">
-                    <Link href={`/blogs/${p.slug}/`} prefetch={true} className="underline-offset-2 hover:underline">
-                      {p.title}
+                    <Link
+                      href={`/blogs/${p.slug}/`}
+                      className="blog-linked-card__title-link underline-offset-2 hover:underline"
+                    >
+                      <SearchHighlight text={p.title} query={q} />
                     </Link>
                   </h3>
                   <p className="text-xs opacity-70">{formatDate(p.date, locale)}</p>
-                  {p.summary && <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{p.summary}</p>}
+                  {p.summary && (
+                    <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                      <SearchHighlight text={p.summary} query={q} />
+                    </p>
+                  )}
                   {p.tags?.length ? (
-                    <div className="mt-1 text-xs opacity-70 truncate">{p.tags.join(', ')}</div>
+                    <div className="mt-1 text-xs opacity-70 truncate">
+                      <SearchHighlight text={p.tags.join(', ')} query={q} />
+                    </div>
                   ) : null}
                 </div>
               </li>
