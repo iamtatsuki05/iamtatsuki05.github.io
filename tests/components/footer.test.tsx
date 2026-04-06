@@ -18,8 +18,9 @@ describe('Footer locale-aware links', () => {
   it('uses ja prefix by default', async () => {
     vi.doMock('next/navigation', () => ({ usePathname: () => '/blogs/' }));
     const { Footer } = await import('@/components/site/Footer');
-    const { render } = await import('@testing-library/react');
-    const { getByText } = render(<Footer />);
-    expect(getByText(/Links/).getAttribute('href')).toBe('/ja-JP/links/');
+    const { render, screen } = await import('@testing-library/react');
+    render(<Footer />);
+    expect(screen.getByText(/Links/).getAttribute('href')).toBe('/ja-JP/links/');
+    expect(screen.getByText(/Hobbies/).getAttribute('href')).toBe('/ja-JP/hobbies/');
   });
 });

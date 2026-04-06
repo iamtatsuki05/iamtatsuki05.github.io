@@ -30,7 +30,7 @@ export function localizedPath(path: string, locale: Locale): string {
 export function isTranslatablePath(pathname: string): boolean {
   if (!pathname) return false;
   const bare = stripLocalePrefix(pathname);
-  return ['/', '/links/', '/publications/', '/blogs/'].includes(
+  return ['/', '/links/', '/hobbies/', '/publications/', '/blogs/'].includes(
     bare.endsWith('/') ? bare : `${bare}/`,
   );
 }

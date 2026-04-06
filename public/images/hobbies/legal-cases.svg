@@ -1,0 +1,20 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="url(#bg)"/>
+  <rect x="558" y="140" width="84" height="360" rx="42" fill="#F8FAFC"/>
+  <rect x="492" y="472" width="216" height="34" rx="17" fill="#F8FAFC"/>
+  <rect x="412" y="506" width="376" height="42" rx="21" fill="#E2E8F0"/>
+  <path d="M332 254H868" stroke="#F8FAFC" stroke-width="26" stroke-linecap="round"/>
+  <path d="M424 256L314 426H534L424 256Z" fill="#0F172A" fill-opacity="0.26"/>
+  <path d="M776 256L666 426H886L776 256Z" fill="#0F172A" fill-opacity="0.26"/>
+  <path d="M424 256L314 426H534L424 256Z" stroke="#F8FAFC" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M776 256L666 426H886L776 256Z" stroke="#F8FAFC" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M220 642H980" stroke="#F8FAFC" stroke-width="24" stroke-linecap="round" opacity="0.82"/>
+  <text x="152" y="706" fill="white" font-size="58" font-family="Arial, Helvetica, sans-serif" font-weight="700">LEGAL CASES</text>
+  <defs>
+    <linearGradient id="bg" x1="102" y1="62" x2="1120" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#115E59"/>
+      <stop offset="0.46" stop-color="#14B8A6"/>
+      <stop offset="1" stop-color="#CBD5E1"/>
+    </linearGradient>
+  </defs>
+</svg>

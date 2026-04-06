@@ -181,12 +181,12 @@ describe('PublicationsClient', () => {
     const userEvent = await import('@testing-library/user-event');
 
     render(<PublicationsClient items={items} locale="en" />, {
-      wrapper: Wrapper,
+      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?q=zzzz">{children}</NuqsTestingAdapter>,
     });
 
     const user = userEvent.default.setup();
     const input = screen.getByRole('textbox', { name: 'Search...' });
-    await user.type(input, 'zzzz');
+    expect(input).toHaveValue('zzzz');
 
     await waitFor(() => {
       expect(screen.getByTestId('filter-empty-state')).toHaveTextContent('No items found for "zzzz"');

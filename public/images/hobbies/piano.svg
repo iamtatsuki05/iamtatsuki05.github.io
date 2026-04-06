@@ -1,0 +1,25 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="url(#bg)"/>
+  <rect x="174" y="178" width="852" height="430" rx="36" fill="#111827" fill-opacity="0.88"/>
+  <rect x="214" y="220" width="772" height="128" rx="24" fill="#312E81"/>
+  <rect x="214" y="374" width="772" height="194" rx="24" fill="#F8FAFC"/>
+  <rect x="308" y="374" width="36" height="118" rx="12" fill="#0F172A"/>
+  <rect x="420" y="374" width="36" height="118" rx="12" fill="#0F172A"/>
+  <rect x="532" y="374" width="36" height="118" rx="12" fill="#0F172A"/>
+  <rect x="644" y="374" width="36" height="118" rx="12" fill="#0F172A"/>
+  <rect x="756" y="374" width="36" height="118" rx="12" fill="#0F172A"/>
+  <rect x="868" y="374" width="36" height="118" rx="12" fill="#0F172A"/>
+  <circle cx="930" cy="284" r="18" fill="#FDE68A"/>
+  <circle cx="882" cy="284" r="18" fill="#FDE68A" fill-opacity="0.75"/>
+  <circle cx="834" cy="284" r="18" fill="#FDE68A" fill-opacity="0.52"/>
+  <path d="M286 132C326 138 356 112 366 80" stroke="#FEF3C7" stroke-width="16" stroke-linecap="round"/>
+  <path d="M404 126C444 132 474 108 484 76" stroke="#FEF3C7" stroke-width="16" stroke-linecap="round"/>
+  <text x="182" y="706" fill="white" font-size="64" font-family="Arial, Helvetica, sans-serif" font-weight="700">PIANO</text>
+  <defs>
+    <linearGradient id="bg" x1="92" y1="54" x2="1124" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C084FC"/>
+      <stop offset="0.46" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#FCD34D"/>
+    </linearGradient>
+  </defs>
+</svg>

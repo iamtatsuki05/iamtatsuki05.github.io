@@ -37,6 +37,17 @@ describe('LanguageSwitch', () => {
     await waitFor(() => expect(window.localStorage.getItem(LOCALE_PREFERENCE_STORAGE_KEY)).toBe('en'));
   });
 
+  it('hobbies でも言語リンクを切り替えられる', async () => {
+    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/hobbies/' }));
+    const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
+    const { render, screen } = await import('@testing-library/react');
+
+    render(<LanguageSwitch />);
+
+    expect(screen.getByRole('link', { name: 'JA' }).getAttribute('href')).toBe('/ja-JP/hobbies/');
+    expect(screen.getByRole('link', { name: 'EN' }).getAttribute('href')).toBe('/en-US/hobbies/');
+  });
+
   it('非対応ページではリンクではなく固定表示になる', async () => {
     vi.doMock('next/navigation', () => ({ usePathname: () => '/ja-JP/blogs/example-post/' }));
     const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');

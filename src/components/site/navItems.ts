@@ -6,6 +6,7 @@ export type NavDisplayItem = { href: string; label: string };
 const NAV_ITEMS: NavItemDef[] = [
   { href: '/', label: { ja: '🏠 Home', en: '🏠 Home' } },
   { href: '/links/', label: { ja: '🔗 Links', en: '🔗 Links' } },
+  { href: '/hobbies/', label: { ja: '🧸 Hobbies', en: '🧸 Hobbies' } },
   { href: '/publications/', label: { ja: '📚 Publications', en: '📚 Publications' } },
   { href: '/blogs/', label: { ja: '📝 Blog', en: '📝 Blog' } },
 ];
