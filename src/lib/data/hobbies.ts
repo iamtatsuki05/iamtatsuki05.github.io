@@ -46,7 +46,7 @@ const HOBBIES: readonly HobbyDefinition[] = [
       ja: 'PCやキーボード、スイッチャーなど、いろいろなガジェットに興味があり、気になるとつい買ってしまいます。',
       en: 'I am interested in all kinds of gadgets, from PCs and keyboards to switchers, and if something catches my eye, I tend to buy it.',
     },
-    thumbnailSrc: '/images/hobbies/gadgets.svg',
+    thumbnailSrc: '/images/hobbies/gadgets.jpg',
     thumbnailAlt: { ja: 'ガジェットのサムネイル', en: 'Gadgets thumbnail' },
     blogFilter: { tags: ['gadgets'] },
   },
