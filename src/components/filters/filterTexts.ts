@@ -66,3 +66,14 @@ export function formatRemoveFilterAriaLabel(locale: Locale, label: string) {
 export function formatClearFilterLabel(locale: Locale, label: string) {
   return locale === 'ja' ? `${label}をクリア` : `Clear ${label}`;
 }
+
+export function formatNoResultMessage(locale: Locale, query?: string) {
+  const trimmedQuery = query?.trim();
+  if (!trimmedQuery) {
+    return resolveFilterText(locale).noResult;
+  }
+
+  return locale === 'ja'
+    ? `「${trimmedQuery}」に一致する項目がありません`
+    : `No items found for "${trimmedQuery}"`;
+}

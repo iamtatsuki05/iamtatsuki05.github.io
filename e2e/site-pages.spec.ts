@@ -348,6 +348,7 @@ for (const { label, use } of viewports) {
 
         await page.keyboard.type('zzzz');
         await expect(page.getByTestId('filter-empty-state')).toBeVisible();
+        await expect(page.getByTestId('filter-empty-state')).toContainText('zzzz');
         await expect(page.getByRole('button', { name: 'Clear Search' })).toBeVisible();
 
         await page.keyboard.press('Escape');

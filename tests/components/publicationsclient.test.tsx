@@ -151,7 +151,7 @@ describe('PublicationsClient', () => {
     await user.type(input, 'zzzz');
 
     await waitFor(() => {
-      expect(screen.getByTestId('filter-empty-state')).toHaveTextContent('No items found');
+      expect(screen.getByTestId('filter-empty-state')).toHaveTextContent('No items found for "zzzz"');
     });
 
     const clearSearch = screen.getByRole('button', { name: 'Clear Search' });

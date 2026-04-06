@@ -41,7 +41,7 @@ describe('BlogsClient', () => {
       expect(getByTestId('filter-result-summary')).toHaveTextContent('0 of 12 items');
       expect(queryByText('Sample 0')).toBeNull();
     });
-    expect(screen.getByTestId('filter-empty-state')).toHaveTextContent('No items found');
+    expect(screen.getByTestId('filter-empty-state')).toHaveTextContent('No items found for "zzzz"');
     expect(getByRole('button', { name: 'Clear Search' })).toBeInTheDocument();
 
     const chip = getByRole('button', { name: 'Remove Search: zzzz' });

@@ -7,7 +7,14 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterDisclosure } from '@/components/filters/FilterDisclosure';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { formatClearFilterLabel, formatFilterResultCount, formatRemoveFilterAriaLabel, formatSearchChipLabel, resolveFilterText } from '@/components/filters/filterTexts';
+import {
+  formatClearFilterLabel,
+  formatFilterResultCount,
+  formatNoResultMessage,
+  formatRemoveFilterAriaLabel,
+  formatSearchChipLabel,
+  resolveFilterText,
+} from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
@@ -374,7 +381,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
 
       {typeFiltered.length === 0 && (
         <div className="search-empty-state space-y-3" data-testid="filter-empty-state">
-          <p className="opacity-70">{t.noResult}</p>
+          <p className="opacity-70">{formatNoResultMessage(locale, q)}</p>
           {emptyStateActions.length ? (
             <div className="search-empty-actions">
               {emptyStateActions.map((action) => (
