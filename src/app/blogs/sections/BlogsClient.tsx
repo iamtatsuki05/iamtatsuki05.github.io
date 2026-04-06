@@ -8,11 +8,15 @@ import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterBar } from '@/components/filters/FilterBar';
 import {
-  formatClearFilterLabel,
+  buildBaseActiveFilters,
+  buildBaseEmptyStateActions,
+  FilterEmptyState,
+  removeSetValue,
+  SearchSortControls,
+  toggleSetValue,
+} from '@/components/filters/filterHelpers';
+import {
   formatFilterResultCount,
-  formatNoResultMessage,
-  formatRemoveFilterAriaLabel,
-  formatSearchChipLabel,
   resolveFilterText,
 } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
@@ -86,95 +90,33 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
   const items = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
 
   const t = useMemo(() => resolveFilterText(locale), [locale]);
-  const resultLabel = useMemo(() => formatFilterResultCount(locale, filtered.length, posts.length), [filtered.length, locale, posts.length]);
+  const resultLabel = useMemo(
+    () => formatFilterResultCount(locale, filtered.length, posts.length),
+    [filtered.length, locale, posts.length],
+  );
   const activeFilters = useMemo(() => {
-    const filters = [];
-
-    if (q) {
-      filters.push({
-        key: `q:${q}`,
-        label: formatSearchChipLabel(locale, q),
-        ariaLabel: formatRemoveFilterAriaLabel(locale, formatSearchChipLabel(locale, q)),
-        onRemove: () => setQ(''),
-      });
-    }
-
-    for (const year of Array.from(yearSet).sort((a, b) => (a < b ? 1 : -1))) {
-      filters.push({
-        key: `year:${year}`,
-        label: year,
-        ariaLabel: formatRemoveFilterAriaLabel(locale, year),
-        onRemove: () => setYearSet((prev) => {
-          prev.delete(year);
-          return prev;
-        }),
-      });
-    }
-
-    for (const tag of Array.from(tagSet).sort()) {
-      const label = `#${tag}`;
-      filters.push({
-        key: `tag:${tag}`,
-        label,
-        ariaLabel: formatRemoveFilterAriaLabel(locale, label),
-        onRemove: () => setTagSet((prev) => {
-          prev.delete(tag);
-          return prev;
-        }),
-      });
-    }
-
-    return filters;
+    return buildBaseActiveFilters({
+      locale,
+      query: q,
+      yearSet,
+      tagSet,
+      onQueryClear: () => setQ(''),
+      onYearRemove: (year) => setYearSet((prev) => removeSetValue(prev, year)),
+      onTagRemove: (tag) => setTagSet((prev) => removeSetValue(prev, tag)),
+    });
   }, [locale, q, setQ, setTagSet, setYearSet, tagSet, yearSet]);
   const emptyStateActions = useMemo(() => {
-    const actions = [];
-
-    if (q) {
-      actions.push({
-        key: 'clear-search',
-        label: formatClearFilterLabel(locale, t.searchKeyword),
-        onClick: () => setQ(''),
-      });
-    }
-
-    if (yearSet.size) {
-      actions.push({
-        key: 'clear-years',
-        label: formatClearFilterLabel(locale, t.year),
-        onClick: () => setYearSet(new Set()),
-      });
-    }
-
-    if (tagSet.size) {
-      actions.push({
-        key: 'clear-tags',
-        label: formatClearFilterLabel(locale, t.tags),
-        onClick: () => setTagSet(new Set()),
-      });
-    }
-
-    return actions;
-  }, [locale, q, setQ, setTagSet, setYearSet, t.searchKeyword, t.tags, t.year, tagSet.size, yearSet.size]);
-  const sortControls = q ? (
-    <div className="filter-bar__sort" role="group" aria-label={t.sort}>
-      <button
-        type="button"
-        className="filter-bar__sort-button ui-cta"
-        aria-pressed={sort === 'relevant'}
-        onClick={() => setSort('relevant')}
-      >
-        {t.sortRelevant}
-      </button>
-      <button
-        type="button"
-        className="filter-bar__sort-button ui-cta"
-        aria-pressed={sort === 'newest'}
-        onClick={() => setSort('newest')}
-      >
-        {t.sortNewest}
-      </button>
-    </div>
-  ) : null;
+    return buildBaseEmptyStateActions({
+      locale,
+      query: q,
+      hasYears: yearSet.size > 0,
+      hasTags: tagSet.size > 0,
+      onQueryClear: () => setQ(''),
+      onYearsClear: () => setYearSet(new Set()),
+      onTagsClear: () => setTagSet(new Set()),
+      texts: t,
+    });
+  }, [locale, q, setQ, setTagSet, setYearSet, t, tagSet.size, yearSet.size]);
 
   return (
     <div className="space-y-6">
@@ -183,27 +125,20 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         onQueryChange={setQ}
         onSearchIntent={preloadSearch}
         placeholder={t.search}
-        onClear={() => {
-          clearFilters();
-        }}
+        onClear={clearFilters}
         clearLabel={t.clear}
         hasActiveFilters={Boolean(yearSet.size || tagSet.size)}
         isSearchLoading={fuseLoading}
         searchLoadingLabel={t.searching}
         resultLabel={resultLabel}
         activeFilters={activeFilters}
-        sortControls={sortControls}
+        sortControls={<SearchSortControls visible={Boolean(q)} sort={sort} onSortChange={setSort} texts={t} />}
         stickyMetaOnMobile
       >
         <YearSelect
           years={allYears}
           selected={yearSet}
-          onToggle={(year) =>
-            setYearSet((prev) => {
-              if (prev.has(year)) prev.delete(year);
-              else prev.add(year);
-              return prev;
-            })}
+          onToggle={(year) => setYearSet((prev) => toggleSetValue(prev, year))}
           onClear={() => setYearSet(new Set())}
           label={t.year}
           allLabel={t.all}
@@ -212,12 +147,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
         <TagSelector
           tags={allTags}
           selected={tagSet}
-          onToggle={(tag) =>
-            setTagSet((prev) => {
-              if (prev.has(tag)) prev.delete(tag);
-              else prev.add(tag);
-              return prev;
-            })}
+          onToggle={(tag) => setTagSet((prev) => toggleSetValue(prev, tag))}
           label={t.tags}
           className="ml-2"
         />
@@ -273,23 +203,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
       <SectionShell tone="lilac">
         <SectionHeader title={t.allPosts} tone="lilac" />
         {filtered.length === 0 ? (
-          <div className="search-empty-state space-y-3" data-testid="filter-empty-state">
-            <p className="opacity-70">{formatNoResultMessage(locale, q)}</p>
-            {emptyStateActions.length ? (
-              <div className="search-empty-actions">
-                {emptyStateActions.map((action) => (
-                  <button
-                    key={action.key}
-                    type="button"
-                    onClick={action.onClick}
-                    className="search-empty-action ui-cta"
-                  >
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
+          <FilterEmptyState locale={locale} query={q} actions={emptyStateActions} />
         ) : (
           <ul className="content-reveal-list space-y-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-all-list">
             {items.map((p, index) => (

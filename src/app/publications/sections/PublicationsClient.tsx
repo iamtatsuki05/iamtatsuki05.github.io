@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, type KeyboardEvent } from 'react';
+import React, { useCallback, useMemo, type KeyboardEvent } from 'react';
 import Image from 'next/image';
 import { parseAsArrayOf, parseAsStringEnum, useQueryState } from 'nuqs';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
@@ -8,11 +8,16 @@ import { TagSelector } from '@/components/filters/TagSelector';
 import { FilterDisclosure } from '@/components/filters/FilterDisclosure';
 import { FilterBar } from '@/components/filters/FilterBar';
 import {
-  formatClearFilterLabel,
+  buildBaseActiveFilters,
+  buildBaseEmptyStateActions,
+  FilterEmptyState,
+  removeSetValue,
+  SearchSortControls,
+  toggleSetValue,
+} from '@/components/filters/filterHelpers';
+import {
   formatFilterResultCount,
-  formatNoResultMessage,
   formatRemoveFilterAriaLabel,
-  formatSearchChipLabel,
   resolveFilterText,
 } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
@@ -76,6 +81,17 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     const source = selectedTypes ?? availableTypes;
     return new Set(source.filter((type): type is Item['type'] => availableTypeSet.has(type)));
   }, [selectedTypes, availableTypes, availableTypeSet]);
+  const updateSelectedTypes = useCallback(
+    (updater: (next: Set<Item['type']>) => void) => {
+      void setSelectedTypes((prev) => {
+        const source = prev ?? availableTypes;
+        const next = new Set(source.filter((type): type is Item['type'] => availableTypeSet.has(type)));
+        updater(next);
+        return Array.from(next);
+      });
+    },
+    [availableTypeSet, availableTypes, setSelectedTypes],
+  );
 
   const typeFiltered = useMemo(() => filtered.filter((i) => selectedTypeSet.has(i.type)), [filtered, selectedTypeSet]);
 
@@ -122,42 +138,15 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     [items.length, locale, typeFiltered.length],
   );
   const activeFilters = useMemo(() => {
-    const filters = [];
-
-    if (q) {
-      const label = formatSearchChipLabel(locale, q);
-      filters.push({
-        key: `q:${q}`,
-        label,
-        ariaLabel: formatRemoveFilterAriaLabel(locale, label),
-        onRemove: () => setQ(''),
-      });
-    }
-
-    for (const year of Array.from(yearSet).sort((a, b) => (a < b ? 1 : -1))) {
-      filters.push({
-        key: `year:${year}`,
-        label: year,
-        ariaLabel: formatRemoveFilterAriaLabel(locale, year),
-        onRemove: () => setYearSet((prev) => {
-          prev.delete(year);
-          return prev;
-        }),
-      });
-    }
-
-    for (const tag of Array.from(tagSet).sort()) {
-      const label = `#${tag}`;
-      filters.push({
-        key: `tag:${tag}`,
-        label,
-        ariaLabel: formatRemoveFilterAriaLabel(locale, label),
-        onRemove: () => setTagSet((prev) => {
-          prev.delete(tag);
-          return prev;
-        }),
-      });
-    }
+    const filters = buildBaseActiveFilters({
+      locale,
+      query: q,
+      yearSet,
+      tagSet,
+      onQueryClear: () => setQ(''),
+      onYearRemove: (year) => setYearSet((prev) => removeSetValue(prev, year)),
+      onTagRemove: (tag) => setTagSet((prev) => removeSetValue(prev, tag)),
+    });
 
     if (selectedTypeSet.size !== availableTypes.length) {
       for (const type of availableTypes.filter((candidate) => selectedTypeSet.has(candidate))) {
@@ -166,50 +155,29 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           key: `type:${type}`,
           label,
           ariaLabel: formatRemoveFilterAriaLabel(locale, label),
-          onRemove: () =>
-            void setSelectedTypes((prev) => {
-              const source = prev ?? availableTypes;
-              const next = new Set(source.filter((value): value is Item['type'] => availableTypeSet.has(value)));
-              next.delete(type);
-              return Array.from(next);
-            }),
+          onRemove: () => updateSelectedTypes((next) => removeSetValue(next, type)),
         });
       }
     }
 
     return filters;
-  }, [availableTypeSet, availableTypes, items.length, locale, q, selectedTypeSet, setQ, setSelectedTypes, setTagSet, setYearSet, tagSet, typeLabels, yearSet]);
+  }, [availableTypes, locale, q, selectedTypeSet, setQ, setTagSet, setYearSet, tagSet, typeLabels, updateSelectedTypes, yearSet]);
   const emptyStateActions = useMemo(() => {
-    const actions = [];
-
-    if (q) {
-      actions.push({
-        key: 'clear-search',
-        label: formatClearFilterLabel(locale, t.searchKeyword),
-        onClick: () => setQ(''),
-      });
-    }
-
-    if (yearSet.size) {
-      actions.push({
-        key: 'clear-years',
-        label: formatClearFilterLabel(locale, t.year),
-        onClick: () => setYearSet(new Set()),
-      });
-    }
-
-    if (tagSet.size) {
-      actions.push({
-        key: 'clear-tags',
-        label: formatClearFilterLabel(locale, t.tags),
-        onClick: () => setTagSet(new Set()),
-      });
-    }
+    const actions = buildBaseEmptyStateActions({
+      locale,
+      query: q,
+      hasYears: yearSet.size > 0,
+      hasTags: tagSet.size > 0,
+      onQueryClear: () => setQ(''),
+      onYearsClear: () => setYearSet(new Set()),
+      onTagsClear: () => setTagSet(new Set()),
+      texts: t,
+    });
 
     if (selectedTypeSet.size !== availableTypes.length) {
       actions.push({
         key: 'clear-types',
-        label: formatClearFilterLabel(locale, t.types),
+        label: locale === 'ja' ? `${t.types}をクリア` : `Clear ${t.types}`,
         onClick: () => {
           void setSelectedTypes(null);
         },
@@ -217,27 +185,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     }
 
     return actions;
-  }, [availableTypes.length, locale, q, selectedTypeSet.size, setQ, setSelectedTypes, setTagSet, setYearSet, t.searchKeyword, t.tags, t.types, t.year, tagSet.size, yearSet.size]);
-  const sortControls = q ? (
-    <div className="filter-bar__sort" role="group" aria-label={t.sort}>
-      <button
-        type="button"
-        className="filter-bar__sort-button ui-cta"
-        aria-pressed={sort === 'relevant'}
-        onClick={() => setSort('relevant')}
-      >
-        {t.sortRelevant}
-      </button>
-      <button
-        type="button"
-        className="filter-bar__sort-button ui-cta"
-        aria-pressed={sort === 'newest'}
-        onClick={() => setSort('newest')}
-      >
-        {t.sortNewest}
-      </button>
-    </div>
-  ) : null;
+  }, [availableTypes.length, locale, q, selectedTypeSet.size, setQ, setSelectedTypes, setTagSet, setYearSet, t, tagSet.size, yearSet.size]);
 
   const openInNewTab = (url?: string) => {
     if (!url || typeof window === 'undefined') return;
@@ -269,18 +217,13 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         searchLoadingLabel={t.searching}
         resultLabel={resultLabel}
         activeFilters={activeFilters}
-        sortControls={sortControls}
+        sortControls={<SearchSortControls visible={Boolean(q)} sort={sort} onSortChange={setSort} texts={t} />}
         stickyMetaOnMobile
       >
         <YearSelect
           years={years}
           selected={yearSet}
-          onToggle={(year) =>
-            setYearSet((prev) => {
-              if (prev.has(year)) prev.delete(year);
-              else prev.add(year);
-              return prev;
-            })}
+          onToggle={(year) => setYearSet((prev) => toggleSetValue(prev, year))}
           onClear={() => setYearSet(new Set())}
           label={t.year}
           allLabel={t.all}
@@ -303,13 +246,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     checked={selectedTypeSet.has(tp)}
                     onChange={() => {
                       requestCloseIfNeeded();
-                      void setSelectedTypes((prev) => {
-                        const source = prev ?? availableTypes;
-                        const next = new Set(source.filter((type): type is Item['type'] => availableTypeSet.has(type)));
-                        if (next.has(tp)) next.delete(tp);
-                        else next.add(tp);
-                        return Array.from(next);
-                      });
+                      updateSelectedTypes((next) => toggleSetValue(next, tp));
                     }}
                   />
                   {typeLabels[tp]}
@@ -322,12 +259,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         <TagSelector
           tags={allTags}
           selected={tagSet}
-          onToggle={(tag) =>
-            setTagSet((prev) => {
-              if (prev.has(tag)) prev.delete(tag);
-              else prev.add(tag);
-              return prev;
-            })}
+          onToggle={(tag) => setTagSet((prev) => toggleSetValue(prev, tag))}
           label={t.tags}
           className="ml-2"
         />
@@ -423,23 +355,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       })}
 
       {typeFiltered.length === 0 && (
-        <div className="search-empty-state space-y-3" data-testid="filter-empty-state">
-          <p className="opacity-70">{formatNoResultMessage(locale, q)}</p>
-          {emptyStateActions.length ? (
-            <div className="search-empty-actions">
-              {emptyStateActions.map((action) => (
-                <button
-                  key={action.key}
-                  type="button"
-                  onClick={action.onClick}
-                  className="search-empty-action ui-cta"
-                >
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
+        <FilterEmptyState locale={locale} query={q} actions={emptyStateActions} />
       )}
     </div>
   );

@@ -1,8 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import React, { useState } from 'react';
 import { FilterBar } from './FilterBar';
 import { YearSelect } from './YearSelect';
 import { TagSelector } from './TagSelector';
-import React, { useState } from 'react';
+import {
+  buildBaseActiveFilters,
+  removeSetValue,
+  SearchSortControls,
+  toggleSetValue,
+} from './filterHelpers';
 
 const meta = {
   title: 'Filters/FilterBar',
@@ -22,6 +28,7 @@ function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
   const [query, setQuery] = useState('');
   const [yearSet, setYearSet] = useState<Set<string>>(new Set());
   const [tagSet, setTagSet] = useState<Set<string>>(new Set());
+  const [sort, setSort] = useState<'relevant' | 'newest'>('relevant');
   const tags = ['nlp', 'ml', 'dev'];
   const years = ['2025', '2024', '2023'];
 
@@ -39,39 +46,32 @@ function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
       searchLoadingLabel="Searching..."
       resultLabel={query || yearSet.size || tagSet.size ? '3 of 12 items' : '12 items'}
       stickyMetaOnMobile
-      sortControls={query ? (
-        <div className="filter-bar__sort" role="group" aria-label="Sort">
-          <button type="button" className="filter-bar__sort-button ui-cta" aria-pressed={true}>
-            Relevant
-          </button>
-          <button type="button" className="filter-bar__sort-button ui-cta" aria-pressed={false}>
-            Newest
-          </button>
-        </div>
-      ) : null}
-      activeFilters={[
-        ...(query ? [{ key: 'query', label: `Search: ${query}`, onRemove: () => setQuery('') }] : []),
-        ...Array.from(yearSet).map((year) => ({ key: `year:${year}`, label: year, onRemove: () => {
-          const next = new Set(yearSet);
-          next.delete(year);
-          setYearSet(next);
-        } })),
-        ...Array.from(tagSet).map((tag) => ({ key: `tag:${tag}`, label: `#${tag}`, onRemove: () => {
-          const next = new Set(tagSet);
-          next.delete(tag);
-          setTagSet(next);
-        } })),
-      ]}
+      sortControls={(
+        <SearchSortControls
+          visible={Boolean(query)}
+          sort={sort}
+          onSortChange={setSort}
+          texts={{
+            sort: 'Sort',
+            sortRelevant: 'Relevant',
+            sortNewest: 'Newest',
+          }}
+        />
+      )}
+      activeFilters={buildBaseActiveFilters({
+        locale: 'en',
+        query,
+        yearSet,
+        tagSet,
+        onQueryClear: () => setQuery(''),
+        onYearRemove: (year) => setYearSet((prev) => removeSetValue(new Set(prev), year)),
+        onTagRemove: (tag) => setTagSet((prev) => removeSetValue(new Set(prev), tag)),
+      })}
     >
       <YearSelect
         years={years}
         selected={yearSet}
-        onToggle={(year) => {
-          const next = new Set(yearSet);
-          if (next.has(year)) next.delete(year);
-          else next.add(year);
-          setYearSet(next);
-        }}
+        onToggle={(year) => setYearSet((prev) => toggleSetValue(new Set(prev), year))}
         onClear={() => setYearSet(new Set())}
         label="Year"
         allLabel="All"
@@ -79,12 +79,7 @@ function FilterBarStory(props: React.ComponentProps<typeof FilterBar>) {
       <TagSelector
         tags={tags}
         selected={tagSet}
-        onToggle={(tag) => {
-          const next = new Set(tagSet);
-          if (next.has(tag)) next.delete(tag);
-          else next.add(tag);
-          setTagSet(next);
-        }}
+        onToggle={(tag) => setTagSet((prev) => toggleSetValue(new Set(prev), tag))}
         label="Tags"
       />
     </FilterBar>
