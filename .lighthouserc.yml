@@ -5,8 +5,11 @@ ci:
     startServerTimeout: 180000
     url:
       - http://localhost:3000/
+      - http://localhost:3000/en-US/
       - http://localhost:3000/blogs/
+      - http://localhost:3000/blogs/2025-09-09-create-homepage-with-llm/
       - http://localhost:3000/hobbies/
+      - http://localhost:3000/en-US/hobbies/
       - http://localhost:3000/links/
       - http://localhost:3000/publications/
     numberOfRuns: 3
