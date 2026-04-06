@@ -399,6 +399,18 @@ for (const { label, use } of viewports) {
         await expect(page.getByText(/数学推論能力向上/)).toBeVisible();
         await expect(page.getByText(/DeNAでの2週間インターンシップ体験記/)).not.toBeVisible();
       });
+    } else {
+      test('closes the year filter after selection on mobile', async ({ page }) => {
+        const yearFilter = page.locator('details').filter({ hasText: 'Year' }).first();
+        await expect(yearFilter).toContainText('Year');
+
+        await yearFilter.locator('summary').click();
+        await expect(yearFilter).toHaveAttribute('open', '');
+
+        await yearFilter.getByRole('button', { name: '2026' }).click();
+        await expect(yearFilter).not.toHaveAttribute('open', '');
+        await expect(page.getByText(/Encoder\/Decoder アーキテクチャ/)).toBeVisible();
+      });
     }
   });
 }

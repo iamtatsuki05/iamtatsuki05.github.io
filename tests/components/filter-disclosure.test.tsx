@@ -7,6 +7,7 @@ import { FilterDisclosure } from '@/components/filters/FilterDisclosure';
 describe('FilterDisclosure', () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('summary clickで開閉状態をdata-stateに反映する', async () => {
@@ -125,5 +126,31 @@ describe('FilterDisclosure', () => {
 
     expect(panel.style.getPropertyValue('--filter-disclosure-max-width')).toBe('164px');
     expect(Number.parseFloat(panel.style.getPropertyValue('--filter-disclosure-offset-x'))).toBeCloseTo(-12, 4);
+  });
+
+  it('mobile 指定時は選択後に disclosure を閉じる', async () => {
+    const user = userEvent.setup();
+    const matchMedia = vi.fn().mockReturnValue({ matches: true });
+    vi.stubGlobal('matchMedia', matchMedia);
+
+    render(
+      <FilterDisclosure label="Tags" count={3} autoCloseOnSelect="mobile">
+        {({ requestCloseIfNeeded }) => (
+          <button type="button" onClick={requestCloseIfNeeded}>
+            #nlp
+          </button>
+        )}
+      </FilterDisclosure>,
+    );
+
+    const summary = screen.getByText('Tags').closest('summary');
+    const details = summary?.closest('details');
+    if (!summary || !details) throw new Error('Filter disclosure is missing');
+
+    await user.click(summary);
+    expect(details).toHaveAttribute('data-state', 'open');
+
+    await user.click(screen.getByRole('button', { name: '#nlp' }));
+    expect(details).toHaveAttribute('data-state', 'closed');
   });
 });

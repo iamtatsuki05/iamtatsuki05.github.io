@@ -253,27 +253,36 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           allLabel={t.all}
         />
 
-        <FilterDisclosure label={t.types} count={availableTypes.length} className="ml-2" panelClassName="max-h-56 overflow-y-auto">
-          <div className="flex flex-col gap-1">
-            {availableTypes.map((tp) => (
-              <label key={tp} className="text-sm inline-flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  checked={selectedTypeSet.has(tp)}
-                  onChange={() =>
-                    void setSelectedTypes((prev) => {
-                      const source = prev ?? availableTypes;
-                      const next = new Set(source.filter((type): type is Item['type'] => availableTypeSet.has(type)));
-                      if (next.has(tp)) next.delete(tp);
-                      else next.add(tp);
-                      return Array.from(next);
-                    })
-                  }
-                />
-                {typeLabels[tp]}
-              </label>
-            ))}
-          </div>
+        <FilterDisclosure
+          label={t.types}
+          count={availableTypes.length}
+          className="ml-2"
+          panelClassName="max-h-56 overflow-y-auto"
+          autoCloseOnSelect="mobile"
+        >
+          {({ requestCloseIfNeeded }) => (
+            <div className="flex flex-col gap-1">
+              {availableTypes.map((tp) => (
+                <label key={tp} className="text-sm inline-flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedTypeSet.has(tp)}
+                    onChange={() => {
+                      requestCloseIfNeeded();
+                      void setSelectedTypes((prev) => {
+                        const source = prev ?? availableTypes;
+                        const next = new Set(source.filter((type): type is Item['type'] => availableTypeSet.has(type)));
+                        if (next.has(tp)) next.delete(tp);
+                        else next.add(tp);
+                        return Array.from(next);
+                      });
+                    }}
+                  />
+                  {typeLabels[tp]}
+                </label>
+              ))}
+            </div>
+          )}
         </FilterDisclosure>
 
         <TagSelector

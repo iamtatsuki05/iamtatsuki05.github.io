@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { PublicationsClient } from '@/app/publications/sections/PublicationsClient';
 
@@ -31,6 +31,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('PublicationsClient', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('renders grouped sections', async () => {
     const { render } = await import('@testing-library/react');
     const { getByRole, getByText } = render(<PublicationsClient items={items} locale="ja" />, {
@@ -93,6 +97,39 @@ describe('PublicationsClient', () => {
     await user.click(tagSummary);
     expect(tagDisclosure).toHaveAttribute('open');
     expect(typeDisclosure).not.toHaveAttribute('open');
+  });
+
+  it('closes the tag disclosure after choosing a tag on mobile', async () => {
+    const { render } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query === '(max-width: 639px)',
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+    }));
+
+    const { container } = render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+
+    const tagDisclosure = Array.from(container.querySelectorAll('details[data-filter-disclosure="true"]')).find((node) =>
+      node.textContent?.includes('Tags'),
+    );
+    const tagSummary = tagDisclosure?.querySelector('summary');
+    if (!tagSummary || !tagDisclosure) throw new Error('Tag filter is missing');
+
+    const user = userEvent.default.setup();
+    await user.click(tagSummary);
+    expect(tagDisclosure).toHaveAttribute('open');
+
+    await user.click(tagDisclosure.querySelector('button[aria-label="Filter by llm tag"]') as HTMLButtonElement);
+    expect(tagDisclosure).not.toHaveAttribute('open');
   });
 
   it('hides preview images on mobile to reduce initial downloads', async () => {
