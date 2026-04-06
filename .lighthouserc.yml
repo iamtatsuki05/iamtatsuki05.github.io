@@ -6,6 +6,7 @@ ci:
     url:
       - http://localhost:3000/
       - http://localhost:3000/blogs/
+      - http://localhost:3000/hobbies/
       - http://localhost:3000/links/
       - http://localhost:3000/publications/
     numberOfRuns: 3
