@@ -1,0 +1,23 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="url(#bg)"/>
+  <path d="M146 594C286 544 430 518 590 518C774 518 922 548 1054 610V680H146V594Z" fill="#7C3AED" fill-opacity="0.18"/>
+  <circle cx="382" cy="382" r="170" fill="#0F172A"/>
+  <circle cx="332" cy="334" r="18" fill="#F8FAFC"/>
+  <circle cx="410" cy="300" r="18" fill="#F8FAFC"/>
+  <circle cx="438" cy="384" r="18" fill="#F8FAFC"/>
+  <rect x="716" y="228" width="82" height="292" rx="40" fill="#F8FAFC"/>
+  <rect x="810" y="228" width="82" height="292" rx="40" fill="#F8FAFC"/>
+  <rect x="904" y="228" width="82" height="292" rx="40" fill="#F8FAFC"/>
+  <rect x="726" y="238" width="62" height="108" rx="30" fill="#E2E8F0"/>
+  <rect x="820" y="238" width="62" height="108" rx="30" fill="#E2E8F0"/>
+  <rect x="914" y="238" width="62" height="108" rx="30" fill="#E2E8F0"/>
+  <path d="M156 646H1044" stroke="#F8FAFC" stroke-width="18" stroke-linecap="round" opacity="0.82"/>
+  <text x="176" y="706" fill="white" font-size="64" font-family="Arial, Helvetica, sans-serif" font-weight="700">BOWLING</text>
+  <defs>
+    <linearGradient id="bg" x1="90" y1="58" x2="1120" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F766E"/>
+      <stop offset="0.45" stop-color="#14B8A6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+</svg>

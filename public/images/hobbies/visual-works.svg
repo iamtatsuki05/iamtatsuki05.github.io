@@ -1,0 +1,20 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="url(#bg)"/>
+  <rect x="162" y="156" width="876" height="492" rx="40" fill="#0F172A" fill-opacity="0.88"/>
+  <rect x="226" y="220" width="748" height="364" rx="28" fill="#F8FAFC"/>
+  <path d="M226 464C302 406 376 374 448 374C534 374 598 438 682 438C768 438 824 364 974 312V584H226V464Z" fill="#60A5FA"/>
+  <path d="M226 510C322 454 400 436 470 436C544 436 622 492 694 492C776 492 850 436 974 396V584H226V510Z" fill="#1D4ED8"/>
+  <circle cx="808" cy="314" r="44" fill="#FDE68A"/>
+  <path d="M140 250L186 220V280L140 250Z" fill="#DBEAFE"/>
+  <path d="M1014 248L1060 218V278L1014 248Z" fill="#DBEAFE"/>
+  <circle cx="206" cy="404" r="18" fill="#DBEAFE"/>
+  <circle cx="994" cy="404" r="18" fill="#DBEAFE"/>
+  <text x="156" y="706" fill="white" font-size="60" font-family="Arial, Helvetica, sans-serif" font-weight="700">VISUAL WORKS</text>
+  <defs>
+    <linearGradient id="bg" x1="96" y1="68" x2="1128" y2="740" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.4" stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#93C5FD"/>
+    </linearGradient>
+  </defs>
+</svg>
