@@ -221,6 +221,25 @@ for (const { label, use } of viewports) {
         await expect(copyButton).toContainText('Copied');
         await expect(copyButton).toHaveAttribute('data-status', 'success');
       });
+
+      test('serves raw markdown when accessing a blog URL with .md', async ({ page }) => {
+        const allPostsSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: '🗂 すべての記事' }) })
+          .first();
+
+        const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
+        const detailPath = await detailLink.getAttribute('href');
+        expect(detailPath).toMatch(/^\/blogs\/[\w-]+\/$/);
+
+        const markdownPath = detailPath?.replace(/\/$/, '.md');
+        expect(markdownPath).toMatch(/^\/blogs\/[\w-]+\.md$/);
+
+        const response = await page.goto(markdownPath!, { waitUntil: 'domcontentloaded' });
+        expect(response?.ok()).toBe(true);
+        await expect(page.locator('body')).toContainText('---');
+        await expect(page.locator('body')).toContainText('## ');
+      });
     }
   });
 
