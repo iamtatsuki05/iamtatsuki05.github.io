@@ -18,13 +18,14 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
   const locale = extractLocaleFromPath(activePath) || fallbackLocale;
   const normalizedActive = stripLocalePrefix(activePath.endsWith('/') ? activePath : `${activePath}/`);
   const isActive = (href: string) => normalizedActive === (href.endsWith('/') ? href : `${href}/`);
+  const isVertical = orientation === 'vertical';
 
-  const baseClass = orientation === 'horizontal'
-    ? 'px-2 py-1 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40'
-    : 'px-3 py-2 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40';
+  const baseClass = isVertical
+    ? 'nav-link nav-link--vertical px-3 py-2 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40'
+    : 'nav-link nav-link--horizontal px-2 py-1 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40';
 
   return (
-    <nav className={clsx(orientation === 'horizontal' ? 'flex items-center gap-4' : 'flex flex-col')}>
+    <nav className={clsx(isVertical ? 'flex flex-col' : 'flex items-center gap-4')}>
       {items.map((n) => (
         <Link
           key={n.href}
@@ -32,7 +33,7 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
           onClick={onNavigate}
           className={clsx(
             baseClass,
-            isActive(n.href) && 'border-purple-300 bg-purple-50 dark:border-amber-300/60 dark:bg-[#161028]',
+            isActive(n.href) && 'nav-link--active border-purple-300 bg-purple-50 dark:border-amber-300/60 dark:bg-[#161028]',
           )}
         >
           {n.label}
