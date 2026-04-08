@@ -12,7 +12,7 @@ type Props = {
 };
 
 export function Card({ as = 'div', href, children, className, target, rel, testId }: Props) {
-  const base = 'card p-4 h-full flex flex-col';
+  const base = 'card ui-layered-card p-4 h-full flex flex-col';
   if (as === 'a' && href) {
     return (
       <a
