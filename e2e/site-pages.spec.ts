@@ -212,9 +212,11 @@ for (const { label, use } of viewports) {
         const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
         await expect(copyButton).toBeVisible();
         await expect(copyButton).toContainText('Copy Markdown');
-        await expect(page.getByRole('button', { name: 'Share' })).toBeVisible();
-        await expect(page.getByRole('link', { name: 'Share on X' })).toBeVisible();
-        await expect(page.getByRole('link', { name: 'Share on LinkedIn' })).toBeVisible();
+        const shareButton = page.getByRole('button', { name: 'Share' });
+        await expect(shareButton).toBeVisible();
+        await shareButton.click();
+        await expect(page.getByRole('menuitem', { name: 'Share on X' })).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: 'Share on LinkedIn' })).toBeVisible();
         await expect(page.getByTestId('blog-toc-fab')).toContainText('Contents');
         await expect(page.locator('article.prose p').first()).toContainText('2025-');
         await copyButton.click();
