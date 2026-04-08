@@ -29,7 +29,7 @@ for (const { label, use } of viewports) {
 
     test('shows main hero and contact info', async ({ page }) => {
       await expect(page.getByRole('heading', { level: 1, name: 'ホームページ' })).toBeVisible();
-      await expect(page.getByText('自然言語処理')).toBeVisible();
+      await expect(page.getByText('自然言語処理 | 機械学習 | ソフトウェア のエンジニアをしています。')).toBeVisible();
       await expect(page.getByRole('link', { name: 'tatsukio0522@gmail.com' })).toHaveAttribute(
         'href',
         'mailto:tatsukio0522@gmail.com',
