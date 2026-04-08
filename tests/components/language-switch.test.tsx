@@ -19,12 +19,15 @@ describe('LanguageSwitch', () => {
     const jaLink = screen.getByRole('link', { name: 'JA' });
     const enLink = screen.getByRole('link', { name: 'EN' });
     const indicator = screen.getByTestId('language-switch-indicator');
+    const group = screen.getByRole('group', { name: 'Language switch' });
 
     expect(jaLink.getAttribute('href')).toBe('/ja-JP/links/');
     expect(enLink.getAttribute('href')).toBe('/en-US/links/');
     expect(enLink.getAttribute('aria-current')).toBe('true');
     expect(jaLink.getAttribute('aria-current')).toBeNull();
     expect(indicator.getAttribute('data-active-locale')).toBe('en');
+    expect(group.className).toContain('language-switch-shell');
+    expect(enLink.className).toContain('language-switch-option');
   });
 
   it('locale付きパスでは選択中言語を保存する', async () => {

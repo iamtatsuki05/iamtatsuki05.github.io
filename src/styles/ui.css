@@ -832,6 +832,76 @@
     opacity: 0.2;
   }
 
+  .language-switch-shell {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .language-switch-shell::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.62), transparent 34%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .language-switch-shell > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .language-switch-indicator {
+    box-shadow:
+      0 12px 24px -18px rgba(126, 34, 206, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  }
+
+  .language-switch-option {
+    position: relative;
+  }
+
+  .language-switch-option[aria-current='true'] {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  .theme-toggle {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .theme-toggle::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 24% 22%, rgba(255, 255, 255, 0.68), transparent 36%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.14), transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .theme-toggle > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dark .language-switch-shell::before {
+    background:
+      radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.08), transparent 34%),
+      linear-gradient(135deg, rgba(252, 211, 77, 0.06), transparent 62%);
+  }
+
+  .dark .theme-toggle::before {
+    background:
+      radial-gradient(circle at 24% 22%, rgba(255, 255, 255, 0.08), transparent 36%),
+      linear-gradient(135deg, rgba(252, 211, 77, 0.08), transparent 62%);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .ui-section-badge {
       animation: none;
