@@ -24,17 +24,17 @@ export function LinkGrid({
     (key: string, item: LinkItem, index: number, extraClassName?: string) => (
       <li
         key={key}
-        className={clsx('content-reveal-card text-center card p-4', extraClassName)}
+        className={clsx('content-reveal-card content-reveal-card--soft text-center card p-4', extraClassName)}
         style={isVisible ? { transitionDelay: `${90 + index * 26}ms` } : undefined}
       >
-        <a href={item.url} target="_blank" rel="noreferrer" className="inline-block mb-2">
+        <a href={item.url} target="_blank" rel="noreferrer" className="link-grid__icon-link inline-block mb-2">
           <LinkIcon item={item} size={iconSize} />
         </a>
         <a
           href={item.url}
           target="_blank"
           rel="noreferrer"
-          className="font-medium underline-offset-2 hover:underline block break-words sm:break-normal sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis"
+          className="link-grid__title font-medium block break-words sm:break-normal sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis"
         >
           {item.title}
         </a>
