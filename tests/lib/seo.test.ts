@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { buildArticleJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { buildArticleJsonLd, buildLanguageAlternates, buildOrganizationJsonLd, buildPageMetadata, buildPersonJsonLd } from '@/lib/seo';
 
 const ORIGINAL_SITE_URL = process.env.SITE_URL;
 
@@ -63,5 +63,31 @@ describe('buildArticleJsonLd', () => {
     expect(article.image?.[0]).toBe('https://example.com/images/og-sample.jpg');
     expect(article.publisher?.logo?.url).toBe('https://example.com/favicon.ico');
     expect(article.keywords).toEqual(['seo']);
+  });
+});
+
+describe('structured profile metadata', () => {
+  it('includes the NLP laboratory under the university affiliation', () => {
+    const person = buildPersonJsonLd();
+
+    expect(person.worksFor?.['@type']).toBe('Organization');
+    expect(person.worksFor?.name).toBe(
+      'Natural Language Processing Laboratory (Watanabe Laboratory), Division of Information Science',
+    );
+    expect(person.worksFor?.url).toBe('https://nlp.naist.jp/en/');
+    expect(person.worksFor?.parentOrganization?.['@type']).toBe('CollegeOrUniversity');
+    expect(person.worksFor?.parentOrganization?.name).toBe('Nara Institute of Science and Technology (NAIST)');
+    expect(person.worksFor?.parentOrganization?.url).toBe('https://www.naist.jp/en/');
+  });
+
+  it('reuses the same affiliation in the profile page schema', () => {
+    const profile = buildOrganizationJsonLd();
+
+    expect(profile.mainEntity.worksFor?.name).toBe(
+      'Natural Language Processing Laboratory (Watanabe Laboratory), Division of Information Science',
+    );
+    expect(profile.mainEntity.worksFor?.parentOrganization?.name).toBe(
+      'Nara Institute of Science and Technology (NAIST)',
+    );
   });
 });
