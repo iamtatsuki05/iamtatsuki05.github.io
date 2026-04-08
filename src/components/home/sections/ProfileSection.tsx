@@ -18,15 +18,15 @@ const AVATAR_SRC = '/favicon.ico' as const;
 export function ProfileSection({ title, alias, handle, affiliation, intro }: Props) {
 
   return (
-    <SectionShell>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-        <div className="flex justify-center">
+    <SectionShell className="hero-profile-shell overflow-hidden">
+      <div className="hero-profile-grid flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <div className="hero-avatar-wrap flex justify-center">
           <Image
             src={AVATAR_SRC}
             alt="My Avatar"
             width={144}
             height={144}
-            className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border border-purple-100 dark:border-purple-500/40 object-cover shadow-sm shadow-purple-100/60 dark:shadow-purple-900/40"
+            className="hero-avatar w-32 h-32 sm:w-36 sm:h-36 rounded-full border-2 border-white dark:border-purple-500/40 object-cover shadow-[0_18px_36px_-24px_rgba(168,85,247,0.35)] dark:shadow-purple-900/40"
             priority
           />
         </div>
@@ -50,7 +50,7 @@ export function ProfileSection({ title, alias, handle, affiliation, intro }: Pro
           </p>
         </div>
       </div>
-      <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed bg-white/80 dark:bg-gray-900/70 rounded-lg border border-purple-100/70 dark:border-purple-500/40 p-4 shadow-sm">
+      <p className="hero-intro-panel text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed bg-white/92 dark:bg-gray-900/70 rounded-lg border border-purple-200/80 dark:border-purple-500/40 p-4 shadow-[0_18px_34px_-28px_rgba(168,85,247,0.24)]">
         {intro}
       </p>
     </SectionShell>
