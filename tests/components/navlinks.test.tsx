@@ -16,6 +16,7 @@ describe('NavLinks', () => {
     expect(blogLink).toBeVisible();
     expect(blogLink.className).toContain('bg-purple-50');
     expect(blogLink.className).toContain('border-purple-300');
+    expect(blogLink.className).toContain('nav-link--horizontal');
     expect(blogLink.className).toContain('nav-link--active');
   });
 
