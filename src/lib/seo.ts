@@ -33,12 +33,31 @@ export const siteConfig = {
     huggingface: 'https://huggingface.co/iamtatsuki05',
   },
   affiliation: {
-    name: 'Program of Information Science and Engineering, Nara Institute of Science and Technology (NAIST)',
-    url: 'https://www.naist.jp/en/',
+    institution: {
+      name: 'Nara Institute of Science and Technology (NAIST)',
+      url: 'https://www.naist.jp/en/',
+    },
+    laboratory: {
+      name: 'Natural Language Processing Laboratory (Watanabe Laboratory), Division of Information Science',
+      url: 'https://nlp.naist.jp/en/',
+    },
   },
   twitterHandle: '@iam_tatsuki05',
   defaultOgImage: '/favicon.ico',
 } as const;
+
+function buildAffiliationJsonLd() {
+  return {
+    '@type': 'Organization',
+    name: siteConfig.affiliation.laboratory.name,
+    url: siteConfig.affiliation.laboratory.url,
+    parentOrganization: {
+      '@type': 'CollegeOrUniversity',
+      name: siteConfig.affiliation.institution.name,
+      url: siteConfig.affiliation.institution.url,
+    },
+  };
+}
 
 export function buildLanguageAlternates(path: string): Record<string, string> {
   const raw = path || '/';
@@ -235,11 +254,7 @@ export function buildPersonJsonLd() {
     image: absoluteUrl(siteConfig.defaultOgImage),
     url: absoluteUrl('/'),
     sameAs: Object.values(siteConfig.socials),
-    worksFor: {
-      '@type': 'CollegeOrUniversity',
-      name: siteConfig.affiliation.name,
-      url: siteConfig.affiliation.url,
-    },
+    worksFor: buildAffiliationJsonLd(),
     knowsAbout: ['Natural Language Processing', 'Machine Learning', 'Software Development'],
   };
 }
@@ -338,11 +353,7 @@ export function buildOrganizationJsonLd() {
       image: absoluteUrl(siteConfig.defaultOgImage),
       url: absoluteUrl('/'),
       sameAs: Object.values(siteConfig.socials),
-      worksFor: {
-        '@type': 'CollegeOrUniversity',
-        name: siteConfig.affiliation.name,
-        url: siteConfig.affiliation.url,
-      },
+      worksFor: buildAffiliationJsonLd(),
       knowsAbout: ['Natural Language Processing', 'Machine Learning', 'Software Development'],
     },
   };
