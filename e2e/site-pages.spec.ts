@@ -298,7 +298,8 @@ for (const { label, use } of viewports) {
           return null;
         }) as typeof window.open;
       });
-      await page.goto(localizedPath('en', '/publications/'));
+      await page.goto(localizedPath('en', '/publications/'), { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('.content-reveal-list').first()).toHaveAttribute('data-state', 'open');
     });
 
     test('shows publication list with outbound links', async ({ page }) => {
@@ -363,6 +364,7 @@ for (const { label, use } of viewports) {
     if (label === 'desktop') {
       test('supports search shortcuts and quick recovery actions', async ({ page }) => {
         const searchInput = page.getByRole('textbox', { name: 'Search...' });
+        await expect(searchInput).toBeVisible();
         await page.locator('body').click({ position: { x: 12, y: 12 } });
         await page.keyboard.press('/');
         await expect(searchInput).toBeFocused();
