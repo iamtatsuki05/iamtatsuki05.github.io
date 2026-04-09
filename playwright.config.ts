@@ -1,24 +1,28 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
+const isCi = Boolean(process.env.CI);
+const webServerCommand = isCi
+  ? 'bun run build && ./node_modules/.bin/serve out -l tcp://127.0.0.1:3000'
+  : 'bun run e2e:dev';
 
 export default defineConfig({
   testDir: './e2e',
   testMatch: '*.spec.ts',
   fullyParallel: true,
-  workers: process.env.CI ? 2 : 3,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  workers: isCi ? 2 : 3,
+  forbidOnly: isCi,
+  retries: isCi ? 1 : 0,
+  reporter: isCi ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL,
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'bun run e2e:dev',
+    command: webServerCommand,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    reuseExistingServer: !isCi,
+    timeout: isCi ? 300_000 : 120_000,
   },
   projects: [
     {

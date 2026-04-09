@@ -298,7 +298,8 @@ for (const { label, use } of viewports) {
           return null;
         }) as typeof window.open;
       });
-      await page.goto(localizedPath('en', '/publications/'));
+      await page.goto(localizedPath('en', '/publications/'), { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('.content-reveal-list').first()).toHaveAttribute('data-state', 'open');
     });
 
     test('shows publication list with outbound links', async ({ page }) => {
@@ -363,6 +364,7 @@ for (const { label, use } of viewports) {
     if (label === 'desktop') {
       test('supports search shortcuts and quick recovery actions', async ({ page }) => {
         const searchInput = page.getByRole('textbox', { name: 'Search...' });
+        await expect(searchInput).toBeVisible();
         await page.locator('body').click({ position: { x: 12, y: 12 } });
         await page.keyboard.press('/');
         await expect(searchInput).toBeFocused();
@@ -604,7 +606,7 @@ test.describe('Special route pages', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test('renders custom not-found page', async ({ page }) => {
-    const response = await page.goto('/ja-JP/this-path-does-not-exist/');
+    const response = await page.goto('/ja-JP/this-path-does-not-exist/', { waitUntil: 'domcontentloaded' });
     expect(response?.status()).toBe(404);
     await expect(page.getByRole('heading', { level: 1, name: 'ページが見つかりません' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'ホームへ戻る' })).toHaveAttribute('href', '/');
