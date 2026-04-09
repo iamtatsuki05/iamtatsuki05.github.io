@@ -34,7 +34,7 @@ export function ContentCardList({ items, gridClassName, listTestId, cardTestId }
       {items.map((item, index) => {
         const body = (
           <>
-            <h3 className="font-medium mb-1">{item.title}</h3>
+            <h3 className="content-card-title font-medium mb-1">{item.title}</h3>
             {item.description ? (
               <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 flex-1">{item.description}</p>
             ) : null}
@@ -58,7 +58,7 @@ export function ContentCardList({ items, gridClassName, listTestId, cardTestId }
         return (
           <li
             key={item.key}
-            className="content-reveal-card h-full"
+            className="content-reveal-card content-reveal-card--soft h-full"
             data-testid={cardTestId}
             style={isVisible ? { transitionDelay: `${80 + index * 34}ms` } : undefined}
           >

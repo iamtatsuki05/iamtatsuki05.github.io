@@ -13,6 +13,7 @@ describe('Card', () => {
 
     const link = screen.getByRole('link', { name: 'Example' });
     expect(link).toHaveClass('card');
+    expect(link).toHaveClass('ui-layered-card');
     expect(link).toHaveClass('pressable-card');
   });
 
@@ -21,6 +22,7 @@ describe('Card', () => {
 
     const card = screen.getByText('Static').closest('div');
     expect(card).toHaveClass('card');
+    expect(card).toHaveClass('ui-layered-card');
     expect(card).not.toHaveClass('pressable-card');
   });
 });
