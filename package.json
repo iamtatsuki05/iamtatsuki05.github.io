@@ -2,7 +2,7 @@
   "name": "personal-homepage",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "bun@1.1.24",
+  "packageManager": "bun@1.3.13",
   "scripts": {
     "dev": "bun scripts/sync-blog-markdown.ts && next dev",
     "build": "bun scripts/sync-blog-markdown.ts && next build && next-image-export-optimizer && bun scripts/generate-rss.ts",
