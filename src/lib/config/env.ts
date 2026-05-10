@@ -22,6 +22,10 @@ export function getAssetVersion(): string {
   return raw.slice(0, 8);
 }
 
+export function getGoogleAnalyticsId(): string | undefined {
+  return normalize(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID) || undefined;
+}
+
 export function getNodeEnv(): 'development' | 'production' | 'test' {
   const raw = normalize(process.env.NODE_ENV);
   if (raw === 'development' || raw === 'test') return raw;

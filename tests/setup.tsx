@@ -17,8 +17,9 @@ vi.mock('next/link', () => {
 });
 
 // next/navigation mock (pathname only)
+(globalThis as any).__NEXT_TEST_PATHNAME__ = '/';
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/',
+  usePathname: () => (globalThis as any).__NEXT_TEST_PATHNAME__ || '/',
 }));
 
 // IntersectionObserver mock for infinite scroll

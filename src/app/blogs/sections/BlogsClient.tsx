@@ -224,7 +224,8 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                       fill
                       className="object-contain"
                       sizes="120px"
-                      loading="lazy"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      priority={index === 0}
                     />
                   </div>
                 ) : null}

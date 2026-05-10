@@ -1,11 +1,13 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from 'next-themes';
 import { absoluteUrl, siteConfig, buildPersonJsonLd, buildWebsiteJsonLd } from '@/lib/seo';
 import { Header } from '@/components/site/Header';
 import { Footer } from '@/components/site/Footer';
+import { getGoogleAnalyticsId } from '@/lib/config/env';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -14,6 +16,7 @@ const TITLE = siteConfig.defaultTitle.ja;
 const DESCRIPTION = siteConfig.description.ja;
 const BASE_URL = absoluteUrl('/');
 const structuredData = JSON.stringify([buildPersonJsonLd(), buildWebsiteJsonLd()]);
+const googleAnalyticsId = getGoogleAnalyticsId();
 
 export const metadata: Metadata = {
   title: {
@@ -108,6 +111,7 @@ export default function RootLayout({
             {modal}
           </ThemeProvider>
         </NuqsAdapter>
+        {googleAnalyticsId ? <GoogleAnalytics gaId={googleAnalyticsId} /> : null}
       </body>
     </html>
   );

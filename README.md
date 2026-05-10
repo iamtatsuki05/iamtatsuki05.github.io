@@ -21,6 +21,11 @@ bun run storybook:build       # output static build to storybook-static/
 # Telemetry: set STORYBOOK_DISABLE_TELEMETRY=1 to opt out
 ```
 
+### Environment variables
+```shell
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+```
+
 ## How to operate Docker
 ### setup
 1. Clone the repository with `git clone`

@@ -1,24 +1,25 @@
 import React from 'react';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { Footer } from '@/components/site/Footer';
+
+function setPathname(pathname: string) {
+  (globalThis as any).__NEXT_TEST_PATHNAME__ = pathname;
+}
 
 afterEach(() => {
-  vi.resetModules();
-  vi.doMock('next/navigation', () => ({ usePathname: () => '/' }));
+  setPathname('/');
 });
 
 describe('Footer locale-aware links', () => {
-  it('uses en prefix when pathname is /en-US/blogs/', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/blogs/' }));
-    const { Footer } = await import('@/components/site/Footer');
-    const { render } = await import('@testing-library/react');
+  it('uses en prefix when pathname is /en-US/blogs/', () => {
+    setPathname('/en-US/blogs/');
     const { getByText } = render(<Footer />);
     expect(getByText(/Blog/).getAttribute('href')).toBe('/en-US/blogs/');
   });
 
-  it('uses ja prefix by default', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/blogs/' }));
-    const { Footer } = await import('@/components/site/Footer');
-    const { render, screen } = await import('@testing-library/react');
+  it('uses ja prefix by default', () => {
+    setPathname('/blogs/');
     render(<Footer />);
     expect(screen.getByText(/Links/).getAttribute('href')).toBe('/ja-JP/links/');
     expect(screen.getByText(/Hobbies/).getAttribute('href')).toBe('/ja-JP/hobbies/');

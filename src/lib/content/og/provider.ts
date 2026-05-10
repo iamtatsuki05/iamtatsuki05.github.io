@@ -74,19 +74,27 @@ export function embedHtmlFor(provider: Provider, url: string): string | null {
     const id = ytIdFrom(url);
     if (!id) return null;
     const canonical = `https://www.youtube.com/watch?v=${id}`;
-    return `<div class="rse-embed embed-video embed-youtube" data-provider="youtube" data-url="${canonical}"></div>`;
+    return `<div class="rse-embed embed-video embed-youtube" data-provider="youtube" data-url="${escapeAttr(canonical)}"></div>`;
   }
   if (provider === 'twitter') {
     try {
       const x = new URL(url);
       const canonical = x.hostname === 'twitter.com' ? url : `https://twitter.com${x.pathname}`;
-      return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${canonical}"></div>`;
+      return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${escapeAttr(canonical)}"></div>`;
     } catch {
-      return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${url}"></div>`;
+      return `<div class="rse-embed embed-social embed-twitter" data-provider="twitter" data-url="${escapeAttr(url)}"></div>`;
     }
   }
   if (provider === 'instagram') {
-    return `<div class="rse-embed embed-social embed-instagram" data-provider="instagram" data-url="${url}"></div>`;
+    return `<div class="rse-embed embed-social embed-instagram" data-provider="instagram" data-url="${escapeAttr(url)}"></div>`;
   }
   return null;
+}
+
+function escapeAttr(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 }

@@ -2,6 +2,9 @@ import { getOgCacheTtlMs, shouldDisableOgFetch } from '@/lib/config/env';
 import type { OGData } from './types';
 import { providerFallback } from './provider';
 
+const OG_FETCH_TIMEOUT_MS = 5_000;
+const OG_MAX_HTML_BYTES = 500_000;
+
 type YouTubeOEmbedResponse = {
   title: string;
   thumbnail_url: string;
@@ -61,11 +64,16 @@ export async function fetchOG(url: string): Promise<OGData | null> {
   if (shouldDisableOgFetch()) {
     return { url };
   }
+  if (!isSafeOgFetchUrl(url)) {
+    return null;
+  }
   try {
     // まずはプロバイダ専用の取得
     const provider = await fetchProviderMeta(url);
     if (provider) return { ...provider, fetchedAt: Date.now() };
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), OG_FETCH_TIMEOUT_MS);
     const res = await fetch(url, {
       headers: {
         'User-Agent':
@@ -74,10 +82,16 @@ export async function fetchOG(url: string): Promise<OGData | null> {
         'Accept-Language': 'ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7',
       },
       redirect: 'follow',
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
     if (!res.ok) return providerFallback(url) || { url };
-    const text = await res.text();
-    const head = text.slice(0, 500_000);
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType && !/text\/html|application\/xhtml\+xml|application\/xml|text\/xml/i.test(contentType)) {
+      return providerFallback(url) || { url };
+    }
+    const text = await readTextWithLimit(res, OG_MAX_HTML_BYTES);
+    const head = text.slice(0, OG_MAX_HTML_BYTES);
     const data = extractMeta(head, url);
     // Amazon: 本文の productTitle を補助的に利用
     try {
@@ -100,6 +114,91 @@ export async function fetchOG(url: string): Promise<OGData | null> {
     // Provider専用フォールバック（ネットワーク不可/OGなし）
     return providerFallback(url);
   }
+}
+
+export function isSafeOgFetchUrl(url: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return false;
+  const hostname = parsed.hostname.toLowerCase();
+  if (!hostname || hostname === 'localhost' || hostname.endsWith('.localhost')) return false;
+  if (isBlockedIpLiteral(hostname)) return false;
+  return true;
+}
+
+function isBlockedIpLiteral(hostname: string): boolean {
+  const ipv4 = parseIpv4(hostname);
+  if (ipv4) return isBlockedIpv4(ipv4);
+
+  const normalizedIpv6 = hostname.replace(/^\[|\]$/g, '').toLowerCase();
+  if (!normalizedIpv6.includes(':')) return false;
+  if (normalizedIpv6 === '::1' || normalizedIpv6 === '::') return true;
+  if (normalizedIpv6.startsWith('fc') || normalizedIpv6.startsWith('fd')) return true;
+  if (normalizedIpv6.startsWith('fe8') || normalizedIpv6.startsWith('fe9') || normalizedIpv6.startsWith('fea') || normalizedIpv6.startsWith('feb')) {
+    return true;
+  }
+  return false;
+}
+
+function parseIpv4(hostname: string): number[] | null {
+  const parts = hostname.split('.');
+  if (parts.length !== 4) return null;
+  const octets = parts.map((part) => {
+    if (!/^\d+$/.test(part)) return Number.NaN;
+    return Number.parseInt(part, 10);
+  });
+  if (octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) return null;
+  return octets;
+}
+
+function isBlockedIpv4([a, b]: number[]): boolean {
+  if (a === 0) return true;
+  if (a === 10) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  return false;
+}
+
+async function readTextWithLimit(response: Response, limitBytes: number): Promise<string> {
+  if (!response.body) {
+    return (await response.text()).slice(0, limitBytes);
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+  while (received < limitBytes) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+    const remaining = limitBytes - received;
+    chunks.push(value.length > remaining ? value.slice(0, remaining) : value);
+    received += value.length;
+  }
+  try {
+    await reader.cancel();
+  } catch {
+    // ignore cancellation errors after the capped read
+  }
+  return new TextDecoder().decode(concatUint8Arrays(chunks));
+}
+
+function concatUint8Arrays(chunks: Uint8Array[]): Uint8Array {
+  const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+  const result = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return result;
 }
 
 function extractMeta(html: string, url: string): OGData {

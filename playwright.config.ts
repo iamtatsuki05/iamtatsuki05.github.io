@@ -2,9 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
 const isCi = Boolean(process.env.CI);
-const webServerCommand = isCi
-  ? 'bun run build && ./node_modules/.bin/serve out -l tcp://127.0.0.1:3000'
-  : 'bun run e2e:dev';
+const webServerCommand =
+  'env -u FORCE_COLOR -u NO_COLOR bun run build && env -u FORCE_COLOR -u NO_COLOR node scripts/serve-static-export.mjs --port 3000 --host 127.0.0.1 --dir out';
 
 export default defineConfig({
   testDir: './e2e',
@@ -21,8 +20,8 @@ export default defineConfig({
   webServer: {
     command: webServerCommand,
     url: baseURL,
-    reuseExistingServer: !isCi,
-    timeout: isCi ? 300_000 : 120_000,
+    reuseExistingServer: false,
+    timeout: 300_000,
   },
   projects: [
     {
