@@ -21,6 +21,11 @@ bun run storybook:build       # storybook-static/ に静的ビルド
 # テレメトリ: 参加したくない場合は STORYBOOK_DISABLE_TELEMETRY=1 を設定
 ```
 
+### 環境変数
+```shell
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+```
+
 ## Docker の操作方法
 ### setup
 1. `git clone` で取得
