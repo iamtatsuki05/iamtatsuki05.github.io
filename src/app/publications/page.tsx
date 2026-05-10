@@ -43,7 +43,7 @@ export default async function PublicationsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <PublicationsPageView locale={DEFAULT_LOCALE} />
+      <PublicationsPageView locale={DEFAULT_LOCALE} items={publications} />
     </>
   );
 }
