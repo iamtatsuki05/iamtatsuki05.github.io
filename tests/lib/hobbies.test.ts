@@ -58,4 +58,19 @@ describe('resolveHobbies', () => {
       'legal-cases',
     ]);
   });
+
+  it('uses optimized static WebP thumbnails for bitmap hobby images', () => {
+    const hobbies = resolveHobbies('ja');
+    const bitmapHobbies = hobbies.filter((hobby) =>
+      ['gadgets', 'camera', 'tomoo', 'cute-characters'].includes(hobby.id),
+    );
+
+    expect(bitmapHobbies).toHaveLength(4);
+    expect(bitmapHobbies.map((hobby) => hobby.thumbnailSrc)).toEqual([
+      '/images/hobbies/nextImageExportOptimizer/gadgets-opt-1200.WEBP',
+      '/images/hobbies/nextImageExportOptimizer/camera-opt-1200.WEBP',
+      '/images/hobbies/nextImageExportOptimizer/tomoo-opt-1200.WEBP',
+      '/images/hobbies/nextImageExportOptimizer/cute-characters-opt-1200.WEBP',
+    ]);
+  });
 });

@@ -7,10 +7,10 @@ import { SectionHeader } from '@/components/home/sections/SectionHeader';
 
 type LinkItem = Awaited<ReturnType<typeof getLinks>>[number];
 
-export async function LinksPage({ locale }: { locale: Locale }) {
+export async function LinksPage({ locale, links }: { locale: Locale; links?: LinkItem[] }) {
   const copy = linksPageCopy[locale];
-  const links = await getLinks();
-  const groups = groupBy(links, (l) => l.category || copy.groupFallback);
+  const resolvedLinks = links ?? (await getLinks());
+  const groups = groupBy(resolvedLinks, (l) => l.category || copy.groupFallback);
   const tones: Array<'blue' | 'lilac' | 'amber' | 'teal'> = ['blue', 'lilac', 'amber', 'teal'];
 
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { LinkGrid } from '@/components/links/LinkGrid';
 
 const items = [
@@ -9,14 +9,7 @@ const items = [
 ];
 
 describe('LinkGrid', () => {
-  afterEach(() => {
-    vi.useRealTimers();
-    vi.restoreAllMocks();
-  });
-
-  it('renders links and reveals the grid after the initial enter delay', () => {
-    vi.useFakeTimers();
-
+  it('renders links without client-side reveal state', () => {
     const { container } = render(<LinkGrid items={items} showDescription iconSize={40} />);
 
     expect(screen.getByRole('link', { name: 'GitHub' })).toHaveAttribute('href', 'https://github.com');
@@ -25,12 +18,7 @@ describe('LinkGrid', () => {
     const list = container.querySelector('ul.content-reveal-list');
     if (!list) throw new Error('Link grid list is missing');
 
-    expect(list).toHaveAttribute('data-state', 'hidden');
-
-    act(() => {
-      vi.runOnlyPendingTimers();
-    });
-
     expect(list).toHaveAttribute('data-state', 'open');
+    expect(list).not.toHaveAttribute('data-client-reveal');
   });
 });
