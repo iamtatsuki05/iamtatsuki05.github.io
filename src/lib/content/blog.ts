@@ -4,6 +4,7 @@ import { BlogFrontmatter } from './types';
 import { parseMarkdownFile, slugFromFilename } from './markdown';
 import { loadCollection } from './loader';
 import { cached } from '@/lib/server/cache';
+import { safeParseLocalized } from '@/lib/validation/zodI18n';
 
 const BLOG_DIR = path.join(process.cwd(), 'src', 'content', 'blogs');
 
@@ -31,7 +32,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
     cacheKey,
     parse: async (full, filename) => {
       const { data } = await parseMarkdownFile(full);
-      const parsed = BlogFrontmatter.safeParse(data);
+      const parsed = safeParseLocalized(BlogFrontmatter, data);
       if (!parsed.success) return null;
       const fm = parsed.data;
       if (fm.draft && !includeDrafts) return null;
@@ -64,7 +65,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     const full = path.join(BLOG_DIR, `${slug}.md`);
     try {
       const { data, contentHtml, headings, raw } = await parseMarkdownFile(full);
-      const parsed = BlogFrontmatter.safeParse(data);
+      const parsed = safeParseLocalized(BlogFrontmatter, data);
       if (!parsed.success) return null;
       const fm = parsed.data;
       if (fm.draft && !includeDrafts) return null;
