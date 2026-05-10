@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/site/ThemeToggle';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
 import { usePathname } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { NavLinks } from '@/components/site/NavLinks';
 import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
@@ -13,20 +13,47 @@ import { MobileMenu } from '@/components/site/MobileMenu';
 export function Header() {
   const pathname = usePathname() || '';
   const [open, setOpen] = useState(false);
+  const [iconRotation, setIconRotation] = useState(0);
   const locale = extractLocaleFromPath(pathname) || 'ja';
   const localePrefix = `/${localeToRouteLocale(locale)}`;
   const activePath = pathname;
 
   const navItems = useMemo(() => resolveNavItems(locale), [locale]);
 
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    if (prefersReducedMotion) {
+      setIconRotation(0);
+      return;
+    }
+
+    const updateRotation = () => {
+      setIconRotation(Math.round(window.scrollY * 0.35));
+    };
+
+    updateRotation();
+    window.addEventListener('scroll', updateRotation, { passive: true });
+    return () => window.removeEventListener('scroll', updateRotation);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 border-b border-purple-100/70 bg-gradient-to-r from-[#f8f5ff]/85 via-[#fff6e6]/90 to-[#f4eeff]/85 backdrop-blur-sm shadow-sm dark:border-purple-500/40 dark:from-[#120d1f]/90 dark:via-[#0f0a17]/90 dark:to-[#140f24]/88">
-      <div className="container mx-auto max-w-screen-2xl px-4 py-4 flex items-center justify-between">
+      <div className="container mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-4 py-4">
         <Link
           href={localizedPath('/', locale)}
-          className="font-semibold text-lg bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200"
+          className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-semibold sm:flex-none"
         >
-          Tatsuki Okada - Personal Site
+          <img
+            src="/icon-192x192.png"
+            alt=""
+            aria-hidden="true"
+            data-testid="header-personal-icon"
+            className="h-7 w-7 shrink-0 rounded-full border border-white/70 bg-white/80 object-cover shadow-sm transition-transform duration-150 ease-out motion-reduce:transition-none dark:border-white/15 dark:bg-gray-950/70"
+            style={{ transform: `rotate(${iconRotation}deg)` }}
+          />
+          <span className="truncate bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
+            Tatsuki Okada - Personal Site
+          </span>
         </Link>
         {/* Desktop nav */}
         <nav aria-label="Main navigation" className="hidden sm:flex items-center gap-4">
