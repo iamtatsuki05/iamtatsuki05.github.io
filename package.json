@@ -27,6 +27,7 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.6",
     "babel-plugin-react-compiler": "^1.0.0",
     "clsx": "2.1.1",
     "feed": "4.2.2",

@@ -3,6 +3,7 @@ import {
   DEFAULT_DEV_SITE_URL,
   DEFAULT_SITE_URL,
   getBasePath,
+  getGoogleAnalyticsId,
   getOgCacheTtlMs,
   getSiteUrl,
   getSiteUrlWithBasePath,
@@ -40,6 +41,21 @@ describe('base path helpers', () => {
   it('falls back to empty string when unset', () => {
     delete process.env.NEXT_PUBLIC_BASE_PATH;
     expect(getBasePath()).toBe('');
+  });
+});
+
+describe('google analytics helpers', () => {
+  it('reads NEXT_PUBLIC_GOOGLE_ANALYTICS_ID from env', () => {
+    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID = ' G-XXXXXXXXXX ';
+    expect(getGoogleAnalyticsId()).toBe('G-XXXXXXXXXX');
+  });
+
+  it('returns undefined when NEXT_PUBLIC_GOOGLE_ANALYTICS_ID is absent or blank', () => {
+    delete process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+    expect(getGoogleAnalyticsId()).toBeUndefined();
+
+    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID = ' ';
+    expect(getGoogleAnalyticsId()).toBeUndefined();
   });
 });
 

@@ -49,6 +49,7 @@ jobs:
             || format('https://{0}.{1}.pages.dev', github.ref_name, secrets.CLOUDFLARE_PAGES_PROJECT) }}
           NEXT_PUBLIC_BASE_PATH: ${{ secrets.CLOUDFLARE_BASE_PATH || '' }}
           NEXT_PUBLIC_ASSET_VERSION: ${{ github.sha }}
+          NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           INCLUDE_DRAFTS: 'false'
         run: bun run build
 
