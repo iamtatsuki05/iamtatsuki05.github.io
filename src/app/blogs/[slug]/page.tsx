@@ -78,8 +78,8 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
               fill
               className="object-cover"
               sizes="(max-width: 640px) 100vw, 720px"
-              loading="lazy"
-              priority={false}
+              loading="eager"
+              priority
               referrerPolicy="no-referrer"
             />
           </div>

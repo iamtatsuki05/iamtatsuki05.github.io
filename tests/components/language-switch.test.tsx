@@ -1,19 +1,21 @@
 import React from 'react';
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { LanguageSwitch } from '@/components/site/LanguageSwitch';
 import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';
+
+function setPathname(pathname: string) {
+  (globalThis as any).__NEXT_TEST_PATHNAME__ = pathname;
+}
 
 afterEach(() => {
   window.localStorage.clear();
-  vi.resetModules();
-  vi.doMock('next/navigation', () => ({ usePathname: () => '/' }));
+  setPathname('/');
 });
 
 describe('LanguageSwitch', () => {
-  it('translatable pathでは言語リンクを表示する', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/links/' }));
-    const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
-    const { render, screen } = await import('@testing-library/react');
-
+  it('translatable pathでは言語リンクを表示する', () => {
+    setPathname('/en-US/links/');
     render(<LanguageSwitch />);
 
     const jaLink = screen.getByRole('link', { name: 'JA' });
@@ -31,31 +33,22 @@ describe('LanguageSwitch', () => {
   });
 
   it('locale付きパスでは選択中言語を保存する', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/links/' }));
-    const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
-    const { render, waitFor } = await import('@testing-library/react');
-
+    setPathname('/en-US/links/');
     render(<LanguageSwitch />);
 
     await waitFor(() => expect(window.localStorage.getItem(LOCALE_PREFERENCE_STORAGE_KEY)).toBe('en'));
   });
 
-  it('hobbies でも言語リンクを切り替えられる', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/en-US/hobbies/' }));
-    const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
-    const { render, screen } = await import('@testing-library/react');
-
+  it('hobbies でも言語リンクを切り替えられる', () => {
+    setPathname('/en-US/hobbies/');
     render(<LanguageSwitch />);
 
     expect(screen.getByRole('link', { name: 'JA' }).getAttribute('href')).toBe('/ja-JP/hobbies/');
     expect(screen.getByRole('link', { name: 'EN' }).getAttribute('href')).toBe('/en-US/hobbies/');
   });
 
-  it('非対応ページではリンクではなく固定表示になる', async () => {
-    vi.doMock('next/navigation', () => ({ usePathname: () => '/ja-JP/blogs/example-post/' }));
-    const { LanguageSwitch } = await import('@/components/site/LanguageSwitch');
-    const { render, screen } = await import('@testing-library/react');
-
+  it('非対応ページではリンクではなく固定表示になる', () => {
+    setPathname('/ja-JP/blogs/example-post/');
     render(<LanguageSwitch />);
 
     expect(screen.queryByRole('link', { name: 'JA' })).toBeNull();

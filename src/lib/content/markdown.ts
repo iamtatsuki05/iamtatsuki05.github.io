@@ -10,12 +10,70 @@ import rehypePrism from 'rehype-prism-plus';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
+import type { Schema } from 'hast-util-sanitize';
 import GithubSlugger from 'github-slugger';
 import type { Root as MdastRoot, Heading, Text, InlineCode, RootContent } from 'mdast';
 import { cached } from '@/lib/server/cache';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';
 import rehypeExternalLinks from './rehype-external-links';
+
+type SanitizerAttributes = NonNullable<Schema['attributes']>;
+type SanitizerAttribute = SanitizerAttributes[string][number];
+
+function defaultAttributes(tagName: string): SanitizerAttribute[] {
+  return [...((defaultSchema.attributes?.[tagName] as SanitizerAttribute[] | undefined) || [])];
+}
+
+const markdownSanitizeSchema: Schema = {
+  ...defaultSchema,
+  tagNames: [
+    ...(defaultSchema.tagNames || []),
+    'details',
+    'summary',
+  ],
+  attributes: {
+    ...defaultSchema.attributes,
+    '*': [
+      ...defaultAttributes('*'),
+      'className',
+    ],
+    a: [
+      ...defaultAttributes('a'),
+      'target',
+      'rel',
+    ],
+    code: [
+      ...defaultAttributes('code'),
+      'className',
+    ],
+    div: [
+      ...defaultAttributes('div'),
+      'className',
+      ['dataProvider', 'youtube', 'twitter', 'instagram'],
+      'dataUrl',
+    ],
+    img: [
+      ...defaultAttributes('img'),
+      'className',
+      'loading',
+      'decoding',
+      'referrerPolicy',
+    ],
+    span: [
+      ...defaultAttributes('span'),
+      'className',
+    ],
+    details: ['open', 'className'],
+    summary: ['className'],
+    pre: [
+      ...defaultAttributes('pre'),
+      'className',
+    ],
+  },
+  clobberPrefix: '',
+};
 
 export type ParsedMarkdown<T> = {
   frontmatter: T;
@@ -61,6 +119,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(remarkLinkCard)
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw) // enable raw HTML like <details><summary>
+      .use(rehypeSanitize, markdownSanitizeSchema)
       .use(rehypeSlug)
       .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
       .use(rehypeExternalLinks)

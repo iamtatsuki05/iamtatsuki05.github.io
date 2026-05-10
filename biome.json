@@ -11,7 +11,7 @@
       "**/*.cts",
       "**/*.mts"
     ],
-    "ignore": [".next/**", "out/**", "node_modules/**", ".cache/**"]
+    "ignore": [".next/**", "out/**", "storybook-static/**", "node_modules/**", ".cache/**"]
   },
   "formatter": {
     "enabled": false

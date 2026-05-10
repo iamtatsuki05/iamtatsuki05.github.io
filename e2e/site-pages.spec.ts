@@ -27,6 +27,7 @@ for (const { label, use } of viewports) {
         .locator('section')
         .filter({ has: page.getByRole('heading', { level: 2, name: '✨ 最新' }) })
         .first();
+      await expect(latestSection.getByTestId('blog-latest-card').first()).toBeVisible();
       expect(await latestSection.locator('li').count()).toBeGreaterThanOrEqual(1);
 
       const allPostsSection = page
@@ -369,7 +370,8 @@ for (const { label, use } of viewports) {
         await page.keyboard.press('/');
         await expect(searchInput).toBeFocused();
 
-        await page.keyboard.type('zzzz');
+        await searchInput.fill('zzzz');
+        await expect(searchInput).toHaveValue('zzzz');
         await expect(page.getByTestId('filter-empty-state')).toBeVisible();
         await expect(page.getByTestId('filter-empty-state')).toContainText('zzzz');
         await expect(page.getByRole('button', { name: 'Clear Search' })).toBeVisible();

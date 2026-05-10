@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
@@ -28,6 +28,7 @@ describe('remark-link-card', () => {
   });
 
   afterEach(async () => {
+    vi.unstubAllGlobals();
     await rm(tmpDir, { recursive: true, force: true });
   });
 
@@ -79,6 +80,23 @@ describe('remark-link-card', () => {
     const tree = processor.parse(url);
     const transformed = (await processor.run(tree)) as any;
     const node = transformed.children[0];
+    expect(node.type).toBe('paragraph');
+    expect(node.children[0].type).toBe('link');
+    expect(node.children[0].url).toBe(url);
+  });
+
+  it('does not fetch metadata for private network URLs', async () => {
+    process.env.OG_DISABLE_FETCH = 'false';
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+
+    const processor = createProcessor();
+    const url = 'http://127.0.0.1:3000/internal';
+    const tree = processor.parse(`[internal](${url})`);
+    const transformed = (await processor.run(tree)) as any;
+    const node = transformed.children[0];
+
+    expect(fetchSpy).not.toHaveBeenCalled();
     expect(node.type).toBe('paragraph');
     expect(node.children[0].type).toBe('link');
     expect(node.children[0].url).toBe(url);
