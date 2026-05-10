@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { withBasePath } from '@/lib/url';
 import { absoluteUrl } from '@/lib/seo';
@@ -11,6 +12,7 @@ import { ShareButtons } from '@/components/blogs/ShareButtons';
 import { BlogToc } from '@/components/blogs/BlogToc';
 import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
 import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
+import { BlogAdjacentNavigationClient } from '@/components/blogs/BlogAdjacentNavigationClient';
 
 type Params = { slug: string };
 
@@ -48,11 +50,16 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   });
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<Params> }) {
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<Params>;
+}) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
+  const allPosts = await getAllPosts();
   const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags, markdown } = post;
   const shareUrl = absoluteUrl(`/blogs/${slug}/`);
   const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
@@ -91,6 +98,9 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
           <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" />
         </div>
         <div dangerouslySetInnerHTML={{ __html: html || '' }} />
+        <Suspense fallback={null}>
+          <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} />
+        </Suspense>
         <CodeCopyClient />
         <EmbedsClient />
       </article>

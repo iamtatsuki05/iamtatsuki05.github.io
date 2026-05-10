@@ -124,6 +124,20 @@ describe('BlogsClient', () => {
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
     expect(queryByText('Sample 1')).toBeNull();
   });
+  it('preserves active blog filters in post links', async () => {
+    const { render, screen, within } = await import('@testing-library/react');
+
+    render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: ({ children }) => (
+        <NuqsTestingAdapter searchParams="?q=hello&year=2025&tags=a&sort=newest">{children}</NuqsTestingAdapter>
+      ),
+    });
+
+    const firstCard = screen.getAllByTestId('blog-card')[0];
+    const link = within(firstCard).getByRole('link');
+
+    expect(link).toHaveAttribute('href', '/blogs/post-10/?q=hello&year=2025&tags=a&sort=newest');
+  });
   it('supports selecting multiple years from the year filter', async () => {
     const { render, screen } = await import('@testing-library/react');
     const userEvent = await import('@testing-library/user-event');
