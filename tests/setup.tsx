@@ -18,8 +18,13 @@ vi.mock('next/link', () => {
 
 // next/navigation mock (pathname only)
 (globalThis as any).__NEXT_TEST_PATHNAME__ = '/';
+(globalThis as any).__NEXT_TEST_SEARCH_PARAMS__ = '';
 vi.mock('next/navigation', () => ({
   usePathname: () => (globalThis as any).__NEXT_TEST_PATHNAME__ || '/',
+  useSearchParams: () => new URLSearchParams((globalThis as any).__NEXT_TEST_SEARCH_PARAMS__ || ''),
+  useRouter: () => ({
+    push: (href: string) => (globalThis as any).__NEXT_TEST_ROUTER_PUSH__?.(href),
+  }),
 }));
 
 // IntersectionObserver mock for infinite scroll

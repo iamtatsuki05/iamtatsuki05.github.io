@@ -43,7 +43,7 @@ export default async function LinksPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <LinksPageView locale={DEFAULT_LOCALE} />
+      <LinksPageView locale={DEFAULT_LOCALE} links={links} />
     </>
   );
 }

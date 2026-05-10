@@ -23,6 +23,7 @@ import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
+import { buildBlogPostHref } from '@/lib/blog/navigation';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -88,6 +89,15 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
 
   const latest = useMemo(() => filtered.slice(0, LATEST_POSTS_COUNT), [filtered]);
   const items = useMemo(() => filtered.slice(0, visible), [filtered, visible]);
+  const linkFilters = useMemo(
+    () => ({
+      q,
+      year: Array.from(yearSet),
+      tags: Array.from(tagSet),
+      sort,
+    }),
+    [q, sort, tagSet, yearSet],
+  );
 
   const t = useMemo(() => resolveFilterText(locale), [locale]);
   const resultLabel = useMemo(
@@ -182,7 +192,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
               <div className="p-3">
                 <h3 className="font-medium">
                   <Link
-                    href={`/blogs/${p.slug}/`}
+                    href={buildBlogPostHref(p.slug, linkFilters)}
                     className="blog-linked-card__title-link underline-offset-2 hover:underline"
                   >
                     <SearchHighlight text={p.title} query={q} />
@@ -232,7 +242,7 @@ export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: 
                 <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                   <h3 className="text-base font-semibold">
                     <Link
-                      href={`/blogs/${p.slug}/`}
+                      href={buildBlogPostHref(p.slug, linkFilters)}
                       className="blog-linked-card__title-link underline-offset-2 hover:underline"
                     >
                       <SearchHighlight text={p.title} query={q} />

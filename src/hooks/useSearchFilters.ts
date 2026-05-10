@@ -2,9 +2,15 @@ import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { parseAsArrayOf, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
 import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
-import { normalizeSearchText, tokenizeSearchQuery } from '@/lib/search/queryTokens';
+import { normalizeSearchText } from '@/lib/search/queryTokens';
+import {
+  filterSearchItems,
+  readSearchField,
+  resolveFusePath,
+  type SearchSortMode,
+} from '@/lib/search/filterItems';
 
-export type SearchSortMode = 'relevant' | 'newest';
+export type { SearchSortMode } from '@/lib/search/filterItems';
 
 type Options<T> = {
   fuseKeys: string[];
@@ -15,46 +21,6 @@ type Options<T> = {
 };
 
 type SetUpdater<T> = T | ((prev: T) => T);
-
-function readSearchField(item: unknown, key: string): string[] {
-  if (!item || typeof item !== 'object') return [];
-
-  const value = (item as Record<string, unknown>)[key];
-  if (typeof value === 'string') return [value];
-  if (typeof value === 'number' || typeof value === 'boolean') return [String(value)];
-  if (Array.isArray(value)) return value.flatMap((entry) => readSearchField({ value: entry }, 'value'));
-  if (value && typeof value === 'object') return Object.values(value).flatMap((entry) => readSearchField({ value: entry }, 'value'));
-
-  return [];
-}
-
-function resolveFusePath(path: string | string[]) {
-  return Array.isArray(path) ? path.join('.') : path;
-}
-
-function compareSearchSortValues<T>(
-  left: T,
-  right: T,
-  extractSortValue?: (item: T) => string | number | undefined,
-) {
-  if (!extractSortValue) return 0;
-
-  const leftValue = extractSortValue(left);
-  const rightValue = extractSortValue(right);
-
-  if (leftValue == null && rightValue == null) return 0;
-  if (leftValue == null) return 1;
-  if (rightValue == null) return -1;
-
-  if (typeof leftValue === 'number' && typeof rightValue === 'number') {
-    return rightValue - leftValue;
-  }
-
-  const leftText = String(leftValue);
-  const rightText = String(rightValue);
-  if (leftText === rightText) return 0;
-  return leftText < rightText ? 1 : -1;
-}
 
 export function useSearchFilters<T>(
   items: T[],
@@ -196,49 +162,19 @@ export function useSearchFilters<T>(
   const allTags = metadata.tags;
 
   const filtered = useMemo(() => {
-    let result = items;
-    if (localQ) {
-      const normalizedQuery = normalizeSearchText(localQ);
-      if (fuse) {
-        const matches = fuse.search(normalizedQuery);
-        result =
-          localSort === 'newest'
-            ? matches.map((entry) => entry.item).sort((left, right) => compareSearchSortValues(left, right, extractSortValue))
-            : matches
-                .sort((left, right) => {
-                  const scoreDiff = (left.score ?? 1) - (right.score ?? 1);
-                  if (scoreDiff !== 0) return scoreDiff;
-                  return compareSearchSortValues(left.item, right.item, extractSortValue);
-                })
-                .map((entry) => entry.item);
-      } else {
-        const normalizedTokens = tokenizeSearchQuery(normalizedQuery);
-
-        if (normalizedTokens.length) {
-          result = result.filter((item) => {
-            const haystack = fuseKeys
-              .flatMap((key) => readSearchField(item, key))
-              .join(' ');
-            const normalizedHaystack = normalizeSearchText(haystack);
-
-            return normalizedTokens.every((token) => normalizedHaystack.includes(token));
-          });
-
-          result = [...result].sort((left, right) => compareSearchSortValues(left, right, extractSortValue));
-        }
-      }
-    } else if (localSort === 'newest' && extractSortValue) {
-      result = [...result].sort((left, right) => compareSearchSortValues(left, right, extractSortValue));
-    }
-    if (yearSet.size) {
-      result = result.filter((item) => {
-        const itemYear = (extractYear(item) || '').slice(0, 4);
-        return yearSet.has(itemYear);
-      });
-    }
-    if (tagSet.size) result = result.filter((item) => extractTags(item).some((tag) => tagSet.has(tag)));
-    return result;
-  }, [items, fuse, localQ, yearSet, tagSet, extractSortValue, extractYear, extractTags]);
+    return filterSearchItems({
+      items,
+      query: localQ,
+      sort: localSort,
+      yearSet,
+      tagSet,
+      fuseKeys,
+      extractYear,
+      extractTags,
+      extractSortValue,
+      matches: localQ && fuse ? fuse.search(normalizeSearchText(localQ)) : undefined,
+    });
+  }, [items, fuse, localQ, localSort, yearSet, tagSet, fuseKeys, extractSortValue, extractYear, extractTags]);
 
   const clearFilters = () => {
     pendingQRef.current = '';
