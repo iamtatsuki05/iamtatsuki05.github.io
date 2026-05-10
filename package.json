@@ -21,6 +21,8 @@
     "e2e:chromium": "bun run e2e:install && bunx playwright test --project=chromium",
     "e2e:firefox": "bun run e2e:install && bunx playwright test --project=firefox",
     "e2e:webkit": "bun run e2e:install && bunx playwright test --project=webkit",
+    "lhci:mobile": "lhci autorun",
+    "lhci:desktop": "lhci autorun --collect.settings.preset=desktop",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build"
   },
@@ -57,6 +59,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@lhci/cli": "0.15.1",
     "@next/bundle-analyzer": "^16.2.6",
     "@playwright/test": "1.59.1",
     "@storybook/addon-docs": "10.3.6",
