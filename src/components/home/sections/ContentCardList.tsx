@@ -1,9 +1,6 @@
-"use client";
-
 import React from 'react';
 import clsx from 'clsx';
 import { Card } from '@/components/ui/Card';
-import { useInitialReveal } from '@/hooks/useInitialReveal';
 
 type CardItem = {
   key: string;
@@ -23,12 +20,10 @@ type Props = {
 };
 
 export function ContentCardList({ items, gridClassName, listTestId, cardTestId }: Props) {
-  const isVisible = useInitialReveal(48);
-
   return (
     <ul
       className={clsx('content-reveal-list grid gap-3 sm:grid-cols-2', gridClassName)}
-      data-state={isVisible ? 'open' : 'hidden'}
+      data-state="open"
       data-testid={listTestId}
     >
       {items.map((item, index) => {
@@ -60,7 +55,7 @@ export function ContentCardList({ items, gridClassName, listTestId, cardTestId }
             key={item.key}
             className="content-reveal-card content-reveal-card--soft h-full"
             data-testid={cardTestId}
-            style={isVisible ? { transitionDelay: `${80 + index * 34}ms` } : undefined}
+            style={{ transitionDelay: `${80 + index * 34}ms` }}
           >
             {card}
           </li>

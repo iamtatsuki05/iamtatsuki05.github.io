@@ -12,6 +12,35 @@ const viewports = [
   },
 ] as const;
 
+test.describe('Site header (mobile)', () => {
+  test.use({ viewport: { width: 375, height: 667 } });
+
+  test('stays fixed while scrolling down the page', async ({ page }) => {
+    await page.goto(localizedPath('ja', '/blogs/'));
+
+    const header = page.locator('header').first();
+    await expect(header).toHaveCSS('position', 'fixed');
+
+    const before = await header.boundingBox();
+    expect(before).not.toBeNull();
+
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+
+    await expect.poll(async () => Math.round((await header.boundingBox())?.y ?? -1)).toBe(0);
+    await expect(header).toBeVisible();
+  });
+});
+
+test.describe('Site header (desktop)', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('keeps the existing sticky header behavior', async ({ page }) => {
+    await page.goto(localizedPath('ja', '/blogs/'));
+
+    await expect(page.locator('header').first()).toHaveCSS('position', 'sticky');
+  });
+});
+
 for (const { label, use } of viewports) {
   test.describe(`Blog index page (${label})`, () => {
     test.use(use);

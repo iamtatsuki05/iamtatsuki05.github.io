@@ -59,8 +59,8 @@ export async function HobbiesPage({ locale }: { locale: Locale }) {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                    loading={index < 2 ? 'eager' : 'lazy'}
-                    priority={index < 2}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    priority={index === 0}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
                   <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/20 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">

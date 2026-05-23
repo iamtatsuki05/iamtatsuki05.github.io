@@ -37,7 +37,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-purple-100/70 bg-gradient-to-r from-[#f8f5ff]/85 via-[#fff6e6]/90 to-[#f4eeff]/85 backdrop-blur-sm shadow-sm dark:border-purple-500/40 dark:from-[#120d1f]/90 dark:via-[#0f0a17]/90 dark:to-[#140f24]/88">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-purple-100/70 bg-gradient-to-r from-[#f8f5ff]/85 via-[#fff6e6]/90 to-[#f4eeff]/85 backdrop-blur-sm shadow-sm sm:sticky sm:z-40 dark:border-purple-500/40 dark:from-[#120d1f]/90 dark:via-[#0f0a17]/90 dark:to-[#140f24]/88">
       <div className="container mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-4 py-4">
         <Link
           href={localizedPath('/', locale)}

@@ -32,6 +32,7 @@
   --fg: 23 23 23;
   --accent: #c084fc; /* lilac */
   --accent-2: #fcd34d; /* cream/gold */
+  --link: #6b21a8;
   --body-gradient:
     radial-gradient(60% 60% at 15% 20%, rgba(192, 132, 252, 0.18), transparent),
     radial-gradient(50% 50% at 85% 10%, rgba(252, 211, 77, 0.14), transparent),
@@ -43,6 +44,7 @@
   --fg: 243 244 246;
   --accent: #c084fc;
   --accent-2: #fcd34d;
+  --link: #d8b4fe;
   --body-gradient:
     radial-gradient(50% 50% at 20% 10%, rgba(192, 132, 252, 0.22), transparent),
     radial-gradient(45% 45% at 80% 20%, rgba(252, 211, 77, 0.18), transparent),
@@ -61,7 +63,7 @@ body {
 }
 
 a {
-  color: var(--accent);
+  color: var(--link);
   text-underline-offset: 4px;
 }
 a:hover {
