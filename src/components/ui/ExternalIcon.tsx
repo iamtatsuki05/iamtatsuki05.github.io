@@ -1,46 +1,46 @@
+"use client";
+
+import { useState } from 'react';
+
 type Props = {
   src: string;
   alt: string;
   size?: number;
   className?: string;
+  fallbackLabel?: string;
 };
 
-// Simple helper to provide light/dark variants for Simple Icons CDN.
-export function ExternalIcon({ src, alt, size = 48, className = '' }: Props) {
-  const m = src.match(/^https?:\/\/cdn\.simpleicons\.org\/([^/]+)(?:\/([0-9a-fA-F]{3,6}))?$/);
-  if (m) {
-    const slug = m[1];
-    const light = `https://cdn.simpleicons.org/${slug}`; // brand color
-    const dark = `https://cdn.simpleicons.org/${slug}/ffffff`; // white on dark
-    return (
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcSet={dark} />
-        <img
-          src={light}
-          alt={alt}
-          width={size}
-          height={size}
-          className={`mx-auto ${className}`}
-          loading="lazy"
-          decoding="async"
-          referrerPolicy="no-referrer"
-          crossOrigin="anonymous"
-        />
-      </picture>
-    );
+export function ExternalIcon({ src, alt, size = 48, className = '', fallbackLabel }: Props) {
+  const [failed, setFailed] = useState(false);
+  const fallbackSize = Math.max(size * 0.72, 26);
+
+  if (failed) {
+    if (fallbackLabel) {
+      return (
+        <span
+          aria-hidden="true"
+          className="inline-flex items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-700 dark:bg-purple-800/60 dark:text-purple-100"
+          style={{ width: fallbackSize, height: fallbackSize }}
+        >
+          {fallbackLabel}
+        </span>
+      );
+    }
+    return null;
   }
-  // Fallback: use same src and invert in dark mode
+
   return (
     <img
       src={src}
       alt={alt}
       width={size}
       height={size}
-      className={`mx-auto dark:invert ${className}`}
-      loading="lazy"
+      className={`mx-auto ${className}`}
+      loading="eager"
       decoding="async"
       referrerPolicy="no-referrer"
       crossOrigin="anonymous"
+      onError={() => setFailed(true)}
     />
   );
 }

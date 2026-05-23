@@ -33,7 +33,7 @@ export function TagSelector({ tags, selected, onToggle, label, className }: Prop
                 }}
                 aria-pressed={active}
                 aria-label={`Filter by ${tag} tag`}
-                className={`rounded-sm border px-2 py-0.5 text-sm ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
+                className={`min-h-7 rounded-sm border px-2.5 py-1 text-sm ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
               >
                 #{tag}
               </button>

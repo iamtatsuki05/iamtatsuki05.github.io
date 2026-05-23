@@ -9,7 +9,7 @@ export default function Loading() {
 
         <div className="relative space-y-4">
           <div
-            className="mx-auto h-11 w-11 animate-spin rounded-full border-4 border-purple-200 border-t-purple-500"
+            className="mx-auto h-11 w-11 animate-spin rounded-full border-4 border-purple-200 border-t-purple-500 motion-reduce:animate-none"
             aria-label="ページを読み込み中"
           />
           <p className="text-base font-medium text-gray-700 dark:text-gray-200">ページを読み込んでいます…</p>

@@ -1,25 +1,25 @@
 - title: GitHub
   url: https://github.com/iamtatsuki05
   desc: ソースコードとプロジェクト
-  iconUrl: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg
+  iconUrl: /images/links/github.svg
   category: Social
 - title: X (Twitter)
   url: https://x.com/iam_tatsuki05
   desc: 日々の発信
-  iconUrl: https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/twitter/twitter-original.svg
+  iconUrl: /images/links/x.svg
   category: Social
 - title: Instagram
   url: https://www.instagram.com/iam_tatsuki05
   desc: 写真・日常
-  iconUrl: https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg
+  iconUrl: /images/links/instagram.webp
   category: Social
 - title: LinkedIn
   url: https://www.linkedin.com/in/iamtatsuki05
   desc: 職務経歴・プロフィール
-  iconUrl: https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg
+  iconUrl: /images/links/linkedin.ico
   category: Social
 - title: Huggingface
   url: https://huggingface.co/iamtatsuki05
   desc: モデル・データセット・アプリ
-  iconUrl: https://huggingface.co/front/assets/huggingface_logo-noborder.svg
+  iconUrl: /images/links/huggingface.svg
   category: Social

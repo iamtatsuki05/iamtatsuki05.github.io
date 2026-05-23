@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <article className="prose dark:prose-invert max-w-4xl mx-auto animate-pulse">
+    <article className="prose dark:prose-invert max-w-4xl mx-auto animate-pulse motion-reduce:animate-none">
       <div className="space-y-4 mb-8">
         <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
