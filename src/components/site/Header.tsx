@@ -66,7 +66,7 @@ function HeaderContent({ currentPath }: HeaderProps) {
             style={{ transform: `rotate(${iconRotation}deg)` }}
           />
           <span className="truncate bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
-            Tatsuki Okada - Personal Site
+            Tatsuki Okada
           </span>
         </Link>
         {/* Desktop nav */}

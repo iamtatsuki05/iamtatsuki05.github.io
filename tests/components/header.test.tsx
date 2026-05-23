@@ -30,7 +30,7 @@ describe('Header', () => {
 
     render(<Header />);
 
-    const title = screen.getByRole('link', { name: /Tatsuki Okada - Personal Site/ });
+    const title = screen.getByRole('link', { name: /^Tatsuki Okada$/ });
     const icon = screen.getByTestId('header-personal-icon');
 
     expect(title).toContainElement(icon);
@@ -67,7 +67,7 @@ describe('Header', () => {
     mockReducedMotion(false);
     render(<Header />);
 
-    const title = screen.getByRole('link', { name: /Tatsuki Okada - Personal Site/ });
+    const title = screen.getByRole('link', { name: /^Tatsuki Okada$/ });
 
     expect(title.className).toContain('min-w-0');
     expect(title.className).toContain('truncate');
