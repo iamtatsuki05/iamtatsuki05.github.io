@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="space-y-8 animate-pulse">
+    <div className="space-y-8 animate-pulse motion-reduce:animate-none">
       <div className="h-8 w-1/3 rounded bg-gray-200 dark:bg-gray-700" />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {[...Array(6)].map((_, index) => (

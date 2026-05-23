@@ -12,10 +12,11 @@ type Props = {
 export function LinkIcon({ item, size = 48, className }: Props) {
   const wrapperSize = size + 20;
   const wrapperClass = clsx(
-    'inline-flex items-center justify-center rounded-full border bg-white shadow-sm shadow-purple-100/60 overflow-hidden',
-    'dark:border-purple-500/30 dark:bg-[#110c1a] dark:shadow-purple-900/40',
+    'relative inline-flex items-center justify-center rounded-full border bg-white shadow-sm shadow-purple-100/60 overflow-hidden',
+    'dark:border-purple-500/30 dark:shadow-purple-900/40',
     className,
   );
+  const fallbackSize = Math.max(size * 0.72, 26);
 
   if (item.iconUrl) {
     return (
@@ -24,7 +25,8 @@ export function LinkIcon({ item, size = 48, className }: Props) {
           src={item.iconUrl}
           alt={item.title}
           size={size}
-          className="block max-h-[72%] max-w-[72%] object-contain"
+          className="absolute inset-0 m-auto block max-h-[72%] max-w-[72%] object-contain"
+          fallbackLabel={getIconFallbackLabel(item.title)}
         />
       </span>
     );
@@ -33,10 +35,20 @@ export function LinkIcon({ item, size = 48, className }: Props) {
     <span className={wrapperClass} style={{ width: wrapperSize, height: wrapperSize }}>
       <span
         className="inline-flex items-center justify-center rounded-full bg-purple-100 text-sm font-semibold text-purple-700 dark:bg-purple-800/60 dark:text-purple-100"
-        style={{ width: Math.max(size * 0.72, 26), height: Math.max(size * 0.72, 26) }}
+        style={{ width: fallbackSize, height: fallbackSize }}
       >
-        {item.title.slice(0, 1)}
+        {getIconFallbackLabel(item.title)}
       </span>
     </span>
   );
+}
+
+function getIconFallbackLabel(title: string): string {
+  const normalized = title.toLowerCase();
+  if (normalized.includes('github')) return 'GH';
+  if (normalized.includes('instagram')) return 'IG';
+  if (normalized.includes('linkedin')) return 'in';
+  if (normalized.includes('hugging')) return 'HF';
+  if (normalized === 'x' || normalized.includes('twitter')) return 'X';
+  return title.slice(0, 2).toUpperCase();
 }

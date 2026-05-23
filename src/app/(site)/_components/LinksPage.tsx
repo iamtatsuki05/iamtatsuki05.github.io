@@ -26,6 +26,7 @@ export async function LinksPage({ locale, links }: { locale: Locale; links?: Lin
               items={items}
               showDescription
               iconSize={48}
+              idPrefix={`links-${idx}`}
               gridClassName="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
             />
           </SectionShell>
