@@ -17,7 +17,7 @@ const routeLocale = Astro.params.locale || 'ja-JP';
 const locale = resolveLocale(routeLocale);
 const dict = dictionaries[locale];
 const [latest, publications, links] = await Promise.all([
-  getLatestPosts(3),
+  getLatestPosts(3, locale),
   getAllPublications(),
   getLinks(),
 ]);

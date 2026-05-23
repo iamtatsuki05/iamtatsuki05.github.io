@@ -103,13 +103,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
       });
 
       test('blog detail sidebar tracks heading and progress smoothly', async ({ page }) => {
@@ -124,13 +124,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
         const toc = page.getByTestId('blog-toc');
         await expect(toc).toBeVisible();
@@ -186,13 +186,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
         const copyButton = page.getByRole('button', { name: '記事のMarkdownをコピー' });
         await expect(copyButton).toBeVisible();
@@ -231,13 +231,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/en-US\/blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/en-US\/blogs\/[\w-]+\/?$/);
 
         const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
         await expect(copyButton).toBeVisible();
@@ -248,7 +248,11 @@ for (const { label, use } of viewports) {
         await expect(page.getByRole('menuitem', { name: 'Share on X' })).toBeVisible();
         await expect(page.getByRole('menuitem', { name: 'Share on LinkedIn' })).toBeVisible();
         await expect(page.getByTestId('blog-toc-fab')).toContainText('Contents');
-        await expect(page.locator('article.prose p').first()).toContainText(/\d{4}-\d{2}-\d{2}/);
+        await expect(page.getByText('This article was translated by AI.')).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Read the Japanese original' })).toHaveAttribute(
+          'href',
+          /^\/blogs\/[\w-]+\/$/,
+        );
         await copyButton.click();
         await expect(copyButton).toContainText('Copied');
         await expect(copyButton).toHaveAttribute('data-status', 'success');
@@ -262,9 +266,10 @@ for (const { label, use } of viewports) {
 
         const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
         const detailPath = await detailLink.getAttribute('href');
-        expect(detailPath).toMatch(/^\/blogs\/[\w-]+\/$/);
+        expect(detailPath).toMatch(/^\/ja-JP\/blogs\/[\w-]+\/$/);
 
-        const markdownPath = detailPath?.replace(/\/$/, '.md');
+        const slug = detailPath?.match(/\/blogs\/([\w-]+)\/$/)?.[1];
+        const markdownPath = slug ? `/blogs/${slug}.md` : null;
         expect(markdownPath).toMatch(/^\/blogs\/[\w-]+\.md$/);
 
         const response = await page.goto(markdownPath!, { waitUntil: 'domcontentloaded' });
@@ -668,9 +673,44 @@ test.describe('Localized page variants', () => {
     await expect(page.getByRole('heading', { level: 1, name: '📝 Blogs' })).toBeVisible();
   });
 
+  test('renders the Chinese blog index and translated detail notice', async ({ page }) => {
+    await page.goto('/zh-CN/blogs/');
+    await expect(page.getByRole('heading', { level: 1, name: '📝 博客' })).toBeVisible();
+
+    const detailLink = page.locator('[data-testid="blog-card"] a[href*="/zh-CN/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    expect(detailPath).toMatch(/^\/zh-CN\/blogs\/[\w-]+\/$/);
+    await page.goto(detailPath!);
+    await expect(page.getByText('本文由 AI 翻译。')).toBeVisible();
+    await expect(page.getByRole('link', { name: '阅读日语原文' })).toHaveAttribute('href', /^\/blogs\/[\w-]+\/$/);
+  });
+
+  test('renders the French blog index and translated detail notice', async ({ page }) => {
+    await page.goto('/fr-FR/blogs/');
+    await expect(page.getByRole('heading', { level: 1, name: '📝 Articles' })).toBeVisible();
+
+    const detailLink = page.locator('[data-testid="blog-card"] a[href*="/fr-FR/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    expect(detailPath).toMatch(/^\/fr-FR\/blogs\/[\w-]+\/$/);
+    await page.goto(detailPath!);
+    await expect(page.getByText('Cet article a été traduit par IA.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Lire l’original japonais' })).toHaveAttribute(
+      'href',
+      /^\/blogs\/[\w-]+\/$/,
+    );
+  });
+
   test('renders the English hobbies page', async ({ page }) => {
     await page.goto('/en-US/hobbies/');
     await expect(page.getByRole('heading', { level: 1, name: '🧸 Hobbies' })).toBeVisible();
+  });
+
+  test('renders the Chinese and French hobbies pages', async ({ page }) => {
+    await page.goto('/zh-CN/hobbies/');
+    await expect(page.getByRole('heading', { level: 1, name: '🧸 兴趣' })).toBeVisible();
+
+    await page.goto('/fr-FR/hobbies/');
+    await expect(page.getByRole('heading', { level: 1, name: '🧸 Centres d’intérêt' })).toBeVisible();
   });
 });
 

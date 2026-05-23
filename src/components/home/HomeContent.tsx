@@ -8,7 +8,7 @@ import { HomeContentView } from '@/components/home/HomeContentView';
 export default async function HomeContent({ locale }: { locale: Locale }) {
   const dict = dictionaries[locale];
   const [latest, publications, links] = await Promise.all([
-    getLatestPosts(3),
+    getLatestPosts(3, locale),
     getAllPublications(),
     getLinks(),
   ]);

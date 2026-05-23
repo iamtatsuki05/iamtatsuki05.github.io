@@ -140,7 +140,7 @@ describe('BlogsClient', () => {
     const firstCard = screen.getAllByTestId('blog-card')[0];
     const link = within(firstCard).getByRole('link');
 
-    expect(link).toHaveAttribute('href', '/blogs/post-10/?q=hello&year=2025&tags=a&sort=newest');
+    expect(link).toHaveAttribute('href', '/en-US/blogs/post-10/?q=hello&year=2025&tags=a&sort=newest');
   });
   it('supports selecting multiple years from the year filter', async () => {
     const { render, screen } = await import('@testing-library/react');

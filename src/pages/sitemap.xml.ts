@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { getAllPosts } from '@/lib/content/blog';
 import { getSiteUrlWithBasePath } from '@/lib/config/env';
+import { SUPPORTED_ROUTE_LOCALES, resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 
 type SitemapEntry = {
   url: string;
@@ -20,22 +22,22 @@ const escapeXml = (value: string) =>
 export const GET: APIRoute = async () => {
   const site = getSiteUrlWithBasePath();
   const now = new Date();
+  const topLevelPages = ['/', '/links/', '/blogs/', '/hobbies/', '/publications/'];
+  const localizedStaticPages = SUPPORTED_ROUTE_LOCALES.flatMap((routeLocale) => {
+    const locale = resolveLocale(routeLocale);
+    return topLevelPages.map((pagePath): SitemapEntry => ({
+      url: `${site}${localizedPath(pagePath, locale)}`,
+      lastModified: now,
+      changeFrequency: pagePath === '/blogs/' || pagePath === '/' ? 'weekly' : 'monthly',
+      priority: pagePath === '/' ? 0.9 : 0.8,
+    }));
+  });
   const staticPages: SitemapEntry[] = [
     ['/', 'weekly', 1],
-    ['/ja-JP/', 'weekly', 0.9],
-    ['/en-US/', 'weekly', 0.9],
     ['/links/', 'monthly', 0.8],
-    ['/ja-JP/links/', 'monthly', 0.8],
-    ['/en-US/links/', 'monthly', 0.8],
     ['/blogs/', 'weekly', 0.9],
-    ['/ja-JP/blogs/', 'weekly', 0.9],
-    ['/en-US/blogs/', 'weekly', 0.9],
     ['/hobbies/', 'monthly', 0.8],
-    ['/ja-JP/hobbies/', 'monthly', 0.8],
-    ['/en-US/hobbies/', 'monthly', 0.8],
     ['/publications/', 'monthly', 0.8],
-    ['/ja-JP/publications/', 'monthly', 0.8],
-    ['/en-US/publications/', 'monthly', 0.8],
   ].map(([path, changeFrequency, priority]) => ({
     url: `${site}${path}`,
     lastModified: now,
@@ -43,15 +45,29 @@ export const GET: APIRoute = async () => {
     priority: Number(priority),
   }));
 
-  const posts = await getAllPosts();
-  const blogPages = posts.map((post) => ({
+  const jaPosts = await getAllPosts();
+  const defaultBlogPages = jaPosts.map((post) => ({
     url: `${site}/blogs/${post.slug}/`,
     lastModified: new Date(post.updated || post.date),
     changeFrequency: 'monthly',
     priority: 0.7,
   }));
+  const localizedBlogPages = (
+    await Promise.all(
+      SUPPORTED_ROUTE_LOCALES.map(async (routeLocale) => {
+        const locale = resolveLocale(routeLocale);
+        const posts = await getAllPosts(locale);
+        return posts.map((post) => ({
+          url: `${site}/${routeLocale}/blogs/${post.slug}/`,
+          lastModified: new Date(post.updated || post.date),
+          changeFrequency: 'monthly',
+          priority: 0.7,
+        }));
+      }),
+    )
+  ).flat();
 
-  const urls = [...staticPages, ...blogPages]
+  const urls = [...staticPages, ...localizedStaticPages, ...defaultBlogPages, ...localizedBlogPages]
     .map((entry) => {
       const lastmod = Number.isNaN(entry.lastModified.getTime()) ? now : entry.lastModified;
       return [

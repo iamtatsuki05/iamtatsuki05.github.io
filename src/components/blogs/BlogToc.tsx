@@ -10,6 +10,7 @@ type TocItem = { id: string; text: string; level: number };
 type Props = {
   containerId?: string;
   className?: string;
+  locale?: Locale;
 };
 
 const ACTIVE_OFFSET = 136;
@@ -38,14 +39,26 @@ const tocText: Record<
     closeAria: 'Close table of contents',
     close: 'Close',
   },
+  zh: {
+    title: '目录',
+    openAria: '打开目录',
+    closeAria: '关闭目录',
+    close: '关闭',
+  },
+  fr: {
+    title: 'Sommaire',
+    openAria: 'Ouvrir le sommaire',
+    closeAria: 'Fermer le sommaire',
+    close: 'Fermer',
+  },
 };
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-export function BlogToc({ containerId = 'blog-article', className }: Props) {
-  const locale = useResolvedPreferredLocale();
+export function BlogToc({ containerId = 'blog-article', className, locale: initialLocale = 'ja' }: Props) {
+  const locale = useResolvedPreferredLocale(initialLocale);
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);

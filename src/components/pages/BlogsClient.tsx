@@ -24,6 +24,7 @@ import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
 import { buildBlogPostHref } from '@/lib/blog/navigation';
+import type { Locale } from '@/lib/i18n';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -45,7 +46,7 @@ export function BlogsClient({
   initialCardsVisible = false,
 }: {
   posts: Post[];
-  locale?: 'ja' | 'en';
+  locale?: Locale;
   initialCardsVisible?: boolean;
 }) {
   const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
@@ -201,7 +202,7 @@ export function BlogsClient({
               <div className="p-3">
                 <h3 className="font-medium">
                   <Link
-                    href={buildBlogPostHref(p.slug, linkFilters)}
+                    href={buildBlogPostHref(p.slug, linkFilters, locale)}
                     className="blog-linked-card__title-link underline-offset-2 hover:underline"
                   >
                     <SearchHighlight text={p.title} query={q} />
@@ -251,7 +252,7 @@ export function BlogsClient({
                 <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                   <h3 className="text-base font-semibold">
                     <Link
-                      href={buildBlogPostHref(p.slug, linkFilters)}
+                      href={buildBlogPostHref(p.slug, linkFilters, locale)}
                       className="blog-linked-card__title-link underline-offset-2 hover:underline"
                     >
                       <SearchHighlight text={p.title} query={q} />

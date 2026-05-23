@@ -52,13 +52,58 @@ export const filterTextEn: FilterTextDict = {
   sortNewest: 'Newest',
 };
 
-export function resolveFilterText(locale: 'ja' | 'en'): FilterTextDict {
-  return locale === 'ja' ? filterTextJa : filterTextEn;
+export const filterTextZh: FilterTextDict = {
+  search: '搜索...',
+  latest: '✨ 最新',
+  allPosts: '🗂 所有文章',
+  noResult: '没有找到匹配项',
+  year: '年份',
+  tags: '标签',
+  clear: '清除',
+  types: '类型',
+  all: '全部',
+  searching: '搜索中...',
+  searchKeyword: '搜索',
+  sort: '排序',
+  sortRelevant: '相关度',
+  sortNewest: '最新',
+};
+
+export const filterTextFr: FilterTextDict = {
+  search: 'Rechercher...',
+  latest: '✨ Récents',
+  allPosts: '🗂 Tous les articles',
+  noResult: 'Aucun élément trouvé',
+  year: 'Année',
+  tags: 'Tags',
+  clear: 'Effacer',
+  types: 'Types',
+  all: 'Tout',
+  searching: 'Recherche...',
+  searchKeyword: 'Recherche',
+  sort: 'Tri',
+  sortRelevant: 'Pertinence',
+  sortNewest: 'Plus récent',
+};
+
+export function resolveFilterText(locale: Locale): FilterTextDict {
+  return {
+    ja: filterTextJa,
+    en: filterTextEn,
+    zh: filterTextZh,
+    fr: filterTextFr,
+  }[locale];
 }
 
 export function formatFilterResultCount(locale: Locale, shown: number, total: number) {
   if (locale === 'ja') {
     return shown === total ? `${total}件` : `${total}件中${shown}件`;
+  }
+  if (locale === 'zh') {
+    return shown === total ? `${total}项` : `共 ${total} 项，显示 ${shown} 项`;
+  }
+  if (locale === 'fr') {
+    return shown === total ? `${total} éléments` : `${shown} sur ${total} éléments`;
   }
 
   return shown === total ? `${total} items` : `${shown} of ${total} items`;
@@ -69,11 +114,17 @@ export function formatSearchChipLabel(locale: Locale, query: string) {
 }
 
 export function formatRemoveFilterAriaLabel(locale: Locale, label: string) {
-  return locale === 'ja' ? `${label}を解除` : `Remove ${label}`;
+  if (locale === 'ja') return `${label}を解除`;
+  if (locale === 'zh') return `移除${label}`;
+  if (locale === 'fr') return `Retirer ${label}`;
+  return `Remove ${label}`;
 }
 
 export function formatClearFilterLabel(locale: Locale, label: string) {
-  return locale === 'ja' ? `${label}をクリア` : `Clear ${label}`;
+  if (locale === 'ja') return `${label}をクリア`;
+  if (locale === 'zh') return `清除${label}`;
+  if (locale === 'fr') return `Effacer ${label}`;
+  return `Clear ${label}`;
 }
 
 export function formatNoResultMessage(locale: Locale, query?: string) {
@@ -82,7 +133,8 @@ export function formatNoResultMessage(locale: Locale, query?: string) {
     return resolveFilterText(locale).noResult;
   }
 
-  return locale === 'ja'
-    ? `「${trimmedQuery}」に一致する項目がありません`
-    : `No items found for "${trimmedQuery}"`;
+  if (locale === 'ja') return `「${trimmedQuery}」に一致する項目がありません`;
+  if (locale === 'zh') return `没有找到与“${trimmedQuery}”匹配的项目`;
+  if (locale === 'fr') return `Aucun élément trouvé pour "${trimmedQuery}"`;
+  return `No items found for "${trimmedQuery}"`;
 }

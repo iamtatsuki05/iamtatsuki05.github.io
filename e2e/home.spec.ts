@@ -25,6 +25,8 @@ for (const { label, use } of viewports) {
       await expect(languageSwitch).toBeVisible();
       await expect(languageSwitch.getByRole('link', { name: 'JA' })).toHaveAttribute('aria-current', 'true');
       await expect(languageSwitch.getByRole('link', { name: 'EN' })).toBeVisible();
+      await expect(languageSwitch.getByRole('link', { name: 'ZH' })).toBeVisible();
+      await expect(languageSwitch.getByRole('link', { name: 'FR' })).toBeVisible();
     });
 
     test('shows main hero and contact info', async ({ page }) => {
@@ -149,12 +151,12 @@ for (const { label, use } of viewports) {
           await blogCardLink.click();
         }
 
-        const isBlogDetailPath = /\/(?:ja\/)?blogs\/[\w-]+\/?$/.test(new URL(page.url()).pathname);
+        const isBlogDetailPath = /\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/.test(new URL(page.url()).pathname);
         if (!isBlogDetailPath && targetPath) {
           await page.goto(targetPath, { waitUntil: 'domcontentloaded' }).catch(() => undefined);
         }
 
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
       });
     }
   });
@@ -171,6 +173,8 @@ for (const { label, use } of viewports) {
       await expect(languageSwitch).toBeVisible();
       await expect(languageSwitch.getByRole('link', { name: 'EN' })).toHaveAttribute('aria-current', 'true');
       await expect(languageSwitch.getByRole('link', { name: 'JA' })).toBeVisible();
+      await expect(languageSwitch.getByRole('link', { name: 'ZH' })).toBeVisible();
+      await expect(languageSwitch.getByRole('link', { name: 'FR' })).toBeVisible();
     });
 
     test('shows localized content', async ({ page }) => {
@@ -181,6 +185,24 @@ for (const { label, use } of viewports) {
     });
   });
 }
+
+test.describe('Homepage ZH/FR localized content', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('renders Chinese homepage copy', async ({ page }) => {
+    await page.goto(localizedPath('zh'));
+    await expect(page.getByRole('heading', { level: 1, name: '主页' })).toBeVisible();
+    await expect(page.getByText('自然语言处理、机器学习和软件开发')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '最新博客' })).toBeVisible();
+  });
+
+  test('renders French homepage copy', async ({ page }) => {
+    await page.goto(localizedPath('fr'));
+    await expect(page.getByRole('heading', { level: 1, name: 'Accueil' })).toBeVisible();
+    await expect(page.getByText('traitement automatique des langues')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Derniers articles' })).toBeVisible();
+  });
+});
 
 test.describe('Homepage theme toggle', () => {
   test.use({ viewport: { width: 1280, height: 800 } });

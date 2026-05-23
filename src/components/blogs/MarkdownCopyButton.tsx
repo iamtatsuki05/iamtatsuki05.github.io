@@ -8,6 +8,7 @@ import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 type Props = {
   markdown: string;
   className?: string;
+  locale?: Locale;
 };
 
 const copyText: Record<
@@ -31,10 +32,22 @@ const copyText: Record<
     failure: 'Copy failed',
     aria: 'Copy article markdown',
   },
+  zh: {
+    default: '复制 Markdown',
+    success: '已复制',
+    failure: '复制失败',
+    aria: '复制文章 Markdown',
+  },
+  fr: {
+    default: 'Copier le Markdown',
+    success: 'Copié',
+    failure: 'Échec de la copie',
+    aria: 'Copier le Markdown de l’article',
+  },
 };
 
-export function MarkdownCopyButton({ markdown, className }: Props) {
-  const locale = useResolvedPreferredLocale();
+export function MarkdownCopyButton({ markdown, className, locale: initialLocale = 'ja' }: Props) {
+  const locale = useResolvedPreferredLocale(initialLocale);
   const [status, setStatus] = useState<'default' | 'success' | 'failure'>('default');
   const resetTimerRef = useRef<number | null>(null);
   const disabled = markdown.length === 0;

@@ -1,6 +1,7 @@
 import Fuse from 'fuse.js';
 import type { BlogPost } from '@/lib/content/blog';
 import { buildBlogPostHref, type BlogFilterParams } from '@/lib/blog/navigation';
+import type { Locale } from '@/lib/i18n';
 import {
   filterSearchItems,
   readSearchField,
@@ -16,6 +17,7 @@ export function resolveBlogPostNavigation<T extends NavigableBlogPost>(
   posts: T[],
   currentSlug: string,
   filters: BlogFilterParams,
+  locale?: Locale,
 ) {
   const query = filters.q?.trim() || '';
   const fuse = query
@@ -48,7 +50,7 @@ export function resolveBlogPostNavigation<T extends NavigableBlogPost>(
     total: ordered.length,
     previous,
     next,
-    previousHref: previous ? buildBlogPostHref(previous.slug, filters) : null,
-    nextHref: next ? buildBlogPostHref(next.slug, filters) : null,
+    previousHref: previous ? buildBlogPostHref(previous.slug, filters, locale) : null,
+    nextHref: next ? buildBlogPostHref(next.slug, filters, locale) : null,
   };
 }

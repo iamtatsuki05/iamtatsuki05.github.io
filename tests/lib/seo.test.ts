@@ -26,11 +26,15 @@ describe('buildPageMetadata', () => {
       languageAlternates: {
         'en-US': '/test/',
         'ja-JP': '/ja-JP/test/',
+        'zh-CN': '/zh-CN/test/',
+        'fr-FR': '/fr-FR/test/',
       },
     });
 
     expect(metadata.alternates?.canonical).toBe('https://example.com/test/');
     expect(metadata.alternates?.languages?.['ja-JP']).toBe('https://example.com/ja-JP/test/');
+    expect(metadata.alternates?.languages?.['zh-CN']).toBe('https://example.com/zh-CN/test/');
+    expect(metadata.alternates?.languages?.['fr-FR']).toBe('https://example.com/fr-FR/test/');
     expect(metadata.openGraph?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.twitter?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.keywords).toContain('custom');
@@ -54,7 +58,19 @@ describe('buildLanguageAlternates', () => {
 
     expect(alternates['ja-JP']).toBe('/ja-JP/blogs/');
     expect(alternates['en-US']).toBe('/en-US/blogs/');
+    expect(alternates['zh-CN']).toBe('/zh-CN/blogs/');
+    expect(alternates['fr-FR']).toBe('/fr-FR/blogs/');
     expect(alternates['x-default']).toBe('/blogs/');
+  });
+
+  it('blog detail paths include all hreflang variants', () => {
+    const alternates = buildLanguageAlternates('/fr-FR/blogs/example-post/');
+
+    expect(alternates['ja-JP']).toBe('/ja-JP/blogs/example-post/');
+    expect(alternates['en-US']).toBe('/en-US/blogs/example-post/');
+    expect(alternates['zh-CN']).toBe('/zh-CN/blogs/example-post/');
+    expect(alternates['fr-FR']).toBe('/fr-FR/blogs/example-post/');
+    expect(alternates['x-default']).toBe('/blogs/example-post/');
   });
 });
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from '@/components/compat/Link';
 import { usePathname } from '@/lib/compat/navigation';
-import { LOCALE_UI_LABELS } from '@/lib/i18n';
+import { LOCALE_UI_LABELS, SUPPORTED_LOCALES, type Locale } from '@/lib/i18n';
 import { extractLocaleFromPath, isTranslatablePath, localizedPath, stripLocalePrefix } from '@/lib/routing';
 import { writePreferredLocale } from '@/lib/localePreference';
 
@@ -16,7 +16,12 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
   const currentLocale = extractLocaleFromPath(pathname) || 'ja';
   const isTranslatable = isTranslatablePath(pathname);
   const groupRef = React.useRef<HTMLDivElement>(null);
-  const optionRefs = React.useRef<Record<'ja' | 'en', HTMLSpanElement | null>>({ ja: null, en: null });
+  const optionRefs = React.useRef<Record<Locale, HTMLSpanElement | null>>({
+    ja: null,
+    en: null,
+    zh: null,
+    fr: null,
+  });
   const [indicatorStyle, setIndicatorStyle] = React.useState<React.CSSProperties | null>(null);
 
   React.useEffect(() => {
@@ -49,14 +54,13 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
 
   const bare = stripLocalePrefix(pathname);
   const normalized = bare.endsWith('/') ? bare : `${bare}/`;
-  const toJa = localizedPath(normalized, 'ja');
-  const toEn = localizedPath(normalized, 'en');
-  const options = [
-    { locale: 'ja', href: toJa, label: LOCALE_UI_LABELS.ja },
-    { locale: 'en', href: toEn, label: LOCALE_UI_LABELS.en },
-  ] as const;
+  const options = SUPPORTED_LOCALES.map((locale) => ({
+    locale,
+    href: localizedPath(normalized, locale),
+    label: LOCALE_UI_LABELS[locale],
+  }));
 
-  const baseOptionClass = 'language-switch-option inline-flex min-w-10 items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] no-underline hover:no-underline transition-[color,transform] duration-200 focus-ring';
+  const baseOptionClass = 'language-switch-option inline-flex min-w-9 items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold tracking-[0.08em] no-underline hover:no-underline transition-[color,transform] duration-200 focus-ring sm:min-w-10 sm:px-2.5';
   const activeOptionClass = 'text-[#2a143f] dark:text-[#2a143f]';
   const inactiveOptionClass = 'text-gray-700 hover:text-purple-600 hover:-translate-y-px dark:text-gray-200 dark:hover:text-amber-200';
   const disabledOptionClass = 'cursor-default text-gray-500 dark:text-gray-400';

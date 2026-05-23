@@ -44,4 +44,5 @@ public/images/links/nextImageExportOptimizer/
 public/images/links/next-image-export-optimizer-hashes.json
 public/blogs/*.md
 public/blogs/*.mdx
+src/content/generated/
 .lighthouseci

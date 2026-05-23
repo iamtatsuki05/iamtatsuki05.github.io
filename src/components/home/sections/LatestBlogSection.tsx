@@ -4,10 +4,12 @@ import { formatDate } from '@/lib/date';
 import { SectionHeader } from './SectionHeader';
 import { ContentCardList } from './ContentCardList';
 import { SectionShell } from '@/components/home/SectionShell';
+import type { Locale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 
 type Props = {
   posts: BlogPost[];
-  locale: 'ja' | 'en';
+  locale: Locale;
   title: string;
   ctaLabel: string;
 };
@@ -19,8 +21,8 @@ export function LatestBlogSection({ posts, locale, title, ctaLabel }: Props) {
         key: post.slug,
         title: post.title,
         description: post.summary,
-        href: `/blogs/${post.slug}/`,
-        date: formatDate(post.date, locale === 'ja' ? 'ja' : 'en'),
+        href: localizedPath(`/blogs/${post.slug}/`, locale),
+        date: formatDate(post.date, locale),
         linkTestId: 'home-latest-blog-link',
       })),
     [posts, locale],
@@ -28,7 +30,7 @@ export function LatestBlogSection({ posts, locale, title, ctaLabel }: Props) {
 
   return (
     <SectionShell id="blog" tone="amber">
-      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/blogs/" tone="amber" />
+      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref={localizedPath('/blogs/', locale)} tone="amber" />
       <ContentCardList
         items={items}
         listTestId="home-latest-blog-list"

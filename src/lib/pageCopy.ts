@@ -25,6 +25,16 @@ export const blogsPageCopy: Record<Locale, BlogsPageCopy> = {
     heading: '📝 Blogs',
     breadcrumb: '🏠 Home / 📝 Blogs',
   },
+  zh: {
+    ...pageMeta.blogs.zh,
+    heading: '📝 博客',
+    breadcrumb: '🏠 首页 / 📝 博客',
+  },
+  fr: {
+    ...pageMeta.blogs.fr,
+    heading: '📝 Articles',
+    breadcrumb: '🏠 Accueil / 📝 Articles',
+  },
 };
 
 export type LinksPageCopy = PageCopy<{
@@ -47,6 +57,20 @@ export const linksPageCopy: Record<Locale, LinksPageCopy> = {
     groupFallback: 'Other',
     moreLabel: 'See more',
   },
+  zh: {
+    ...pageMeta.links.zh,
+    heading: '🔗 链接',
+    breadcrumb: '🏠 首页 / 🔗 链接',
+    groupFallback: '其他',
+    moreLabel: '查看更多',
+  },
+  fr: {
+    ...pageMeta.links.fr,
+    heading: '🔗 Liens',
+    breadcrumb: '🏠 Accueil / 🔗 Liens',
+    groupFallback: 'Autres',
+    moreLabel: 'Voir plus',
+  },
 };
 
 export type PublicationsPageCopy = PageCopy;
@@ -61,6 +85,16 @@ export const publicationsPageCopy: Record<Locale, PublicationsPageCopy> = {
     ...pageMeta.publications.en,
     heading: '📚 Publications',
     breadcrumb: '🏠 Home / 📚 Publications',
+  },
+  zh: {
+    ...pageMeta.publications.zh,
+    heading: '📚 公开成果',
+    breadcrumb: '🏠 首页 / 📚 公开成果',
+  },
+  fr: {
+    ...pageMeta.publications.fr,
+    heading: '📚 Publications',
+    breadcrumb: '🏠 Accueil / 📚 Publications',
   },
 };
 
@@ -97,5 +131,29 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     currentFocusLabel: "Why I'm Into It",
     emptyStateLabel: 'Related blog posts are coming soon',
     ctaLabel: 'Open Blogs',
+  },
+  zh: {
+    ...pageMeta.hobbies.zh,
+    heading: '🧸 兴趣',
+    breadcrumb: '🏠 首页 / 🧸 兴趣',
+    introHeading: '最近投入的事情',
+    introBody:
+      '我有时会突然迷上某个主题，然后集中投入大约三个月。每张卡片都会打开与该主题相关的博客筛选列表。',
+    gridHeading: '兴趣列表',
+    currentFocusLabel: '吸引我的原因',
+    emptyStateLabel: '相关博客文章准备中',
+    ctaLabel: '查看博客',
+  },
+  fr: {
+    ...pageMeta.hobbies.fr,
+    heading: '🧸 Centres d’intérêt',
+    breadcrumb: '🏠 Accueil / 🧸 Centres d’intérêt',
+    introHeading: 'Ce qui me passionne en ce moment',
+    introBody:
+      'Il m’arrive de me passionner soudainement pour un sujet et d’y passer environ trois mois. Chaque carte ouvre une liste filtrée d’articles liés à ce thème.',
+    gridHeading: 'Liste des centres d’intérêt',
+    currentFocusLabel: 'Pourquoi cela m’intéresse',
+    emptyStateLabel: 'Les articles associés arrivent bientôt',
+    ctaLabel: 'Ouvrir les articles',
   },
 };

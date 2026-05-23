@@ -1,4 +1,6 @@
 import type { SearchSortMode } from '@/lib/search/filterItems';
+import type { Locale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 
 export type BlogFilterParams = {
   q?: string;
@@ -21,10 +23,11 @@ export function buildBlogFilterSearchParams(filters: BlogFilterParams) {
   return params;
 }
 
-export function buildBlogPostHref(slug: string, filters: BlogFilterParams) {
+export function buildBlogPostHref(slug: string, filters: BlogFilterParams, locale?: Locale) {
   const params = buildBlogFilterSearchParams(filters);
   const query = params.toString();
-  return `/blogs/${slug}/${query ? `?${query}` : ''}`;
+  const path = locale ? localizedPath(`/blogs/${slug}/`, locale) : `/blogs/${slug}/`;
+  return `${path}${query ? `?${query}` : ''}`;
 }
 
 export function parseBlogFilterParams(

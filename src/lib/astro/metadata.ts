@@ -48,5 +48,10 @@ export function renderMetadata(metadata: AstroMetadata) {
 }
 
 export function htmlLangFromLocale(locale: Locale) {
-  return locale === 'ja' ? 'ja' : 'en';
+  return {
+    ja: 'ja',
+    en: 'en',
+    zh: 'zh-CN',
+    fr: 'fr',
+  }[locale];
 }

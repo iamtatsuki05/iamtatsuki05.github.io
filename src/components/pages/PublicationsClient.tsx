@@ -24,6 +24,7 @@ import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
+import type { Locale } from '@/lib/i18n';
 
 type Item = {
   slug: string;
@@ -91,7 +92,7 @@ function useSelectedPublicationTypes() {
   return [types, setSelectedTypes] as const;
 }
 
-export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; locale?: 'ja' | 'en' }) {
+export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; locale?: Locale }) {
   const areCardsVisible = true;
   const [selectedTypes, setSelectedTypes] = useSelectedPublicationTypes();
 
@@ -161,23 +162,40 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
   }, [availableTypes, groups, q, sort, typeFiltered]);
 
   const t = resolveFilterText(locale);
-  const typeLabels: Record<Item['type'], string> = locale === 'ja'
-    ? {
+  const typeLabels: Record<Item['type'], string> = {
+    ja: {
         paper: '📄 論文',
         article: '📝 技術ブログ',
         talk: '🎤 登壇',
         slide: '📑 スライド',
         media: '📰 メディア',
         app: '📱 アプリ',
-      }
-    : {
+      },
+    en: {
         paper: '📄 Papers',
         article: '📝 Technical Articles',
         talk: '🎤 Talks',
         slide: '📑 Slides',
         media: '📰 Media',
         app: '📱 Apps',
-      };
+      },
+    zh: {
+      paper: '📄 论文',
+      article: '📝 技术博客',
+      talk: '🎤 演讲',
+      slide: '📑 幻灯片',
+      media: '📰 媒体',
+      app: '📱 应用',
+    },
+    fr: {
+      paper: '📄 Articles scientifiques',
+      article: '📝 Articles techniques',
+      talk: '🎤 Presentations',
+      slide: '📑 Slides',
+      media: '📰 Medias',
+      app: '📱 Apps',
+    },
+  }[locale];
   const resultLabel = useMemo(
     () => formatFilterResultCount(locale, typeFiltered.length, items.length),
     [items.length, locale, typeFiltered.length],
@@ -222,7 +240,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     if (selectedTypeSet.size !== availableTypes.length) {
       actions.push({
         key: 'clear-types',
-        label: locale === 'ja' ? `${t.types}をクリア` : `Clear ${t.types}`,
+        label: locale === 'ja' ? `${t.types}をクリア` : formatClearTypesLabel(locale, t.types),
         onClick: () => setSelectedTypes(null),
       });
     }
@@ -402,4 +420,10 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       )}
     </div>
   );
+}
+
+function formatClearTypesLabel(locale: Locale, label: string) {
+  if (locale === 'zh') return `清除${label}`;
+  if (locale === 'fr') return `Effacer ${label}`;
+  return `Clear ${label}`;
 }
