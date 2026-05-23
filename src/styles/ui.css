@@ -1618,6 +1618,17 @@
       background-color 180ms ease;
   }
 
+  .link-grid__item {
+    flex: 0 0 calc((100% - 2rem) / 3);
+    max-width: calc((100% - 2rem) / 3);
+  }
+
+  @media (min-width: 640px) {
+    .link-grid__item {
+      max-width: none;
+    }
+  }
+
   .link-grid__title {
     position: relative;
     text-decoration: none;
