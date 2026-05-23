@@ -1,7 +1,6 @@
 import React from 'react';
 import { afterEach, describe, it, expect, vi } from 'vitest';
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
-import { PublicationsClient } from '@/app/publications/sections/PublicationsClient';
+import { PublicationsClient } from '@/components/pages/PublicationsClient';
 
 const items = [
   {
@@ -26,8 +25,13 @@ const items = [
   },
 ];
 
+const QueryWrapper = ({ children, searchParams = '' }: { children: React.ReactNode; searchParams?: string }) => {
+  window.history.replaceState(null, '', `/${searchParams}`);
+  return <>{children}</>;
+};
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <NuqsTestingAdapter>{children}</NuqsTestingAdapter>
+  <QueryWrapper>{children}</QueryWrapper>
 );
 
 describe('PublicationsClient', () => {
@@ -181,7 +185,7 @@ describe('PublicationsClient', () => {
     const userEvent = await import('@testing-library/user-event');
 
     render(<PublicationsClient items={items} locale="en" />, {
-      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?q=zzzz">{children}</NuqsTestingAdapter>,
+      wrapper: ({ children }) => <QueryWrapper searchParams="?q=zzzz">{children}</QueryWrapper>,
     });
 
     const user = userEvent.default.setup();
@@ -280,7 +284,7 @@ describe('PublicationsClient', () => {
     ];
 
     render(<PublicationsClient items={publicationItems} locale="en" />, {
-      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?q=encoder">{children}</NuqsTestingAdapter>,
+      wrapper: ({ children }) => <QueryWrapper searchParams="?q=encoder">{children}</QueryWrapper>,
     });
 
     const user = userEvent.default.setup();

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ThemeToggle } from './ThemeToggle';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/lib/compat/theme';
 
 const meta = {
   title: 'Site/ThemeToggle',

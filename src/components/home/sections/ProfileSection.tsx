@@ -1,6 +1,6 @@
 import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from '@/components/compat/Link';
+import Image from '@/components/compat/Image';
 import { renderInlineLinks } from '@/lib/ui/inlineMarkdown';
 import { SectionShell } from '@/components/home/SectionShell';
 

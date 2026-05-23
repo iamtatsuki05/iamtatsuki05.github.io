@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { HomeContentView } from '@/components/home/HomeContentView';
+import { dictionaries } from '@/lib/i18n';
+import { getLatestPosts } from '@/lib/content/blog';
+import { getAllPublications } from '@/lib/content/publication';
+import { getLinks } from '@/lib/data/links';
+import { buildBreadcrumbJsonLd, buildLanguageAlternates, buildOrganizationJsonLd, buildPageMetadata, buildSiteLinksJsonLd } from '@/lib/seo';
+import { getPageMeta } from '@/lib/seo/metaConfig';
+
+const locale = 'ja';
+const dict = dictionaries[locale];
+const [latest, publications, links] = await Promise.all([
+  getLatestPosts(3),
+  getAllPublications(),
+  getLinks(),
+]);
+const homeMeta = getPageMeta('home', locale);
+const metadata = buildPageMetadata({
+  title: homeMeta.metadataTitle,
+  description: homeMeta.metadataDescription,
+  locale,
+  path: homeMeta.path,
+  type: 'website',
+  images: [{ url: '/favicon.ico', width: 1200, height: 630, alt: '岡田 龍樹 | Tatsuki Okada' }],
+  keywords: ['ポートフォリオ', 'NLPエンジニア', '機械学習エンジニア', 'ソフトウェアエンジニア'],
+  languageAlternates: buildLanguageAlternates(homeMeta.path),
+});
+---
+
+<BaseLayout metadata={metadata} lang="ja" jsonLd={[buildSiteLinksJsonLd(), buildBreadcrumbJsonLd(), buildOrganizationJsonLd()]}>
+  <HomeContentView
+    locale={locale}
+    dict={dict}
+    latest={latest.items}
+    publications={publications.slice(0, 4)}
+    links={links.slice(0, 6)}
+  />
+</BaseLayout>

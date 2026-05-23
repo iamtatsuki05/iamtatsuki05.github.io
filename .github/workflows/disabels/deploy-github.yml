@@ -1,4 +1,4 @@
-name: Deploy Next.js site to Pages
+name: Deploy Astro site to Pages
 
 on:
   # Cloudflare Pages を優先するため GitHub Pages の自動デプロイは一旦無効化
@@ -31,23 +31,26 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
-      - name: Restore cache
+      - name: Restore Astro cache
         uses: actions/cache@v4
         with:
           path: |
-            .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+            .astro
+            node_modules/.vite
+          key: ${{ runner.os }}-astro-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**/*.astro') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-
+            ${{ runner.os }}-astro-${{ hashFiles('bun.lockb') }}-
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Build with Next.js
+      - name: Build with Astro
         env:
           SITE_URL: ${{ secrets.SITE_URL || (endsWith(github.event.repository.name, '.github.io') && format('https://{0}', github.event.repository.name) || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name)) }}
           # NOTE: GitHub Expressions で "A && '' || B" は左辺が空文字だと B にフォールバックしてしまう。
           # そのためユーザー/Org ページの場合は '/' を渡し、アプリ側で '' に正規化する。
           NEXT_PUBLIC_BASE_PATH: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}', github.event.repository.name) }}
+          PUBLIC_BASE_PATH: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}', github.event.repository.name) }}
           NEXT_PUBLIC_ASSET_VERSION: ${{ github.sha }}
+          PUBLIC_ASSET_VERSION: ${{ github.sha }}
           INCLUDE_DRAFTS: 'false'
         run: bun run build
       - name: Build Storybook

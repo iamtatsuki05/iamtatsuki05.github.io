@@ -115,7 +115,7 @@ for (const { label, use } of viewports) {
           .catch(() => false);
         await page.waitForLoadState('domcontentloaded').catch(() => undefined);
         if (!navigated && new URL(page.url()).pathname !== targetPath) {
-          // モバイル相当の実行環境で Next.js の Link 遷移が不安定なため、href で補完する
+          // モバイル相当の実行環境でリンク遷移が不安定な場合は、href で補完する
           await page.goto(`${targetPath}?pw_fallback=1`, { waitUntil: 'domcontentloaded' }).catch(() => undefined);
         }
         if (new URL(page.url()).pathname !== targetPath) {

@@ -1,5 +1,4 @@
-import type { Metadata } from 'next';
-import { buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { buildLanguageAlternates, buildPageMetadata, type PageMetadata } from '@/lib/seo';
 import type { Locale } from '@/lib/i18n';
 import { resolveLocale, SUPPORTED_ROUTE_LOCALES, SUPPORTED_LOCALES } from '@/lib/i18n';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
@@ -18,7 +17,7 @@ export async function buildLocalizedMetadata(
   params: Promise<{ locale: string }>,
   copyMap: Record<Locale, CopyBase>,
   extra?: Partial<Pick<Parameters<typeof buildPageMetadata>[0], 'images' | 'keywords' | 'type' | 'languageAlternates'>>,
-): Promise<Metadata> {
+): Promise<PageMetadata> {
   const locale = resolveLocale((await params).locale);
   const copy = copyMap[locale];
   const basePath = copy.path;

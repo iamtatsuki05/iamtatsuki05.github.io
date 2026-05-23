@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import Link from '@/components/compat/Link';
 import clsx from 'clsx';
 
 type Props = {

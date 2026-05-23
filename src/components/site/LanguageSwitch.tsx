@@ -1,14 +1,18 @@
 "use client";
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from '@/components/compat/Link';
+import { usePathname } from '@/lib/compat/navigation';
 import { LOCALE_UI_LABELS } from '@/lib/i18n';
 import { extractLocaleFromPath, isTranslatablePath, localizedPath, stripLocalePrefix } from '@/lib/routing';
 import { writePreferredLocale } from '@/lib/localePreference';
 
-export function LanguageSwitch() {
+type LanguageSwitchProps = {
+  currentPath?: string;
+};
+
+export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
   const indicatorInsetPx = 4;
-  const pathname = usePathname() || '';
+  const pathname = usePathname(currentPath) || '';
   const currentLocale = extractLocaleFromPath(pathname) || 'ja';
   const isTranslatable = isTranslatablePath(pathname);
   const groupRef = React.useRef<HTMLDivElement>(null);
