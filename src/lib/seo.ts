@@ -1,9 +1,43 @@
-import type { Metadata } from 'next';
 import { withBasePath } from '@/lib/url';
 import type { Locale } from '@/lib/i18n';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/lib/i18n';
 import { localizedPath, stripLocalePrefix } from '@/lib/routing';
 import { getSiteUrl } from '@/lib/config/env';
+
+export type PageMetadata = {
+  title?: string;
+  description?: string;
+  alternates?: {
+    canonical?: string;
+    languages?: Record<string, string>;
+    types?: Record<string, string>;
+  };
+  keywords?: string[];
+  openGraph?: {
+    title?: string;
+    description?: string;
+    url?: string;
+    siteName?: string;
+    locale?: string;
+    type?: 'website' | 'article';
+    images?: Array<{ url: string; width?: number; height?: number; alt?: string }>;
+    publishedTime?: string;
+    modifiedTime?: string;
+    authors?: string[];
+    tags?: string[];
+  };
+  twitter?: {
+    card?: 'summary' | 'summary_large_image';
+    site?: string;
+    creator?: string;
+    title?: string;
+    description?: string;
+    images?: Array<{ url: string; width?: number; height?: number; alt?: string }>;
+  };
+  authors?: Array<{ name: string; url?: string }>;
+  creator?: string;
+  publisher?: string;
+};
 
 export const siteConfig = {
   owner: 'Tatsuki Okada',
@@ -11,18 +45,26 @@ export const siteConfig = {
   siteName: {
     ja: '岡田 龍樹 | Tatsuki Okada',
     en: 'Tatsuki Okada | 岡田 龍樹',
+    zh: 'Tatsuki Okada | 岡田 龍樹',
+    fr: 'Tatsuki Okada | 岡田 龍樹',
   } satisfies Record<Locale, string>,
   defaultTitle: {
-    ja: '岡田 龍樹(Tatsuki Okada) | NLP・機械学習エンジニア',
-    en: 'Tatsuki Okada(岡田 龍樹) | NLP & Machine Learning Engineer',
+    ja: 'NLP・機械学習エンジニア',
+    en: 'NLP & Machine Learning Engineer',
+    zh: '自然语言处理与机器学习工程师',
+    fr: 'Ingénieur NLP et machine learning',
   } satisfies Record<Locale, string>,
   description: {
     ja: '自然言語処理・機械学習・ソフトウェア開発に取り組むエンジニア、岡田 龍樹のポートフォリオサイト。最新のブログ、研究成果、制作物、活動記録をまとめています。',
     en: 'Portfolio site of Tatsuki Okada, an engineer working on NLP, machine learning, and software projects. Explore recent blog posts, publications, and side projects.',
+    zh: '冈田龙树的作品集网站。他是一名从事自然语言处理、机器学习和软件开发的工程师。这里整理了最新博客、研究成果和个人项目。',
+    fr: 'Site portfolio de Tatsuki Okada, ingénieur travaillant sur le NLP, le machine learning et des projets logiciels. Vous y trouverez ses articles récents, publications et projets personnels.',
   } satisfies Record<Locale, string>,
   keywords: {
     ja: ['岡田 龍樹', 'Tatsuki Okada', 'iamtatsuki05', 'iam_tatsuki05', '自然言語処理', '機械学習', 'ソフトウェアエンジニア', 'ポートフォリオ', '研究'],
     en: ['Tatsuki Okada', '岡田 龍樹', 'iamtatsuki05', 'iam_tatsuki05', 'NLP engineer', 'machine learning', 'software engineer', 'portfolio', 'research'],
+    zh: ['Tatsuki Okada', '岡田 龍樹', 'iamtatsuki05', 'iam_tatsuki05', '自然语言处理', '机器学习', '软件工程师', '作品集', '研究'],
+    fr: ['Tatsuki Okada', '岡田 龍樹', 'iamtatsuki05', 'iam_tatsuki05', 'ingénieur NLP', 'machine learning', 'ingénieur logiciel', 'portfolio', 'recherche'],
   } satisfies Record<Locale, string[]>,
   contactEmail: 'tatsukio0522@gmail.com',
   socials: {
@@ -139,7 +181,7 @@ export function buildPageMetadata({
   publishedTime,
   modifiedTime,
   tags,
-}: BuildMetadataOptions): Metadata {
+}: BuildMetadataOptions): PageMetadata {
   const base = siteConfig.siteName[locale] || siteConfig.siteName.ja;
   const finalTitle = title.includes(base) ? title : `${title} | ${base}`;
   const finalDescription = description || siteConfig.description[locale];
@@ -153,7 +195,7 @@ export function buildPageMetadata({
       )
     : undefined;
 
-  const metadata: Metadata = {
+  const metadata: PageMetadata = {
     title: finalTitle,
     description: finalDescription,
     alternates: {
@@ -166,7 +208,12 @@ export function buildPageMetadata({
       description: finalDescription,
       url: canonicalUrl,
       siteName: siteConfig.siteName[locale],
-      locale: locale === 'ja' ? 'ja_JP' : 'en_US',
+      locale: {
+        ja: 'ja_JP',
+        en: 'en_US',
+        zh: 'zh_CN',
+        fr: 'fr_FR',
+      }[locale],
       type,
       images: ogImages,
     },
@@ -301,7 +348,7 @@ export function buildSiteLinksJsonLd() {
       {
         '@type': 'SiteNavigationElement',
         position: 3,
-        name: 'Blog',
+        name: 'Blogs',
         description: '最新の技術ブログと記事',
         url: absoluteUrl('/blogs/'),
       },

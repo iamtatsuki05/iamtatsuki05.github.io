@@ -42,7 +42,7 @@ test.describe('Site header (desktop)', () => {
 });
 
 for (const { label, use } of viewports) {
-  test.describe(`Blog index page (${label})`, () => {
+  test.describe(`Blogs index page (${label})`, () => {
     test.use(use);
 
     test.beforeEach(async ({ page }) => {
@@ -103,13 +103,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
       });
 
       test('blog detail sidebar tracks heading and progress smoothly', async ({ page }) => {
@@ -124,13 +124,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
         const toc = page.getByTestId('blog-toc');
         await expect(toc).toBeVisible();
@@ -186,13 +186,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/(?:ja\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja\/)?blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
         const copyButton = page.getByRole('button', { name: '記事のMarkdownをコピー' });
         await expect(copyButton).toBeVisible();
@@ -231,13 +231,13 @@ for (const { label, use } of viewports) {
         const detailPath = await detailLink.getAttribute('href');
         await detailLink.click();
         const navigated = await page
-          .waitForURL(/\/blogs\/[\w-]+\/?$/, { timeout: 3000 })
+          .waitForURL(/\/en-US\/blogs\/[\w-]+\/?$/, { timeout: 3000 })
           .then(() => true)
           .catch(() => false);
         if (!navigated && detailPath) {
           await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
         }
-        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/blogs\/[\w-]+\/?$/);
+        await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/en-US\/blogs\/[\w-]+\/?$/);
 
         const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
         await expect(copyButton).toBeVisible();
@@ -248,7 +248,11 @@ for (const { label, use } of viewports) {
         await expect(page.getByRole('menuitem', { name: 'Share on X' })).toBeVisible();
         await expect(page.getByRole('menuitem', { name: 'Share on LinkedIn' })).toBeVisible();
         await expect(page.getByTestId('blog-toc-fab')).toContainText('Contents');
-        await expect(page.locator('article.prose p').first()).toContainText('2025-');
+        await expect(page.getByText('This article was translated by AI.')).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Read the Japanese original' })).toHaveAttribute(
+          'href',
+          /^\/blogs\/[\w-]+\/$/,
+        );
         await copyButton.click();
         await expect(copyButton).toContainText('Copied');
         await expect(copyButton).toHaveAttribute('data-status', 'success');
@@ -262,9 +266,10 @@ for (const { label, use } of viewports) {
 
         const detailLink = allPostsSection.locator('[data-testid="blog-card"] a[href*="/blogs/"]').first();
         const detailPath = await detailLink.getAttribute('href');
-        expect(detailPath).toMatch(/^\/blogs\/[\w-]+\/$/);
+        expect(detailPath).toMatch(/^\/ja-JP\/blogs\/[\w-]+\/$/);
 
-        const markdownPath = detailPath?.replace(/\/$/, '.md');
+        const slug = detailPath?.match(/\/blogs\/([\w-]+)\/$/)?.[1];
+        const markdownPath = slug ? `/blogs/${slug}.md` : null;
         expect(markdownPath).toMatch(/^\/blogs\/[\w-]+\.md$/);
 
         const response = await page.goto(markdownPath!, { waitUntil: 'domcontentloaded' });
@@ -296,6 +301,46 @@ for (const { label, use } of viewports) {
       await expect(firstLink).toHaveAttribute('rel', /noreferrer/);
       await expect(firstLink).toHaveAttribute('href', /^https?:\/\//);
     });
+
+    if (label === 'mobile') {
+      test('centers the final row of social icon cards', async ({ page }) => {
+        const firstSection = page.locator('section').first();
+        const list = firstSection.locator('ul').first();
+        const cards = firstSection.locator('li');
+
+        await expect(list).toBeVisible();
+        await expect(cards).toHaveCount(5);
+
+        const listBox = await list.boundingBox();
+        expect(listBox).not.toBeNull();
+        const cardBoxes = await cards.evaluateAll((elements) =>
+          elements.map((element) => {
+            const rect = element.getBoundingClientRect();
+            return { x: rect.x, y: rect.y, width: rect.width };
+          }),
+        );
+        const maxY = Math.max(...cardBoxes.map((box) => box.y));
+        const finalRow = cardBoxes.filter((box) => Math.abs(box.y - maxY) < 2);
+        expect(finalRow).toHaveLength(1);
+
+        const rowLeft = Math.min(...finalRow.map((box) => box.x));
+        const rowRight = Math.max(...finalRow.map((box) => box.x + box.width));
+        const rowCenter = (rowLeft + rowRight) / 2;
+        const listCenter = (listBox?.x || 0) + (listBox?.width || 0) / 2;
+
+        expect(Math.abs(rowCenter - listCenter)).toBeLessThanOrEqual(1);
+
+        const iconCenterDeltas = await cards.evaluateAll((elements) =>
+          elements.map((element) => {
+            const cardRect = element.getBoundingClientRect();
+            const iconRect = element.querySelector('.link-grid__icon-link')?.getBoundingClientRect();
+            if (!iconRect) return Number.POSITIVE_INFINITY;
+            return Math.abs((iconRect.x + iconRect.width / 2) - (cardRect.x + cardRect.width / 2));
+          }),
+        );
+        expect(Math.max(...iconCenterDeltas)).toBeLessThanOrEqual(1);
+      });
+    }
 
     if (label === 'desktop') {
       test('keeps current page when clicking external link with ctrl+click simulation', async ({ page }) => {
@@ -513,11 +558,31 @@ for (const { label, use } of viewports) {
 
         await expect.poll(() => new URL(page.url()).pathname).toBe('/en-US/blogs/');
         await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe('LLM');
-        await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
+        await expect(page.getByRole('heading', { level: 1, name: '📝 Blogs' })).toBeVisible();
       });
     }
   });
 }
+
+test.describe('Markdown rendering', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('renders inline code without typography backtick pseudo content', async ({ page }) => {
+    await page.goto('/blogs/2026-05-24-next-to-astro-with-ai/');
+
+    const inlineCode = page.locator('article.prose :not(pre) > code').filter({ hasText: 'bun run build' }).first();
+    await expect(inlineCode).toBeVisible();
+    await expect(inlineCode).toHaveText('bun run build');
+
+    const pseudoContent = await inlineCode.evaluate((element) => ({
+      before: getComputedStyle(element, '::before').content,
+      after: getComputedStyle(element, '::after').content,
+    }));
+
+    expect(['none', 'normal', '""']).toContain(pseudoContent.before);
+    expect(['none', 'normal', '""']).toContain(pseudoContent.after);
+  });
+});
 
 test.describe('Blog detail toc toggle (tablet)', () => {
   test.use({ viewport: { width: 900, height: 900 } });
@@ -605,12 +670,47 @@ test.describe('Localized page variants', () => {
 
   test('renders the English blog index', async ({ page }) => {
     await page.goto('/en-US/blogs/');
-    await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: '📝 Blogs' })).toBeVisible();
+  });
+
+  test('renders the Chinese blog index and translated detail notice', async ({ page }) => {
+    await page.goto('/zh-CN/blogs/');
+    await expect(page.getByRole('heading', { level: 1, name: '📝 博客' })).toBeVisible();
+
+    const detailLink = page.locator('[data-testid="blog-card"] a[href*="/zh-CN/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    expect(detailPath).toMatch(/^\/zh-CN\/blogs\/[\w-]+\/$/);
+    await page.goto(detailPath!);
+    await expect(page.getByText('本文由 AI 翻译。')).toBeVisible();
+    await expect(page.getByRole('link', { name: '阅读日语原文' })).toHaveAttribute('href', /^\/blogs\/[\w-]+\/$/);
+  });
+
+  test('renders the French blog index and translated detail notice', async ({ page }) => {
+    await page.goto('/fr-FR/blogs/');
+    await expect(page.getByRole('heading', { level: 1, name: '📝 Articles' })).toBeVisible();
+
+    const detailLink = page.locator('[data-testid="blog-card"] a[href*="/fr-FR/blogs/"]').first();
+    const detailPath = await detailLink.getAttribute('href');
+    expect(detailPath).toMatch(/^\/fr-FR\/blogs\/[\w-]+\/$/);
+    await page.goto(detailPath!);
+    await expect(page.getByText('Cet article a été traduit par IA.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Lire l’original japonais' })).toHaveAttribute(
+      'href',
+      /^\/blogs\/[\w-]+\/$/,
+    );
   });
 
   test('renders the English hobbies page', async ({ page }) => {
     await page.goto('/en-US/hobbies/');
     await expect(page.getByRole('heading', { level: 1, name: '🧸 Hobbies' })).toBeVisible();
+  });
+
+  test('renders the Chinese and French hobbies pages', async ({ page }) => {
+    await page.goto('/zh-CN/hobbies/');
+    await expect(page.getByRole('heading', { level: 1, name: '🧸 兴趣' })).toBeVisible();
+
+    await page.goto('/fr-FR/hobbies/');
+    await expect(page.getByRole('heading', { level: 1, name: '🧸 Centres d’intérêt' })).toBeVisible();
   });
 });
 

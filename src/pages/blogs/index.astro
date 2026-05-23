@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { BlogsClient } from '@/components/pages/BlogsClient';
+import { getAllPosts } from '@/lib/content/blog';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { blogsPageCopy } from '@/lib/pageCopy';
+import { getPageMeta } from '@/lib/seo/metaConfig';
+
+const locale = 'ja';
+const posts = await getAllPosts();
+const copy = blogsPageCopy[locale];
+const pageMeta = getPageMeta('blogs', locale);
+const metadata = buildPageMetadata({
+  title: pageMeta.metadataTitle,
+  description: pageMeta.metadataDescription,
+  locale,
+  path: pageMeta.path,
+  languageAlternates: buildLanguageAlternates(pageMeta.path),
+});
+const collectionJsonLd = buildCollectionPageJsonLd({
+  path: '/blogs/',
+  name: 'Blogs',
+  description: '技術ブログと記事',
+  itemCount: posts.length,
+});
+const breadcrumbJsonLd = buildBreadcrumbJsonLd({
+  items: [
+    { name: 'Home', url: absoluteUrl('/') },
+    { name: 'Blogs', url: absoluteUrl('/blogs/') },
+  ],
+});
+---
+
+<BaseLayout metadata={metadata} lang="ja" jsonLd={[collectionJsonLd, breadcrumbJsonLd]}>
+  <div class="space-y-4">
+    <div class="text-sm opacity-70">{copy.breadcrumb}</div>
+    <h1 class="text-3xl font-bold">{copy.heading}</h1>
+    <BlogsClient posts={posts} locale={locale} initialCardsVisible client:load />
+  </div>
+</BaseLayout>

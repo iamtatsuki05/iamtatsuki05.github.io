@@ -1,4 +1,4 @@
-# Next.js 静的サイト
+# Astro 静的サイト
 
 [English](README.md) | [日本語](README_JA.md)
 
@@ -11,7 +11,7 @@
 
 ### スクリプト実行
 ```shell
-bun dev                       # http://localhost:3000 で開発
+bun dev                       # http://localhost:3000 で Astro 開発
 INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
 bun run start                 # :3000 で out/ を配信
 bun run e2e:run              # Playwright E2E を Chromium で実行
@@ -61,7 +61,6 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 │   ├── optimize-images.ts
 │   └── utils
 ├── src
-│   ├── app
 │   ├── components
 │   ├── content
 │   │   ├── blogs
@@ -74,8 +73,7 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ├── tests
 ├── package.json
 ├── biome.json
-├── next.config.mjs
-├── next-sitemap.config.mts
+├── astro.config.mjs
 ├── postcss.config.js
 ├── tsconfig.json
 └── vitest.config.mts
@@ -84,4 +82,4 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ## 補足
 - i18n: Home/Links/Publications/Blog index は ja/en の言語ルート対応
 - SEO/フィード: ビルド時に `/sitemap.xml` `/robots.txt` `/rss.xml` を生成
-- GitHub Pages: `.github/workflows/deploy.yml` で `SITE_URL` と basePath を自動設定
+- Cloudflare Pages: `.github/workflows/deploy-cloudflare.yml` で Astro の `out/` をビルド・公開

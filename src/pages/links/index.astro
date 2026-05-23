@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LinksPage } from '@/components/pages/LinksPage';
+import { getLinks } from '@/lib/data/links';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { getPageMeta } from '@/lib/seo/metaConfig';
+
+const locale = 'ja';
+const links = await getLinks();
+const pageMeta = getPageMeta('links', locale);
+const metadata = buildPageMetadata({
+  title: pageMeta.metadataTitle,
+  description: pageMeta.metadataDescription,
+  locale,
+  path: pageMeta.path,
+  languageAlternates: buildLanguageAlternates(pageMeta.path),
+});
+---
+
+<BaseLayout
+  metadata={metadata}
+  lang="ja"
+  jsonLd={[
+    buildCollectionPageJsonLd({ path: '/links/', name: 'Links', description: 'SNSと外部リンク集', itemCount: links.length }),
+    buildBreadcrumbJsonLd({ items: [{ name: 'Home', url: absoluteUrl('/') }, { name: 'Links', url: absoluteUrl('/links/') }] }),
+  ]}
+>
+  <LinksPage locale={locale} links={links} />
+</BaseLayout>

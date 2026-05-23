@@ -9,6 +9,8 @@ export function readPreferredLocale(): Locale | null {
   const raw = window.localStorage.getItem(LOCALE_PREFERENCE_STORAGE_KEY)?.toLowerCase();
   if (raw === 'ja' || raw === 'ja-jp') return 'ja';
   if (raw === 'en' || raw === 'en-us') return 'en';
+  if (raw === 'zh' || raw === 'zh-cn') return 'zh';
+  if (raw === 'fr' || raw === 'fr-fr') return 'fr';
   return null;
 }
 

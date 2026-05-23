@@ -1,0 +1,29 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { PublicationsPage } from '@/components/pages/PublicationsPage';
+import { getAllPublications } from '@/lib/content/publication';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { getPageMeta } from '@/lib/seo/metaConfig';
+
+const locale = 'ja';
+const publications = await getAllPublications();
+const pageMeta = getPageMeta('publications', locale);
+const metadata = buildPageMetadata({
+  title: pageMeta.metadataTitle,
+  description: pageMeta.metadataDescription,
+  locale,
+  path: pageMeta.path,
+  languageAlternates: buildLanguageAlternates(pageMeta.path),
+});
+---
+
+<BaseLayout
+  metadata={metadata}
+  lang="ja"
+  jsonLd={[
+    buildCollectionPageJsonLd({ path: '/publications/', name: 'Publications', description: '学術論文と研究成果', itemCount: publications.length }),
+    buildBreadcrumbJsonLd({ items: [{ name: 'Home', url: absoluteUrl('/') }, { name: 'Publications', url: absoluteUrl('/publications/') }] }),
+  ]}
+>
+  <PublicationsPage locale={locale} items={publications} client:load />
+</BaseLayout>

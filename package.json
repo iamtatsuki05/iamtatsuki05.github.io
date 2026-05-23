@@ -4,17 +4,19 @@
   "private": true,
   "packageManager": "bun@1.3.13",
   "scripts": {
-    "dev": "bun scripts/sync-blog-markdown.ts && next dev --webpack",
-    "build": "bun scripts/sync-blog-markdown.ts && next build --webpack && next-image-export-optimizer && bun scripts/prune-static-export.ts && bun scripts/generate-rss.ts",
-    "build:analyze": "bun scripts/sync-blog-markdown.ts && ANALYZE=true next build --webpack",
+    "dev": "bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1 --port 3000",
+    "build": "bun scripts/ensure-blog-translations.ts && bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && bun scripts/generate-hobby-optimized-images.ts && ASTRO_TELEMETRY_DISABLED=1 astro build && bun scripts/prune-static-export.ts && bun scripts/generate-rss.ts",
+    "build:analyze": "bun run build",
     "start": "node scripts/serve-static-export.mjs --port 3000 --dir out",
     "lint": "biome check .",
     "test": "bun run vitest:run && bun run e2e:run",
-    "vitest:run": "bun run vitest:run:components && bun run vitest:run:core",
+    "translate:blogs:ensure": "bun scripts/ensure-blog-translations.ts",
+    "translate:blogs:prompt": "bun scripts/print-blog-translation-agent-prompt.ts",
+    "vitest:run": "bun scripts/generate-blog-translations.ts && bun run vitest:run:components && bun run vitest:run:core",
     "vitest:run:components": "vitest run tests/components --pool threads --maxWorkers=1",
-    "vitest:run:core": "vitest run tests/app tests/lib --pool threads --maxWorkers=1",
+    "vitest:run:core": "vitest run tests/lib --pool threads --maxWorkers=1",
     "vitest:watch": "vitest",
-    "e2e:dev": "bun scripts/sync-blog-markdown.ts && next dev --webpack --hostname 127.0.0.1 --port 3000",
+    "e2e:dev": "bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1 --port 3000",
     "e2e:install": "bunx playwright install chromium firefox webkit",
     "e2e:run": "bunx playwright install chromium && bunx playwright test --project=chromium",
     "e2e:open": "bun run e2e:install && bunx playwright test --ui --headed --project=chromium",
@@ -27,7 +29,8 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
-    "@next/third-parties": "16.2.6",
+    "@astrojs/react": "5.0.5",
+    "astro": "6.3.7",
     "babel-plugin-react-compiler": "^1.0.0",
     "clsx": "2.1.1",
     "feed": "4.2.2",
@@ -35,10 +38,6 @@
     "github-slugger": "2.0.0",
     "gray-matter": "4.0.3",
     "hast-util-sanitize": "5.0.2",
-    "next": "16.2.6",
-    "next-image-export-optimizer": "1.20.1",
-    "next-themes": "0.4.6",
-    "nuqs": "2.8.9",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-social-media-embed": "^2.5.18",
@@ -60,11 +59,10 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@lhci/cli": "0.15.1",
-    "@next/bundle-analyzer": "^16.2.6",
     "@playwright/test": "1.59.1",
     "@storybook/addon-docs": "10.3.6",
-    "@storybook/nextjs-vite": "10.3.6",
     "@storybook/react": "10.3.6",
+    "@storybook/react-vite": "10.3.6",
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "6.9.1",
@@ -75,12 +73,12 @@
     "@types/react-dom": "^19.2.3",
     "jsdom": "29.1.1",
     "postcss": "8.5.14",
+    "sharp": "^0.34.5",
     "storybook": "10.3.6",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
-    "vite": "8.0.11",
-    "vitest": "4.1.5",
-    "webpack-bundle-analyzer": "^5.3.0"
+    "vite": "^7.3.3",
+    "vitest": "4.1.5"
   },
   "browserslist": {
     "production": [
@@ -98,10 +96,10 @@
   },
   "overrides": {
     "@playwright/test": "1.59.1",
-    "next": "16.2.6",
     "picomatch": "4.0.4",
     "playwright": "1.59.1",
     "rollup": "4.60.3",
-    "serialize-javascript": "7.0.5"
+    "serialize-javascript": "7.0.5",
+    "vite": "^7.3.3"
   }
 }

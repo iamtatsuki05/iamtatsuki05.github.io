@@ -9,6 +9,7 @@ type Props = {
   url: string;
   title: string;
   className?: string;
+  locale?: Locale;
 };
 
 const shareText: Record<
@@ -29,10 +30,20 @@ const shareText: Record<
     shareOnX: 'Share on X',
     shareOnLinkedIn: 'Share on LinkedIn',
   },
+  zh: {
+    share: '分享',
+    shareOnX: '分享到 X',
+    shareOnLinkedIn: '分享到 LinkedIn',
+  },
+  fr: {
+    share: 'Partager',
+    shareOnX: 'Partager sur X',
+    shareOnLinkedIn: 'Partager sur LinkedIn',
+  },
 };
 
-export function ShareButtons({ url, title, className }: Props) {
-  const locale = useResolvedPreferredLocale();
+export function ShareButtons({ url, title, className, locale: initialLocale = 'ja' }: Props) {
+  const locale = useResolvedPreferredLocale(initialLocale);
   const [activeAction, setActiveAction] = useState<'share' | 'x' | 'linkedin' | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const resetTimerRef = useRef<number | null>(null);

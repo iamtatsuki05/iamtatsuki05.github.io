@@ -52,7 +52,7 @@ const samplePublications: Publication[] = [
     publishedAt: '2023-12-10',
     authors: ['Tatsuki Okada'],
     links: [{ kind: 'slides', url: 'https://example.com/slides.pdf' }],
-    tags: ['Blog', 'SRE'],
+    tags: ['Blogs', 'SRE'],
   },
 ];
 

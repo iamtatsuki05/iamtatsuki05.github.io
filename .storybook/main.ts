@@ -1,30 +1,30 @@
 import path from 'path';
-import type { StorybookConfig } from '@storybook/nextjs-vite';
+import { fileURLToPath } from 'url';
+import type { StorybookConfig } from '@storybook/react-vite';
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const config: StorybookConfig = {
   stories: ['../src/components/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-docs'],
-  staticDirs: ['../public', '../src/app'],
+  staticDirs: ['../public'],
   framework: {
-    name: '@storybook/nextjs-vite',
-    options: {
-      appDirectory: true,
-    },
+    name: '@storybook/react-vite',
+    options: {},
   },
   docs: {
     autodocs: 'tag',
   },
-  webpackFinal: async (baseConfig) => {
-    const resolve = baseConfig.resolve || {};
-    resolve.alias = {
-      ...(resolve.alias || {}),
-      '@': path.resolve(__dirname, '..', 'src'),
-    };
-    return {
-      ...baseConfig,
-      resolve,
-    };
-  },
+  viteFinal: async (baseConfig) => ({
+    ...baseConfig,
+    resolve: {
+      ...(baseConfig.resolve || {}),
+      alias: {
+        ...(baseConfig.resolve?.alias || {}),
+        '@': path.resolve(dirname, '..', 'src'),
+      },
+    },
+  }),
 };
 
 export default config;

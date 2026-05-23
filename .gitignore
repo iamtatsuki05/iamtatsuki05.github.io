@@ -1,11 +1,17 @@
 node_modules
 .next
+.astro
 out
 .DS_Store
 *.log
+*.tsbuildinfo
 data/og-cache.json
 src/data/og-cache.json
 .cache
+.agent/*
+!.agent/skills/
+!.agent/skills/**
+.agent/work/
 
 # bundle analyzer
 .next/analyze/
@@ -41,4 +47,5 @@ public/images/links/nextImageExportOptimizer/
 public/images/links/next-image-export-optimizer-hashes.json
 public/blogs/*.md
 public/blogs/*.mdx
+src/content/generated/
 .lighthouseci

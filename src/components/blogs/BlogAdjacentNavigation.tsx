@@ -1,8 +1,10 @@
 "use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link from '@/components/compat/Link';
+import { useRouter } from '@/lib/compat/navigation';
 import { useRef } from 'react';
+import type { Locale } from '@/lib/i18n';
+import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
 export type BlogAdjacentLink = {
   title: string;
@@ -12,11 +14,14 @@ export type BlogAdjacentLink = {
 export function BlogAdjacentNavigation({
   previous,
   next,
+  locale: initialLocale = 'ja',
 }: {
   previous: BlogAdjacentLink | null;
   next: BlogAdjacentLink | null;
+  locale?: Locale;
 }) {
   const router = useRouter();
+  const locale = useResolvedPreferredLocale(initialLocale);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
@@ -50,13 +55,13 @@ export function BlogAdjacentNavigation({
         data-testid="blog-adjacent-mobile-swipe"
         className="flex items-center justify-between gap-4 px-1 py-2 sm:hidden"
       >
-        <SwipeArrow direction="previous" enabled={Boolean(previous)} />
+        <SwipeArrow direction="previous" enabled={Boolean(previous)} locale={locale} />
         <span className="h-1.5 w-12 rounded-full bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
-        <SwipeArrow direction="next" enabled={Boolean(next)} />
+        <SwipeArrow direction="next" enabled={Boolean(next)} locale={locale} />
       </div>
       <div data-testid="blog-adjacent-desktop-links" className="hidden gap-3 sm:grid sm:grid-cols-2">
-        <AdjacentItem direction="previous" item={previous} />
-        <AdjacentItem direction="next" item={next} />
+        <AdjacentItem direction="previous" item={previous} locale={locale} />
+        <AdjacentItem direction="next" item={next} locale={locale} />
       </div>
     </nav>
   );
@@ -65,11 +70,13 @@ export function BlogAdjacentNavigation({
 function SwipeArrow({
   direction,
   enabled,
+  locale,
 }: {
   direction: 'previous' | 'next';
   enabled: boolean;
+  locale: Locale;
 }) {
-  const label = direction === 'previous' ? '前の記事へスワイプ' : '次の記事へスワイプ';
+  const label = adjacentCopy[locale][direction === 'previous' ? 'swipePrevious' : 'swipeNext'];
   return (
     <span
       aria-label={label}
@@ -88,13 +95,16 @@ function SwipeArrow({
 function AdjacentItem({
   direction,
   item,
+  locale,
 }: {
   direction: 'previous' | 'next';
   item: BlogAdjacentLink | null;
+  locale: Locale;
 }) {
   const isPrevious = direction === 'previous';
-  const label = isPrevious ? '前の記事' : '次の記事';
-  const disabledLabel = `${label}はありません`;
+  const copy = adjacentCopy[locale];
+  const label = isPrevious ? copy.previous : copy.next;
+  const disabledLabel = isPrevious ? copy.noPrevious : copy.noNext;
 
   if (!item) {
     return (
@@ -120,3 +130,48 @@ function AdjacentItem({
     </Link>
   );
 }
+
+const adjacentCopy: Record<
+  Locale,
+  {
+    previous: string;
+    next: string;
+    noPrevious: string;
+    noNext: string;
+    swipePrevious: string;
+    swipeNext: string;
+  }
+> = {
+  ja: {
+    previous: '前の記事',
+    next: '次の記事',
+    noPrevious: '前の記事はありません',
+    noNext: '次の記事はありません',
+    swipePrevious: '前の記事へスワイプ',
+    swipeNext: '次の記事へスワイプ',
+  },
+  en: {
+    previous: 'Previous post',
+    next: 'Next post',
+    noPrevious: 'No previous post',
+    noNext: 'No next post',
+    swipePrevious: 'Swipe to previous post',
+    swipeNext: 'Swipe to next post',
+  },
+  zh: {
+    previous: '上一篇',
+    next: '下一篇',
+    noPrevious: '没有上一篇',
+    noNext: '没有下一篇',
+    swipePrevious: '滑动到上一篇',
+    swipeNext: '滑动到下一篇',
+  },
+  fr: {
+    previous: 'Article précédent',
+    next: 'Article suivant',
+    noPrevious: 'Aucun article précédent',
+    noNext: 'Aucun article suivant',
+    swipePrevious: 'Glisser vers l’article précédent',
+    swipeNext: 'Glisser vers l article suivant',
+  },
+};

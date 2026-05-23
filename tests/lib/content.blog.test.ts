@@ -13,4 +13,16 @@ describe('content/blog', () => {
     expect(post?.html).toBeTypeOf('string');
     expect(post?.markdown).toContain('---');
   });
+
+  it('loads translated blog posts by locale without changing the original slug', async () => {
+    const posts = await getAllPosts('fr');
+    const post = await getPostBySlug('2026-05-24-next-to-astro-with-ai', 'fr');
+
+    expect(posts.map((item) => item.slug)).toContain('2026-05-24-next-to-astro-with-ai');
+    expect(post?.locale).toBe('fr');
+    expect(post?.isAiTranslated).toBe(true);
+    expect(post?.originalPath).toBe('/blogs/2026-05-24-next-to-astro-with-ai/');
+    expect(post?.title).toContain('Astro');
+    expect(post?.html).toContain('Codex');
+  });
 });

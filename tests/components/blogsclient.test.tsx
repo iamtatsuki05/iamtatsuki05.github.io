@@ -1,8 +1,7 @@
 import React from 'react';
 import { act, screen } from '@testing-library/react';
 import { describe, it, vi } from 'vitest';
-import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
-import { BlogsClient } from '@/app/blogs/sections/BlogsClient';
+import { BlogsClient } from '@/components/pages/BlogsClient';
 
 const sample = Array.from({ length: 12 }).map((_, i) => ({
   slug: `post-${i}`,
@@ -13,8 +12,13 @@ const sample = Array.from({ length: 12 }).map((_, i) => ({
   headerImage: 'https://example.com/sample.png',
 }));
 
+const QueryWrapper = ({ children, searchParams = '' }: { children: React.ReactNode; searchParams?: string }) => {
+  window.history.replaceState(null, '', `/${searchParams}`);
+  return <>{children}</>;
+};
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <NuqsTestingAdapter>{children}</NuqsTestingAdapter>
+  <QueryWrapper>{children}</QueryWrapper>
 );
 
 describe('BlogsClient', () => {
@@ -119,7 +123,7 @@ describe('BlogsClient', () => {
   it('applies tag filter from query params', async () => {
     const { render } = await import('@testing-library/react');
     const { getAllByText, queryByText } = render(<BlogsClient posts={sample} locale="en" />, {
-      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?tags=a">{children}</NuqsTestingAdapter>,
+      wrapper: ({ children }) => <QueryWrapper searchParams="?tags=a">{children}</QueryWrapper>,
     });
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
     expect(queryByText('Sample 1')).toBeNull();
@@ -129,14 +133,14 @@ describe('BlogsClient', () => {
 
     render(<BlogsClient posts={sample} locale="en" />, {
       wrapper: ({ children }) => (
-        <NuqsTestingAdapter searchParams="?q=hello&year=2025&tags=a&sort=newest">{children}</NuqsTestingAdapter>
+        <QueryWrapper searchParams="?q=hello&year=2025&tags=a&sort=newest">{children}</QueryWrapper>
       ),
     });
 
     const firstCard = screen.getAllByTestId('blog-card')[0];
     const link = within(firstCard).getByRole('link');
 
-    expect(link).toHaveAttribute('href', '/blogs/post-10/?q=hello&year=2025&tags=a&sort=newest');
+    expect(link).toHaveAttribute('href', '/en-US/blogs/post-10/?q=hello&year=2025&tags=a&sort=newest');
   });
   it('supports selecting multiple years from the year filter', async () => {
     const { render, screen } = await import('@testing-library/react');
@@ -183,7 +187,7 @@ describe('BlogsClient', () => {
     ];
 
     render(<BlogsClient posts={posts} locale="en" />, {
-      wrapper: ({ children }) => <NuqsTestingAdapter searchParams="?q=encoder">{children}</NuqsTestingAdapter>,
+      wrapper: ({ children }) => <QueryWrapper searchParams="?q=encoder">{children}</QueryWrapper>,
     });
 
     const user = userEvent.default.setup();

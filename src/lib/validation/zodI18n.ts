@@ -22,12 +22,32 @@ const valueTypeLabels = {
     object: 'an object',
     default: 'a valid value',
   },
+  zh: {
+    string: '字符串',
+    number: '数字',
+    boolean: '布尔值',
+    date: '日期',
+    array: '数组',
+    object: '对象',
+    default: '有效值',
+  },
+  fr: {
+    string: 'une chaine',
+    number: 'un nombre',
+    boolean: 'un booleen',
+    date: 'une date',
+    array: 'un tableau',
+    object: 'un objet',
+    default: 'une valeur valide',
+  },
 } as const satisfies Record<Locale, Record<string, string>>;
 
 export const zodCustomErrorMessages = {
   'validation.custom.slugLowercase': {
     ja: '半角英小文字、数字、ハイフンで入力してください',
     en: 'Use lowercase letters, numbers, and hyphens',
+    zh: '请使用小写英文字母、数字和连字符',
+    fr: 'Utilisez des lettres minuscules, des chiffres et des traits d union',
   },
 } as const satisfies Record<string, Record<Locale, string>>;
 
@@ -106,6 +126,58 @@ export const zodErrorDictionaries: Record<Locale, { standard: StandardMessageDic
     },
     custom: {
       'validation.custom.slugLowercase': zodCustomErrorMessages['validation.custom.slugLowercase'].en,
+    },
+  },
+  zh: {
+    standard: {
+      required: '必填项',
+      invalidType: ({ expected }) => `请输入${expected ?? valueTypeLabels.zh.default}`,
+      invalidEmail: '请输入有效的电子邮件地址',
+      invalidFormat: '请输入正确的格式',
+      tooSmall: ({ origin, minimum }) => {
+        if (origin === 'string') return `请至少输入 ${minimum} 个字符`;
+        if (origin === 'array') return `请至少选择 ${minimum} 项`;
+        return `请输入 ${minimum} 以上`;
+      },
+      tooBig: ({ origin, maximum }) => {
+        if (origin === 'string') return `请输入 ${maximum} 个字符以内`;
+        if (origin === 'array') return `请选择 ${maximum} 项以内`;
+        return `请输入 ${maximum} 以下`;
+      },
+      invalidValue: '请选择允许的值',
+      invalidUnion: '请检查输入内容',
+      unrecognizedKeys: '包含不支持的项目',
+      custom: '请检查输入内容',
+      fallback: '请检查输入内容',
+    },
+    custom: {
+      'validation.custom.slugLowercase': zodCustomErrorMessages['validation.custom.slugLowercase'].zh,
+    },
+  },
+  fr: {
+    standard: {
+      required: 'Ce champ est obligatoire',
+      invalidType: ({ expected }) => `Saisissez ${expected ?? valueTypeLabels.fr.default}`,
+      invalidEmail: 'Saisissez une adresse e-mail valide',
+      invalidFormat: 'Saisissez un format valide',
+      tooSmall: ({ origin, minimum }) => {
+        if (origin === 'string') return `Saisissez au moins ${minimum} caracteres`;
+        if (origin === 'array') return `Selectionnez au moins ${minimum} elements`;
+        return `Saisissez ${minimum} ou plus`;
+      },
+      tooBig: ({ origin, maximum }) => {
+        if (origin === 'string') return `Saisissez ${maximum} caracteres ou moins`;
+        if (origin === 'array') return `Selectionnez ${maximum} elements ou moins`;
+        return `Saisissez ${maximum} ou moins`;
+      },
+      invalidValue: 'Selectionnez une valeur autorisee',
+      invalidUnion: 'Verifiez la saisie',
+      unrecognizedKeys: 'Des champs non pris en charge sont inclus',
+      custom: 'Verifiez la saisie',
+      fallback: 'Verifiez la saisie',
+    },
+    custom: {
+      'validation.custom.slugLowercase': zodCustomErrorMessages['validation.custom.slugLowercase'].fr,
     },
   },
 };

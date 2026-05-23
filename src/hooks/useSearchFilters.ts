@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
-import { parseAsArrayOf, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
 import type Fuse from 'fuse.js';
+import { notifyLocationChange } from '@/lib/compat/navigation';
 import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
 import { normalizeSearchText } from '@/lib/search/queryTokens';
 import {
@@ -22,16 +22,54 @@ type Options<T> = {
 
 type SetUpdater<T> = T | ((prev: T) => T);
 
+function readQueryState() {
+  const params = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
+  const sort = params.get('sort');
+  return {
+    q: params.get('q') || '',
+    year: parseList(params.get('year')),
+    tags: parseList(params.get('tags')),
+    sort: sort === 'newest' ? 'newest' as const : 'relevant' as const,
+  };
+}
+
+function parseList(value: string | null) {
+  return value?.split(',').map((entry) => entry.trim()).filter(Boolean) ?? [];
+}
+
+function writeQueryState(next: Partial<ReturnType<typeof readQueryState>>) {
+  if (typeof window === 'undefined') return;
+  const current = readQueryState();
+  const merged = { ...current, ...next };
+  const params = new URLSearchParams(window.location.search);
+
+  const setString = (key: string, value: string) => {
+    if (value) params.set(key, value);
+    else params.delete(key);
+  };
+  const setArray = (key: string, values: string[]) => {
+    const normalized = values.map((value) => value.trim()).filter(Boolean);
+    if (normalized.length) params.set(key, normalized.join(','));
+    else params.delete(key);
+  };
+
+  setString('q', merged.q);
+  setArray('year', merged.year);
+  setArray('tags', merged.tags);
+  if (merged.q && merged.sort === 'newest') params.set('sort', merged.sort);
+  else params.delete('sort');
+
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+  window.history.replaceState(null, '', nextUrl);
+  notifyLocationChange();
+}
+
 export function useSearchFilters<T>(
   items: T[],
   { fuseKeys, threshold = 0.35, extractYear, extractTags, extractSortValue }: Options<T>,
 ) {
-  const [{ q, year: selectedYears, tags, sort: selectedSort }, setFilters] = useQueryStates({
-    q: parseAsString.withDefault(''),
-    year: parseAsArrayOf(parseAsString).withDefault([]),
-    tags: parseAsArrayOf(parseAsString).withDefault([]),
-    sort: parseAsStringEnum<SearchSortMode>(['relevant', 'newest']).withDefault('relevant'),
-  });
+  const [{ q, year: selectedYears, tags, sort: selectedSort }, setQueryState] = useState(readQueryState);
   const [fuse, setFuse] = useState<Fuse<T> | null>(null);
   const [fuseLoading, setFuseLoading] = useState(false);
   const [localQ, setLocalQ] = useState(q);
@@ -49,6 +87,17 @@ export function useSearchFilters<T>(
   const tagSet = useMemo(() => new Set(localTags), [localTags]);
 
   const serializeValues = (values: string[]) => values.slice().sort().join('\u0001');
+
+  useEffect(() => {
+    const update = () => setQueryState(readQueryState());
+    window.addEventListener('popstate', update);
+    window.addEventListener('app-location-change', update);
+    update();
+    return () => {
+      window.removeEventListener('popstate', update);
+      window.removeEventListener('app-location-change', update);
+    };
+  }, []);
 
   useEffect(() => {
     localYearsRef.current = localYears;
@@ -90,8 +139,8 @@ export function useSearchFilters<T>(
     if (localQ || localSort === 'relevant') return;
     pendingSortRef.current = 'relevant';
     setLocalSort('relevant');
-    void setFilters({ sort: null });
-  }, [localQ, localSort, setFilters]);
+    writeQueryState({ sort: 'relevant' });
+  }, [localQ, localSort]);
 
   const loadFuse = useCallback(() => {
     if (fuse) return Promise.resolve();
@@ -185,7 +234,7 @@ export function useSearchFilters<T>(
     setLocalYears([]);
     setLocalTags([]);
     setLocalSort('relevant');
-    setFilters({ q: null, year: null, tags: null, sort: null });
+    writeQueryState({ q: '', year: [], tags: [], sort: 'relevant' });
   };
 
   return {
@@ -194,7 +243,7 @@ export function useSearchFilters<T>(
       const nextValue = value || '';
       pendingQRef.current = nextValue;
       setLocalQ(nextValue);
-      void setFilters({ q: nextValue || null });
+      writeQueryState({ q: nextValue });
     },
     yearSet,
     setYearSet: (next: SetUpdater<Set<string>>) => {
@@ -203,7 +252,7 @@ export function useSearchFilters<T>(
 
       pendingYearsRef.current = serializeValues(normalized);
       setLocalYears(normalized);
-      void setFilters({ year: normalized.length ? normalized : null });
+      writeQueryState({ year: normalized });
     },
     tagSet,
     setTagSet: (next: SetUpdater<Set<string>>) => {
@@ -212,13 +261,13 @@ export function useSearchFilters<T>(
 
       pendingTagsRef.current = serializeValues(normalized);
       setLocalTags(normalized);
-      void setFilters({ tags: normalized.length ? normalized : null });
+      writeQueryState({ tags: normalized });
     },
     sort: localSort,
     setSort: (value: SearchSortMode) => {
       pendingSortRef.current = value;
       setLocalSort(value);
-      void setFilters({ sort: value === 'relevant' ? null : value });
+      writeQueryState({ sort: value });
     },
     fuseLoading: Boolean(localQ) && fuseLoading && !fuse,
     fuse,

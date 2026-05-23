@@ -3,24 +3,37 @@ import { useEffect } from 'react';
 import type { Locale } from '@/lib/i18n';
 import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 
-export function CodeCopyClient({ enabled = true }: { enabled?: boolean } = {}) {
-  const locale = useResolvedPreferredLocale();
+export function CodeCopyClient({ enabled = true, locale: initialLocale = 'ja' }: { enabled?: boolean; locale?: Locale } = {}) {
+  const locale = useResolvedPreferredLocale(initialLocale);
 
   useEffect(() => {
     if (!enabled) return;
-    const text = locale === 'ja'
-      ? {
+    const text = {
+      ja: {
           default: 'コピー',
           success: 'コピーしました',
           failure: 'コピーに失敗しました',
           aria: 'コードをコピー',
-        }
-      : {
+        },
+      en: {
           default: 'Copy',
           success: 'Copied',
           failure: 'Failed',
           aria: 'Copy code',
-        };
+        },
+      zh: {
+        default: '复制',
+        success: '已复制',
+        failure: '失败',
+        aria: '复制代码',
+      },
+      fr: {
+        default: 'Copier',
+        success: 'Copié',
+        failure: 'Échec',
+        aria: 'Copier le code',
+      },
+    }[locale];
     const pres = Array.from(document.querySelectorAll<HTMLElement>('article.prose pre'));
     pres.forEach((pre) => {
       const code = pre.querySelector('code');

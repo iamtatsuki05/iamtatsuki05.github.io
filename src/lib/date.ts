@@ -1,4 +1,6 @@
-export type UiLocale = 'ja' | 'en';
+import type { Locale } from '@/lib/i18n';
+
+export type UiLocale = Locale;
 
 function normalizeDate(input: string | Date | undefined | null): Date | null {
   if (!input) return null;
@@ -18,5 +20,6 @@ export function formatDate(dateLike: string, locale: UiLocale = 'ja') {
   const date = normalizeDate(dateLike);
   if (!date) return (dateLike || '').toString().slice(0, 10);
   const { y, m, d } = formatIsoParts(date);
-  return locale === 'ja' ? `${y}/${m}/${d}` : `${y}-${m}-${d}`;
+  if (locale === 'ja' || locale === 'zh') return `${y}/${m}/${d}`;
+  return `${y}-${m}-${d}`;
 }

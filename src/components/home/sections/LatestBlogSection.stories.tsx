@@ -47,7 +47,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const English: Story = {
-  args: { locale: 'en', title: '✨ Latest Blog Posts', ctaLabel: 'See more' },
+  args: { locale: 'en', title: '✨ Latest Blogs', ctaLabel: 'See more' },
 };
 
 export const Mobile: Story = {

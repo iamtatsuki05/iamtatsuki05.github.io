@@ -1,17 +1,31 @@
 "use client";
-import Link from 'next/link';
+import Link from '@/components/compat/Link';
 import { ThemeToggle } from '@/components/site/ThemeToggle';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
-import { usePathname } from 'next/navigation';
+import { usePathname } from '@/lib/compat/navigation';
+import { ThemeProvider } from '@/lib/compat/theme';
 import { useEffect, useMemo, useState } from 'react';
 import { NavLinks } from '@/components/site/NavLinks';
 import { resolveNavItems } from '@/components/site/navItems';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
 import { localeToRouteLocale } from '@/lib/i18n';
 import { MobileMenu } from '@/components/site/MobileMenu';
+import { withBasePath } from '@/lib/url';
 
-export function Header() {
-  const pathname = usePathname() || '';
+type HeaderProps = {
+  currentPath?: string;
+};
+
+export function Header({ currentPath }: HeaderProps) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <HeaderContent currentPath={currentPath} />
+    </ThemeProvider>
+  );
+}
+
+function HeaderContent({ currentPath }: HeaderProps) {
+  const pathname = usePathname(currentPath) || '';
   const [open, setOpen] = useState(false);
   const [iconRotation, setIconRotation] = useState(0);
   const locale = extractLocaleFromPath(pathname) || 'ja';
@@ -44,7 +58,7 @@ export function Header() {
           className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-semibold sm:flex-none"
         >
           <img
-            src="/icon-192x192.png"
+            src={withBasePath('/icon-192x192.png')}
             alt=""
             aria-hidden="true"
             data-testid="header-personal-icon"
@@ -52,19 +66,19 @@ export function Header() {
             style={{ transform: `rotate(${iconRotation}deg)` }}
           />
           <span className="truncate bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
-            Tatsuki Okada - Personal Site
+            Tatsuki Okada
           </span>
         </Link>
         {/* Desktop nav */}
         <nav aria-label="Main navigation" className="hidden sm:flex items-center gap-4">
           <NavLinks items={navItems} activePath={activePath} localePrefix={localePrefix} />
-          <LanguageSwitch />
+          <LanguageSwitch currentPath={pathname} />
           <ThemeToggle />
         </nav>
 
         {/* Mobile buttons */}
         <div className="sm:hidden flex items-center gap-2">
-          <LanguageSwitch />
+          <LanguageSwitch currentPath={pathname} />
           <ThemeToggle />
           <button
             aria-label="Open menu"
