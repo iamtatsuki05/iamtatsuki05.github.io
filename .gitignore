@@ -8,7 +8,10 @@ out
 data/og-cache.json
 src/data/og-cache.json
 .cache
-.agent/
+.agent/*
+!.agent/skills/
+!.agent/skills/**
+.agent/work/
 
 # bundle analyzer
 .next/analyze/
