@@ -9,7 +9,7 @@ const meta = {
   },
   args: {
     url: 'https://example.com/blogs/sample',
-    title: 'Sample Blog Post',
+    title: 'Sample Blogs Article',
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof ShareButtons>;

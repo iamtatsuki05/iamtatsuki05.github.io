@@ -8,7 +8,7 @@ const NAV_ITEMS: NavItemDef[] = [
   { href: '/links/', label: { ja: '🔗 Links', en: '🔗 Links' } },
   { href: '/hobbies/', label: { ja: '🧸 Hobbies', en: '🧸 Hobbies' } },
   { href: '/publications/', label: { ja: '📚 Publications', en: '📚 Publications' } },
-  { href: '/blogs/', label: { ja: '📝 Blog', en: '📝 Blog' } },
+  { href: '/blogs/', label: { ja: '📝 Blogs', en: '📝 Blogs' } },
 ];
 
 export function resolveNavItems(locale: Locale): NavDisplayItem[] {

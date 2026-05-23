@@ -40,7 +40,7 @@ const publications: Publication[] = [
 const links: LinkItem[] = [
   { title: 'GitHub', url: 'https://github.com' },
   { title: 'Twitter', url: 'https://twitter.com' },
-  { title: 'Blog', url: 'https://blog.example.com' },
+  { title: 'Blogs', url: 'https://blog.example.com' },
   { title: 'Extra', url: 'https://extra.example.com' },
 ];
 

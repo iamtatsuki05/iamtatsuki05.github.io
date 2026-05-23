@@ -19,14 +19,14 @@ const metadata = buildPageMetadata({
 });
 const collectionJsonLd = buildCollectionPageJsonLd({
   path: '/blogs/',
-  name: 'Blog',
+  name: 'Blogs',
   description: '技術ブログと記事',
   itemCount: posts.length,
 });
 const breadcrumbJsonLd = buildBreadcrumbJsonLd({
   items: [
     { name: 'Home', url: absoluteUrl('/') },
-    { name: 'Blog', url: absoluteUrl('/blogs/') },
+    { name: 'Blogs', url: absoluteUrl('/blogs/') },
   ],
 });
 ---

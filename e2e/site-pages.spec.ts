@@ -42,7 +42,7 @@ test.describe('Site header (desktop)', () => {
 });
 
 for (const { label, use } of viewports) {
-  test.describe(`Blog index page (${label})`, () => {
+  test.describe(`Blogs index page (${label})`, () => {
     test.use(use);
 
     test.beforeEach(async ({ page }) => {
@@ -297,6 +297,46 @@ for (const { label, use } of viewports) {
       await expect(firstLink).toHaveAttribute('href', /^https?:\/\//);
     });
 
+    if (label === 'mobile') {
+      test('centers the final row of social icon cards', async ({ page }) => {
+        const firstSection = page.locator('section').first();
+        const list = firstSection.locator('ul').first();
+        const cards = firstSection.locator('li');
+
+        await expect(list).toBeVisible();
+        await expect(cards).toHaveCount(5);
+
+        const listBox = await list.boundingBox();
+        expect(listBox).not.toBeNull();
+        const cardBoxes = await cards.evaluateAll((elements) =>
+          elements.map((element) => {
+            const rect = element.getBoundingClientRect();
+            return { x: rect.x, y: rect.y, width: rect.width };
+          }),
+        );
+        const maxY = Math.max(...cardBoxes.map((box) => box.y));
+        const finalRow = cardBoxes.filter((box) => Math.abs(box.y - maxY) < 2);
+        expect(finalRow).toHaveLength(1);
+
+        const rowLeft = Math.min(...finalRow.map((box) => box.x));
+        const rowRight = Math.max(...finalRow.map((box) => box.x + box.width));
+        const rowCenter = (rowLeft + rowRight) / 2;
+        const listCenter = (listBox?.x || 0) + (listBox?.width || 0) / 2;
+
+        expect(Math.abs(rowCenter - listCenter)).toBeLessThanOrEqual(1);
+
+        const iconCenterDeltas = await cards.evaluateAll((elements) =>
+          elements.map((element) => {
+            const cardRect = element.getBoundingClientRect();
+            const iconRect = element.querySelector('.link-grid__icon-link')?.getBoundingClientRect();
+            if (!iconRect) return Number.POSITIVE_INFINITY;
+            return Math.abs((iconRect.x + iconRect.width / 2) - (cardRect.x + cardRect.width / 2));
+          }),
+        );
+        expect(Math.max(...iconCenterDeltas)).toBeLessThanOrEqual(1);
+      });
+    }
+
     if (label === 'desktop') {
       test('keeps current page when clicking external link with ctrl+click simulation', async ({ page }) => {
         const firstExternalLink = page.locator('section').first().locator('a[target="_blank"]').first();
@@ -513,11 +553,31 @@ for (const { label, use } of viewports) {
 
         await expect.poll(() => new URL(page.url()).pathname).toBe('/en-US/blogs/');
         await expect.poll(() => new URL(page.url()).searchParams.get('q')).toBe('LLM');
-        await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
+        await expect(page.getByRole('heading', { level: 1, name: '📝 Blogs' })).toBeVisible();
       });
     }
   });
 }
+
+test.describe('Markdown rendering', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('renders inline code without typography backtick pseudo content', async ({ page }) => {
+    await page.goto('/blogs/2026-05-24-next-to-astro-with-ai/');
+
+    const inlineCode = page.locator('article.prose :not(pre) > code').filter({ hasText: 'bun run build' }).first();
+    await expect(inlineCode).toBeVisible();
+    await expect(inlineCode).toHaveText('bun run build');
+
+    const pseudoContent = await inlineCode.evaluate((element) => ({
+      before: getComputedStyle(element, '::before').content,
+      after: getComputedStyle(element, '::after').content,
+    }));
+
+    expect(['none', 'normal', '""']).toContain(pseudoContent.before);
+    expect(['none', 'normal', '""']).toContain(pseudoContent.after);
+  });
+});
 
 test.describe('Blog detail toc toggle (tablet)', () => {
   test.use({ viewport: { width: 900, height: 900 } });
@@ -605,7 +665,7 @@ test.describe('Localized page variants', () => {
 
   test('renders the English blog index', async ({ page }) => {
     await page.goto('/en-US/blogs/');
-    await expect(page.getByRole('heading', { level: 1, name: '📝 Blog' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: '📝 Blogs' })).toBeVisible();
   });
 
   test('renders the English hobbies page', async ({ page }) => {

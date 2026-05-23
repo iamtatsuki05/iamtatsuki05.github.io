@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { buildArticleJsonLd, buildLanguageAlternates, buildOrganizationJsonLd, buildPageMetadata, buildPersonJsonLd } from '@/lib/seo';
+import { buildArticleJsonLd, buildLanguageAlternates, buildOrganizationJsonLd, buildPageMetadata, buildPersonJsonLd, siteConfig } from '@/lib/seo';
 
 const ORIGINAL_SITE_URL = process.env.SITE_URL;
 
@@ -34,6 +34,17 @@ describe('buildPageMetadata', () => {
     expect(metadata.openGraph?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.twitter?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
     expect(metadata.keywords).toContain('custom');
+  });
+
+  it('keeps the home page title concise without repeating the site name', () => {
+    const metadata = buildPageMetadata({
+      title: siteConfig.defaultTitle.ja,
+      description: siteConfig.description.ja,
+      locale: 'ja',
+      path: '/',
+    });
+
+    expect(metadata.title).toBe('NLP・機械学習エンジニア | 岡田 龍樹 | Tatsuki Okada');
   });
 });
 

@@ -5,7 +5,7 @@ import { LinkGrid } from '@/components/links/LinkGrid';
 
 const items = [
   { title: 'GitHub', url: 'https://github.com', desc: 'Code hosting' },
-  { title: 'Blog', url: 'https://example.com/blog', desc: 'Posts' },
+  { title: 'Blogs', url: 'https://example.com/blog', desc: 'Posts' },
 ];
 
 describe('LinkGrid', () => {

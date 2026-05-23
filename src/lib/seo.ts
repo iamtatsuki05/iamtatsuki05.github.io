@@ -47,8 +47,8 @@ export const siteConfig = {
     en: 'Tatsuki Okada | 岡田 龍樹',
   } satisfies Record<Locale, string>,
   defaultTitle: {
-    ja: '岡田 龍樹(Tatsuki Okada) | NLP・機械学習エンジニア',
-    en: 'Tatsuki Okada(岡田 龍樹) | NLP & Machine Learning Engineer',
+    ja: 'NLP・機械学習エンジニア',
+    en: 'NLP & Machine Learning Engineer',
   } satisfies Record<Locale, string>,
   description: {
     ja: '自然言語処理・機械学習・ソフトウェア開発に取り組むエンジニア、岡田 龍樹のポートフォリオサイト。最新のブログ、研究成果、制作物、活動記録をまとめています。',
@@ -335,7 +335,7 @@ export function buildSiteLinksJsonLd() {
       {
         '@type': 'SiteNavigationElement',
         position: 3,
-        name: 'Blog',
+        name: 'Blogs',
         description: '最新の技術ブログと記事',
         url: absoluteUrl('/blogs/'),
       },

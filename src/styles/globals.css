@@ -74,6 +74,11 @@ a:hover {
   @apply overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700;
 }
 
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+  content: none;
+}
+
 /* Code copy button (injected at runtime) */
 .prose pre { position: relative; }
 .code-copy-btn {

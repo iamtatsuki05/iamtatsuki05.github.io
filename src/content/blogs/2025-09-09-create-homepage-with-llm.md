@@ -101,7 +101,7 @@ GPT に箇条書きでページルーティングや技術スタックを伝え�
 
 ### 2.3 グローバルナビ
 
-* Home | Links | Publications | Blog
+* Home | Links | Publications | Blogs
 * フッター: コピーライト、ライセンス、サイトマップ、RSS（ブログ用）
 
 ---

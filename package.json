@@ -5,7 +5,7 @@
   "packageManager": "bun@1.3.13",
   "scripts": {
     "dev": "bun scripts/sync-blog-markdown.ts && ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1 --port 3000",
-    "build": "bun scripts/sync-blog-markdown.ts && ASTRO_TELEMETRY_DISABLED=1 astro build && bun scripts/prune-static-export.ts && bun scripts/generate-rss.ts",
+    "build": "bun scripts/sync-blog-markdown.ts && bun scripts/generate-hobby-optimized-images.ts && ASTRO_TELEMETRY_DISABLED=1 astro build && bun scripts/prune-static-export.ts && bun scripts/generate-rss.ts",
     "build:analyze": "bun run build",
     "start": "node scripts/serve-static-export.mjs --port 3000 --dir out",
     "lint": "biome check .",
@@ -71,10 +71,11 @@
     "@types/react-dom": "^19.2.3",
     "jsdom": "29.1.1",
     "postcss": "8.5.14",
+    "sharp": "^0.34.5",
     "storybook": "10.3.6",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
-    "vite": "8.0.11",
+    "vite": "^7.3.3",
     "vitest": "4.1.5"
   },
   "browserslist": {
@@ -96,6 +97,7 @@
     "picomatch": "4.0.4",
     "playwright": "1.59.1",
     "rollup": "4.60.3",
-    "serialize-javascript": "7.0.5"
+    "serialize-javascript": "7.0.5",
+    "vite": "^7.3.3"
   }
 }

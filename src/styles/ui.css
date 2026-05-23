@@ -1606,6 +1606,10 @@
 
   .link-grid__icon-link {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline: auto;
     padding: 0.65rem;
     border-radius: 1.35rem;
     background:
@@ -1619,13 +1623,37 @@
   }
 
   .link-grid__item {
-    flex: 0 0 calc((100% - 2rem) / 3);
-    max-width: calc((100% - 2rem) / 3);
+    flex: 0 0 calc((100% - 1rem) / 2);
+    max-width: calc((100% - 1rem) / 2);
+  }
+
+  .link-grid--descriptive .link-grid__item {
+    flex-basis: calc((100% - 1rem) / 2);
+    max-width: calc((100% - 1rem) / 2);
   }
 
   @media (min-width: 640px) {
     .link-grid__item {
       max-width: none;
+    }
+
+    .link-grid--descriptive .link-grid__item {
+      flex-basis: calc((100% - 2rem) / 3);
+      max-width: calc((100% - 2rem) / 3);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .link-grid--descriptive .link-grid__item {
+      flex-basis: calc((100% - 3rem) / 4);
+      max-width: calc((100% - 3rem) / 4);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .link-grid--descriptive .link-grid__item {
+      flex-basis: calc((100% - 4rem) / 5);
+      max-width: calc((100% - 4rem) / 5);
     }
   }
 

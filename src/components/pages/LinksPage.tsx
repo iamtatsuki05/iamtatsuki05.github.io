@@ -24,7 +24,7 @@ export function LinksPage({ locale, links }: { locale: Locale; links: LinkItem[]
               showDescription
               iconSize={48}
               idPrefix={`links-${idx}`}
-              gridClassName="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+              gridClassName="link-grid--descriptive flex flex-wrap justify-center gap-4"
             />
           </SectionShell>
         );

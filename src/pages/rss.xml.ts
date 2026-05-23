@@ -8,7 +8,7 @@ export const GET: APIRoute = async () => {
   const site = getSiteUrlWithBasePath();
   const posts = await getAllPosts();
   const feed = new Feed({
-    title: 'Personal Site Blog',
+    title: `${siteConfig.owner} Blogs`,
     description: siteConfig.description.ja,
     id: site,
     link: site,

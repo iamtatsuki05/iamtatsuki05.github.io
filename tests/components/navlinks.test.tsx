@@ -11,7 +11,7 @@ describe('NavLinks', () => {
   it('renders navigation items and marks active link', () => {
     render(<NavLinks items={items} activePath={activePath} localePrefix={localePrefix} />);
 
-    const blogLink = screen.getByText('📝 Blog');
+    const blogLink = screen.getByText('📝 Blogs');
     expect(screen.getByText('🧸 Hobbies')).toBeVisible();
     expect(blogLink).toBeVisible();
     expect(blogLink.className).toContain('bg-purple-50');

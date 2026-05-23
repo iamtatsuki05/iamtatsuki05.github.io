@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { spawnSync } from 'node:child_process';
 import { buildBlogsFilterPath, resolveHobbies } from '@/lib/data/hobbies';
 
 describe('buildBlogsFilterPath', () => {
@@ -73,4 +74,24 @@ describe('resolveHobbies', () => {
       '/images/hobbies/nextImageExportOptimizer/cute-characters-opt-1200.WEBP',
     ]);
   });
+
+  it('keeps generated optimized bitmap hobby thumbnails out of Git', () => {
+    const optimizedThumbnailSources = resolveHobbies('ja')
+      .map((hobby) => hobby.thumbnailSrc)
+      .filter((src) => src.includes('/nextImageExportOptimizer/'));
+
+    const trackedGeneratedFiles = optimizedThumbnailSources.filter((src) => !isGitIgnored(`public${src}`));
+    expect(trackedGeneratedFiles).toEqual([]);
+  });
 });
+
+function isGitIgnored(filePath: string) {
+  const result = spawnSync('git', ['check-ignore', '--quiet', filePath], {
+    cwd: process.cwd(),
+  });
+
+  if (result.status === 0) return true;
+  if (result.status === 1) return false;
+
+  throw new Error(`git check-ignore failed for ${filePath}`);
+}
