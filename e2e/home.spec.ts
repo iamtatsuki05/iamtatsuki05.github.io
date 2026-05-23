@@ -78,7 +78,7 @@ for (const { label, use } of viewports) {
         );
         const maxY = Math.max(...cardBoxes.map((box) => box.y));
         const finalRow = cardBoxes.filter((box) => Math.abs(box.y - maxY) < 2);
-        expect(finalRow).toHaveLength(2);
+        expect(finalRow).toHaveLength(1);
 
         const rowLeft = Math.min(...finalRow.map((box) => box.x));
         const rowRight = Math.max(...finalRow.map((box) => box.x + box.width));
@@ -86,6 +86,16 @@ for (const { label, use } of viewports) {
         const listCenter = (listBox?.x || 0) + (listBox?.width || 0) / 2;
 
         expect(Math.abs(rowCenter - listCenter)).toBeLessThanOrEqual(1);
+
+        const iconCenterDeltas = await cards.evaluateAll((elements) =>
+          elements.map((element) => {
+            const cardRect = element.getBoundingClientRect();
+            const iconRect = element.querySelector('.link-grid__icon-link')?.getBoundingClientRect();
+            if (!iconRect) return Number.POSITIVE_INFINITY;
+            return Math.abs((iconRect.x + iconRect.width / 2) - (cardRect.x + cardRect.width / 2));
+          }),
+        );
+        expect(Math.max(...iconCenterDeltas)).toBeLessThanOrEqual(1);
       });
 
       test('opens and closes the mobile menu', async ({ page }) => {
@@ -166,7 +176,7 @@ for (const { label, use } of viewports) {
     test('shows localized content', async ({ page }) => {
       await expect(page.getByRole('heading', { level: 1, name: 'Home Page' })).toBeVisible();
       await expect(page.getByText('engineer working in NLP')).toBeVisible();
-      await expect(page.getByRole('heading', { level: 2, name: 'Latest Blog Posts' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 2, name: 'Latest Blogs' })).toBeVisible();
       await expect(page.getByRole('heading', { level: 2, name: 'Recent Publications' })).toBeVisible();
     });
   });

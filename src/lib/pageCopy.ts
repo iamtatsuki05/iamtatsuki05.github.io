@@ -22,8 +22,8 @@ export const blogsPageCopy: Record<Locale, BlogsPageCopy> = {
   },
   en: {
     ...pageMeta.blogs.en,
-    heading: '📝 Blog',
-    breadcrumb: '🏠 Home / 📝 Blog',
+    heading: '📝 Blogs',
+    breadcrumb: '🏠 Home / 📝 Blogs',
   },
 };
 
@@ -80,11 +80,11 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     breadcrumb: '🏠 Home / 🧸 趣味',
     introHeading: '趣味について',
     introBody:
-      'ある日突然ハマり、3ヶ月くらい集中的に没頭してしまいます。各カードから、そのテーマに関連する Blog の絞り込み一覧へ移動できます。',
+      'ある日突然ハマり、3ヶ月くらい集中的に没頭してしまいます。各カードから、そのテーマに関連するブログの絞り込み一覧へ移動できます。',
     gridHeading: '趣味一覧',
     currentFocusLabel: '魅力・ハマった理由',
-    emptyStateLabel: '関連するBlog記事は準備中',
-    ctaLabel: 'Blogを見る',
+    emptyStateLabel: '関連するブログ記事は準備中',
+    ctaLabel: 'ブログを見る',
   },
   en: {
     ...pageMeta.hobbies.en,
@@ -96,6 +96,6 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     gridHeading: 'Hobby List',
     currentFocusLabel: "Why I'm Into It",
     emptyStateLabel: 'Related blog posts are coming soon',
-    ctaLabel: 'Open Blog',
+    ctaLabel: 'Open Blogs',
   },
 };

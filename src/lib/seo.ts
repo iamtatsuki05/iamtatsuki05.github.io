@@ -335,7 +335,7 @@ export function buildSiteLinksJsonLd() {
       {
         '@type': 'SiteNavigationElement',
         position: 3,
-        name: 'Blog',
+        name: 'Blogs',
         description: '最新の技術ブログと記事',
         url: absoluteUrl('/blogs/'),
       },

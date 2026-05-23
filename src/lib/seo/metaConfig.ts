@@ -29,7 +29,7 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
       path: '/ja-JP/blogs/',
     },
     en: {
-      metadataTitle: 'Blog Posts',
+      metadataTitle: 'Blogs',
       metadataDescription:
         'Browse blog posts by Tatsuki Okada about natural language processing, machine learning, and development.',
       path: '/en-US/blogs/',

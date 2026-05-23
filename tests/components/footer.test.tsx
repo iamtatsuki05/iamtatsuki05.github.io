@@ -15,7 +15,7 @@ describe('Footer locale-aware links', () => {
   it('uses en prefix when pathname is /en-US/blogs/', () => {
     setPathname('/en-US/blogs/');
     const { getByText } = render(<Footer />);
-    expect(getByText(/Blog/).getAttribute('href')).toBe('/en-US/blogs/');
+    expect(getByText(/Blogs/).getAttribute('href')).toBe('/en-US/blogs/');
   });
 
   it('uses ja prefix by default', () => {
