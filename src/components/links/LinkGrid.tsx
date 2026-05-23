@@ -14,7 +14,7 @@ export function LinkGrid({
   items,
   showDescription = false,
   iconSize = 48,
-  gridClassName = 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4',
+  gridClassName = 'flex flex-wrap justify-center gap-4 sm:grid sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6',
   idPrefix = 'link-grid',
 }: Props) {
   const renderItem = (key: string, item: LinkItem, index: number, extraClassName?: string) => {
@@ -24,7 +24,10 @@ export function LinkGrid({
     return (
       <li
         key={key}
-        className={clsx('content-reveal-card content-reveal-card--soft text-center card p-4', extraClassName)}
+        className={clsx(
+          'content-reveal-card content-reveal-card--soft link-grid__item text-center card p-4',
+          extraClassName,
+        )}
         style={{ transitionDelay: `${90 + index * 26}ms` }}
       >
         <a

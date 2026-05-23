@@ -57,6 +57,37 @@ for (const { label, use } of viewports) {
     });
 
     if (label === 'mobile') {
+      test('centers the final row of social link cards', async ({ page }) => {
+        const linksSection = page
+          .locator('section')
+          .filter({ has: page.getByRole('heading', { level: 2, name: 'Links' }) })
+          .first();
+        const list = linksSection.locator('ul').first();
+        const cards = linksSection.locator('li');
+
+        await expect(list).toBeVisible();
+        await expect(cards).toHaveCount(5);
+
+        const listBox = await list.boundingBox();
+        expect(listBox).not.toBeNull();
+        const cardBoxes = await cards.evaluateAll((elements) =>
+          elements.map((element) => {
+            const rect = element.getBoundingClientRect();
+            return { x: rect.x, y: rect.y, width: rect.width };
+          }),
+        );
+        const maxY = Math.max(...cardBoxes.map((box) => box.y));
+        const finalRow = cardBoxes.filter((box) => Math.abs(box.y - maxY) < 2);
+        expect(finalRow).toHaveLength(2);
+
+        const rowLeft = Math.min(...finalRow.map((box) => box.x));
+        const rowRight = Math.max(...finalRow.map((box) => box.x + box.width));
+        const rowCenter = (rowLeft + rowRight) / 2;
+        const listCenter = (listBox?.x || 0) + (listBox?.width || 0) / 2;
+
+        expect(Math.abs(rowCenter - listCenter)).toBeLessThanOrEqual(1);
+      });
+
       test('opens and closes the mobile menu', async ({ page }) => {
         const menu = page.locator('#mobile-menu');
 
