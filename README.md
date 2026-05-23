@@ -1,4 +1,4 @@
-# Next.js Static Site
+# Astro Static Site
 
 [English](README.md) | [日本語](README_JA.md)
 
@@ -11,7 +11,7 @@
 
 ### run script
 ```shell
-bun dev                       # start dev server at http://localhost:3000
+bun dev                       # start Astro dev server at http://localhost:3000
 INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
 bun run start                 # serve static out/ on :3000
 bun run e2e:run              # run Playwright E2E tests on Chromium
@@ -61,7 +61,6 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 │   ├── optimize-images.ts
 │   └── utils
 ├── src
-│   ├── app
 │   ├── components
 │   ├── content
 │   │   ├── blogs
@@ -74,8 +73,7 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ├── tests
 ├── package.json
 ├── biome.json
-├── next.config.mjs
-├── next-sitemap.config.mts
+├── astro.config.mjs
 ├── postcss.config.js
 ├── tsconfig.json
 └── vitest.config.mts
@@ -84,4 +82,4 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ## Notes
 - i18n: ja/en routes for Home/Links/Publications/Blog index.
 - Feeds/SEO: `/sitemap.xml`, `/robots.txt`, `/rss.xml` generated at build.
-- GitHub Pages: CI config in `.github/workflows/deploy.yml` sets `SITE_URL` and base path automatically.
+- Cloudflare Pages: `.github/workflows/deploy-cloudflare.yml` builds Astro output into `out/` and publishes it.

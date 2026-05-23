@@ -1,7 +1,7 @@
 "use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link from '@/components/compat/Link';
+import { useRouter } from '@/lib/compat/navigation';
 import { useRef } from 'react';
 
 export type BlogAdjacentLink = {

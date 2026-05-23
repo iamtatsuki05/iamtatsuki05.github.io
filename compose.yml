@@ -11,12 +11,12 @@ services:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_BASE_PATH: ""
+      PUBLIC_BASE_PATH: ""
       SITE_URL: "http://localhost:3000"
       INCLUDE_DRAFTS: "true"
-      NEXT_TELEMETRY_DISABLED: "1"
-      WATCHPACK_POLLING: "true"
+      ASTRO_TELEMETRY_DISABLED: "1"
       CHOKIDAR_USEPOLLING: "true"
-    command: sh -c "bun install && bun dev -H 0.0.0.0 -p 3000"
+    command: sh -c "bun install && bun dev --host 0.0.0.0 --port 3000"
 
   preview:
     build: .
@@ -28,11 +28,11 @@ services:
       - "3001:3000"
     environment:
       NEXT_PUBLIC_BASE_PATH: ""
+      PUBLIC_BASE_PATH: ""
       SITE_URL: "http://localhost:3001"
       INCLUDE_DRAFTS: "false"
-      NEXT_TELEMETRY_DISABLED: "1"
+      ASTRO_TELEMETRY_DISABLED: "1"
     command: sh -c "bun install && bun run build && bun run start"
 
 volumes:
   app-node_modules:
-

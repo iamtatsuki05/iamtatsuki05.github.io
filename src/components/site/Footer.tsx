@@ -1,14 +1,18 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from '@/components/compat/Link';
+import { usePathname } from '@/lib/compat/navigation';
 import { absoluteUrl } from '@/lib/seo';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
 import { resolveNavItems } from '@/components/site/navItems';
 
-export function Footer() {
-  const pathname = usePathname() || '';
+type FooterProps = {
+  currentPath?: string;
+};
+
+export function Footer({ currentPath }: FooterProps) {
+  const pathname = usePathname(currentPath) || '';
   const locale = extractLocaleFromPath(pathname) || 'ja';
   const navLinks = resolveNavItems(locale);
   const sitemapHref = absoluteUrl('/sitemap.xml');

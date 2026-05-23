@@ -21,24 +21,19 @@
       ]
     },
     "types": [
-      "node"
+      "node",
+      "astro/client"
     ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "isolatedModules": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "isolatedModules": true
   },
   "include": [
-    "next-env.d.ts",
     "src/**/*",
     "scripts/**/*",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    "astro.config.mjs",
+    ".astro/types.d.ts"
   ],
   "exclude": [
     "node_modules",

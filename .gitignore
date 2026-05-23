@@ -1,11 +1,14 @@
 node_modules
 .next
+.astro
 out
 .DS_Store
 *.log
+*.tsbuildinfo
 data/og-cache.json
 src/data/og-cache.json
 .cache
+.agent/
 
 # bundle analyzer
 .next/analyze/

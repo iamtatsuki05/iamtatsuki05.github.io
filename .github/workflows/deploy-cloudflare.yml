@@ -28,19 +28,20 @@ jobs:
         with:
           bun-version: 1.3.13
 
-      - name: Restore cache
+      - name: Restore Astro cache
         uses: actions/cache@v4
         with:
           path: |
-            .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+            .astro
+            node_modules/.vite
+          key: ${{ runner.os }}-astro-${{ hashFiles('bun.lockb') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**/*.astro') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('bun.lockb') }}-
+            ${{ runner.os }}-astro-${{ hashFiles('bun.lockb') }}-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build Next.js
+      - name: Build Astro
         env:
           SITE_URL: ${{ github.ref_name == 'main'
             && (secrets.CLOUDFLARE_SITE_URL || format('https://{0}.pages.dev', secrets.CLOUDFLARE_PAGES_PROJECT))
@@ -48,8 +49,11 @@ jobs:
             && (secrets.CLOUDFLARE_SITE_URL_DEVELOP || format('https://develop.{0}.pages.dev', secrets.CLOUDFLARE_PAGES_PROJECT))
             || format('https://{0}.{1}.pages.dev', github.ref_name, secrets.CLOUDFLARE_PAGES_PROJECT) }}
           NEXT_PUBLIC_BASE_PATH: ${{ secrets.CLOUDFLARE_BASE_PATH || '' }}
+          PUBLIC_BASE_PATH: ${{ secrets.CLOUDFLARE_BASE_PATH || '' }}
           NEXT_PUBLIC_ASSET_VERSION: ${{ github.sha }}
+          PUBLIC_ASSET_VERSION: ${{ github.sha }}
           NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
+          PUBLIC_GOOGLE_ANALYTICS_ID: ${{ secrets.GOOGLE_ANALYTICS_ID }}
           INCLUDE_DRAFTS: 'false'
         run: bun run build
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Preview } from '@storybook/react';
-import { ThemeProvider } from 'next-themes';
-import '../src/app/globals.css';
+import { ThemeProvider } from '@/lib/compat/theme';
+import '../src/styles/globals.css';
 
 const preview: Preview = {
   parameters: {
@@ -11,9 +11,6 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
-    },
-    nextjs: {
-      appDirectory: true,
     },
   },
   decorators: [
