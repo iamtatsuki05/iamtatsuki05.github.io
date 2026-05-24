@@ -1,70 +1,102 @@
 ---
 title: 我几乎把从 Next.js 迁移到 Astro 的工作都交给了 AI
-summary: 这篇文章记录了我如何让 Codex 负责把本站从 Next.js 迁移到 Astro，并完成实现、验证和后续修正。
+summary: 记录我把这个网站从 Next.js 迁移到 Astro 的过程，从实现到验证基本都交给了 Codex。
 headerAlt: 显示代码的屏幕
 ---
 
-## 前言
+## 开始
 
-这个网站原本使用 Next.js 的静态导出运行。它是一个常见的个人网站：可以写博客，有链接集和公开成果列表，也有日英切换和深色模式。
+我把这个网站从 Next.js 迁移到了 Astro。
 
-不过从实际情况看，它几乎就是一个静态网站。Next.js 本身并没有造成严重问题，但 App Router、静态 export、图片优化以及 Cloudflare Pages 周边配置，对这个网站来说开始显得有些重。
+这不是因为我讨厌 Next.js。也不是因为 Next.js 让我遇到了多严重的问题。只是重新看这个网站实际在做什么时，我觉得它有点太重了。博客、链接集、公开成果列表、语言切换、深色模式。说到底，它基本上是一个静态网站。
 
-于是我把它迁移到了 Astro。这一次，我不仅把实现交给 Codex，也让它负责调查、迁移前后的测量、测试和 review 后的修正。
+但我还背着 App Router、static export、图片优化、Cloudflare Pages 的配置。它当然能工作，只是相对于网站规模来说，随身行李有点多。
 
-说成“全部交给 AI 做”听起来很粗糙，但实际做法是先给出非常具体的完成条件，再让它在这个范围内持续推进。本文就是这次过程的记录。
+所以我迁到了 Astro。
 
-## 我是怎么下指令的
+这次我没有自己一点点改，而是把相当大的一部分交给了 Codex。实现、迁移前后的测量、测试、失败点修复、reviewer 的反馈处理，基本都作为一整段工作交给了它。
 
-最初给 Codex 的并不是简单一句“迁移到 Astro”。
+说「交给 AI」听起来有点粗糙。实际更接近于：把不能弄坏的东西细细列出来，然后让它在这个范围内一直跑到结束。
 
-我要求它保持现有外观、URL、SEO、可访问性和 Cloudflare Pages 的部署路径；比较迁移前后的 build time、输出大小和 Lighthouse 指标；通过 lint、类型检查、Vitest、E2E 和 preview smoke check；最后再让另一个 read-only reviewer 检查。
+## 我想改变什么
 
-让 AI 做事时，只给实现方向是危险的。尤其是 framework migration，有时页面看起来能显示，但 sitemap 或 OGP 已经坏了。所以这次我先把“做到什么才算完成”写清楚。
+这次迁移的目的不是追逐流行框架。
 
-## 先测量迁移前状态
+这个网站的大部分页面都在构建时确定。没有登录，也几乎不需要服务器动态返回内容。确实有 React component，但并不是所有东西都需要一直在 client-side 运行。
 
-作业一开始，Codex 先测量了 Next.js 版本的 baseline。
+既然如此，把静态网站当作静态网站来处理会更自然。
 
-它执行了 `bun run build`，检查输出大小和主要 HTML 的大小，并运行 lint、Vitest、Playwright E2E，以及 mobile / desktop 的 Lighthouse。
+换成 Astro 后，页面放在 `src/pages/**`，共用 layout 由 Astro 侧持有。只有确实需要客户端行为的 React component 继续作为 island 保留。这个分法很适合我的网站。
 
-这一步很朴素，但很有价值。迁移不是“修好坏掉的东西”，而是“不破坏已经正常工作的东西，并把底层替换掉”。没有 baseline，就没有判断依据。
+不过，framework migration 并不是画面看起来一样就结束了。URL、SEO、OGP、sitemap、RSS、Cloudflare Pages、accessibility、语言切换、theme toggle，这些地方都很容易漏。
 
-## 改了什么
+所以一开始，我就把「不能弄坏什么」比较细地交给了 Codex。
 
-实现上，`src/app/**` 下的 Next.js App Router 被移除，改成了 `src/pages/**` 下的 Astro routes。共通 layout 移到 `BaseLayout.astro`，现有 React component 只在需要的地方作为 Astro island 保留。
+## 我怎么让 Codex 做
 
-这不是完全重写。相反，UI component 尽量保持原样。真正改变的是 framework 边界。
+我没有只对 Codex 说「迁移到 Astro」。
 
-例如，`next/link`、`next/image`、`next/navigation` 被很小的 local wrapper 替代。`next-themes` 和 `nuqs` 也被移除，只在本网站需要的范围内做了本地实现。
+我要求它保留现有外观、URL、SEO、accessibility、Cloudflare Pages 的部署路径。还要求比较迁移前后的 build time、输出大小、Lighthouse 结果；通过 lint、typecheck、Vitest、E2E、preview smoke check；最后再让另一个 read-only reviewer 看一遍。
 
-RSS、sitemap、robots、metadata、OGP 和 JSON-LD 也改由 Astro 侧生成。Cloudflare Pages 的 workflow 也调整为 Astro build 前提。
+大概就是这样交代的。
 
-## 没有那么顺利的地方
+把工作交给 AI 时，只给实现方向是危险的。尤其是迁移工作。页面能显示，并不代表 sitemap 正确、OGP meta 没掉、Cloudflare 的 cache header 没指向旧路径。
 
-最卡的是 hydration。
+所以这次我先约束的是完成条件，而不是具体实现方法。
 
-在 Next.js 里自然作为 client component 运行的东西，在 Astro 里如果不显式写 `client:load` 等 directive，就不会运行。第一次 E2E 很正常地失败了。
+## 先取 baseline
 
-具体来说，英文页面上的 language switch active state 错了，theme toggle 停留在 placeholder 状态，Publications 的 filter 也不能工作。从英文页面进入 blog detail 时，日期仍然显示成日文格式。
+迁移前，Codex 先测了 Next.js 版的状态。
 
-Codex 一边读 E2E failure log，一边查看 DOM，然后逐步修复。它从 Astro 把当前 pathname 传给 Header，把 theme provider 放进 Header island，并让 Publications page 本身 hydrate。
+它跑了 `bun run build`，检查输出大小、代表性 HTML 的大小，运行 lint、Vitest、Playwright E2E，并收集 mobile / desktop 的 Lighthouse 结果。
 
-如果我自己手动迁移，大概也会做同样的事情：看 Playwright 日志、看 DOM、修正。Codex 让这个循环快了很多。
+这一步不华丽，但很重要。迁移不是修坏掉的东西，而是替换一个已经能工作的东西。如果没有 baseline，就很难判断结果到底是变好了、坏了，还是只是刚好能动。
 
-## Review 发现了什么
+这次 build time 和输出大小改善得很明显，所以提前取 baseline 很值得。
 
-基本能运行之后，我让另一个 read-only reviewer 看了差分。这里发现了几个重要问题。
+## 实际改变了什么
 
-sitemap 里还残留了实际上不存在的 publication detail URL。blog article 的 `article:published_time` 等 OGP meta 也丢了。Cloudflare 的 headers 仍然是 `/_next/static/*`，没有改成 Astro 的 `/_astro/*`。
+Next.js App Router 的 `src/app/**` 消失了，换成了 Astro 的 `src/pages/**`。
+共用 layout 移到了 `BaseLayout.astro`，已有的 React component 只在需要的地方作为 Astro island 留下。
 
-这些问题普通 E2E 很难发现。页面会显示，链接也能点，但 SEO 和部署细节可能已经坏了。
+这不是一次完全重写。反而 UI component 尽量保留了下来。我想改变的不是外观，而是和 framework 的边界。
 
-收到指摘后，Codex 修复了 sitemap、article meta、cache header 和 base path 支持。最后还直接检查生成后的 HTML，确认 meta tag 确实输出了。
+我放了小的 local wrapper 来替代 `next/link`、`next/image`、`next/navigation`。`next-themes` 和 `nuqs` 也移除了，只留下这个网站实际需要的行为，用 local 实现处理。
+
+RSS、sitemap、robots、metadata、OGP、JSON-LD 也改成在 Astro 侧生成。Cloudflare Pages 的 workflow 也改成以 Astro build 为前提。
+
+这些变化不花哨。但要把 framework 的前提一个个拆掉，中心工作本来就是这种朴素的替换。
+
+## 卡住的地方
+
+最麻烦的是 hydration。
+
+在 Next.js 中自然作为 client component 运行的东西，到了 Astro 里，如果不显式加上 `client:load` 之类的 directive，就不会运行。最初的 E2E 很正常地失败了。
+
+英文页面里 language switch 的 active state 会错。theme toggle 一直停在 placeholder。Publications 的 filter 不工作。从英文页面进入 blog detail 时，日期还是日语格式。
+
+这些都是只粗略看画面时很容易漏掉的问题。
+
+Codex 一边读 E2E 的 failure log 一边修。把当前 pathname 从 Astro 传给 Header，把 theme provider 放进 Header island，让 Publications page 自身 hydrate。做的事情和我自己手动迁移时会做的基本一样。
+
+不同的是这个循环很快。读日志，提出假设，修改，再跑测试，它一直比较耐心地重复这套流程。
+
+## reviewer 捡到的东西
+
+整体能跑之后，我让另一个 read-only reviewer 看了差分。
+这里捡到的东西很关键。
+
+sitemap 里还残着实际并不存在的 publication detail URL。blog article 的 `article:published_time` 等 OGP meta 也掉了。Cloudflare headers 仍然指向 `/_next/static/*`，没有作用到 Astro 的 `/_astro/*`。
+
+这些只靠普通地操作页面很难发现。页面能显示，链接也能点。但 SEO 和部署细节已经坏了。
+
+收到指摘后，Codex 修了 sitemap、article meta、cache header、base path 对应。最后还直接看了生成后的 HTML，确认 meta tag 真的存在。
+
+这个 review 加得很好。AI 写的东西再让 AI 看，也可能沿着同一套前提漏掉同样的地方。换一个视角，能捡到的东西会变。
 
 ## 数字
 
-最终通过了以下检查：
+最终通过了这些检查。
 
 - TypeScript
 - lint
@@ -72,7 +104,7 @@ sitemap 里还残留了实际上不存在的 publication detail URL。blog artic
 - Chromium E2E: 50 tests
 - Storybook build
 - Astro build
-- Playwright visual smoke
+- Playwright 的 visual smoke
 
 | 项目 | Next.js | Astro |
 | --- | ---: | ---: |
@@ -80,28 +112,20 @@ sitemap 里还残留了实际上不存在的 publication detail URL。blog artic
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-build time 明显缩短，输出大小也差不多减半。
+build time 明显缩短了。输出大小也差不多减半。
 
-Lighthouse 在 desktop 的所有对象 route 上都有改善。mobile 也几乎都改善了。只有 blog detail 的 performance score 从 `72` 到 `71` 少了 1 分，但 LCP 从 `11040ms` 改善到 `8836ms`，TBT 从 `65ms` 改善到 `28ms`，所以这更像 Lighthouse 的权重或运行波动，而不是用户能感受到的退步。
+Lighthouse 在 desktop 的所有检查 route 上都有改善。mobile 也几乎都改善了。只有 blog detail 的 performance score 从 `72` 到 `71`，降了 1 分，但 LCP 从 `11040ms` 到 `8836ms`，TBT 从 `65ms` 到 `28ms`，实际指标是改善的。
 
-对这个规模的个人网站来说，这已经足够。
+对这个规模的个人网站来说，结果已经足够好。
 
-## 做完之后的想法
+## 结束
 
-即使说把工作交给 AI，也不是完全放着不管。
+这次迁移让我觉得，越是把工作交给 AI，越需要把完成条件写清楚。
 
-这次人类这边最重要的工作不是实现，而是决定“什么不能坏”。URL、SEO、部署、performance、测试。先把这些写清楚，AI 就能相当坚持地推进。
+如果只说「迁移到 Astro」，大概也能到网站看起来能动的程度。可是把 URL、SEO、deploy、performance、E2E、review 都算进去，最开始写清楚条件就很有意义。
 
-反过来，如果不写这些，很容易变成只是看起来能动的迁移。
+人这边做的最大工作，不是写代码，而是决定什么不能坏。
 
-baseline 也麻烦但值得做。迁移之后可以不只是说“感觉变快了”，而是用数字说明哪里变快、变了多少。这次 build time 和输出大小的改善尤其明显。
+个人网站这种规模，只要 build 和 test 的循环已经存在，AI 主导的 framework migration 是很现实的。只是如果人没有掌握「怎样才算完成」，它很容易停在「看起来能动」。
 
-另外，让另一个 reviewer 看也很有效。就像人会漏看自己写的代码，AI 也会漏看自己的工作。另一个视点发现了 sitemap 和 OGP 的问题。
-
-## 结语
-
-这次迁移很大程度上由 AI 主导。不过并不是 AI 自动“感觉很好”地做完，而是先给细致条件，让它读日志，失败就修，最后再从另一个视角检查。
-
-对于有 build 和 test loop 的个人网站来说，AI 主导的 framework migration 已经相当现实。
-
-下次再做的话，我会先加入 SEO metadata 和 sitemap URL 的 snapshot test，再开始迁移。因为这次 reviewer 发现了这些问题，所以之后应该从一开始就用机器检查守住。
+下次再做类似迁移，我会先加 SEO metadata 和 sitemap URL 的 snapshot test。因为这次 reviewer 捡到的正是这些地方，所以一开始就应该让机器守住。

@@ -6,61 +6,93 @@ headerAlt: A screen showing code
 
 ## Introduction
 
-This site originally ran as a static export from Next.js. It was a typical personal site: blog posts, links, publications, Japanese/English language switching, and dark mode.
+I moved this site from Next.js to Astro.
 
-In practice, though, it was almost entirely static. Next.js was not causing a serious problem, but App Router, static export, image optimization, and the Cloudflare Pages setup started to feel heavier than the site needed.
+It was not because I had started to hate Next.js. I was not in serious trouble either. But when I looked at what this site actually does, Next.js had begun to feel a little too large for it. It has a blog, links, publications, language switching, and dark mode. Most of it is a static site.
 
-So I migrated it to Astro. This time I asked Codex to handle not only the implementation, but also the investigation, before-and-after measurements, tests, and review follow-up.
+Still, I was carrying App Router, static export, image optimization, and Cloudflare Pages configuration. It worked, of course, but the site had more baggage than its size called for.
 
-Saying "I let AI do everything" sounds rough, but the actual process was more like giving it detailed completion criteria and letting it keep working inside those boundaries. This article is a record of that process.
+So I moved it to Astro.
 
-## How I Asked
+This time I did not rewrite it little by little by hand. I gave a large part of the work to Codex. Not only the implementation, but also before-and-after measurements, tests, fixes for failed checks, and review follow-up.
 
-The first instruction I gave Codex was not just "migrate this to Astro."
+"I let AI do it" sounds a bit sloppy. What actually happened was closer to giving it a detailed list of things it must not break, then letting it keep going until the work was done.
 
-I specified that the existing appearance, URLs, SEO, accessibility, and Cloudflare Pages deployment path had to be preserved. I also asked it to compare build time, output size, and Lighthouse scores before and after the migration; to pass lint, typecheck, Vitest, E2E, and preview smoke checks; and finally to ask a separate read-only reviewer to inspect the result.
+## What I Wanted to Change
 
-When delegating to AI, it is risky to provide only an implementation direction. Framework migrations can look fine in the browser while silently breaking sitemap entries or OGP metadata. This time I constrained the work by defining what "done" meant up front.
+The goal was not to jump onto a fashionable framework.
 
-## Measuring the Baseline First
+Most pages on this site are decided at build time. There is no login. There is almost no need to return dynamic content from a server. There are React components, but they do not all need to run on the client all the time.
 
-At the start, Codex measured the existing Next.js version.
+If so, it makes sense to treat the site as a static site.
+
+With Astro, pages live under `src/pages/**`, and the shared layout can be owned by Astro. Only the React components that need client-side behavior stay as islands. That split fit this site well.
+
+But a framework migration is not done just because the page looks right. URLs, SEO, OGP, sitemap, RSS, Cloudflare Pages, accessibility, language switching, and the theme toggle are all easy places to miss things.
+
+So before anything else, I gave Codex a fairly detailed list of what it was not allowed to break.
+
+## How I Asked Codex
+
+I did not simply tell Codex, "migrate this to Astro."
+
+I told it to preserve the existing appearance, URLs, SEO, accessibility, and Cloudflare Pages deployment path. I told it to compare build time, output size, and Lighthouse results before and after the migration. I also asked it to pass lint, typecheck, Vitest, E2E, and preview smoke checks, then have a separate read-only reviewer inspect the result.
+
+That was the shape of the request.
+
+When delegating to AI, an implementation direction alone is not enough. This is especially true for migrations. A page can display correctly while the sitemap is wrong, OGP metadata is missing, or Cloudflare cache headers still point at the old path.
+
+So this time, I constrained the definition of done before I cared about the implementation details.
+
+## Taking a Baseline First
+
+Before the migration, Codex measured the existing Next.js version.
 
 It ran `bun run build`, checked output size, inspected representative HTML sizes, ran lint, Vitest, Playwright E2E, and collected Lighthouse results for mobile and desktop.
 
-This is not glamorous, but it was worth doing. Migration is not about fixing something broken; it is about replacing something that works without losing behavior. Without a baseline, there is nothing concrete to compare against.
+This was plain work, but it mattered a lot. Migration is not fixing something broken. It is replacing something that already works. Without a baseline, it is hard to tell whether the result is better, broken, or merely lucky.
 
-## What Changed
+In this case, build time and output size improved clearly, so I was glad the baseline existed.
 
-The implementation removed the Next.js App Router under `src/app/**` and replaced it with Astro routes under `src/pages/**`. The shared layout moved into `BaseLayout.astro`, and existing React components stayed as Astro islands only where they were still needed.
+## What Actually Changed
 
-It was not a full rewrite. In fact, most UI components remained as close as possible to the original versions. The main changes were at the framework boundary.
+The Next.js App Router under `src/app/**` disappeared and was replaced by Astro routes under `src/pages/**`.
+The shared layout moved to `BaseLayout.astro`, and the existing React components remained only where they were needed as Astro islands.
 
-For example, small local wrappers replaced `next/link`, `next/image`, and `next/navigation`. `next-themes` and `nuqs` were also removed, with only the behavior this site needed reimplemented locally.
+It was not a full rewrite. If anything, I kept the UI components as much as possible. What I wanted to change was not the appearance, but the boundary with the framework.
 
-RSS, sitemap, robots, metadata, OGP, and JSON-LD are now generated from the Astro side. The Cloudflare Pages workflow was updated for the Astro build as well.
+Small local wrappers replaced `next/link`, `next/image`, and `next/navigation`. I also removed `next-themes` and `nuqs`, and kept only the behavior this site actually needs as local code.
 
-## Where It Was Not Smooth
+RSS, sitemap, robots, metadata, OGP, and JSON-LD are now generated on the Astro side. The Cloudflare Pages workflow was updated for the Astro build too.
+
+None of this is flashy. But removing framework assumptions one by one mostly looks like this kind of steady replacement.
+
+## Where It Got Stuck
 
 The biggest issue was hydration.
 
-Components that had naturally run as client components in Next.js did not work in Astro unless directives such as `client:load` were set explicitly. The first E2E run failed in ordinary ways.
+Things that naturally ran as client components in Next.js do not run in Astro unless directives such as `client:load` are set explicitly. The first E2E run failed normally.
 
-For example, the language switch active state was wrong on English pages, the theme toggle stayed in a placeholder state, and the Publications filter did not work. When entering a blog detail page from an English page, the date still appeared in Japanese format.
+The active state of the language switch was wrong on English pages. The theme toggle stayed as a placeholder. The Publications filter did not work. When entering a blog detail page from an English page, the date was still formatted in Japanese.
 
-Codex fixed these while reading the E2E failure logs and inspecting the DOM. It passed the current pathname from Astro to the Header, placed the theme provider inside the Header island, and hydrated the Publications page itself.
+These are exactly the kind of problems that are easy to miss if you only glance at the page.
 
-If I had done the migration by hand, I would probably have gone through the same loop of reading Playwright logs and inspecting the DOM. Codex made that loop much faster.
+Codex fixed them while reading the E2E failure logs. It passed the current pathname from Astro to the Header, put the theme provider inside the Header island, and hydrated the Publications page itself. The work was the same kind of thing I would have done by hand.
 
-## What the Review Caught
+The difference was the speed of the loop. It kept reading logs, making a hypothesis, fixing the code, and running the tests again.
 
-After the site was working, I asked a separate read-only reviewer to inspect the diff. That caught several important details.
+## What the Reviewer Caught
 
-The sitemap still contained publication detail URLs that did not actually exist. Article OGP metadata such as `article:published_time` had disappeared. Cloudflare headers still targeted `/_next/static/*` instead of Astro's `/_astro/*`.
+After the site worked end to end, I asked a separate read-only reviewer to inspect the diff.
+That caught several important details.
 
-These issues are hard to catch with ordinary E2E tests. The page displays, links work, and the UI feels fine, but SEO and deployment details can still be broken.
+The sitemap still contained publication detail URLs that did not actually exist. Blog article OGP metadata such as `article:published_time` had disappeared. Cloudflare headers still targeted `/_next/static/*` instead of Astro's `/_astro/*`.
 
-After the review, Codex fixed the sitemap, article metadata, cache headers, and base path handling. At the end it inspected the generated HTML directly to confirm that the meta tags were actually present.
+These are hard to notice by just using the site. The page displays. Links work. But SEO and deployment details are still broken.
+
+After the review, Codex fixed the sitemap, article metadata, cache headers, and base path handling. At the end, it inspected the generated HTML directly and confirmed that the meta tags were really present.
+
+That review was worth adding. When AI reviews what AI wrote, it can miss things under the same assumptions. A separate perspective changes what gets caught.
 
 ## Numbers
 
@@ -80,28 +112,20 @@ In the final state, the following checks passed:
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-Build time became much shorter, and the output size was almost cut in half.
+Build time became much shorter. Output size was about cut in half.
 
-Lighthouse improved on every checked desktop route. Mobile improved on almost every route as well. The blog detail performance score dropped by one point, from `72` to `71`, but LCP improved from `11040ms` to `8836ms` and TBT improved from `65ms` to `28ms`, so the score difference looked more like Lighthouse variance than a real user-visible regression.
+Lighthouse improved on every checked desktop route. Mobile improved on almost every route too. The blog detail performance score dropped by one point, from `72` to `71`, but LCP improved from `11040ms` to `8836ms`, and TBT improved from `65ms` to `28ms`.
 
-For a personal site of this size, that is more than good enough.
-
-## What I Learned
-
-Even if you say you are delegating everything to AI, you cannot simply walk away.
-
-The most important human work here was not implementation. It was deciding what must not break: URLs, SEO, deployment, performance, and tests. If you write those down first, AI can keep working surprisingly persistently.
-
-If you skip that, you are likely to end up with a migration that only looks correct.
-
-Taking a baseline is also worth the trouble. After the migration, you can say not just that the site feels faster, but where and by how much. In this case, the build time and output size improvements were especially clear.
-
-Using a separate reviewer also helped. Just as humans miss issues in their own code, AI misses issues in its own work. A different perspective caught the sitemap and OGP problems.
+For a personal site of this size, that is a good result.
 
 ## Closing
 
-This migration was largely AI-led. Still, it was not that AI magically handled everything. The process was: define detailed conditions, make it read logs, fix failures, and then review the result from another angle.
+What I felt from this migration is that the more I delegate to AI, the more clearly I need to write the completion criteria.
 
-For a personal site with a solid build and test loop, AI-led framework migration feels very realistic.
+If I had only said "migrate this to Astro," it probably would have reached the point where the site appeared to work. But once URLs, SEO, deployment, performance, E2E, and review are included, defining the conditions first matters a lot.
 
-Next time, I would add snapshot tests for SEO metadata and sitemap URLs before starting the migration. Since the reviewer caught those issues this time, they should be guarded mechanically from the beginning.
+The biggest human job was not writing code. It was deciding what must not break.
+
+For a personal site of this size, if the build and test loop already exists, AI-led framework migration is very realistic. But if the human side does not own the definition of done, the migration can easily stop at "it looks fine."
+
+Next time I do a similar migration, I would add snapshot tests for SEO metadata and sitemap URLs before starting. Those were the points the reviewer caught this time, so I want them guarded mechanically from the beginning.
