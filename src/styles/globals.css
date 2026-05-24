@@ -71,7 +71,43 @@ a:hover {
 }
 
 .prose pre {
-  @apply overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700;
+  @apply overflow-x-auto rounded-md border border-gray-200 bg-gray-950 text-gray-100 shadow-sm dark:border-gray-700 dark:bg-[#0b1020];
+}
+
+.prose pre code {
+  @apply bg-transparent text-inherit;
+}
+
+.prose code .token.keyword,
+.prose code .token.operator {
+  color: #c084fc;
+}
+
+.prose code .token.string,
+.prose code .token.attr-value {
+  color: #86efac;
+}
+
+.prose code .token.number,
+.prose code .token.boolean,
+.prose code .token.constant {
+  color: #fcd34d;
+}
+
+.prose code .token.function,
+.prose code .token.class-name {
+  color: #93c5fd;
+}
+
+.prose code .token.comment {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.prose .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
 }
 
 .prose :not(pre) > code::before,
