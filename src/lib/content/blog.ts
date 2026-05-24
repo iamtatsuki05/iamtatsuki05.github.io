@@ -21,6 +21,7 @@ export type BlogPost = {
   thumbnail?: string;
   headerImage?: string;
   headerAlt?: string;
+  aiAssisted?: boolean;
   draft?: boolean;
   html?: string;
   headings?: { id: string; title: string; level: number }[];
@@ -64,6 +65,7 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
         thumbnail: fm.thumbnail,
         headerImage: fm.headerImage,
         headerAlt: fm.headerAlt,
+        aiAssisted: fm.aiAssisted,
         draft: fm.draft,
       }, locale);
     },
@@ -97,6 +99,7 @@ export async function getPostBySlug(slug: string, locale: Locale = 'ja'): Promis
         thumbnail: fm.thumbnail,
         headerImage: fm.headerImage,
         headerAlt: fm.headerAlt,
+        aiAssisted: fm.aiAssisted,
         draft: fm.draft,
         html: contentHtml,
         headings,

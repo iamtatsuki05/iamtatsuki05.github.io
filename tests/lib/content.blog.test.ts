@@ -25,4 +25,12 @@ describe('content/blog', () => {
     expect(post?.title).toContain('Astro');
     expect(post?.html).toContain('Codex');
   });
+
+  it('loads AI-assisted blog metadata', async () => {
+    const post = await getPostBySlug('2026-05-24-bonsai-dotfiles-ai-agent-era');
+    const translated = await getPostBySlug('2026-05-24-bonsai-dotfiles-ai-agent-era', 'en');
+
+    expect(post?.aiAssisted).toBe(true);
+    expect(translated?.aiAssisted).toBe(true);
+  });
 });

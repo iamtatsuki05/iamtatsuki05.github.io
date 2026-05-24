@@ -17,3 +17,10 @@ export const blogTranslationNotice: Record<Exclude<Locale, 'ja'>, {
     originalLinkLabel: 'Lire l’original japonais',
   },
 };
+
+export const blogAiWritingNotice: Record<Locale, string> = {
+  ja: 'この記事は AI の補助を使って執筆しています。',
+  en: 'This article was written with AI assistance.',
+  zh: '本文在 AI 辅助下撰写。',
+  fr: 'Cet article a été rédigé avec l’aide de l’IA.',
+};
