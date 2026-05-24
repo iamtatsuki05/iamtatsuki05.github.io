@@ -86,7 +86,7 @@ const googleAnalyticsId = getGoogleAnalyticsId();
   </head>
   <body class="min-h-screen flex flex-col">
     <Header currentPath={Astro.url.pathname} client:load />
-    <main class="container mx-auto max-w-screen-2xl px-4 pt-28 pb-8 sm:py-8 flex-1">
+    <main class="container mx-auto max-w-screen-2xl px-4 pt-28 pb-8 flex-1">
       <slot />
     </main>
     <Footer currentPath={Astro.url.pathname} client:load />

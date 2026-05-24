@@ -34,10 +34,16 @@ test.describe('Site header (mobile)', () => {
 test.describe('Site header (desktop)', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
-  test('keeps the existing sticky header behavior', async ({ page }) => {
+  test('stays fixed while scrolling down the page', async ({ page }) => {
     await page.goto(localizedPath('ja', '/blogs/'));
 
-    await expect(page.locator('header').first()).toHaveCSS('position', 'sticky');
+    const header = page.locator('header').first();
+    await expect(header).toHaveCSS('position', 'fixed');
+
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }));
+
+    await expect.poll(async () => Math.round((await header.boundingBox())?.y ?? -1)).toBe(0);
+    await expect(header).toBeVisible();
   });
 });
 
