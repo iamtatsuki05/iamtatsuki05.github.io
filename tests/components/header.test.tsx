@@ -39,7 +39,7 @@ describe('Header', () => {
     expect(icon).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('rotates the personal icon with page scroll', () => {
+  it('gets pressed into a stronger squash reaction with page scroll', () => {
     mockReducedMotion(false);
     render(<Header />);
 
@@ -48,10 +48,13 @@ describe('Header', () => {
       window.dispatchEvent(new Event('scroll'));
     });
 
-    expect(screen.getByTestId('header-personal-icon')).toHaveStyle({ transform: 'rotate(84deg)' });
+    expect(screen.getByTestId('header-personal-icon')).toHaveStyle({
+      transform: 'translate3d(0, 3px, 0) scaleX(1.240) scaleY(0.760) rotate(-3deg)',
+      transformOrigin: '50% 85%',
+    });
   });
 
-  it('does not rotate the icon when reduced motion is requested', () => {
+  it('keeps the icon still when reduced motion is requested', () => {
     mockReducedMotion(true);
     render(<Header />);
 
@@ -60,7 +63,10 @@ describe('Header', () => {
       window.dispatchEvent(new Event('scroll'));
     });
 
-    expect(screen.getByTestId('header-personal-icon')).toHaveStyle({ transform: 'rotate(0deg)' });
+    expect(screen.getByTestId('header-personal-icon')).toHaveStyle({
+      transform: 'translate3d(0, 0px, 0) scaleX(1.000) scaleY(1.000) rotate(0deg)',
+      transformOrigin: '50% 85%',
+    });
   });
 
   it('keeps the title area shrinkable on mobile so controls do not overlap', () => {
