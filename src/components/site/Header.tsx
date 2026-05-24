@@ -16,6 +16,26 @@ type HeaderProps = {
   currentPath?: string;
 };
 
+const STILL_ICON_TRANSFORM = 'translate3d(0, 0px, 0) scaleX(1.000) scaleY(1.000) rotate(0deg)';
+
+function getScrollIconTransform(scrollY: number) {
+  if (!Number.isFinite(scrollY) || scrollY <= 0) {
+    return STILL_ICON_TRANSFORM;
+  }
+
+  const impactPhase = scrollY % 120;
+  const impactSquash = impactPhase < 28 ? 1 - impactPhase / 28 : 0;
+  const reboundStretch = impactPhase >= 28 && impactPhase < 68 ? 1 - Math.abs((impactPhase - 48) / 20) : 0;
+  const tiredSquash = Math.min(scrollY / 900, 1) * 0.08;
+  const squash = Math.min(1, Math.max(impactSquash, Math.abs(Math.sin(scrollY / 38)) * 0.35) + tiredSquash);
+  const scaleX = 1 + squash * 0.24 - reboundStretch * 0.08;
+  const scaleY = 1 - squash * 0.24 + reboundStretch * 0.18;
+  const hop = Math.round(impactSquash * 3 - reboundStretch * 5);
+  const rotation = Math.round(Math.sin(scrollY / 64) * 3 - impactSquash);
+
+  return `translate3d(0, ${hop}px, 0) scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(3)}) rotate(${rotation}deg)`;
+}
+
 export function Header({ currentPath }: HeaderProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -27,7 +47,7 @@ export function Header({ currentPath }: HeaderProps) {
 function HeaderContent({ currentPath }: HeaderProps) {
   const pathname = usePathname(currentPath) || '';
   const [open, setOpen] = useState(false);
-  const [iconRotation, setIconRotation] = useState(0);
+  const [iconTransform, setIconTransform] = useState(STILL_ICON_TRANSFORM);
   const locale = extractLocaleFromPath(pathname) || 'ja';
   const localePrefix = `/${localeToRouteLocale(locale)}`;
   const activePath = pathname;
@@ -37,17 +57,17 @@ function HeaderContent({ currentPath }: HeaderProps) {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     if (prefersReducedMotion) {
-      setIconRotation(0);
+      setIconTransform(STILL_ICON_TRANSFORM);
       return;
     }
 
-    const updateRotation = () => {
-      setIconRotation(Math.round(window.scrollY * 0.35));
+    const updateIconTransform = () => {
+      setIconTransform(getScrollIconTransform(window.scrollY));
     };
 
-    updateRotation();
-    window.addEventListener('scroll', updateRotation, { passive: true });
-    return () => window.removeEventListener('scroll', updateRotation);
+    updateIconTransform();
+    window.addEventListener('scroll', updateIconTransform, { passive: true });
+    return () => window.removeEventListener('scroll', updateIconTransform);
   }, []);
 
   return (
@@ -55,15 +75,15 @@ function HeaderContent({ currentPath }: HeaderProps) {
       <div className="container mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-4 py-4">
         <Link
           href={localizedPath('/', locale)}
-          className="flex min-w-0 flex-1 items-center gap-2 truncate text-lg font-semibold sm:flex-none"
+          className="flex min-w-0 flex-1 items-center gap-3 truncate text-lg font-semibold sm:flex-none"
         >
           <img
             src={withBasePath('/icon-192x192.png')}
             alt=""
             aria-hidden="true"
             data-testid="header-personal-icon"
-            className="h-7 w-7 shrink-0 rounded-full border border-white/70 bg-white/80 object-cover shadow-sm transition-transform duration-150 ease-out motion-reduce:transition-none dark:border-white/15 dark:bg-gray-950/70"
-            style={{ transform: `rotate(${iconRotation}deg)` }}
+            className="h-7 w-7 shrink-0 rounded-full border border-white/70 bg-white/80 object-cover shadow-sm transition-transform duration-150 ease-out will-change-transform motion-reduce:transition-none dark:border-white/15 dark:bg-gray-950/70"
+            style={{ transform: iconTransform, transformOrigin: '50% 85%' }}
           />
           <span className="truncate bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
             Tatsuki Okada
