@@ -4,9 +4,11 @@ import matter from 'gray-matter';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePrism from 'rehype-prism-plus';
+import rehypeKatex from 'rehype-katex';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import rehypeRaw from 'rehype-raw';
@@ -116,6 +118,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
     const file = await unified()
       .use(remarkParse)
       .use(remarkGfm)
+      .use(remarkMath)
       .use(remarkLinkCard)
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw) // enable raw HTML like <details><summary>
@@ -124,6 +127,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
       .use(rehypeExternalLinks)
       .use(rehypeImgDefaults)
+      .use(rehypeKatex, { strict: false })
       .use(rehypePrism)
       .use(rehypeStringify)
       .process(content);
