@@ -3,19 +3,11 @@ import path from 'node:path';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { Feed } from 'feed';
 import { getAllPosts } from '../src/lib/content/blog';
-import type { BlogPost } from '../src/lib/content/blog';
 import { getSiteUrlWithBasePath } from '../src/lib/config/env';
 import { siteConfig } from '../src/lib/seo';
-import { SUPPORTED_LOCALES, type Locale } from '../src/lib/i18n';
+import { SUPPORTED_LOCALES } from '../src/lib/i18n';
 import { localizedPath } from '../src/lib/routing';
-import { blogTranslationNotice } from '../src/lib/blog/translation';
-
-function rssDescription(post: BlogPost, locale: Locale, site: string) {
-  if (locale === 'ja') return post.summary;
-  const notice = blogTranslationNotice[locale];
-  const originalUrl = `${site}/blogs/${post.slug}/`;
-  return `${notice.label} ${notice.originalLinkLabel}: ${originalUrl}\n\n${post.summary}`;
-}
+import { buildBlogRssDescription } from '../src/lib/blog/rss';
 
 async function main() {
   const site = getSiteUrlWithBasePath();
@@ -40,7 +32,7 @@ async function main() {
         id: url,
         link: url,
         title: post.title,
-        description: rssDescription(post, locale, site),
+        description: buildBlogRssDescription(post, locale, site),
         date: Number.isNaN(date.getTime()) ? new Date() : date,
       });
     }

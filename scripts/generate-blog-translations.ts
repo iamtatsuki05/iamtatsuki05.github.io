@@ -23,6 +23,7 @@ function pickSourceMetadata(frontmatter: Frontmatter) {
     tags: frontmatter.tags,
     thumbnail: frontmatter.thumbnail,
     headerImage: frontmatter.headerImage,
+    aiAssisted: frontmatter.aiAssisted,
     draft: frontmatter.draft,
   });
 }

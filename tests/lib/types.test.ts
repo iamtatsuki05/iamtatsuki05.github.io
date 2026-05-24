@@ -6,6 +6,11 @@ describe('Frontmatter schemas', () => {
     const parsed = BlogFrontmatter.parse({ title: 't', date: new Date('2024-12-10') });
     expect(typeof parsed.date).toBe('string');
     expect(parsed.title).toBe('t');
+    expect(parsed.aiAssisted).toBe(false);
+  });
+  it('accepts AI-assisted blog frontmatter', () => {
+    const parsed = BlogFrontmatter.parse({ title: 't', date: '2024-12-10', aiAssisted: true });
+    expect(parsed.aiAssisted).toBe(true);
   });
   it('accepts publication schema with links', () => {
     const parsed = PublicationFrontmatter.parse({
@@ -18,4 +23,3 @@ describe('Frontmatter schemas', () => {
     expect(typeof parsed.publishedAt).toBe('string');
   });
 });
-

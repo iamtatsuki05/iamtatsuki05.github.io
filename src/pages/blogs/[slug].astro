@@ -10,6 +10,7 @@ import { EmbedsClient } from '@/components/site/EmbedsClient';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
 import { withBasePath } from '@/lib/url';
 import { absoluteUrl, buildArticleJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { blogAiWritingNotice } from '@/lib/blog/translation';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -21,6 +22,7 @@ const post = await getPostBySlug(slug);
 if (!post) return Astro.redirect('/404/');
 
 const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags, markdown } = post;
+const aiWritingNotice = post.aiAssisted ? blogAiWritingNotice.ja : null;
 const publishedTime = toIsoString(date);
 const modifiedTime = toIsoString(updated) || publishedTime;
 const description = summary || `${title} に関する記事です。`;
@@ -77,6 +79,11 @@ function toIsoString(input?: string | null) {
       ) : null}
       <h1>{title}</h1>
       <BlogPostMeta date={date} updated={updated} locale="ja" client:load />
+      {aiWritingNotice ? (
+        <aside class="not-prose my-4 rounded-sm border border-amber-300/70 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-300/30 dark:bg-amber-950/30 dark:text-amber-100">
+          <p class="m-0">{aiWritingNotice}</p>
+        </aside>
+      ) : null}
       <div class="my-4 flex flex-wrap items-center gap-3">
         <ShareButtons url={shareUrl} title={title} className="my-0" locale="ja" client:load />
         <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" locale="ja" client:load />
