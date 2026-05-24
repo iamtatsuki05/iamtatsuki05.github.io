@@ -1,19 +1,11 @@
 import type { APIRoute } from 'astro';
 import { Feed } from 'feed';
 import { getAllPosts } from '@/lib/content/blog';
-import type { BlogPost } from '@/lib/content/blog';
 import { getSiteUrlWithBasePath } from '@/lib/config/env';
 import { siteConfig } from '@/lib/seo';
-import { SUPPORTED_LOCALES, type Locale } from '@/lib/i18n';
+import { SUPPORTED_LOCALES } from '@/lib/i18n';
 import { localizedPath } from '@/lib/routing';
-import { blogTranslationNotice } from '@/lib/blog/translation';
-
-function rssDescription(post: BlogPost, locale: Locale, site: string) {
-  if (locale === 'ja') return post.summary;
-  const notice = blogTranslationNotice[locale];
-  const originalUrl = `${site}/blogs/${post.slug}/`;
-  return `${notice.label} ${notice.originalLinkLabel}: ${originalUrl}\n\n${post.summary}`;
-}
+import { buildBlogRssDescription } from '@/lib/blog/rss';
 
 export const GET: APIRoute = async () => {
   const site = getSiteUrlWithBasePath();
@@ -38,7 +30,7 @@ export const GET: APIRoute = async () => {
         id: url,
         link: url,
         title: post.title,
-        description: rssDescription(post, locale, site),
+        description: buildBlogRssDescription(post, locale, site),
         date: Number.isNaN(date.getTime()) ? new Date() : date,
       });
     }

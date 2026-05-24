@@ -5,6 +5,7 @@ tags: [astro, nextjs, ai, codex, migration]
 summary: このサイトを Next.js から Astro へ移行する作業を、実装から検証まで Codex にほぼ任せてみた記録です。
 headerImage: https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80
 headerAlt: コードが表示された画面
+aiAssisted: true
 ---
 
 ## はじめに

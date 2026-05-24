@@ -5,6 +5,7 @@ tags: [dotfiles, nix, mise, ai, codex]
 summary: Nix、mise、chezmoi、AI agent 設定を dotfiles に寄せながら、変化の速い開発環境を盆栽のように手入れしていく話です。
 headerImage: https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=1600&q=80
 headerAlt: 鉢植えの植物
+aiAssisted: true
 ---
 
 ## はじめに
