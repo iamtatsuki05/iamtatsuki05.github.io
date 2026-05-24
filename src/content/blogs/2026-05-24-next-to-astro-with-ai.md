@@ -9,88 +9,93 @@ headerAlt: コードが表示された画面
 
 ## はじめに
 
-このサイトは、もともと Next.js の静的エクスポートで動かしていました。
-ブログを書けて、リンク集があって、公開物一覧があって、日英切り替えやダークモードもある、よくある個人サイトです。
+このサイトを Next.js から Astro に移しました。
 
-ただ、実態としてはほぼ静的サイトです。
-Next.js で困っていたわけではないのですが、App Router、静的 export、画像最適化、Cloudflare Pages まわりの設定が少し大げさに感じるようになっていました。
+Next.js が嫌になったわけではありません。困っていたというほどでもありません。ただ、このサイトの実態を考えると、少し大げさになっていました。ブログ、リンク集、公開物一覧、言語切り替え、ダークモード。やっていることはほぼ静的サイトです。
 
-そこで Astro に移行しました。
-しかも今回は、実装だけでなく、調査、移行前後の計測、テスト、レビュー対応までほぼ Codex に任せました。
+それなのに、App Router、静的 export、画像最適化、Cloudflare Pages の設定を抱えていました。もちろん動いてはいましたが、サイトの規模に対して持ち物が多い感じがありました。
 
-「AI に全部やらせた」と言うと雑ですが、実際にはかなり細かい完了条件を渡して、その範囲で走らせた感じです。
-この記事はその記録です。
+そこで Astro に移しました。
 
-## 依頼の出し方
+今回は、自分で少しずつ書き換えるのではなく、Codex にかなり任せました。実装だけでなく、移行前後の計測、テスト、失敗した箇所の修正、reviewer の指摘対応まで、ほぼ一連の作業として渡しています。
 
-最初に Codex に渡したのは、単なる「Astro に移行して」ではありません。
+AI に丸投げした、というと少し雑です。実際には、丸投げというより「壊してはいけないものを細かく渡して、最後まで走らせた」に近いです。
 
-既存の見た目、URL、SEO、アクセシビリティ、Cloudflare Pages のデプロイ経路を維持すること。
-移行前後で build time、出力サイズ、Lighthouse の値を比較すること。
-lint、型チェック、Vitest、E2E、preview の smoke check まで通すこと。
-最後に別の read-only reviewer に見てもらうこと。
+## 何を変えたかったのか
 
-このあたりを全部書きました。
+移行の目的は、流行りの framework に乗り換えることではありません。
 
-AI に任せる時、実装方針だけ渡すと危ないです。
-特に framework migration は、画面が表示されていても sitemap や OGP が壊れていることがあります。
-なので今回は「何をしたら完了か」を先に縛りました。
+このサイトは、ほとんどのページがビルド時に決まります。ログインもなければ、サーバ側で動的に返す必要もほぼありません。React component はありますが、全部が常に client-side で動く必要もありません。
 
-## まず移行前の状態を測る
+なら、静的サイトを静的サイトとして扱いやすい形にした方がよいです。
 
-作業の最初に、Next.js 版の baseline を取りました。
+Astro にすると、ページは `src/pages/**` に置き、共通 layout は Astro 側で持てます。必要な React component だけ island として残せます。自分のサイトにはこの分け方が合っていました。
+
+ただし、framework migration は見た目だけ合っていればよいわけではありません。URL、SEO、OGP、sitemap、RSS、Cloudflare Pages、アクセシビリティ、言語切り替え、theme toggle など、見落としやすいものが多いです。
+
+なので、最初に Codex へ「何を壊してはいけないか」をかなり細かく渡しました。
+
+## Codex への頼み方
+
+Codex には、単に「Astro に移行して」とは頼みませんでした。
+
+既存の見た目、URL、SEO、アクセシビリティ、Cloudflare Pages のデプロイ経路を維持すること。移行前後で build time、出力サイズ、Lighthouse の値を比較すること。lint、型チェック、Vitest、E2E、preview の smoke check まで通すこと。最後に別の read-only reviewer に見てもらうこと。
+
+このあたりをまとめて渡しました。
+
+AI に任せるとき、実装方針だけ渡すと危ないです。特に移行作業では、画面が表示されているだけでは安心できません。sitemap が変だったり、OGP meta が落ちていたり、Cloudflare の cache header が古い path のままだったりします。
+
+だから今回は、実装の細かい方法よりも、完了条件を先に縛りました。
+
+## まず baseline を取る
+
+移行前に、Next.js 版の状態を測りました。
 
 `bun run build`、出力サイズ、主要 HTML のサイズ、lint、Vitest、Playwright E2E、Lighthouse mobile / desktop です。
 
-これは地味ですが、やっておいて良かったです。
-移行作業は「動かないものを直す」ではなく、「動いているものを壊さずに置き換える」作業なので、比較対象がないと何も判断できません。
+これは地味ですが、かなり大事でした。移行は、壊れているものを直す作業ではありません。動いているものを置き換える作業です。比較対象がないと、良くなったのか、壊したのか、たまたま動いているだけなのか判断できません。
 
-## 何が変わったか
+今回は結果として build time と出力サイズがかなり分かりやすく改善したので、baseline を取っておいて良かったです。
 
-実装としては、Next.js App Router の `src/app/**` をなくして、Astro の `src/pages/**` に置き換えました。
-共通 layout は `BaseLayout.astro` に移し、既存の React component は必要なところだけ Astro island として残しました。
+## 実際に変わったところ
 
-全部を書き直したわけではありません。
-むしろ、UI component はできるだけそのまま使っています。
-変えたのは framework 依存の境界です。
+Next.js App Router の `src/app/**` はなくなり、Astro の `src/pages/**` に置き換わりました。
+共通 layout は `BaseLayout.astro` に移し、既存の React component は必要なところだけ Astro island として残しています。
 
-たとえば `next/link`、`next/image`、`next/navigation` の代わりに、小さな local wrapper を置きました。
-`next-themes` や `nuqs` も外して、このサイトで必要な分だけを local 実装にしています。
+全部を書き直したわけではありません。むしろ、UI component はできるだけ残しています。変えたかったのは見た目ではなく、framework との境界です。
 
-RSS、sitemap、robots、metadata、OGP、JSON-LD も Astro 側で生成するようにしました。
-Cloudflare Pages の workflow も Astro build 前提に変更しています。
+`next/link`、`next/image`、`next/navigation` の代わりに、小さな local wrapper を置きました。`next-themes` や `nuqs` も外して、このサイトで必要な分だけ local 実装にしています。
 
-## すんなりはいかなかったところ
+RSS、sitemap、robots、metadata、OGP、JSON-LD も Astro 側で生成するようにしました。Cloudflare Pages の workflow も Astro build 前提に変えています。
+
+このあたりは、派手な変更ではありません。でも、依存していた framework の前提を一つずつ外す作業としては、こういう地味な置き換えが中心でした。
+
+## 詰まったところ
 
 一番引っかかったのは hydration でした。
 
-Next.js では自然に client component として動いていたものも、Astro では `client:load` などを明示しないと動きません。
-最初の E2E では普通に落ちました。
+Next.js では自然に client component として動いていたものも、Astro では `client:load` などを明示しないと動きません。最初の E2E では普通に落ちました。
 
-具体的には、英語ページで language switch の active state がずれたり、theme toggle が placeholder のままになったり、Publications の filter が動かなかったりしました。
-英語ページから blog detail に入った時に、日付だけ日本語表記になる問題もありました。
+英語ページで language switch の active state がずれる。theme toggle が placeholder のままになる。Publications の filter が動かない。英語ページから blog detail に入ったとき、日付だけ日本語表記になる。
 
-このへんは、Codex が E2E の failure log を読みながら直していきました。
-Header に現在の pathname を Astro から渡したり、theme provider を Header island の中に置いたり、Publications page 自体を hydrate したりしています。
+こういう、画面をざっと見るだけだと見落としそうなところで落ちました。
 
-自分でやっていたら、たぶん同じように Playwright のログと DOM を見て直していたと思います。
-その作業をかなり速く回してくれたのは良かったです。
+Codex は E2E の failure log を読みながら直していました。Header に現在の pathname を Astro から渡す。theme provider を Header island の中に置く。Publications page 自体を hydrate する。やっていることは、自分でやる場合と同じです。
 
-## レビューで拾えたもの
+違ったのは、そのループが速かったことです。ログを読む、仮説を立てる、直す、もう一度テストする、という作業をかなり粘って回してくれました。
 
-一通り動くようになったあと、別の read-only reviewer に差分を見てもらいました。
-ここで出た指摘がけっこう大事でした。
+## reviewer が拾ったもの
 
-sitemap に、実際には存在しない publication detail URL が残っていました。
-また、blog article の `article:published_time` などの OGP meta が落ちていました。
-Cloudflare の headers も `/_next/static/*` のままで、Astro の `/_astro/*` に効いていませんでした。
+一通り動いたあと、別の read-only reviewer に差分を見てもらいました。
+ここで拾えたものがかなり大事でした。
 
-これは、普通の E2E では落ちにくいところです。
-画面は表示されるし、リンクも押せる。
-でも SEO や deploy の細部は壊れている、というタイプの問題です。
+sitemap に、実際には存在しない publication detail URL が残っていました。blog article の `article:published_time` などの OGP meta も落ちていました。Cloudflare の headers も `/_next/static/*` のままで、Astro の `/_astro/*` に効いていませんでした。
 
-指摘後に、sitemap、article meta、cache header、base path 対応を直しました。
-最後は生成された HTML を直接見て、meta tag が本当に出ていることまで確認しました。
+どれも、普通にページを触っているだけでは気づきにくいです。画面は表示されます。リンクも押せます。でも SEO や deploy の細部は壊れています。
+
+指摘後に、sitemap、article meta、cache header、base path 対応を直しました。最後は生成された HTML を直接見て、meta tag が本当に出ているところまで確認しています。
+
+この review は入れて良かったです。AI が書いたものを AI が見直しても、同じ前提のまま見落とすことがあります。別の視点を挟むだけで、拾える種類が変わります。
 
 ## 数字
 
@@ -110,39 +115,20 @@ Cloudflare の headers も `/_next/static/*` のままで、Astro の `/_astro/*
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-build time はかなり短くなりました。
-出力サイズも半分くらいになっています。
+build time はかなり短くなりました。出力サイズも半分くらいになっています。
 
-Lighthouse は desktop だと全対象 route で改善しました。
-mobile もほとんど改善しています。
-blog detail だけ performance score が `72 -> 71` と 1 点下がりましたが、LCP は `11040ms -> 8836ms`、TBT は `65ms -> 28ms` に改善していました。
+Lighthouse は desktop だと全対象 route で改善しました。mobile もほとんど改善しています。blog detail だけ performance score が `72 -> 71` と 1 点下がりましたが、LCP は `11040ms -> 8836ms`、TBT は `65ms -> 28ms` に改善していました。
 
-この規模の個人サイトとしては十分です。
-
-## やってみて思ったこと
-
-AI に丸投げするといっても、完全に放置できるわけではありません。
-
-今回、人間側でやった一番大きな仕事は、実装ではなく「何を壊してはいけないか」を決めることでした。
-URL、SEO、deploy、performance、テスト。
-このあたりを先に書いておくと、AI はかなり粘ってくれます。
-
-逆に、そこを書かないと、見た目だけ動いている移行になりそうです。
-
-あと、baseline は面倒でも取った方が良いです。
-移行後に「速くなった気がする」ではなく、数字で見られるようになります。
-今回は build time と出力サイズがかなり分かりやすく改善したので、やった意味が見えやすかったです。
-
-それから、reviewer を別に立てるのは効きました。
-自分で書いたコードを自分で見ると見落とすように、AI も自分の作業を見落とします。
-別視点で sitemap や OGP を拾えたのは良かったです。
+この規模の個人サイトとしては、十分な結果です。
 
 ## おわりに
 
-今回の移行は、かなり AI に任せました。
-ただ、AI が勝手に良い感じにやってくれたというより、細かい条件を渡して、ログを読ませて、失敗したら直させて、最後に別視点で見直した、という感じです。
+今回の移行で思ったのは、AI に任せるほど、完了条件をちゃんと書いた方がよいということです。
 
-個人サイトくらいの規模で、テストや build がちゃんと回るなら、AI 主導の framework migration はかなり現実的だと思います。
+「Astro に移行して」だけだと、おそらく見た目が表示されるところまでは行けます。しかし、URL、SEO、deploy、performance、E2E、review まで含めると、最初に条件を書いておく意味がかなり大きいです。
 
-次にやるなら、SEO metadata の snapshot test と sitemap URL の検証を先に入れてから移行を始めたいです。
-今回 reviewer が拾ってくれたところなので、そこは最初から機械的に守れるようにしておくと安心そうです。
+人間側でやった一番大きな仕事は、コードを書くことではありませんでした。何を壊してはいけないかを決めることでした。
+
+個人サイトくらいの規模で、build と test がちゃんと回るなら、AI 主導の framework migration はかなり現実的です。ただし、何をもって終わりにするかを人間が持っていないと、たぶん見た目だけ動いている移行になります。
+
+次に同じような移行をするなら、SEO metadata と sitemap URL の snapshot test を先に入れてから始めます。今回 reviewer が拾ってくれたところなので、最初から機械的に守れるようにしておきたいです。
