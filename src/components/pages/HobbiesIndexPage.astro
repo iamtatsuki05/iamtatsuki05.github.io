@@ -1,0 +1,46 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { HobbiesPage } from '@/components/pages/HobbiesPage';
+import { getAllPosts } from '@/lib/content/blog';
+import { resolveLocale } from '@/lib/i18n';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+import { resolveHobbies } from '@/lib/data/hobbies';
+
+type Props = {
+  /** ルート locale。未指定はデフォルト (ja) の locale prefix なしルート。 */
+  routeLocale?: string;
+};
+
+const { routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+const posts = await getAllPosts(locale);
+const hobbies = resolveHobbies(locale, posts);
+const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.hobbies);
+const jsonLd = routeLocale
+  ? []
+  : [
+      buildCollectionPageJsonLd({
+        path: '/hobbies/',
+        name: 'Hobbies',
+        description: '趣味と最近ハマっていることの一覧',
+        itemCount: hobbies.length,
+      }),
+      buildBreadcrumbJsonLd({
+        items: [
+          { name: 'Home', url: absoluteUrl('/') },
+          { name: 'Hobbies', url: absoluteUrl('/hobbies/') },
+        ],
+      }),
+    ];
+---
+
+<BaseLayout
+  metadata={metadata}
+  lang={htmlLangFromLocale(locale)}
+  preloadImages={hobbies[0]?.thumbnailSrc ? [hobbies[0].thumbnailSrc] : []}
+  jsonLd={jsonLd}
+>
+  <HobbiesPage locale={locale} posts={posts} />
+</BaseLayout>

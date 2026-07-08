@@ -1,35 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { HomeContentView } from '@/components/home/HomeContentView';
-import { dictionaries, resolveLocale, SUPPORTED_LOCALES, SUPPORTED_ROUTE_LOCALES } from '@/lib/i18n';
-import { getLatestPosts } from '@/lib/content/blog';
-import { getAllPublications } from '@/lib/content/publication';
-import { getLinks } from '@/lib/data/links';
-import { buildLocalizedMetadata } from '@/lib/metadata';
-import { pageMeta } from '@/lib/seo/metaConfig';
-import { htmlLangFromLocale } from '@/lib/astro/metadata';
+import HomePage from '@/components/pages/HomePage.astro';
+import { localeStaticPaths } from '@/lib/astro/paths';
 
 export function getStaticPaths() {
-  return [...SUPPORTED_ROUTE_LOCALES, ...SUPPORTED_LOCALES].map((locale) => ({ params: { locale } }));
+  return localeStaticPaths();
 }
-
-const routeLocale = Astro.params.locale || 'ja-JP';
-const locale = resolveLocale(routeLocale);
-const dict = dictionaries[locale];
-const [latest, publications, links] = await Promise.all([
-  getLatestPosts(3, locale),
-  getAllPublications(),
-  getLinks(),
-]);
-const metadata = await buildLocalizedMetadata(Promise.resolve({ locale: routeLocale }), pageMeta.home);
 ---
 
-<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)}>
-  <HomeContentView
-    locale={locale}
-    dict={dict}
-    latest={latest.items}
-    publications={publications.slice(0, 4)}
-    links={links.slice(0, 6)}
-  />
-</BaseLayout>
+<HomePage routeLocale={Astro.params.locale || 'ja-JP'} />

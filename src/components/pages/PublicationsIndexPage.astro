@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { PublicationsPage } from '@/components/pages/PublicationsPage';
+import { getAllPublications } from '@/lib/content/publication';
+import { resolveLocale } from '@/lib/i18n';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+
+type Props = {
+  /** ルート locale。未指定はデフォルト (ja) の locale prefix なしルート。 */
+  routeLocale?: string;
+};
+
+const { routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+const publications = await getAllPublications();
+const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.publications);
+const jsonLd = routeLocale
+  ? []
+  : [
+      buildCollectionPageJsonLd({
+        path: '/publications/',
+        name: 'Publications',
+        description: '学術論文と研究成果',
+        itemCount: publications.length,
+      }),
+      buildBreadcrumbJsonLd({
+        items: [
+          { name: 'Home', url: absoluteUrl('/') },
+          { name: 'Publications', url: absoluteUrl('/publications/') },
+        ],
+      }),
+    ];
+---
+
+<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
+  <PublicationsPage locale={locale} items={publications} client:load />
+</BaseLayout>

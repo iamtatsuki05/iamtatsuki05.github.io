@@ -1,0 +1,45 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { BlogsClient } from '@/components/pages/BlogsClient';
+import { getAllPosts } from '@/lib/content/blog';
+import { resolveLocale } from '@/lib/i18n';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
+import { blogsPageCopy } from '@/lib/pageCopy';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+
+type Props = {
+  /** ルート locale。未指定はデフォルト (ja) の locale prefix なしルート。 */
+  routeLocale?: string;
+};
+
+const { routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+const posts = await getAllPosts(locale);
+const copy = blogsPageCopy[locale];
+const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.blogs);
+const jsonLd = routeLocale
+  ? []
+  : [
+      buildCollectionPageJsonLd({
+        path: '/blogs/',
+        name: 'Blogs',
+        description: '技術ブログと記事',
+        itemCount: posts.length,
+      }),
+      buildBreadcrumbJsonLd({
+        items: [
+          { name: 'Home', url: absoluteUrl('/') },
+          { name: 'Blogs', url: absoluteUrl('/blogs/') },
+        ],
+      }),
+    ];
+---
+
+<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
+  <div class="space-y-4">
+    <div class="text-sm opacity-70">{copy.breadcrumb}</div>
+    <h1 class="text-3xl font-bold">{copy.heading}</h1>
+    <BlogsClient posts={posts} locale={locale} initialCardsVisible client:load />
+  </div>
+</BaseLayout>
