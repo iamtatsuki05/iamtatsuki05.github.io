@@ -108,7 +108,7 @@ const HOBBIES: readonly HobbyDefinition[] = [
       zh: '在海外使用翻译应用时，我开始想用这类技术真正改善人们的生活，这也让我对自然语言处理产生了兴趣。最近我尤其关注语言模型的分析。',
       fr: 'L utilisation d une application de traduction a l etranger m a donne envie de creer des technologies qui ameliorent vraiment la vie des gens, ce qui a declenche mon interet pour le NLP. En ce moment, l analyse des modeles de langue m interesse particulierement.',
     },
-    thumbnailSrc: 'https://huggingface.co/front/assets/huggingface_logo-noborder.svg',
+    thumbnailSrc: '/images/hobbies/huggingface-logo.svg',
     thumbnailAlt: { ja: 'Hugging Face ロゴ', en: 'Hugging Face logo', zh: 'Hugging Face 标志', fr: 'Logo Hugging Face' },
     blogFilter: { q: 'LLM' },
   },

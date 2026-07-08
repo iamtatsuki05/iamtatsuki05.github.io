@@ -4,6 +4,7 @@ import { BlogFrontmatter } from './types';
 import { parseMarkdownFile, slugFromFilename } from './markdown';
 import { loadCollection } from './loader';
 import { cached } from '@/lib/server/cache';
+import { resolveOptimizedBlogHeaderImage } from '@/lib/content/blogHeaderImages';
 import { safeParseLocalized } from '@/lib/validation/zodI18n';
 import type { Locale } from '@/lib/i18n';
 
@@ -20,6 +21,8 @@ export type BlogPost = {
   summary: string;
   thumbnail?: string;
   headerImage?: string;
+  headerImageOptimizedSrc?: string;
+  headerImageSrcSet?: string;
   headerAlt?: string;
   aiAssisted?: boolean;
   draft?: boolean;
@@ -35,8 +38,12 @@ function blogDirForLocale(locale: Locale) {
 }
 
 function enrichPost(post: Omit<BlogPost, 'locale' | 'isAiTranslated' | 'originalPath'>, locale: Locale): BlogPost {
+  const optimizedHeaderImage = resolveOptimizedBlogHeaderImage(post.headerImage);
   return {
     ...post,
+    ...(optimizedHeaderImage
+      ? { headerImageOptimizedSrc: optimizedHeaderImage.src, headerImageSrcSet: optimizedHeaderImage.srcSet }
+      : {}),
     locale,
     isAiTranslated: locale !== 'ja',
     originalPath: `/blogs/${post.slug}/`,
