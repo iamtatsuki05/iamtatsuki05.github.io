@@ -93,15 +93,32 @@ const googleAnalyticsId = getGoogleAnalyticsId();
     </main>
     <Footer currentPath={Astro.url.pathname} client:load />
     {googleAnalyticsId ? (
-      <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}></script>
-        <script is:inline define:vars={{ googleAnalyticsId }}>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', googleAnalyticsId);
-        </script>
-      </>
+      <script is:inline define:vars={{ googleAnalyticsId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', googleAnalyticsId);
+        // gtag.js (約160KB) を初期表示のクリティカルパスから外す。
+        // 計測イベントは dataLayer に積まれ、読み込み後にまとめて処理される。
+        let gtagLoaded = false;
+        const loadGtag = () => {
+          if (gtagLoaded) return;
+          gtagLoaded = true;
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`;
+          document.head.appendChild(script);
+        };
+        // load 前に離脱・操作するユーザーの取りこぼしを減らすため、最初の操作でも読み込む
+        for (const eventName of ['pointerdown', 'keydown', 'touchstart', 'scroll']) {
+          window.addEventListener(eventName, loadGtag, { once: true, passive: true });
+        }
+        if (document.readyState === 'complete') {
+          setTimeout(loadGtag, 0);
+        } else {
+          window.addEventListener('load', loadGtag, { once: true });
+        }
+      </script>
     ) : null}
   </body>
 </html>
