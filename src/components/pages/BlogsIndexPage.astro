@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { BlogsClient } from '@/components/pages/BlogsClient';
 import { getAllPosts } from '@/lib/content/blog';
 import { resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
 import { pageMeta } from '@/lib/seo/metaConfig';
 import { blogsPageCopy } from '@/lib/pageCopy';
@@ -18,22 +19,22 @@ const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
 const posts = await getAllPosts(locale);
 const copy = blogsPageCopy[locale];
 const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.blogs);
-const jsonLd = routeLocale
-  ? []
-  : [
-      buildCollectionPageJsonLd({
-        path: '/blogs/',
-        name: 'Blogs',
-        description: '技術ブログと記事',
-        itemCount: posts.length,
-      }),
-      buildBreadcrumbJsonLd({
-        items: [
-          { name: 'Home', url: absoluteUrl('/') },
-          { name: 'Blogs', url: absoluteUrl('/blogs/') },
-        ],
-      }),
-    ];
+const pagePath = routeLocale ? localizedPath('/blogs/', locale) : '/blogs/';
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildCollectionPageJsonLd({
+    path: pagePath,
+    name: 'Blogs',
+    description: '技術ブログと記事',
+    itemCount: posts.length,
+  }),
+  buildBreadcrumbJsonLd({
+    items: [
+      { name: 'Home', url: absoluteUrl(homePath) },
+      { name: 'Blogs', url: absoluteUrl(pagePath) },
+    ],
+  }),
+];
 ---
 
 <BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>

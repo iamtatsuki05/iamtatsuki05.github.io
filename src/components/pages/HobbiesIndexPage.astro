@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { HobbiesPage } from '@/components/pages/HobbiesPage';
 import { getAllPosts } from '@/lib/content/blog';
 import { resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
 import { pageMeta } from '@/lib/seo/metaConfig';
 import { htmlLangFromLocale } from '@/lib/astro/metadata';
@@ -18,22 +19,22 @@ const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
 const posts = await getAllPosts(locale);
 const hobbies = resolveHobbies(locale, posts);
 const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.hobbies);
-const jsonLd = routeLocale
-  ? []
-  : [
-      buildCollectionPageJsonLd({
-        path: '/hobbies/',
-        name: 'Hobbies',
-        description: '趣味と最近ハマっていることの一覧',
-        itemCount: hobbies.length,
-      }),
-      buildBreadcrumbJsonLd({
-        items: [
-          { name: 'Home', url: absoluteUrl('/') },
-          { name: 'Hobbies', url: absoluteUrl('/hobbies/') },
-        ],
-      }),
-    ];
+const pagePath = routeLocale ? localizedPath('/hobbies/', locale) : '/hobbies/';
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildCollectionPageJsonLd({
+    path: pagePath,
+    name: 'Hobbies',
+    description: '趣味と最近ハマっていることの一覧',
+    itemCount: hobbies.length,
+  }),
+  buildBreadcrumbJsonLd({
+    items: [
+      { name: 'Home', url: absoluteUrl(homePath) },
+      { name: 'Hobbies', url: absoluteUrl(pagePath) },
+    ],
+  }),
+];
 ---
 
 <BaseLayout

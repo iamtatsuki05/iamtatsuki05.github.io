@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { PublicationsPage } from '@/components/pages/PublicationsPage';
 import { getAllPublications } from '@/lib/content/publication';
 import { resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
 import { pageMeta } from '@/lib/seo/metaConfig';
 import { htmlLangFromLocale } from '@/lib/astro/metadata';
@@ -16,22 +17,22 @@ const { routeLocale } = Astro.props;
 const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
 const publications = await getAllPublications();
 const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.publications);
-const jsonLd = routeLocale
-  ? []
-  : [
-      buildCollectionPageJsonLd({
-        path: '/publications/',
-        name: 'Publications',
-        description: '学術論文と研究成果',
-        itemCount: publications.length,
-      }),
-      buildBreadcrumbJsonLd({
-        items: [
-          { name: 'Home', url: absoluteUrl('/') },
-          { name: 'Publications', url: absoluteUrl('/publications/') },
-        ],
-      }),
-    ];
+const pagePath = routeLocale ? localizedPath('/publications/', locale) : '/publications/';
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildCollectionPageJsonLd({
+    path: pagePath,
+    name: 'Publications',
+    description: '学術論文と研究成果',
+    itemCount: publications.length,
+  }),
+  buildBreadcrumbJsonLd({
+    items: [
+      { name: 'Home', url: absoluteUrl(homePath) },
+      { name: 'Publications', url: absoluteUrl(pagePath) },
+    ],
+  }),
+];
 ---
 
 <BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>

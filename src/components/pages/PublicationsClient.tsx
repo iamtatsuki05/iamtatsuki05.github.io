@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useMemo, type KeyboardEvent } from 'react';
+import React, { useCallback, useMemo, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
 import { notifyLocationChange } from '@/lib/compat/navigation';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
@@ -256,14 +256,6 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const handleKey = (event: KeyboardEvent<HTMLLIElement>, url?: string) => {
-    if (!url) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openInNewTab(url);
-    }
-  };
-
   return (
     <div className="space-y-6">
       <FilterBar
@@ -341,12 +333,14 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
               {arr.map((i, index) => {
                 const primaryLink = i.links[0]?.url;
                 const isFirstImage = index === 0 && Boolean(i.headerImage);
-                const clickableProps = primaryLink
+                // マウス操作の利便のためカード全域クリックを維持する。キーボードと支援技術には
+                // タイトルの実リンクがあるため、li には role を与えずクリックのみ委譲する。
+                const cardClickProps = primaryLink
                   ? {
-                      role: 'link' as const,
-                      tabIndex: 0,
-                      onClick: () => openInNewTab(primaryLink),
-                      onKeyDown: (event: KeyboardEvent<HTMLLIElement>) => handleKey(event, primaryLink),
+                      onClick: (event: MouseEvent<HTMLLIElement>) => {
+                        if ((event.target as HTMLElement).closest('a')) return;
+                        openInNewTab(primaryLink);
+                      },
                     }
                   : {};
                 return (
@@ -355,7 +349,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     data-testid="publication-card"
                     className={`content-reveal-card card p-3 gap-3 items-start sm:flex ${primaryLink ? 'pressable-card cursor-pointer' : ''}`}
                     style={areCardsVisible ? { transitionDelay: `${100 + index * 24}ms` } : undefined}
-                    {...clickableProps}
+                    {...cardClickProps}
                   >
                     {i.headerImage ? (
                       <div
@@ -375,7 +369,19 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     ) : null}
                     <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                       <h3 className="text-base font-semibold">
-                        <SearchHighlight text={i.title} query={q} />
+                        {primaryLink ? (
+                          <a
+                            href={primaryLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            data-testid="publication-card-link"
+                            className="underline-offset-2 hover:underline"
+                          >
+                            <SearchHighlight text={i.title} query={q} />
+                          </a>
+                        ) : (
+                          <SearchHighlight text={i.title} query={q} />
+                        )}
                       </h3>
                       <p className="text-xs opacity-70">
                         {(i.publishedAt || '').slice(0, 10)} ・{' '}
@@ -395,15 +401,14 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                           ))}
                         </div>
                       ) : null}
-                      <div className="mt-1 space-x-2 text-sm">
+                      <div className="-mx-1.5 mt-1 flex flex-wrap text-sm">
                         {i.links.map((l) => (
                           <a
                             key={l.url}
                             href={l.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="underline"
-                            onClick={(event) => event.stopPropagation()}
+                            className="inline-flex min-h-6 items-center px-1.5 py-1 underline"
                           >
                             {l.kind}
                           </a>

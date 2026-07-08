@@ -2,10 +2,12 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { HomeContentView } from '@/components/home/HomeContentView';
 import { dictionaries, resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 import { getLatestPosts } from '@/lib/content/blog';
 import { getAllPublications } from '@/lib/content/publication';
 import { getLinks } from '@/lib/data/links';
 import {
+  absoluteUrl,
   buildBreadcrumbJsonLd,
   buildLanguageAlternates,
   buildLocalizedMetadata,
@@ -42,7 +44,12 @@ const metadata = routeLocale
       keywords: ['ポートフォリオ', 'NLPエンジニア', '機械学習エンジニア', 'ソフトウェアエンジニア'],
       languageAlternates: buildLanguageAlternates(homeMeta.path),
     });
-const jsonLd = routeLocale ? [] : [buildSiteLinksJsonLd(), buildBreadcrumbJsonLd(), buildOrganizationJsonLd()];
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildSiteLinksJsonLd(),
+  buildBreadcrumbJsonLd({ items: [{ name: 'Home', url: absoluteUrl(homePath) }] }),
+  buildOrganizationJsonLd(),
+];
 ---
 
 <BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
