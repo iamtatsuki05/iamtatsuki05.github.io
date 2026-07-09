@@ -29,7 +29,8 @@ async function main() {
       const url = `${site}${path}`;
       const date = new Date(post.updated || post.date);
       feed.addItem({
-        id: url,
+        // id を渡すと feed v6 は guid を isPermaLink="false" にするため、
+        // link への fallback に任せて guid を permalink のまま保つ
         link: url,
         title: post.title,
         description: buildBlogRssDescription(post, locale, site),
