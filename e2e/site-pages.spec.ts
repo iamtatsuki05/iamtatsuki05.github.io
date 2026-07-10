@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForIslandHydration } from './helpers/hydration';
 import { localizedPath } from './helpers/paths';
 
 const viewports = [
@@ -200,6 +201,7 @@ for (const { label, use } of viewports) {
         }
         await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
+        await waitForIslandHydration(page, 'MarkdownCopyButton');
         const copyButton = page.getByRole('button', { name: '記事のMarkdownをコピー' });
         await expect(copyButton).toBeVisible();
         await copyButton.click();
@@ -245,6 +247,8 @@ for (const { label, use } of viewports) {
         }
         await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/en-US\/blogs\/[\w-]+\/?$/);
 
+        await waitForIslandHydration(page, 'MarkdownCopyButton');
+        await waitForIslandHydration(page, 'ShareButtons');
         const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
         await expect(copyButton).toBeVisible();
         await expect(copyButton).toContainText('Copy Markdown');
