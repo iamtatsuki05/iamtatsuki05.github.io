@@ -1,4 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import type React from 'react';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 
 export type FilterBarActiveFilter = {
   key: string;
@@ -23,6 +25,14 @@ type Props = {
   activeFilters?: FilterBarActiveFilter[];
   sortControls?: React.ReactNode;
   stickyMetaOnMobile?: boolean;
+  /** 音声入力の認識言語 (例: 'ja-JP')。未指定ならマイクボタンを表示しない。 */
+  voiceLang?: string;
+  voiceStartLabel?: string;
+  voiceStopLabel?: string;
+  voiceListeningLabel?: string;
+  voicePermissionMessage?: string;
+  voiceNoSpeechMessage?: string;
+  voiceUnavailableMessage?: string;
 };
 
 export function FilterBar({
@@ -41,10 +51,37 @@ export function FilterBar({
   activeFilters = [],
   sortControls,
   stickyMetaOnMobile = false,
+  voiceLang,
+  voiceStartLabel = 'Search by voice',
+  voiceStopLabel = 'Stop voice input',
+  voiceListeningLabel = 'Listening...',
+  voicePermissionMessage = 'Microphone access is blocked',
+  voiceNoSpeechMessage = 'No speech detected',
+  voiceUnavailableMessage = 'Voice input is unavailable',
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const showClear = Boolean(hasActiveFilters) || Boolean(query);
   const showMeta = Boolean(resultLabel) || activeFilters.length > 0 || Boolean(sortControls);
+
+  const {
+    supported: voiceSupported,
+    listening: voiceListening,
+    error: voiceError,
+    toggle: toggleVoice,
+  } = useSpeechRecognition({
+    lang: voiceLang ?? 'en-US',
+    onResult: (transcript) => {
+      onQueryChange(transcript);
+    },
+  });
+  const showVoiceButton = Boolean(voiceLang) && voiceSupported;
+  const voiceErrorMessage = voiceError
+    ? {
+        permission: voicePermissionMessage,
+        'no-speech': voiceNoSpeechMessage,
+        unavailable: voiceUnavailableMessage,
+      }[voiceError]
+    : null;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -70,7 +107,11 @@ export function FilterBar({
   return (
     <div data-filter-bar-root="true" className={`filter-bar space-y-3 ${className || ''}`}>
       <div className="filter-bar__controls flex flex-wrap items-center gap-3">
-        <div className="filter-bar__search">
+        <div
+          className={`filter-bar__search ${showVoiceButton ? 'filter-bar__search--voice' : ''} ${
+            voiceListening ? 'filter-bar__search--listening' : ''
+          }`}
+        >
           <input
             ref={inputRef}
             aria-label={placeholder}
@@ -96,6 +137,56 @@ export function FilterBar({
             <span className="filter-bar__search-status" role="status" aria-live="polite">
               {searchLoadingLabel}
             </span>
+          ) : null}
+          {voiceListening ? (
+            <span
+              className="filter-bar__search-status filter-bar__search-status--listening"
+              role="status"
+              aria-live="polite"
+              data-testid="filter-voice-listening"
+            >
+              {voiceListeningLabel}
+            </span>
+          ) : null}
+          {!isSearchLoading && !voiceListening && voiceErrorMessage ? (
+            <span
+              className="filter-bar__search-status filter-bar__search-status--error"
+              role="status"
+              aria-live="polite"
+              data-testid="filter-voice-error"
+            >
+              {voiceErrorMessage}
+            </span>
+          ) : null}
+          {showVoiceButton ? (
+            <button
+              type="button"
+              onClick={() => {
+                onSearchIntent?.();
+                toggleVoice();
+              }}
+              aria-label={voiceListening ? voiceStopLabel : voiceStartLabel}
+              aria-pressed={voiceListening}
+              data-state={voiceListening ? 'listening' : 'idle'}
+              data-testid="filter-voice-button"
+              className="filter-bar__voice focus-ring"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3Z" />
+                <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+              </svg>
+            </button>
           ) : null}
         </div>
 

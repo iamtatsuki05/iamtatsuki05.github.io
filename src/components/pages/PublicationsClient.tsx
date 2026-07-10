@@ -25,7 +25,7 @@ import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
-import type { Locale } from '@/lib/i18n';
+import { type Locale, localeToRouteLocale } from '@/lib/i18n';
 
 type Item = {
   slug: string;
@@ -275,6 +275,13 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         activeFilters={activeFilters}
         sortControls={<SearchSortControls visible={Boolean(q)} sort={sort} onSortChange={setSort} texts={t} />}
         stickyMetaOnMobile
+        voiceLang={localeToRouteLocale(locale)}
+        voiceStartLabel={t.voiceStart}
+        voiceStopLabel={t.voiceStop}
+        voiceListeningLabel={t.voiceListening}
+        voicePermissionMessage={t.voicePermission}
+        voiceNoSpeechMessage={t.voiceNoSpeech}
+        voiceUnavailableMessage={t.voiceUnavailable}
       >
         <YearSelect
           years={years}

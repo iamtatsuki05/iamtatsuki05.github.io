@@ -24,7 +24,7 @@ import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
 import { buildBlogPostHref } from '@/lib/blog/navigation';
-import type { Locale } from '@/lib/i18n';
+import { type Locale, localeToRouteLocale } from '@/lib/i18n';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
@@ -156,6 +156,13 @@ export function BlogsClient({
         activeFilters={activeFilters}
         sortControls={<SearchSortControls visible={Boolean(q)} sort={sort} onSortChange={setSort} texts={t} />}
         stickyMetaOnMobile
+        voiceLang={localeToRouteLocale(locale)}
+        voiceStartLabel={t.voiceStart}
+        voiceStopLabel={t.voiceStop}
+        voiceListeningLabel={t.voiceListening}
+        voicePermissionMessage={t.voicePermission}
+        voiceNoSpeechMessage={t.voiceNoSpeech}
+        voiceUnavailableMessage={t.voiceUnavailable}
       >
         <YearSelect
           years={allYears}

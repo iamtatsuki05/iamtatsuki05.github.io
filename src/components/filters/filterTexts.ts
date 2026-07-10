@@ -14,7 +14,13 @@ export type FilterTextKey =
   | 'searchKeyword'
   | 'sort'
   | 'sortRelevant'
-  | 'sortNewest';
+  | 'sortNewest'
+  | 'voiceStart'
+  | 'voiceStop'
+  | 'voiceListening'
+  | 'voicePermission'
+  | 'voiceNoSpeech'
+  | 'voiceUnavailable';
 
 export type FilterTextDict = Record<FilterTextKey, string>;
 
@@ -33,6 +39,12 @@ export const filterTextJa: FilterTextDict = {
   sort: '並び替え',
   sortRelevant: '関連順',
   sortNewest: '新しい順',
+  voiceStart: '音声で検索',
+  voiceStop: '音声入力を停止',
+  voiceListening: '聞き取り中...',
+  voicePermission: 'マイクの使用が許可されていません',
+  voiceNoSpeech: '音声を検出できませんでした',
+  voiceUnavailable: '音声入力を利用できません',
 };
 
 export const filterTextEn: FilterTextDict = {
@@ -50,6 +62,12 @@ export const filterTextEn: FilterTextDict = {
   sort: 'Sort',
   sortRelevant: 'Relevant',
   sortNewest: 'Newest',
+  voiceStart: 'Search by voice',
+  voiceStop: 'Stop voice input',
+  voiceListening: 'Listening...',
+  voicePermission: 'Microphone access is blocked',
+  voiceNoSpeech: 'No speech detected',
+  voiceUnavailable: 'Voice input is unavailable',
 };
 
 export const filterTextZh: FilterTextDict = {
@@ -67,6 +85,12 @@ export const filterTextZh: FilterTextDict = {
   sort: '排序',
   sortRelevant: '相关度',
   sortNewest: '最新',
+  voiceStart: '语音搜索',
+  voiceStop: '停止语音输入',
+  voiceListening: '正在聆听...',
+  voicePermission: '麦克风权限未开启',
+  voiceNoSpeech: '未检测到语音',
+  voiceUnavailable: '语音输入不可用',
 };
 
 export const filterTextFr: FilterTextDict = {
@@ -84,6 +108,12 @@ export const filterTextFr: FilterTextDict = {
   sort: 'Tri',
   sortRelevant: 'Pertinence',
   sortNewest: 'Plus récent',
+  voiceStart: 'Recherche vocale',
+  voiceStop: 'Arrêter la saisie vocale',
+  voiceListening: 'À l’écoute...',
+  voicePermission: 'L’accès au micro est bloqué',
+  voiceNoSpeech: 'Aucune voix détectée',
+  voiceUnavailable: 'La saisie vocale est indisponible',
 };
 
 export function resolveFilterText(locale: Locale): FilterTextDict {
