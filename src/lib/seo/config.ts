@@ -41,7 +41,7 @@ export const siteConfig = {
       url: 'https://www.naist.jp/en/',
     },
     laboratory: {
-      name: 'Natural Language Processing Laboratory (Watanabe Laboratory), Division of Information Science',
+      name: 'Natural Language Processing Laboratory (Watanabe Lab), Graduate School of Science and Technology, Information Science',
       url: 'https://nlp.naist.jp/en/',
     },
   },

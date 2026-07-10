@@ -99,7 +99,7 @@ describe('structured profile metadata', () => {
 
     expect(person.worksFor?.['@type']).toBe('Organization');
     expect(person.worksFor?.name).toBe(
-      'Natural Language Processing Laboratory (Watanabe Laboratory), Division of Information Science',
+      'Natural Language Processing Laboratory (Watanabe Lab), Graduate School of Science and Technology, Information Science',
     );
     expect(person.worksFor?.url).toBe('https://nlp.naist.jp/en/');
     expect(person.worksFor?.parentOrganization?.['@type']).toBe('CollegeOrUniversity');
@@ -111,7 +111,7 @@ describe('structured profile metadata', () => {
     const profile = buildOrganizationJsonLd();
 
     expect(profile.mainEntity.worksFor?.name).toBe(
-      'Natural Language Processing Laboratory (Watanabe Laboratory), Division of Information Science',
+      'Natural Language Processing Laboratory (Watanabe Lab), Graduate School of Science and Technology, Information Science',
     );
     expect(profile.mainEntity.worksFor?.parentOrganization?.name).toBe(
       'Nara Institute of Science and Technology (NAIST)',
