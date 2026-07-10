@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "baseBranches": ["develop"],
+  "timezone": "Asia/Tokyo",
+  "schedule": ["before 9am on monday"],
+  "rangeStrategy": "replace",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "minor and patch dependencies"
+    },
+    {
+      "matchPackageNames": ["playwright", "@playwright/test", "playwright-core"],
+      "groupName": "playwright"
+    }
+  ]
+}
