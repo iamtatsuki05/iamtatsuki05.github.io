@@ -1,0 +1,40 @@
+---
+import { ContentCardList } from '@/components/home/sections/ContentCardList';
+import { SectionHeader } from '@/components/home/sections/SectionHeader';
+import { SectionShell } from '@/components/home/SectionShell';
+import { buildBlogPostHref } from '@/lib/blog/navigation';
+import { type RelatedPostCandidate, selectRelatedPosts } from '@/lib/blog/relatedPosts';
+import { blogRelatedPostsHeading } from '@/lib/blog/translation';
+import { formatDate } from '@/lib/date';
+import type { Locale } from '@/lib/i18n';
+
+type Props = {
+  posts: RelatedPostCandidate[];
+  currentSlug: string;
+  locale?: Locale;
+  // locale prefix なしルートではリンクも prefix なしに保つため未指定のまま使う
+  hrefLocale?: Locale;
+};
+
+const { posts, currentSlug, locale = 'ja', hrefLocale } = Astro.props;
+const relatedPosts = selectRelatedPosts(posts, currentSlug);
+const items = relatedPosts.map((post) => ({
+  key: post.slug,
+  title: post.title,
+  description: post.summary,
+  href: buildBlogPostHref(post.slug, {}, hrefLocale),
+  date: formatDate(post.date, locale),
+  linkTestId: 'blog-related-post-link',
+}));
+---
+
+{items.length > 0 ? (
+  <SectionShell tone="amber" className="not-prose mt-12" data-testid="blog-related-posts">
+    <SectionHeader title={blogRelatedPostsHeading[locale]} tone="amber" />
+    <ContentCardList
+      items={items}
+      listTestId="blog-related-posts-list"
+      cardTestId="blog-related-post-card"
+    />
+  </SectionShell>
+) : null}

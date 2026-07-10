@@ -6,6 +6,7 @@ import { ShareButtons } from '@/components/blogs/ShareButtons';
 import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
 import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
 import { BlogAdjacentNavigationClient } from '@/components/blogs/BlogAdjacentNavigationClient';
+import RelatedPosts from '@/components/blogs/RelatedPosts.astro';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { EmbedsClient } from '@/components/site/EmbedsClient';
 import type { BlogPost } from '@/lib/content/blog';
@@ -107,6 +108,7 @@ function toIsoString(input?: string | null) {
         <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" locale={locale} client:load />
       </div>
       <div set:html={html || ''} />
+      <RelatedPosts posts={allPosts} currentSlug={slug} locale={locale} {...(routeLocale ? { hrefLocale: locale } : {})} />
       <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} {...navigationProps} client:load />
       <CodeCopyClient locale={locale} client:load />
       <EmbedsClient client:load />
