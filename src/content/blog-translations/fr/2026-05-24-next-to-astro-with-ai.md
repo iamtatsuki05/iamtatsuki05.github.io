@@ -14,9 +14,9 @@ Et pourtant, je traînais encore App Router, le static export, l'optimisation d'
 
 Je suis donc passé à Astro.
 
-Cette fois, je n'ai pas réécrit le site petit à petit moi-même. J'ai confié une grande partie du travail à Codex. Pas seulement l'implémentation, mais aussi les mesures avant/après, les tests, la correction des échecs et le traitement des retours de review.
+Cette fois, j'ai arrêté de réécrire le site petit à petit moi-même et j'ai presque tout confié à Codex. Pas seulement l'implémentation, mais aussi les mesures avant/après, les tests, la correction des échecs et le traitement des retours de review.
 
-Dire que j'ai tout confié à l'IA sonne un peu vague. En pratique, c'était plutôt: écrire précisément ce qu'il ne fallait pas casser, puis la laisser avancer jusqu'au bout dans ce cadre.
+Dire que j'ai tout confié à l'IA sonne un peu vague. Ce que j'ai fait en pratique : écrire précisément ce qu'il ne fallait pas casser, puis la laisser avancer jusqu'au bout.
 
 ## Ce que je voulais changer
 
@@ -50,16 +50,16 @@ Avant la migration, Codex a mesuré l'état de la version Next.js.
 
 Il a lancé `bun run build`, vérifié la taille de sortie, regardé la taille de quelques HTML représentatifs, lancé lint, Vitest, Playwright E2E, puis collecté les résultats Lighthouse mobile et desktop.
 
-Ce n'est pas spectaculaire, mais c'était important. Une migration ne consiste pas à réparer quelque chose de cassé. Elle consiste à remplacer quelque chose qui fonctionne déjà. Sans baseline, il est difficile de savoir si le résultat est meilleur, cassé, ou juste tombé juste par hasard.
+Ce n'est pas spectaculaire, mais c'est peut-être ce qui a le plus servi. Une migration remplace quelque chose qui fonctionne déjà : sans baseline, il est difficile de savoir si le résultat est meilleur, cassé, ou juste tombé juste par hasard.
 
-Dans ce cas, le build time et la taille de sortie se sont améliorés de façon très lisible, donc ce baseline a vraiment servi.
+Au final, le build time et la taille de sortie se sont nettement améliorés, donc ce baseline a servi.
 
 ## Ce qui a changé
 
 Le Next.js App Router sous `src/app/**` a disparu, remplacé par des routes Astro sous `src/pages/**`.
 Le layout commun est passé dans `BaseLayout.astro`, et les composants React existants sont restés uniquement là où ils étaient nécessaires comme Astro islands.
 
-Ce n'était pas une réécriture complète. Au contraire, j'ai gardé autant de composants UI que possible. Ce que je voulais changer, ce n'était pas l'apparence, mais la frontière avec le framework.
+Ce n'était pas une réécriture complète : j'ai gardé autant de composants UI que possible. Ce que je voulais changer, c'était la frontière avec le framework.
 
 De petits wrappers locaux ont remplacé `next/link`, `next/image` et `next/navigation`. J'ai aussi retiré `next-themes` et `nuqs`, puis gardé seulement le comportement nécessaire à ce site dans du code local.
 
@@ -112,7 +112,7 @@ Cette review valait le coup. Quand une IA relit ce qu'une IA a écrit, elle peut
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-Le build time a nettement baissé. La taille de sortie a presque été divisée par deux.
+Le build time a été divisé par huit. La taille de sortie, par deux.
 
 Lighthouse s'est amélioré sur toutes les routes desktop vérifiées. Sur mobile aussi, presque tout s'est amélioré. Seule la page de détail de blog a perdu un point de performance score, de `72` à `71`, mais le LCP est passé de `11040ms` à `8836ms`, et le TBT de `65ms` à `28ms`.
 
@@ -124,8 +124,8 @@ Ce que cette migration m'a fait sentir, c'est que plus je délègue à l'IA, plu
 
 Avec seulement « migre ce site vers Astro », le site aurait probablement fini par s'afficher. Mais dès que l'on inclut URL, SEO, déploiement, performance, E2E et review, définir les conditions au départ devient vraiment utile.
 
-Le plus gros travail humain n'a pas été d'écrire du code. C'était de décider ce qui ne devait pas casser.
+Le plus gros travail humain a été de décider ce qui ne devait pas casser. Je n'ai presque pas écrit de code.
 
-Pour un site personnel de cette taille, si la boucle de build et de test existe déjà, une migration de framework pilotée par l'IA est très réaliste. Mais si l'humain ne garde pas la définition de terminé, la migration peut facilement s'arrêter à « ça a l'air de marcher ».
+Pour un site personnel de cette taille, si la boucle de build et de test existe déjà, une migration de framework pilotée par l'IA est réaliste. Mais si l'humain ne garde pas la définition de terminé, la migration peut facilement s'arrêter à « ça a l'air de marcher ».
 
 La prochaine fois que je ferai une migration similaire, j'ajouterai d'abord des snapshot tests pour les métadonnées SEO et les URL du sitemap. Ce sont les points que le reviewer a trouvés cette fois, donc je veux qu'ils soient gardés mécaniquement dès le départ.

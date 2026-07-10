@@ -14,25 +14,25 @@ That feeling shows up directly in recent `dotfiles` commits. After moving to che
 
 This is no longer just a place to put configuration files. It is closer to daily infrastructure.
 
-This article organizes the recent maintenance of my dotfiles as "bonsai dotfiles for the AI Agent era." It is not a grand theory. It is a practical story about touching multiple PCs and multiple agents, and realizing that the environment gets messy quickly unless it is tended.
+This article walks through my recent dotfiles maintenance, treating it like tending a bonsai. It comes from working across multiple PCs and multiple agents, and realizing that the environment gets messy quickly unless it is tended.
 
 ## Problem Setting
 
 First, what is actually troublesome about the current development environment?
 
-In my case, there is not just one environment. There is my daily macOS machine, Linux CLI environments, research and course directories, and AI agents beyond Codex. As tools such as `codex`, `claude-code`, `copilot`, `cursor-agent`, `devin`, `hermes`, and `opencode` increase, it becomes easier to think I am doing the same work while the assumptions are actually different.
+In my case, I work in more than one environment. There is my daily macOS machine, Linux CLI environments, research and course directories, and AI agents beyond Codex. As tools such as `codex`, `claude-code`, `copilot`, `cursor-agent`, `devin`, `hermes`, and `opencode` pile up, I end up doing what I think is the same work on different assumptions.
 
 The naive approach is to fix each PC and each tool on the spot. It works, but not for long. You lose track of what is installed where. You stop knowing which prompt each agent is reading. You think you updated a tool, but another environment still has the old one.
 
 If only humans were using the environment, memory could cover some of that. Once AI agents are doing work, it becomes harder. Agents are strongly affected by the settings and files they can read. A drifting environment becomes drifting work.
 
-So my recent dotfiles have been moving in three directions.
+So my recent dotfiles have been moving in these directions:
 
-1. Use Nix to absorb OS and machine differences where possible.
-2. Collect AI agent prompts, skills, and hooks under `.agent`.
-3. Manage fast-moving CLI tools with mise.
+- Use Nix to absorb OS and machine differences where possible
+- Collect AI agent prompts, skills, and hooks under `.agent`
+- Manage fast-moving CLI tools with mise
 
-Each piece is ordinary on its own. Together, they change what dotfiles mean. They are no longer just convenience settings. They become the roots that support reproducible work.
+Each piece is ordinary on its own. Together, though, dotfiles become the roots that support reproducible work.
 
 ## Deciding What Nix Should Align
 
@@ -40,7 +40,7 @@ First, Nix.
 
 In my current dotfiles, I split profiles into `full` for macOS and `cli` for Linux. `full` includes nix-darwin, Home Manager, GUI apps, macOS defaults, configuration files, mise, and Neovim. `cli` focuses on CLI tools and is easier to use in environments such as Ubuntu.
 
-This split is important.
+This split is the key part.
 
 macOS and Linux do not need to be identical. In fact, trying to make them identical becomes painful around GUI apps and OS-specific settings. But I do want the CLI feel to stay aligned. If `zsh`, `git`, `rg`, `mise`, `uv`, and Neovim are consistent, moving to another machine feels much less awkward.
 
@@ -66,7 +66,7 @@ To a human, those may look like minor differences. To an agent, they are differe
 
 So I stopped placing prompts and skills directly in each tool's configuration directory. Dotfiles are the source. `dotfiles/.agent/sync.sh` calls `scripts/setup_agent_files.sh` and creates symlinks into each tool home.
 
-This is plain, but it works. If AI agents are part of the development environment rather than one-off convenience tools, the assumptions given to them should also be version-controlled.
+Plain, but it works. If AI agents are part of the development environment, the assumptions given to them should also be version-controlled.
 
 ## Tracking Fast Changes with mise
 
@@ -108,7 +108,7 @@ As I delegate more work to AI agents, I may write fewer lines of code directly. 
 
 Where does the prompt the agent reads come from? Which revision is the skill on? Will hooks behave the same way on another PC? At what granularity are CLI tools updated, and can they be rolled back? Where do the responsibilities of Nix, mise, and chezmoi begin and end?
 
-If these points are vague, AI-assisted work is hard to reproduce. If they are organized, AI agents become much more stable tools.
+If these points are vague, AI-assisted work is hard to reproduce. If they are organized, AI agents become stable tools.
 
 For me, dotfiles are no longer just a collection of shell aliases. They are a place to grow multiple PCs, a Nix package set, mise tools, chezmoi source state, AI agent prompts, skills, hooks, and evals together.
 
