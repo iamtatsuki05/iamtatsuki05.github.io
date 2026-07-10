@@ -6,16 +6,16 @@ headerAlt: Illustration du vibe coding
 
 ## Introduction
 
-Je voulais depuis quelque temps créer une page de présentation personnelle, mais je n’avais jamais vraiment eu le temps de commencer. Récemment, le "vibe coding", une façon de développer par élan et par dialogue avec des outils comme Claude Code ou Codex, est devenu un sujet courant. Comme j’avais enfin un peu de temps, j’ai essayé de construire ce site personnel de cette manière.
+Je voulais depuis quelque temps créer une page de présentation personnelle, mais je n’avais jamais le temps de commencer. Récemment, le vibe coding, où l’on pilote par le dialogue des outils comme Claude Code ou Codex, est devenu un sujet courant. Comme j’avais enfin un peu de temps, j’ai construit ce site de cette manière.
 
 ## Processus
 
-Le processus a ete le suivant :
+Voici ce que j’ai fait :
 
-1. definir les exigences
-2. les confier a Codex
-3. donner plusieurs retours sur le code genere
-4. ecrire moi-meme les textes de presentation, puis demander a l IA de les relire
+- définir les exigences
+- les confier à Codex
+- donner plusieurs retours sur le code généré
+- écrire moi-même les textes de présentation, puis demander à l’IA de les relire
 
 ### Definition des exigences
 
@@ -121,10 +121,10 @@ https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E
 
 ### Retours sur le resultat genere
 
-J ai lance le site, indique brievement les points qui me genaient, puis repete les ameliorations.
+J’ai lancé le site, indiqué brièvement les points qui me gênaient, laissé Codex corriger, puis répété l’opération.
 
 ## Impressions
 
-Sans presque rien implementer moi-meme, j ai pu construire rapidement une page d un niveau pratique. Dans ChatGPT Plus, je gardais Reasoning Effort sur high, mais le developpement est reste confortable sans limite de taux bloquante.
+Sans presque rien implémenter moi-même, j’ai obtenu en peu de temps une page d’un niveau pratique. Dans ChatGPT Plus, je gardais Reasoning Effort sur high et je n’ai jamais atteint la limite de débit.
 
-J ai senti qu un coding agent peut etre tres efficace si l on a assez d experience pratique pour evaluer le resultat. Collaborer avec l IA a rendu le processus beaucoup moins stressant.
+Développer avec un coding agent fonctionne bien dès qu’on a assez d’expérience pratique pour juger le résultat. Le processus m’a peu stressé.
