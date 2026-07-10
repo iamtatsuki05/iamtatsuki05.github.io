@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LinksPage } from '@/components/pages/LinksPage';
+import { getLinks } from '@/lib/data/links';
+import { resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLocalizedMetadata } from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+
+type Props = {
+  /** ルート locale。未指定はデフォルト (ja) の locale prefix なしルート。 */
+  routeLocale?: string;
+};
+
+const { routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+const links = await getLinks();
+const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.links);
+const pagePath = routeLocale ? localizedPath('/links/', locale) : '/links/';
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildCollectionPageJsonLd({
+    path: pagePath,
+    name: 'Links',
+    description: 'SNSと外部リンク集',
+    itemCount: links.length,
+  }),
+  buildBreadcrumbJsonLd({
+    items: [
+      { name: 'Home', url: absoluteUrl(homePath) },
+      { name: 'Links', url: absoluteUrl(pagePath) },
+    ],
+  }),
+];
+---
+
+<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
+  <LinksPage locale={locale} links={links} />
+</BaseLayout>

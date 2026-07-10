@@ -1,22 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { PublicationsPage } from '@/components/pages/PublicationsPage';
-import { getAllPublications } from '@/lib/content/publication';
-import { resolveLocale, SUPPORTED_LOCALES, SUPPORTED_ROUTE_LOCALES } from '@/lib/i18n';
-import { buildLocalizedMetadata } from '@/lib/metadata';
-import { pageMeta } from '@/lib/seo/metaConfig';
-import { htmlLangFromLocale } from '@/lib/astro/metadata';
+import PublicationsIndexPage from '@/components/pages/PublicationsIndexPage.astro';
+import { localeStaticPaths } from '@/lib/astro/paths';
 
 export function getStaticPaths() {
-  return [...SUPPORTED_ROUTE_LOCALES, ...SUPPORTED_LOCALES].map((locale) => ({ params: { locale } }));
+  return localeStaticPaths();
 }
-
-const routeLocale = Astro.params.locale || 'ja-JP';
-const locale = resolveLocale(routeLocale);
-const publications = await getAllPublications();
-const metadata = await buildLocalizedMetadata(Promise.resolve({ locale: routeLocale }), pageMeta.publications);
 ---
 
-<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)}>
-  <PublicationsPage locale={locale} items={publications} client:load />
-</BaseLayout>
+<PublicationsIndexPage routeLocale={Astro.params.locale || 'ja-JP'} />

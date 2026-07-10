@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useMemo, type KeyboardEvent } from 'react';
+import React, { useCallback, useMemo, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
 import { notifyLocationChange } from '@/lib/compat/navigation';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
@@ -16,6 +16,7 @@ import {
   toggleSetValue,
 } from '@/components/filters/filterHelpers';
 import {
+  formatClearFilterLabel,
   formatFilterResultCount,
   formatRemoveFilterAriaLabel,
   resolveFilterText,
@@ -41,6 +42,41 @@ type Item = {
 };
 
 const publicationTypeOrder: Item['type'][] = ['paper', 'app', 'article', 'talk', 'slide', 'media'];
+
+const publicationTypeLabels: Record<Locale, Record<Item['type'], string>> = {
+  ja: {
+    paper: '📄 論文',
+    article: '📝 技術ブログ',
+    talk: '🎤 登壇',
+    slide: '📑 スライド',
+    media: '📰 メディア',
+    app: '📱 アプリ',
+  },
+  en: {
+    paper: '📄 Papers',
+    article: '📝 Technical Articles',
+    talk: '🎤 Talks',
+    slide: '📑 Slides',
+    media: '📰 Media',
+    app: '📱 Apps',
+  },
+  zh: {
+    paper: '📄 论文',
+    article: '📝 技术博客',
+    talk: '🎤 演讲',
+    slide: '📑 幻灯片',
+    media: '📰 媒体',
+    app: '📱 应用',
+  },
+  fr: {
+    paper: '📄 Articles scientifiques',
+    article: '📝 Articles techniques',
+    talk: '🎤 Presentations',
+    slide: '📑 Slides',
+    media: '📰 Medias',
+    app: '📱 Apps',
+  },
+};
 
 function isPublicationType(value: string): value is Item['type'] {
   return publicationTypeOrder.includes(value as Item['type']);
@@ -162,40 +198,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
   }, [availableTypes, groups, q, sort, typeFiltered]);
 
   const t = resolveFilterText(locale);
-  const typeLabels: Record<Item['type'], string> = {
-    ja: {
-        paper: '📄 論文',
-        article: '📝 技術ブログ',
-        talk: '🎤 登壇',
-        slide: '📑 スライド',
-        media: '📰 メディア',
-        app: '📱 アプリ',
-      },
-    en: {
-        paper: '📄 Papers',
-        article: '📝 Technical Articles',
-        talk: '🎤 Talks',
-        slide: '📑 Slides',
-        media: '📰 Media',
-        app: '📱 Apps',
-      },
-    zh: {
-      paper: '📄 论文',
-      article: '📝 技术博客',
-      talk: '🎤 演讲',
-      slide: '📑 幻灯片',
-      media: '📰 媒体',
-      app: '📱 应用',
-    },
-    fr: {
-      paper: '📄 Articles scientifiques',
-      article: '📝 Articles techniques',
-      talk: '🎤 Presentations',
-      slide: '📑 Slides',
-      media: '📰 Medias',
-      app: '📱 Apps',
-    },
-  }[locale];
+  const typeLabels = publicationTypeLabels[locale];
   const resultLabel = useMemo(
     () => formatFilterResultCount(locale, typeFiltered.length, items.length),
     [items.length, locale, typeFiltered.length],
@@ -240,7 +243,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     if (selectedTypeSet.size !== availableTypes.length) {
       actions.push({
         key: 'clear-types',
-        label: locale === 'ja' ? `${t.types}をクリア` : formatClearTypesLabel(locale, t.types),
+        label: formatClearFilterLabel(locale, t.types),
         onClick: () => setSelectedTypes(null),
       });
     }
@@ -251,14 +254,6 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
   const openInNewTab = (url?: string) => {
     if (!url || typeof window === 'undefined') return;
     window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleKey = (event: KeyboardEvent<HTMLLIElement>, url?: string) => {
-    if (!url) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openInNewTab(url);
-    }
   };
 
   return (
@@ -338,12 +333,14 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
               {arr.map((i, index) => {
                 const primaryLink = i.links[0]?.url;
                 const isFirstImage = index === 0 && Boolean(i.headerImage);
-                const clickableProps = primaryLink
+                // マウス操作の利便のためカード全域クリックを維持する。キーボードと支援技術には
+                // タイトルの実リンクがあるため、li には role を与えずクリックのみ委譲する。
+                const cardClickProps = primaryLink
                   ? {
-                      role: 'link' as const,
-                      tabIndex: 0,
-                      onClick: () => openInNewTab(primaryLink),
-                      onKeyDown: (event: KeyboardEvent<HTMLLIElement>) => handleKey(event, primaryLink),
+                      onClick: (event: MouseEvent<HTMLLIElement>) => {
+                        if ((event.target as HTMLElement).closest('a')) return;
+                        openInNewTab(primaryLink);
+                      },
                     }
                   : {};
                 return (
@@ -352,7 +349,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     data-testid="publication-card"
                     className={`content-reveal-card card p-3 gap-3 items-start sm:flex ${primaryLink ? 'pressable-card cursor-pointer' : ''}`}
                     style={areCardsVisible ? { transitionDelay: `${100 + index * 24}ms` } : undefined}
-                    {...clickableProps}
+                    {...cardClickProps}
                   >
                     {i.headerImage ? (
                       <div
@@ -372,7 +369,19 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                     ) : null}
                     <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                       <h3 className="text-base font-semibold">
-                        <SearchHighlight text={i.title} query={q} />
+                        {primaryLink ? (
+                          <a
+                            href={primaryLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            data-testid="publication-card-link"
+                            className="underline-offset-2 hover:underline"
+                          >
+                            <SearchHighlight text={i.title} query={q} />
+                          </a>
+                        ) : (
+                          <SearchHighlight text={i.title} query={q} />
+                        )}
                       </h3>
                       <p className="text-xs opacity-70">
                         {(i.publishedAt || '').slice(0, 10)} ・{' '}
@@ -392,15 +401,14 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                           ))}
                         </div>
                       ) : null}
-                      <div className="mt-1 space-x-2 text-sm">
+                      <div className="-mx-1.5 mt-1 flex flex-wrap text-sm">
                         {i.links.map((l) => (
                           <a
                             key={l.url}
                             href={l.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="underline"
-                            onClick={(event) => event.stopPropagation()}
+                            className="inline-flex min-h-6 items-center px-1.5 py-1 underline"
                           >
                             {l.kind}
                           </a>
@@ -420,10 +428,4 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
       )}
     </div>
   );
-}
-
-function formatClearTypesLabel(locale: Locale, label: string) {
-  if (locale === 'zh') return `清除${label}`;
-  if (locale === 'fr') return `Effacer ${label}`;
-  return `Clear ${label}`;
 }

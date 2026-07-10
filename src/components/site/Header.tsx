@@ -78,7 +78,10 @@ function HeaderContent({ currentPath }: HeaderProps) {
           className="flex min-w-0 flex-1 items-center gap-3 truncate text-lg font-semibold sm:flex-none"
         >
           <img
-            src={withBasePath('/icon-192x192.png')}
+            src={withBasePath('/header-icon-56.webp')}
+            srcSet={`${withBasePath('/header-icon-56.webp')} 1x, ${withBasePath('/header-icon-112.webp')} 2x`}
+            width={28}
+            height={28}
             alt=""
             aria-hidden="true"
             data-testid="header-personal-icon"

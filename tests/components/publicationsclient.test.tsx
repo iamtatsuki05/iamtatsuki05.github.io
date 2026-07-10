@@ -49,6 +49,32 @@ describe('PublicationsClient', () => {
     expect(getByText('Paper 1')).toBeInTheDocument();
   });
 
+  it('opens the primary link on blank-area click but not on inner link click', async () => {
+    const { render } = await import('@testing-library/react');
+    const userEvent = await import('@testing-library/user-event');
+    const openSpy = vi.fn();
+    vi.stubGlobal('open', openSpy);
+
+    const { getAllByTestId, getByRole } = render(<PublicationsClient items={items} locale="en" />, {
+      wrapper: Wrapper,
+    });
+    const user = userEvent.default.setup();
+
+    const card = getAllByTestId('publication-card')[0];
+    await user.click(card);
+    expect(openSpy).toHaveBeenCalledTimes(1);
+    expect(openSpy).toHaveBeenCalledWith('https://example.com/paper.pdf', '_blank', 'noopener,noreferrer');
+
+    const titleLink = getByRole('link', { name: 'Paper 1' });
+    expect(titleLink).toHaveAttribute('href', 'https://example.com/paper.pdf');
+    expect(titleLink).toHaveAttribute('target', '_blank');
+    await user.click(titleLink);
+    expect(openSpy).toHaveBeenCalledTimes(1);
+
+    await user.click(getByRole('link', { name: 'pdf' }));
+    expect(openSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('builds type filter options from publication metadata', async () => {
     const { render } = await import('@testing-library/react');
     const { within } = await import('@testing-library/react');

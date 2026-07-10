@@ -1,28 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { BlogsClient } from '@/components/pages/BlogsClient';
-import { getAllPosts } from '@/lib/content/blog';
-import { resolveLocale, SUPPORTED_LOCALES, SUPPORTED_ROUTE_LOCALES } from '@/lib/i18n';
-import { buildLocalizedMetadata } from '@/lib/metadata';
-import { pageMeta } from '@/lib/seo/metaConfig';
-import { blogsPageCopy } from '@/lib/pageCopy';
-import { htmlLangFromLocale } from '@/lib/astro/metadata';
+import BlogsIndexPage from '@/components/pages/BlogsIndexPage.astro';
+import { localeStaticPaths } from '@/lib/astro/paths';
 
 export function getStaticPaths() {
-  return [...SUPPORTED_ROUTE_LOCALES, ...SUPPORTED_LOCALES].map((locale) => ({ params: { locale } }));
+  return localeStaticPaths();
 }
-
-const routeLocale = Astro.params.locale || 'ja-JP';
-const locale = resolveLocale(routeLocale);
-const posts = await getAllPosts(locale);
-const copy = blogsPageCopy[locale];
-const metadata = await buildLocalizedMetadata(Promise.resolve({ locale: routeLocale }), pageMeta.blogs);
 ---
 
-<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)}>
-  <div class="space-y-4">
-    <div class="text-sm opacity-70">{copy.breadcrumb}</div>
-    <h1 class="text-3xl font-bold">{copy.heading}</h1>
-    <BlogsClient posts={posts} locale={locale} initialCardsVisible client:load />
-  </div>
-</BaseLayout>
+<BlogsIndexPage routeLocale={Astro.params.locale || 'ja-JP'} />

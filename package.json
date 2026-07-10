@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "bun@1.3.13",
   "scripts": {
-    "dev": "bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1 --port 3000",
-    "build": "bun scripts/ensure-blog-translations.ts && bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && bun scripts/generate-hobby-optimized-images.ts && ASTRO_TELEMETRY_DISABLED=1 astro build && bun scripts/prune-static-export.ts && bun scripts/generate-rss.ts",
+    "dev": "bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && bun scripts/generate-blog-header-images.ts && ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1 --port 3000",
+    "build": "bun scripts/ensure-blog-translations.ts && bun scripts/generate-blog-translations.ts && bun scripts/sync-blog-markdown.ts && bun scripts/generate-blog-header-images.ts && bun scripts/generate-hobby-optimized-images.ts && ASTRO_TELEMETRY_DISABLED=1 astro build && bun scripts/prune-static-export.ts && bun scripts/generate-rss.ts",
     "build:analyze": "bun run build",
     "start": "node scripts/serve-static-export.mjs --port 3000 --dir out",
     "lint": "biome check .",

@@ -1,16 +1,6 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { BlogToc } from '@/components/blogs/BlogToc';
-import { ShareButtons } from '@/components/blogs/ShareButtons';
-import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
-import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
-import { BlogAdjacentNavigationClient } from '@/components/blogs/BlogAdjacentNavigationClient';
-import { CodeCopyClient } from '@/components/site/CodeCopyClient';
-import { EmbedsClient } from '@/components/site/EmbedsClient';
+import BlogPostPage from '@/components/pages/BlogPostPage.astro';
 import { getAllPosts, getPostBySlug } from '@/lib/content/blog';
-import { withBasePath } from '@/lib/url';
-import { absoluteUrl, buildArticleJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
-import { blogAiWritingNotice } from '@/lib/blog/translation';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -20,84 +10,7 @@ export async function getStaticPaths() {
 const slug = Astro.params.slug || '';
 const post = await getPostBySlug(slug);
 if (!post) return Astro.redirect('/404/');
-
-const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags, markdown } = post;
-const aiWritingNotice = post.aiAssisted ? blogAiWritingNotice.ja : null;
-const publishedTime = toIsoString(date);
-const modifiedTime = toIsoString(updated) || publishedTime;
-const description = summary || `${title} に関する記事です。`;
-const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
-const metadata = buildPageMetadata({
-  title,
-  description,
-  locale: 'ja',
-  path: `/blogs/${slug}/`,
-  type: 'article',
-  images,
-  keywords: tags,
-  languageAlternates: buildLanguageAlternates(`/blogs/${slug}/`),
-  publishedTime,
-  modifiedTime,
-  tags,
-});
-const shareUrl = absoluteUrl(`/blogs/${slug}/`);
 const allPosts = await getAllPosts();
-const articleJsonLd = buildArticleJsonLd({
-  title,
-  description,
-  path: `/blogs/${slug}/`,
-  image: images[0],
-  datePublished: publishedTime ?? date,
-  dateModified: toIsoString(updated) ?? toIsoString(date) ?? date,
-  tags,
-});
-
-function toIsoString(input?: string | null) {
-  if (!input) return undefined;
-  const date = new Date(input);
-  if (Number.isNaN(date.getTime())) return undefined;
-  return date.toISOString();
-}
 ---
 
-<BaseLayout metadata={metadata} lang="ja" jsonLd={[articleJsonLd]}>
-  <div class="mx-auto w-full lg:grid lg:max-w-[1560px] lg:grid-cols-[minmax(0,1fr)_minmax(0,56rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
-    <article id="blog-article" class="prose dark:prose-invert w-full max-w-none lg:col-start-2">
-      {headerImage ? (
-        <div class="relative mb-4 aspect-[16/9] w-full overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
-          <img
-            src={withBasePath(headerImage)}
-            alt={headerAlt || title}
-            class="absolute inset-0 h-full w-full object-cover"
-            sizes="(max-width: 640px) 100vw, 720px"
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            referrerpolicy="no-referrer"
-          />
-        </div>
-      ) : null}
-      <h1>{title}</h1>
-      <BlogPostMeta date={date} updated={updated} locale="ja" client:load />
-      {aiWritingNotice ? (
-        <aside class="not-prose my-4 rounded-sm border border-amber-300/70 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-300/30 dark:bg-amber-950/30 dark:text-amber-100">
-          <p class="m-0">{aiWritingNotice}</p>
-        </aside>
-      ) : null}
-      <div class="my-4 flex flex-wrap items-center gap-3">
-        <ShareButtons url={shareUrl} title={title} className="my-0" locale="ja" client:load />
-        <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" locale="ja" client:load />
-      </div>
-      <div set:html={html || ''} />
-      <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} client:load />
-      <CodeCopyClient locale="ja" client:load />
-      <EmbedsClient client:load />
-    </article>
-    <BlogToc
-      containerId="blog-article"
-      className="min-[1440px]:col-start-3 min-[1440px]:justify-self-start min-[1440px]:w-full min-[1440px]:max-w-[clamp(14rem,24vw,20rem)]"
-      locale="ja"
-      client:load
-    />
-  </div>
-</BaseLayout>
+<BlogPostPage post={post} allPosts={allPosts} slug={slug} />

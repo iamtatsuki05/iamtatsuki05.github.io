@@ -34,7 +34,7 @@ describe('Header', () => {
     const icon = screen.getByTestId('header-personal-icon');
 
     expect(title).toContainElement(icon);
-    expect(icon).toHaveAttribute('src', '/icon-192x192.png');
+    expect(icon).toHaveAttribute('src', '/header-icon-56.webp');
     expect(icon).toHaveAttribute('alt', '');
     expect(icon).toHaveAttribute('aria-hidden', 'true');
   });

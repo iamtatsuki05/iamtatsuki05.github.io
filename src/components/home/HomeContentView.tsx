@@ -23,7 +23,9 @@ type HomeDictionary = {
   affiliation?: string;
   latest_blog: string;
   latest_pub: string;
-  cta_more: string;
+  cta_more_links: string;
+  cta_more_blogs: string;
+  cta_more_publications: string;
 };
 
 export function HomeContentView({ locale, dict, latest, publications, links }: HomeContentViewProps) {
@@ -37,11 +39,11 @@ export function HomeContentView({ locale, dict, latest, publications, links }: H
         intro={dict.intro}
       />
 
-      <LinksSection links={links} ctaLabel={dict.cta_more} />
+      <LinksSection links={links} ctaLabel={dict.cta_more_links} />
 
-      <LatestBlogSection posts={latest} locale={locale} title={dict.latest_blog} ctaLabel={dict.cta_more} />
+      <LatestBlogSection posts={latest} locale={locale} title={dict.latest_blog} ctaLabel={dict.cta_more_blogs} />
 
-      <PublicationsSection publications={publications} title={dict.latest_pub} ctaLabel={dict.cta_more} />
+      <PublicationsSection publications={publications} title={dict.latest_pub} ctaLabel={dict.cta_more_publications} />
     </div>
   );
 }

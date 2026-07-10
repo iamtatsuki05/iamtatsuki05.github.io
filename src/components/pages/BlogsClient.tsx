@@ -37,6 +37,8 @@ type Post = {
   tags: string[];
   summary: string;
   headerImage?: string;
+  headerImageOptimizedSrc?: string;
+  headerImageSrcSet?: string;
   headerAlt?: string;
 };
 
@@ -189,7 +191,8 @@ export function BlogsClient({
                   data-testid="blog-image"
                 >
                   <Image
-                    src={p.headerImage}
+                    src={p.headerImageOptimizedSrc ?? p.headerImage}
+                    srcSet={p.headerImageSrcSet}
                     alt={p.headerAlt || p.title}
                     fill
                     className="object-cover"
@@ -239,7 +242,8 @@ export function BlogsClient({
                     data-testid="blog-image"
                   >
                     <Image
-                      src={p.headerImage}
+                      src={p.headerImageOptimizedSrc ?? p.headerImage}
+                      srcSet={p.headerImageSrcSet}
                       alt={p.headerAlt || p.title}
                       fill
                       className="object-contain"

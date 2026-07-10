@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { HomeContentView } from '@/components/home/HomeContentView';
+import { dictionaries, resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
+import { getLatestPosts } from '@/lib/content/blog';
+import { getAllPublications } from '@/lib/content/publication';
+import { getLinks } from '@/lib/data/links';
+import {
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildLanguageAlternates,
+  buildLocalizedMetadata,
+  buildOrganizationJsonLd,
+  buildPageMetadata,
+  buildSiteLinksJsonLd,
+} from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+
+type Props = {
+  /** ルート locale。未指定はデフォルト (ja) の locale prefix なしルート。 */
+  routeLocale?: string;
+};
+
+const { routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+const dict = dictionaries[locale];
+const [latest, publications, links] = await Promise.all([
+  getLatestPosts(3, locale),
+  getAllPublications(),
+  getLinks(),
+]);
+const homeMeta = pageMeta.home[locale];
+const metadata = routeLocale
+  ? buildLocalizedMetadata(routeLocale, pageMeta.home)
+  : buildPageMetadata({
+      title: homeMeta.metadataTitle,
+      description: homeMeta.metadataDescription,
+      locale,
+      path: homeMeta.path,
+      type: 'website',
+      images: [{ url: '/favicon.ico', width: 1200, height: 630, alt: '岡田 龍樹 | Tatsuki Okada' }],
+      keywords: ['ポートフォリオ', 'NLPエンジニア', '機械学習エンジニア', 'ソフトウェアエンジニア'],
+      languageAlternates: buildLanguageAlternates(homeMeta.path),
+    });
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildSiteLinksJsonLd(),
+  buildBreadcrumbJsonLd({ items: [{ name: 'Home', url: absoluteUrl(homePath) }] }),
+  buildOrganizationJsonLd(),
+];
+---
+
+<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
+  <HomeContentView
+    locale={locale}
+    dict={dict}
+    latest={latest.items}
+    publications={publications.slice(0, 4)}
+    links={links.slice(0, 6)}
+  />
+</BaseLayout>

@@ -397,7 +397,12 @@ for (const { label, use } of viewports) {
     });
 
     test('opens the primary link when clicking a publication card', async ({ page }) => {
-      await page.locator('[data-testid="publication-card"]').first().click();
+      const card = page.locator('[data-testid="publication-card"]').first();
+      const titleLink = card.locator('[data-testid="publication-card-link"]');
+      await expect(titleLink).toHaveAttribute('target', '_blank');
+      expect(await titleLink.getAttribute('href')).toBeTruthy();
+
+      await card.click({ position: { x: 10, y: 10 } });
       const openCalls = await page.evaluate(
         () => (window as unknown as { __publicationOpenCalls__?: string[] }).__publicationOpenCalls__ || [],
       );
