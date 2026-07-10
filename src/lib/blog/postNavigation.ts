@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
 import type { BlogPost } from '@/lib/content/blog';
-import { buildBlogPostHref, type BlogFilterParams } from '@/lib/blog/navigation';
+import { BLOG_SEARCH_KEYS, buildBlogPostHref, type BlogFilterParams } from '@/lib/blog/navigation';
 import type { Locale } from '@/lib/i18n';
 import {
   filterSearchItems,
@@ -9,9 +9,7 @@ import {
 } from '@/lib/search/filterItems';
 import { normalizeSearchText } from '@/lib/search/queryTokens';
 
-type NavigableBlogPost = Pick<BlogPost, 'slug' | 'title' | 'date' | 'tags' | 'summary'>;
-
-const BLOG_SEARCH_KEYS = ['title', 'summary', 'tags'];
+type NavigableBlogPost = Pick<BlogPost, 'slug' | 'title' | 'date' | 'tags' | 'summary' | 'searchText'>;
 
 export function resolveBlogPostNavigation<T extends NavigableBlogPost>(
   posts: T[],
@@ -24,6 +22,7 @@ export function resolveBlogPostNavigation<T extends NavigableBlogPost>(
     ? new Fuse(posts, {
         keys: BLOG_SEARCH_KEYS,
         threshold: 0.35,
+        ignoreLocation: true,
         includeScore: true,
         getFn: (item, path) => readSearchField(item, resolveFusePath(path)).map((value) => normalizeSearchText(value)),
       })
