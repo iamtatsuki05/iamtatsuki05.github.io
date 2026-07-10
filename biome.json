@@ -14,7 +14,8 @@
 			"!**/out",
 			"!**/storybook-static",
 			"!**/node_modules",
-			"!**/.cache"
+			"!**/.cache",
+			"!**/.claude"
 		]
 	},
 	"formatter": {
