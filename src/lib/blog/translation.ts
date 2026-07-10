@@ -25,6 +25,13 @@ export const blogRelatedPostsHeading: Record<Locale, string> = {
   fr: 'Articles liés',
 };
 
+export const blogCommentsHeading: Record<Locale, string> = {
+  ja: 'コメント',
+  en: 'Comments',
+  zh: '评论',
+  fr: 'Commentaires',
+};
+
 export const blogAiWritingNotice: Record<Locale, string> = {
   ja: 'この記事は AI の補助を使って執筆しています。',
   en: 'This article was written with AI assistance.',
