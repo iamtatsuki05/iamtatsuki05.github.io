@@ -23,13 +23,14 @@ import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
-import { buildBlogPostHref } from '@/lib/blog/navigation';
+import { BLOG_SEARCH_KEYS, buildBlogPostHref } from '@/lib/blog/navigation';
 import { type Locale, localeToRouteLocale } from '@/lib/i18n';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
 const LATEST_POSTS_COUNT = 3;
 
+// タイトル/サマリ/タグのマッチを本文(searchText)より優先する。
 type Post = {
   slug: string;
   title: string;
@@ -40,6 +41,7 @@ type Post = {
   headerImageOptimizedSrc?: string;
   headerImageSrcSet?: string;
   headerAlt?: string;
+  searchText?: string;
 };
 
 export function BlogsClient({
@@ -72,7 +74,8 @@ export function BlogsClient({
     sort,
     setSort,
   } = useSearchFilters(posts, {
-    fuseKeys: ['title', 'summary', 'tags'],
+    fuseKeys: BLOG_SEARCH_KEYS,
+    ignoreLocation: true,
     extractYear: (p) => p.date,
     extractTags: (p) => p.tags || [],
     extractSortValue: (p) => p.date,
