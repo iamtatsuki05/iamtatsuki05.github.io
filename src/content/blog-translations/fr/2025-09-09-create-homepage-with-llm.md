@@ -17,9 +17,9 @@ Voici ce que j’ai fait :
 - donner plusieurs retours sur le code généré
 - écrire moi-même les textes de présentation, puis demander à l’IA de les relire
 
-### Definition des exigences
+### Définition des exigences
 
-Comme j utilise ChatGPT Plus, je suis parti de la. J ai donne a GPT des idees de routes et de stack technique sous forme de liste, puis je lui ai demande de les transformer en cahier des charges.
+Comme j’utilise ChatGPT Plus, je suis parti de là. J’ai donné à GPT des idées de routes et de stack technique sous forme de liste, puis je lui ai demandé de les transformer en cahier des charges.
 
 <details>
 <summary>Demande</summary>
@@ -113,13 +113,13 @@ Utiliser GitHub Actions pour builder lors d un push sur `main` et deployer `out/
 ```
 </details>
 
-### Demande a Codex
+### Demande à Codex
 
-Apres avoir installe Codex, j ai utilise l article ci-dessous comme reference de configuration, puis je lui ai donne le cahier des charges.
+Après avoir installé Codex, j’ai utilisé l’article ci-dessous comme référence de configuration, puis je lui ai donné le cahier des charges.
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
-### Retours sur le resultat genere
+### Retours sur le résultat généré
 
 J’ai lancé le site, indiqué brièvement les points qui me gênaient, laissé Codex corriger, puis répété l’opération.
 
