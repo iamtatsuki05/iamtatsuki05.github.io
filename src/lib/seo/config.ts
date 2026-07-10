@@ -46,5 +46,6 @@ export const siteConfig = {
     },
   },
   twitterHandle: '@iam_tatsuki05',
-  defaultOgImage: '/favicon.ico',
+  defaultOgImage: '/og-image.jpg',
+  avatarImage: '/avatar-288.webp',
 } as const;

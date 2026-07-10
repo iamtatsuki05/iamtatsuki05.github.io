@@ -35,8 +35,8 @@ describe('buildPageMetadata', () => {
     expect(metadata.alternates?.languages?.['ja-JP']).toBe('https://example.com/ja-JP/test/');
     expect(metadata.alternates?.languages?.['zh-CN']).toBe('https://example.com/zh-CN/test/');
     expect(metadata.alternates?.languages?.['fr-FR']).toBe('https://example.com/fr-FR/test/');
-    expect(metadata.openGraph?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
-    expect(metadata.twitter?.images?.[0]).toEqual({ url: 'https://example.com/favicon.ico' });
+    expect(metadata.openGraph?.images?.[0]).toEqual({ url: 'https://example.com/og-image.jpg' });
+    expect(metadata.twitter?.images?.[0]).toEqual({ url: 'https://example.com/og-image.jpg' });
     expect(metadata.keywords).toContain('custom');
   });
 
@@ -88,7 +88,7 @@ describe('buildArticleJsonLd', () => {
     expect(article['@type']).toBe('BlogPosting');
     expect(article.url).toBe('https://example.com/blogs/structured-data/');
     expect(article.image?.[0]).toBe('https://example.com/images/og-sample.jpg');
-    expect(article.publisher?.logo?.url).toBe('https://example.com/favicon.ico');
+    expect(article.publisher?.logo?.url).toBe('https://example.com/avatar-288.webp');
     expect(article.keywords).toEqual(['seo']);
   });
 });
