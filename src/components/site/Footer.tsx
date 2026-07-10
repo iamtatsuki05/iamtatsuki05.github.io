@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import Link from '@/components/compat/Link';
 import { usePathname } from '@/lib/compat/navigation';
 import { absoluteUrl } from '@/lib/seo';

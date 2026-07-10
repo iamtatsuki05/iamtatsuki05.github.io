@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { Locale } from '@/lib/i18n';
 import type { SearchSortMode } from '@/hooks/useSearchFilters';
 import type { FilterBarActiveFilter } from './FilterBar';

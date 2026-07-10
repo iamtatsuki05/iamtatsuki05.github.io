@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { describe, it, expect, afterEach } from 'vitest';
 import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
 import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';

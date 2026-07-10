@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from '@/components/compat/Link';
 import Image from '@/components/compat/Image';
 import { formatDate } from '@/lib/date';

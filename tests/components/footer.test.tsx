@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Footer } from '@/components/site/Footer';

@@ -15,7 +15,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { Schema } from 'hast-util-sanitize';
 import GithubSlugger from 'github-slugger';
-import type { Root as MdastRoot, Heading, Text, InlineCode, RootContent } from 'mdast';
+import type { Root as MdastRoot, Text, InlineCode, RootContent } from 'mdast';
 import { cached } from '@/lib/server/cache';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';

@@ -2,7 +2,6 @@ import type { Locale } from '@/lib/i18n';
 import type { BlogPost } from '@/lib/content/blog';
 import type { Publication } from '@/lib/content/publication';
 import type { LinkItem } from '@/lib/data/links';
-import React from 'react';
 import { ProfileSection } from '@/components/home/sections/ProfileSection';
 import { LinksSection } from '@/components/home/sections/LinksSection';
 import { LatestBlogSection } from '@/components/home/sections/LatestBlogSection';

@@ -24,7 +24,7 @@ function isAllowed(url: string, allow: string[]) {
 }
 
 // naive walk over mdast
-function walk(node: any, fn: (n: any, parent: any, index: number) => void, parent: any = null) {
+function walk(node: any, fn: (n: any, parent: any, index: number) => void, _parent: any = null) {
   const children = (node && node.children) || [];
   for (let i = 0; i < children.length; i++) {
     fn(children[i], node, i);

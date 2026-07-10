@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { Publication } from '@/lib/content/publication';
 import { SectionHeader } from './SectionHeader';
 import { ContentCardList } from './ContentCardList';

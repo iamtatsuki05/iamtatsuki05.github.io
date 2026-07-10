@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { LinkItem } from '@/lib/data/links';
 import { SectionHeader } from './SectionHeader';
 import { LinkGrid } from '@/components/links/LinkGrid';

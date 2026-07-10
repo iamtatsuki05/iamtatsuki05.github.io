@@ -4,7 +4,7 @@ import { afterEach } from 'vitest';
 afterEach(() => cleanup());
 
 // Disable network OG fetches during tests
-// @ts-ignore
+// @ts-expect-error
 process.env.OG_DISABLE_FETCH = 'true';
 
 // IntersectionObserver mock for infinite scroll
@@ -14,5 +14,5 @@ class IO {
   disconnect() {}
   unobserve() {}
 }
-// @ts-ignore
+// @ts-expect-error
 global.IntersectionObserver = IO;
