@@ -26,6 +26,17 @@ describe('content/blog', () => {
     expect(post?.html).toContain('Codex');
   });
 
+  it('includes plain searchText for list search', async () => {
+    const posts = await getAllPosts();
+    for (const post of posts) {
+      expect(post.searchText).toBeTypeOf('string');
+      expect(post.searchText?.length).toBeGreaterThan(0);
+      expect(post.searchText?.length).toBeLessThanOrEqual(4000);
+      expect(post.searchText).not.toContain('```');
+      expect(post.searchText).not.toContain('https://');
+    }
+  });
+
   it('loads AI-assisted blog metadata', async () => {
     const post = await getPostBySlug('2026-05-24-bonsai-dotfiles-ai-agent-era');
     const translated = await getPostBySlug('2026-05-24-bonsai-dotfiles-ai-agent-era', 'en');

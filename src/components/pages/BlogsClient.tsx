@@ -30,6 +30,14 @@ const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
 const LATEST_POSTS_COUNT = 3;
 
+// タイトル/サマリ/タグのマッチを本文(searchText)より優先する。
+const BLOG_FUSE_KEYS = [
+  { name: 'title', weight: 3 },
+  { name: 'summary', weight: 2 },
+  { name: 'tags', weight: 2 },
+  { name: 'searchText', weight: 1 },
+];
+
 type Post = {
   slug: string;
   title: string;
@@ -40,6 +48,7 @@ type Post = {
   headerImageOptimizedSrc?: string;
   headerImageSrcSet?: string;
   headerAlt?: string;
+  searchText?: string;
 };
 
 export function BlogsClient({
@@ -72,7 +81,8 @@ export function BlogsClient({
     sort,
     setSort,
   } = useSearchFilters(posts, {
-    fuseKeys: ['title', 'summary', 'tags'],
+    fuseKeys: BLOG_FUSE_KEYS,
+    ignoreLocation: true,
     extractYear: (p) => p.date,
     extractTags: (p) => p.tags || [],
     extractSortValue: (p) => p.date,

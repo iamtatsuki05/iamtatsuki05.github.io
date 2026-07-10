@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { shouldIncludeDrafts } from '@/lib/config/env';
 import { BlogFrontmatter } from './types';
-import { parseMarkdownFile, slugFromFilename } from './markdown';
+import { extractMarkdownSearchText, parseMarkdownFile, slugFromFilename } from './markdown';
 import { loadCollection } from './loader';
 import { cached } from '@/lib/server/cache';
 import { resolveOptimizedBlogHeaderImage } from '@/lib/content/blogHeaderImages';
@@ -29,6 +29,7 @@ export type BlogPost = {
   html?: string;
   headings?: { id: string; title: string; level: number }[];
   markdown?: string;
+  searchText?: string;
   isAiTranslated?: boolean;
   originalPath?: string;
 };
@@ -57,7 +58,7 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
     dir: blogDirForLocale(locale),
     cacheKey,
     parse: async (full, filename) => {
-      const { data } = await parseMarkdownFile(full);
+      const { data, raw } = await parseMarkdownFile(full);
       const parsed = safeParseLocalized(BlogFrontmatter, data);
       if (!parsed.success) return null;
       const fm = parsed.data;
@@ -74,6 +75,7 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
         headerAlt: fm.headerAlt,
         aiAssisted: fm.aiAssisted,
         draft: fm.draft,
+        searchText: extractMarkdownSearchText(raw),
       }, locale);
     },
     sort: (a, b) => (a.date < b.date ? 1 : -1),
