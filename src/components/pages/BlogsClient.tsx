@@ -159,6 +159,7 @@ export function BlogsClient({
         voiceLang={localeToRouteLocale(locale)}
         voiceStartLabel={t.voiceStart}
         voiceStopLabel={t.voiceStop}
+        voiceListeningLabel={t.voiceListening}
         voicePermissionMessage={t.voicePermission}
         voiceNoSpeechMessage={t.voiceNoSpeech}
         voiceUnavailableMessage={t.voiceUnavailable}

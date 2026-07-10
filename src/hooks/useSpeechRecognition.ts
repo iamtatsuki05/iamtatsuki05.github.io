@@ -83,7 +83,8 @@ export function useSpeechRecognition({ lang, onResult }: Options) {
     const recognition = new Ctor();
     recognition.lang = lang;
     recognition.interimResults = true;
-    recognition.continuous = false;
+    // 停止操作 (または長い無音での自動終了) まで聞き続け、複数フレーズを積み上げる
+    recognition.continuous = true;
     recognition.onresult = (event) => {
       let transcript = '';
       let isFinal = false;

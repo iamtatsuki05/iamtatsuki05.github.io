@@ -29,6 +29,7 @@ type Props = {
   voiceLang?: string;
   voiceStartLabel?: string;
   voiceStopLabel?: string;
+  voiceListeningLabel?: string;
   voicePermissionMessage?: string;
   voiceNoSpeechMessage?: string;
   voiceUnavailableMessage?: string;
@@ -53,6 +54,7 @@ export function FilterBar({
   voiceLang,
   voiceStartLabel = 'Search by voice',
   voiceStopLabel = 'Stop voice input',
+  voiceListeningLabel = 'Listening...',
   voicePermissionMessage = 'Microphone access is blocked',
   voiceNoSpeechMessage = 'No speech detected',
   voiceUnavailableMessage = 'Voice input is unavailable',
@@ -105,7 +107,11 @@ export function FilterBar({
   return (
     <div data-filter-bar-root="true" className={`filter-bar space-y-3 ${className || ''}`}>
       <div className="filter-bar__controls flex flex-wrap items-center gap-3">
-        <div className={`filter-bar__search ${showVoiceButton ? 'filter-bar__search--voice' : ''}`}>
+        <div
+          className={`filter-bar__search ${showVoiceButton ? 'filter-bar__search--voice' : ''} ${
+            voiceListening ? 'filter-bar__search--listening' : ''
+          }`}
+        >
           <input
             ref={inputRef}
             aria-label={placeholder}
@@ -132,7 +138,17 @@ export function FilterBar({
               {searchLoadingLabel}
             </span>
           ) : null}
-          {!isSearchLoading && voiceErrorMessage ? (
+          {voiceListening ? (
+            <span
+              className="filter-bar__search-status filter-bar__search-status--listening"
+              role="status"
+              aria-live="polite"
+              data-testid="filter-voice-listening"
+            >
+              {voiceListeningLabel}
+            </span>
+          ) : null}
+          {!isSearchLoading && !voiceListening && voiceErrorMessage ? (
             <span
               className="filter-bar__search-status filter-bar__search-status--error"
               role="status"

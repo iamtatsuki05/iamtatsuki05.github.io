@@ -278,6 +278,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         voiceLang={localeToRouteLocale(locale)}
         voiceStartLabel={t.voiceStart}
         voiceStopLabel={t.voiceStop}
+        voiceListeningLabel={t.voiceListening}
         voicePermissionMessage={t.voicePermission}
         voiceNoSpeechMessage={t.voiceNoSpeech}
         voiceUnavailableMessage={t.voiceUnavailable}

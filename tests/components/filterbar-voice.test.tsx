@@ -84,8 +84,10 @@ describe('FilterBar voice input', () => {
     expect(recognition.started).toBe(true);
     expect(recognition.lang).toBe('ja-JP');
     expect(recognition.interimResults).toBe(true);
+    expect(recognition.continuous).toBe(true);
     expect(button).toHaveAttribute('aria-pressed', 'true');
     expect(button).toHaveAttribute('aria-label', '音声入力を停止');
+    expect(screen.getByTestId('filter-voice-listening')).toBeInTheDocument();
 
     act(() => {
       recognition.emitResult('チャイ', false);
@@ -98,6 +100,7 @@ describe('FilterBar voice input', () => {
     });
     expect(onQueryChange).toHaveBeenLastCalledWith('チャイ レシピ');
     expect(button).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.queryByTestId('filter-voice-listening')).toBeNull();
   });
 
   it('shows a permission message when microphone access is denied', () => {

@@ -1006,6 +1006,21 @@
     right: 2.7rem;
   }
 
+  .filter-bar__search--listening .filter-bar__search-input {
+    border-color: rgba(168, 85, 247, 0.9);
+    box-shadow:
+      0 0 0 0.2rem rgba(168, 85, 247, 0.18),
+      0 12px 26px -20px rgba(168, 85, 247, 0.5);
+  }
+
+  .filter-bar__search-status--listening {
+    color: rgb(126 34 206);
+  }
+
+  .dark .filter-bar__search-status--listening {
+    color: rgb(233 213 255);
+  }
+
   .filter-bar__search-status--error {
     color: rgb(190 18 60);
   }
