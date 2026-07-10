@@ -15,7 +15,8 @@ import { absoluteUrl, buildArticleJsonLd, buildLanguageAlternates, buildPageMeta
 import { resolveLocale } from '@/lib/i18n';
 import { localizedPath } from '@/lib/routing';
 import { htmlLangFromLocale } from '@/lib/astro/metadata';
-import { blogAiWritingNotice, blogTranslationNotice } from '@/lib/blog/translation';
+import { blogAiWritingNotice, blogCommentsHeading, blogTranslationNotice } from '@/lib/blog/translation';
+import { GiscusComments } from '@/components/blogs/GiscusComments';
 
 type Props = {
   post: BlogPost;
@@ -110,6 +111,10 @@ function toIsoString(input?: string | null) {
       <div set:html={html || ''} />
       <RelatedPosts posts={allPosts} currentSlug={slug} locale={locale} {...(routeLocale ? { hrefLocale: locale } : {})} />
       <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} {...navigationProps} client:load />
+      <section class="not-prose mt-12 border-t border-gray-200 pt-8 dark:border-gray-700" aria-label={blogCommentsHeading[locale]}>
+        <h2 class="text-xl font-semibold">{blogCommentsHeading[locale]}</h2>
+        <GiscusComments term={slug} locale={locale} client:visible />
+      </section>
       <CodeCopyClient locale={locale} client:load />
       <EmbedsClient client:load />
     </article>
