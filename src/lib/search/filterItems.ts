@@ -2,6 +2,13 @@ import { normalizeSearchText, tokenizeSearchQuery } from '@/lib/search/queryToke
 
 export type SearchSortMode = 'relevant' | 'newest';
 
+// Fuse.js の keys と互換の最小表現。weight 付き指定を許容する。
+export type SearchKey = string | { name: string; weight?: number };
+
+export function resolveSearchKeyName(key: SearchKey) {
+  return typeof key === 'string' ? key : key.name;
+}
+
 export type SearchMatch<T> = {
   item: T;
   score?: number;
@@ -13,7 +20,7 @@ export type SearchFilterOptions<T> = {
   sort?: SearchSortMode;
   yearSet?: Set<string>;
   tagSet?: Set<string>;
-  fuseKeys: string[];
+  fuseKeys: SearchKey[];
   extractYear: (item: T) => string | undefined;
   extractTags: (item: T) => string[];
   extractSortValue?: (item: T) => string | number | undefined;
@@ -119,10 +126,10 @@ function filterByTokens<T>({
 }: {
   items: T[];
   normalizedTokens: string[];
-  fuseKeys: string[];
+  fuseKeys: SearchKey[];
 }) {
   return items.filter((item) => {
-    const haystack = fuseKeys.flatMap((key) => readSearchField(item, key)).join(' ');
+    const haystack = fuseKeys.flatMap((key) => readSearchField(item, resolveSearchKeyName(key))).join(' ');
     const normalizedHaystack = normalizeSearchText(haystack);
 
     return normalizedTokens.every((token) => normalizedHaystack.includes(token));

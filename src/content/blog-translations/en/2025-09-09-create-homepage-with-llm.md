@@ -6,16 +6,16 @@ headerAlt: Illustration of vibe coding
 
 ## Introduction
 
-I had been vaguely wanting to build a personal introduction site, but I never had enough time to start. Recently, "vibe coding," a development style based on conversation and momentum with tools such as Claude Code and Codex, has become a popular topic. When I finally had some time, I tried building this personal site with that approach.
+I had wanted to build a personal introduction site for a while, but I never had enough time to start. Recently, vibe coding, where you drive tools such as Claude Code and Codex through conversation, has become a popular topic. When I finally had some time, I built this site that way.
 
 ## Process
 
-The rough process was:
+Here is what I did:
 
-1. Define requirements
-2. Ask Codex to implement them
-3. Give feedback on the generated code several times
-4. Write the self-introduction text myself, then ask AI to polish it
+- Define requirements
+- Ask Codex to implement them
+- Give feedback on the generated code several times
+- Write the self-introduction text myself, then ask AI to polish it
 
 ### Requirements Definition
 
@@ -121,10 +121,10 @@ https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E
 
 ### Feedback on the Generated Site
 
-I repeatedly ran the site, pointed out anything that felt off, and asked for improvements.
+I ran the site, pointed out anything that felt off in a few words, and let Codex fix it. Then I repeated that.
 
 ## Impressions
 
-Even without implementing most of the site myself, I was able to build something practical in a short time. I kept Reasoning Effort at high in ChatGPT Plus, and the development process remained comfortable without hitting rate limits.
+I barely implemented anything myself, yet a practical site came together in a short time. I kept Reasoning Effort at high in ChatGPT Plus and never hit a rate limit.
 
-I felt that coding agents can be very effective as long as you have enough hands-on experience to evaluate the result. Working together with AI made the process much less stressful.
+Development with a coding agent works well as long as you have enough hands-on experience to judge the result. The process gave me little stress.

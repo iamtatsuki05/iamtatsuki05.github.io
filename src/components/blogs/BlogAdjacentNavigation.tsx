@@ -79,15 +79,14 @@ function SwipeArrow({
   const label = adjacentCopy[locale][direction === 'previous' ? 'swipePrevious' : 'swipeNext'];
   return (
     <span
-      aria-label={label}
-      aria-disabled={enabled ? undefined : 'true'}
       className={`inline-flex h-11 w-11 items-center justify-center rounded-full text-2xl transition ${
         enabled
           ? 'text-gray-800 dark:text-gray-100'
           : 'text-gray-300 dark:text-gray-700'
       }`}
     >
-      {direction === 'previous' ? '←' : '→'}
+      <span aria-hidden="true">{direction === 'previous' ? '←' : '→'}</span>
+      {enabled ? <span className="sr-only">{label}</span> : null}
     </span>
   );
 }

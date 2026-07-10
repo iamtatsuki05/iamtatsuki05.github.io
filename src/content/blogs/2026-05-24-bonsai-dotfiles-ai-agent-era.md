@@ -18,25 +18,25 @@ dotfiles が好きです。
 
 これはもう、設定ファイル置き場というより生活基盤です。
 
-本稿では、最近の dotfiles の手入れを「AI Agent 時代の盆栽 dotfiles」という見方で整理します。大きな思想というより、実際に複数台の PC と複数の agent を触っているうちに、こうしないとすぐ荒れるなと思った話です。
+この記事では、最近の dotfiles の手入れを盆栽の手入れになぞらえて整理します。複数台の PC と複数の agent を触っているうちに、こうしないとすぐ荒れるなと思った話です。
 
 ## 問題設定
 
 まず、今の開発環境で何が面倒なのかを整理します。
 
-自分の場合、環境は一つではありません。普段使いの macOS があり、Linux の CLI 環境があり、研究や授業の作業ディレクトリがあり、AI Agent も Codex だけではありません。`codex`、`claude-code`、`copilot`、`cursor-agent`、`devin`、`hermes`、`opencode` など、道具が増えるほど「同じつもりで作業しているのに前提が違う」ことが起きます。
+自分の場合、環境は一つではありません。普段使いの macOS があり、Linux の CLI 環境があり、研究や授業の作業ディレクトリがあり、AI Agent も Codex だけではありません。`codex`、`claude-code`、`copilot`、`cursor-agent`、`devin`、`hermes`、`opencode` と道具が増えるほど、同じつもりで作業しているのに前提が違う、ということが起きます。
 
 ナイーブにやるなら、各 PC と各 tool の設定をその場で直せばよいです。動きます。しかし、すぐに破綻します。どの PC に何を入れたか分からなくなる。どの agent がどの prompt を読んでいるか分からなくなる。新しい tool を入れたつもりが、別の環境では古いままになる。
 
 人間だけが使う環境なら、多少は記憶で補えます。AI Agent に作業を任せるようになると、そうもいきません。agent はその場で読める設定とファイルにかなり強く引っ張られます。つまり、環境のブレはそのまま作業のブレになります。
 
-そこで、最近の dotfiles は三つの方向に寄っています。
+そこで、最近の dotfiles は次の方向に寄っています。
 
-1. OS や machine の差分は Nix でなるべく吸収する。
-2. AI Agent の prompt、skill、hook は `.agent` に集める。
-3. 変化の速い CLI tool は mise で管理する。
+- OS や machine の差分は Nix でなるべく吸収する
+- AI Agent の prompt、skill、hook は `.agent` に集める
+- 変化の速い CLI tool は mise で管理する
 
-どれも単体では普通の話です。しかし、この三つが揃うと dotfiles の意味が変わります。単なる便利設定ではなく、作業環境の再現性を支える根になります。
+どれも単体では普通の話です。ただ、これが揃うと dotfiles は作業環境の再現性を支える根になります。
 
 ## Nix で揃える部分を決める
 
@@ -44,17 +44,17 @@ dotfiles が好きです。
 
 今の dotfiles では、macOS は `full`、Linux は `cli` という profile に分けています。`full` には nix-darwin、Home Manager、GUI アプリ、macOS defaults、設定ファイル、mise、Neovim まで入れています。一方の `cli` は、Ubuntu などでも使いやすい CLI 中心の profile です。
 
-この分け方がかなり重要です。
+この分け方が要です。
 
-macOS と Linux を完全に同じにする必要はありません。むしろ無理に同じにしようとすると、GUI アプリや OS 固有設定のところで苦しくなります。しかし、CLI の手触りは揃えたい。`zsh`、`git`、`rg`、`mise`、`uv`、Neovim あたりが揃っているだけで、別 machine に入ったときの違和感はかなり減ります。
+macOS と Linux を完全に同じにする必要はありません。むしろ無理に同じにしようとすると、GUI アプリや OS 固有設定のところで苦しくなります。それでも CLI の使い勝手は揃えたい。`zsh`、`git`、`rg`、`mise`、`uv`、Neovim あたりが揃っているだけで、別 machine に入ったときの違和感はだいぶ減ります。
 
 そのため `flake.nix` では `aarch64-darwin`、`x86_64-darwin`、`aarch64-linux`、`x86_64-linux` を扱っています。macOS では nix-darwin と Home Manager、Linux では Home Manager を使います。
 
 ただ、全部を Nix に入れたいわけではありません。
 
-zsh や Neovim のように宣言的に固定したいものは Nix 側に寄せる。一方で、ターミナル設定、bash 起動ファイル、`mise` config、ローカル設定のひな形のように、ホームディレクトリへ自然に置きたいものは chezmoi に任せる。この分担があるので、変更するときに「これはどこに書くべきか」で迷いにくいです。
+zsh や Neovim のように宣言的に固定したいものは Nix 側に寄せる。一方で、ターミナル設定、bash 起動ファイル、`mise` config、ローカル設定のひな形のように、ホームディレクトリへ自然に置きたいものは chezmoi に任せる。この分担があるので、変更するときにどこへ書くべきかで迷いにくいです。
 
-自分の場合、Nix は「毎回同じように入ってほしいもの」を置く場所です。逆に、少し手触りを残したい設定まで全部そこへ寄せると、変更するたびに重く感じます。
+自分の場合、Nix は毎回同じように入ってほしいものを置く場所です。逆に、まだ試行錯誤したい設定まで全部そこへ寄せると、変更するたびに重く感じます。
 
 ## `.agent` は AI に渡す前提である
 
@@ -66,17 +66,17 @@ AI Agent を使うとき、モデル性能やプロンプトの書き方に目�
 
 ある agent には最近の注意書きが入っているが、別の agent は古いまま。ある PC には必要な skill があるが、別の PC では使えない。hook の挙動が tool ごとに違い、同じつもりの依頼でも作業ログや検証の残り方が変わる。
 
-これは人間が見ると些細な差です。しかし agent にとっては、読める前提が違うということです。前提が違えば、出てくる作業も違います。
+人間が見ると些細な差です。しかし agent にとっては、読める前提が違うということです。前提が違えば、出てくる作業も違います。
 
 そこで、prompt や skill を tool ごとの設定ディレクトリに直接置くのをやめて、dotfiles 側を正にしました。`dotfiles/.agent/sync.sh` から `scripts/setup_agent_files.sh` を呼び、各 tool home に symlink を張っています。
 
-これはかなり地味ですが、効きます。AI Agent を単発の便利ツールではなく、開発環境の一部として扱うなら、agent に渡す前提も version control されているべきです。
+地味ですが、効きます。AI Agent を開発環境の一部として扱うなら、agent に渡す前提も version control されているべきです。
 
 ## mise で速い変化を追う
 
 Nix と `.agent` だけでは足りません。
 
-AI Agent 周辺の CLI は変化が速すぎます。`codex`、`claude-code`、`opencode`、`cursor-agent`、`devin` などは、少し放っておくとすぐ状況が変わります。OS の package manager に任せるには速すぎるし、毎回手で入れるには忘れやすい。
+AI Agent 周辺の CLI は変化が速い。`codex`、`claude-code`、`opencode`、`cursor-agent`、`devin` などは、少し放っておくとすぐ状況が変わります。OS の package manager に任せるには速すぎるし、毎回手で入れるには忘れやすい。
 
 ここで mise が効きます。
 
@@ -112,7 +112,7 @@ AI Agent に任せる作業が増えるほど、人間が直接書くコード�
 
 Agent が読む prompt はどこから来るのか。skill はどの revision なのか。hook は別の PC でも同じように動くのか。CLI tool はどの単位で更新され、必要なら戻せるのか。Nix、mise、chezmoi の責務はどこで分けるのか。
 
-ここが曖昧だと、AI に任せた作業の再現性も曖昧になります。逆にここが整っていると、AI Agent はかなり安定した道具になります。
+ここが曖昧だと、AI に任せた作業の再現性も曖昧になります。逆にここが整っていると、AI Agent は安定した道具になります。
 
 自分にとって dotfiles は、もう shell alias 集ではありません。複数台の PC、Nix package set、mise tool、chezmoi source state、AI Agent prompt、skill、hook、eval をまとめて育てる場所です。
 

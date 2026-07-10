@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Link from '@/components/compat/Link';
 import clsx from 'clsx';
 import type { NavDisplayItem } from '@/components/site/navItems';

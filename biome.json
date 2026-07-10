@@ -1,61 +1,64 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "files": {
-    "include": [
-      "**/*.js",
-      "**/*.jsx",
-      "**/*.ts",
-      "**/*.tsx",
-      "**/*.mjs",
-      "**/*.cjs",
-      "**/*.cts",
-      "**/*.mts"
-    ],
-    "ignore": [".next/**", "out/**", "storybook-static/**", "node_modules/**", ".cache/**"]
-  },
-  "formatter": {
-    "enabled": false
-  },
-  "organizeImports": {
-    "enabled": false
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "a11y": {
-        "noSvgWithoutTitle": "off",
-        "useButtonType": "off",
-        "useKeyWithClickEvents": "off",
-        "useSemanticElements": "off"
-      },
-      "complexity": {
-        "noBannedTypes": "off",
-        "noForEach": "off",
-        "noUselessConstructor": "off",
-        "useOptionalChain": "off"
-      },
-      "correctness": {
-        "useExhaustiveDependencies": "off"
-      },
-      "performance": {
-        "noDelete": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "style": {
-        "noInferrableTypes": "off",
-        "noNonNullAssertion": "off",
-        "useImportType": "off",
-        "useNodejsImportProtocol": "off"
-      },
-      "suspicious": {
-        "noArrayIndexKey": "off",
-        "noAssignInExpressions": "off",
-        "noExplicitAny": "off",
-        "noShadowRestrictedNames": "off"
-      }
-    }
-  }
+	"$schema": "https://biomejs.dev/schemas/2.5.3/schema.json",
+	"files": {
+		"includes": [
+			"**/*.js",
+			"**/*.jsx",
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.mjs",
+			"**/*.cjs",
+			"**/*.cts",
+			"**/*.mts",
+			"!**/.next",
+			"!**/out",
+			"!**/storybook-static",
+			"!**/node_modules",
+			"!**/.cache",
+			"!**/.claude"
+		]
+	},
+	"formatter": {
+		"enabled": false
+	},
+	"assist": { "actions": { "source": { "organizeImports": "off" } } },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"a11y": {
+				"noSvgWithoutTitle": "off",
+				"useButtonType": "off",
+				"useKeyWithClickEvents": "off",
+				"useSemanticElements": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off",
+				"noForEach": "off",
+				"noUselessConstructor": "off",
+				"useOptionalChain": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off"
+			},
+			"performance": {
+				"noDelete": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "off"
+			},
+			"style": {
+				"noInferrableTypes": "off",
+				"noNonNullAssertion": "off",
+				"useImportType": "off",
+				"useNodejsImportProtocol": "off"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "off",
+				"noAssignInExpressions": "off",
+				"noExplicitAny": "off",
+				"noShadowRestrictedNames": "off"
+			}
+		}
+	}
 }

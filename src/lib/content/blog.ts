@@ -1,9 +1,10 @@
 import path from 'node:path';
 import { shouldIncludeDrafts } from '@/lib/config/env';
 import { BlogFrontmatter } from './types';
-import { parseMarkdownFile, slugFromFilename } from './markdown';
+import { extractMarkdownSearchText, parseMarkdownFile, slugFromFilename } from './markdown';
 import { loadCollection } from './loader';
 import { cached } from '@/lib/server/cache';
+import { resolveOptimizedBlogHeaderImage } from '@/lib/content/blogHeaderImages';
 import { safeParseLocalized } from '@/lib/validation/zodI18n';
 import type { Locale } from '@/lib/i18n';
 
@@ -20,12 +21,15 @@ export type BlogPost = {
   summary: string;
   thumbnail?: string;
   headerImage?: string;
+  headerImageOptimizedSrc?: string;
+  headerImageSrcSet?: string;
   headerAlt?: string;
   aiAssisted?: boolean;
   draft?: boolean;
   html?: string;
   headings?: { id: string; title: string; level: number }[];
   markdown?: string;
+  searchText?: string;
   isAiTranslated?: boolean;
   originalPath?: string;
 };
@@ -35,8 +39,12 @@ function blogDirForLocale(locale: Locale) {
 }
 
 function enrichPost(post: Omit<BlogPost, 'locale' | 'isAiTranslated' | 'originalPath'>, locale: Locale): BlogPost {
+  const optimizedHeaderImage = resolveOptimizedBlogHeaderImage(post.headerImage);
   return {
     ...post,
+    ...(optimizedHeaderImage
+      ? { headerImageOptimizedSrc: optimizedHeaderImage.src, headerImageSrcSet: optimizedHeaderImage.srcSet }
+      : {}),
     locale,
     isAiTranslated: locale !== 'ja',
     originalPath: `/blogs/${post.slug}/`,
@@ -50,7 +58,7 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
     dir: blogDirForLocale(locale),
     cacheKey,
     parse: async (full, filename) => {
-      const { data } = await parseMarkdownFile(full);
+      const { data, raw } = await parseMarkdownFile(full);
       const parsed = safeParseLocalized(BlogFrontmatter, data);
       if (!parsed.success) return null;
       const fm = parsed.data;
@@ -67,6 +75,7 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
         headerAlt: fm.headerAlt,
         aiAssisted: fm.aiAssisted,
         draft: fm.draft,
+        searchText: extractMarkdownSearchText(raw),
       }, locale);
     },
     sort: (a, b) => (a.date < b.date ? 1 : -1),

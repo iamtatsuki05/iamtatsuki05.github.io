@@ -1,6 +1,7 @@
-import React from 'react';
+
 import Link from '@/components/compat/Link';
 import Image from '@/components/compat/Image';
+import { withBasePath } from '@/lib/url';
 import { renderInlineLinks } from '@/lib/ui/inlineMarkdown';
 import { SectionShell } from '@/components/home/SectionShell';
 
@@ -12,7 +13,8 @@ type Props = {
   intro: string;
 };
 
-const AVATAR_SRC = '/favicon.ico' as const;
+const AVATAR_SRC = '/avatar-144.webp' as const;
+const AVATAR_SRC_2X = '/avatar-288.webp' as const;
 
 // シンプルなプロフィール表示セクション
 export function ProfileSection({ title, alias, handle, affiliation, intro }: Props) {
@@ -23,6 +25,7 @@ export function ProfileSection({ title, alias, handle, affiliation, intro }: Pro
         <div className="hero-avatar-wrap flex justify-center">
           <Image
             src={AVATAR_SRC}
+            srcSet={`${withBasePath(AVATAR_SRC)} 1x, ${withBasePath(AVATAR_SRC_2X)} 2x`}
             alt="My Avatar"
             width={144}
             height={144}

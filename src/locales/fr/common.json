@@ -3,8 +3,10 @@
   "intro": "Je suis ingénieur en traitement automatique des langues, apprentissage automatique et logiciel.\nJ'aime Hachiware de Chiikawa et les personnages mignons en général. Je m'intéresse aussi aux cryptomonnaies, aux actions et aux technologies.",
   "alias": "Nom : Tatsuki Okada | 岡田 龍樹",
   "handle": "Identifiants : iamtatsuki05 | iam_tatsuki05",
-  "affiliation": "Affiliation : Division of Information Science, [Nara Institute of Science and Technology (NAIST)](https://www.naist.jp/en/) / [Natural Language Processing Laboratory (Watanabe Laboratory)](https://nlp.naist.jp/en/)",
+  "affiliation": "Affiliation : [Nara Institute of Science and Technology (NAIST)](https://www.naist.jp/en/), Graduate School of Science and Technology, Information Science, [Natural Language Processing Laboratory (Watanabe Lab)](https://nlp.naist.jp/en/)",
   "latest_blog": "✨ Derniers articles",
   "latest_pub": "📚 Publications récentes",
-  "cta_more": "Voir plus"
+  "cta_more_links": "Voir plus de liens",
+  "cta_more_blogs": "Voir plus d’articles",
+  "cta_more_publications": "Voir plus de publications"
 }

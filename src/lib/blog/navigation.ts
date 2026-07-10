@@ -1,6 +1,14 @@
-import type { SearchSortMode } from '@/lib/search/filterItems';
+import type { SearchKey, SearchSortMode } from '@/lib/search/filterItems';
 import type { Locale } from '@/lib/i18n';
 import { localizedPath } from '@/lib/routing';
+
+// 一覧 (BlogsClient) と前後記事ナビ (postNavigation) で検索順位が一致するよう共有する
+export const BLOG_SEARCH_KEYS: SearchKey[] = [
+  { name: 'title', weight: 3 },
+  { name: 'summary', weight: 2 },
+  { name: 'tags', weight: 2 },
+  { name: 'searchText', weight: 1 },
+];
 
 export type BlogFilterParams = {
   q?: string;

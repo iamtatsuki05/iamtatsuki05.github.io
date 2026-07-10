@@ -18,9 +18,9 @@ Next.js が嫌になったわけではありません。困っていたという
 
 そこで Astro に移しました。
 
-今回は、自分で少しずつ書き換えるのではなく、Codex にかなり任せました。実装だけでなく、移行前後の計測、テスト、失敗した箇所の修正、reviewer の指摘対応まで、ほぼ一連の作業として渡しています。
+今回は、自分で少しずつ書き換えるのをやめて、Codex にほぼ任せました。実装だけでなく、移行前後の計測、テスト、失敗した箇所の修正、reviewer の指摘対応まで、一連の作業として渡しています。
 
-AI に丸投げした、というと少し雑です。実際には、丸投げというより「壊してはいけないものを細かく渡して、最後まで走らせた」に近いです。
+AI に丸投げした、というと少し雑です。実際にやったのは、壊してはいけないものを細かく渡して、最後まで走らせることでした。
 
 ## 何を変えたかったのか
 
@@ -34,7 +34,7 @@ Astro にすると、ページは `src/pages/**` に置き、共通 layout は A
 
 ただし、framework migration は見た目だけ合っていればよいわけではありません。URL、SEO、OGP、sitemap、RSS、Cloudflare Pages、アクセシビリティ、言語切り替え、theme toggle など、見落としやすいものが多いです。
 
-なので、最初に Codex へ「何を壊してはいけないか」をかなり細かく渡しました。
+なので、最初に Codex へ、何を壊してはいけないかを細かく渡しました。
 
 ## Codex への頼み方
 
@@ -54,16 +54,16 @@ AI に任せるとき、実装方針だけ渡すと危ないです。特に移�
 
 `bun run build`、出力サイズ、主要 HTML のサイズ、lint、Vitest、Playwright E2E、Lighthouse mobile / desktop です。
 
-これは地味ですが、かなり大事でした。移行は、壊れているものを直す作業ではありません。動いているものを置き換える作業です。比較対象がないと、良くなったのか、壊したのか、たまたま動いているだけなのか判断できません。
+地味ですが、これが一番効いたかもしれません。移行は動いているものを置き換える作業なので、比較対象がないと、良くなったのか、壊したのか、たまたま動いているだけなのか判断できません。
 
-今回は結果として build time と出力サイズがかなり分かりやすく改善したので、baseline を取っておいて良かったです。
+結果として build time と出力サイズがはっきり改善したので、baseline を取っておいて良かったです。
 
 ## 実際に変わったところ
 
 Next.js App Router の `src/app/**` はなくなり、Astro の `src/pages/**` に置き換わりました。
 共通 layout は `BaseLayout.astro` に移し、既存の React component は必要なところだけ Astro island として残しています。
 
-全部を書き直したわけではありません。むしろ、UI component はできるだけ残しています。変えたかったのは見た目ではなく、framework との境界です。
+全部を書き直したわけではなく、UI component はできるだけ残しています。変えたかったのは framework との境界です。
 
 `next/link`、`next/image`、`next/navigation` の代わりに、小さな local wrapper を置きました。`next-themes` や `nuqs` も外して、このサイトで必要な分だけ local 実装にしています。
 
@@ -83,12 +83,12 @@ Next.js では自然に client component として動いていたものも、Ast
 
 Codex は E2E の failure log を読みながら直していました。Header に現在の pathname を Astro から渡す。theme provider を Header island の中に置く。Publications page 自体を hydrate する。やっていることは、自分でやる場合と同じです。
 
-違ったのは、そのループが速かったことです。ログを読む、仮説を立てる、直す、もう一度テストする、という作業をかなり粘って回してくれました。
+違ったのは、そのループが速かったことです。ログを読む、仮説を立てる、直す、もう一度テストする、という作業を粘り強く回してくれました。
 
 ## reviewer が拾ったもの
 
 一通り動いたあと、別の read-only reviewer に差分を見てもらいました。
-ここで拾えたものがかなり大事でした。
+ここで拾えたものが大きかったです。
 
 sitemap に、実際には存在しない publication detail URL が残っていました。blog article の `article:published_time` などの OGP meta も落ちていました。Cloudflare の headers も `/_next/static/*` のままで、Astro の `/_astro/*` に効いていませんでした。
 
@@ -116,7 +116,7 @@ sitemap に、実際には存在しない publication detail URL が残ってい
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-build time はかなり短くなりました。出力サイズも半分くらいになっています。
+build time は 8 分の 1 になりました。出力サイズも半分です。
 
 Lighthouse は desktop だと全対象 route で改善しました。mobile もほとんど改善しています。blog detail だけ performance score が `72 -> 71` と 1 点下がりましたが、LCP は `11040ms -> 8836ms`、TBT は `65ms -> 28ms` に改善していました。
 
@@ -126,10 +126,10 @@ Lighthouse は desktop だと全対象 route で改善しました。mobile も�
 
 今回の移行で思ったのは、AI に任せるほど、完了条件をちゃんと書いた方がよいということです。
 
-「Astro に移行して」だけだと、おそらく見た目が表示されるところまでは行けます。しかし、URL、SEO、deploy、performance、E2E、review まで含めると、最初に条件を書いておく意味がかなり大きいです。
+「Astro に移行して」だけだと、おそらく見た目が表示されるところまでは行けます。しかし、URL、SEO、deploy、performance、E2E、review まで含めると、最初に条件を書いておく意味が大きいです。
 
-人間側でやった一番大きな仕事は、コードを書くことではありませんでした。何を壊してはいけないかを決めることでした。
+人間側の一番大きな仕事は、何を壊してはいけないかを決めることでした。コードはほとんど書いていません。
 
-個人サイトくらいの規模で、build と test がちゃんと回るなら、AI 主導の framework migration はかなり現実的です。ただし、何をもって終わりにするかを人間が持っていないと、たぶん見た目だけ動いている移行になります。
+個人サイトくらいの規模で、build と test がちゃんと回るなら、AI 主導の framework migration は現実的です。ただし、何をもって終わりにするかを人間が持っていないと、たぶん見た目だけ動いている移行になります。
 
 次に同じような移行をするなら、SEO metadata と sitemap URL の snapshot test を先に入れてから始めます。今回 reviewer が拾ってくれたところなので、最初から機械的に守れるようにしておきたいです。

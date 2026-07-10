@@ -1,0 +1,128 @@
+---
+import 'katex/dist/katex.min.css';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { BlogToc } from '@/components/blogs/BlogToc';
+import { ShareButtons } from '@/components/blogs/ShareButtons';
+import { MarkdownCopyButton } from '@/components/blogs/MarkdownCopyButton';
+import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
+import { BlogAdjacentNavigationClient } from '@/components/blogs/BlogAdjacentNavigationClient';
+import RelatedPosts from '@/components/blogs/RelatedPosts.astro';
+import { CodeCopyClient } from '@/components/site/CodeCopyClient';
+import { EmbedsClient } from '@/components/site/EmbedsClient';
+import type { BlogPost } from '@/lib/content/blog';
+import { withBasePath } from '@/lib/url';
+import { absoluteUrl, buildArticleJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
+import { resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+import { blogAiWritingNotice, blogCommentsHeading, blogTranslationNotice } from '@/lib/blog/translation';
+import { GiscusComments } from '@/components/blogs/GiscusComments';
+
+type Props = {
+  post: BlogPost;
+  allPosts: BlogPost[];
+  slug: string;
+  /** ルート locale。未指定はデフォルト (ja) の locale prefix なしルート。 */
+  routeLocale?: string;
+};
+
+const { post, allPosts, slug, routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+
+const { title, date, updated, html, summary, headerImage, headerAlt, thumbnail, tags, markdown } = post;
+const publishedTime = toIsoString(date);
+const modifiedTime = toIsoString(updated) || publishedTime;
+const description = summary || `${title} に関する記事です。`;
+const images = [headerImage, thumbnail].filter((src): src is string => Boolean(src));
+const path = routeLocale ? localizedPath(`/blogs/${slug}/`, locale) : `/blogs/${slug}/`;
+const metadata = buildPageMetadata({
+  title,
+  description,
+  locale,
+  path,
+  type: 'article',
+  images,
+  keywords: tags,
+  languageAlternates: buildLanguageAlternates(path),
+  publishedTime,
+  modifiedTime,
+  tags,
+});
+const shareUrl = absoluteUrl(path);
+const articleJsonLd = buildArticleJsonLd({
+  title,
+  description,
+  path,
+  image: images[0],
+  datePublished: publishedTime ?? date,
+  dateModified: toIsoString(updated) ?? toIsoString(date) ?? date,
+  tags,
+});
+const notice = locale === 'ja' ? null : blogTranslationNotice[locale];
+const aiWritingNotice = post.aiAssisted ? blogAiWritingNotice[locale] : null;
+// locale prefix なしルートでは前後記事リンクも prefix なしに保つため locale を渡さない
+const navigationProps = routeLocale ? { locale } : {};
+
+function toIsoString(input?: string | null) {
+  if (!input) return undefined;
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date.toISOString();
+}
+---
+
+<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={[articleJsonLd]}>
+  <div class="mx-auto w-full lg:grid lg:max-w-[1560px] lg:grid-cols-[minmax(0,1fr)_minmax(0,56rem)_minmax(0,1fr)] lg:items-start lg:gap-8">
+    <article id="blog-article" class="prose dark:prose-invert w-full max-w-none lg:col-start-2">
+      {headerImage ? (
+        <div class="relative mb-4 aspect-[16/9] w-full overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+          <img
+            src={post.headerImageOptimizedSrc ?? withBasePath(headerImage)}
+            srcset={post.headerImageSrcSet}
+            alt={headerAlt || title}
+            class="absolute inset-0 h-full w-full object-cover"
+            sizes="(max-width: 640px) 100vw, 896px"
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            referrerpolicy="no-referrer"
+          />
+        </div>
+      ) : null}
+      <h1>{title}</h1>
+      <BlogPostMeta date={date} updated={updated} locale={locale} client:load />
+      {notice || aiWritingNotice ? (
+        <aside class="not-prose my-4 rounded-sm border border-amber-300/70 bg-amber-50 px-4 py-3 text-sm text-amber-950 dark:border-amber-300/30 dark:bg-amber-950/30 dark:text-amber-100">
+          {notice ? (
+            <p class="m-0">
+              {notice.label}{' '}
+              <a class="font-semibold underline underline-offset-2" href={withBasePath(`/blogs/${slug}/`)}>
+                {notice.originalLinkLabel}
+              </a>
+            </p>
+          ) : null}
+          {aiWritingNotice ? <p class:list={['m-0', notice ? 'mt-1' : '']}>{aiWritingNotice}</p> : null}
+        </aside>
+      ) : null}
+      <div class="my-4 flex flex-wrap items-center gap-3">
+        <ShareButtons url={shareUrl} title={title} className="my-0" locale={locale} client:load />
+        <MarkdownCopyButton markdown={markdown || ''} className="ml-auto" locale={locale} client:load />
+      </div>
+      <div set:html={html || ''} />
+      <RelatedPosts posts={allPosts} currentSlug={slug} locale={locale} {...(routeLocale ? { hrefLocale: locale } : {})} />
+      <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} {...navigationProps} client:load />
+      <section class="not-prose mt-12 border-t border-gray-200 pt-8 dark:border-gray-700" aria-label={blogCommentsHeading[locale]}>
+        <h2 class="text-xl font-semibold">{blogCommentsHeading[locale]}</h2>
+        <GiscusComments term={slug} locale={locale} client:visible />
+      </section>
+      <CodeCopyClient locale={locale} client:load />
+      <EmbedsClient client:load />
+    </article>
+    <BlogToc
+      containerId="blog-article"
+      className="min-[1440px]:col-start-3 min-[1440px]:justify-self-start min-[1440px]:w-full min-[1440px]:max-w-[clamp(14rem,24vw,20rem)]"
+      locale={locale}
+      client:load
+    />
+  </div>
+</BaseLayout>

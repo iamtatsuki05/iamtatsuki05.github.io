@@ -1,5 +1,5 @@
 import type { Locale } from '@/lib/i18n';
-import { siteConfig } from '@/lib/seo';
+import { siteConfig } from './config';
 
 export type PageKey = 'home' | 'blogs' | 'links' | 'publications' | 'hobbies';
 
@@ -127,7 +127,3 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
     },
   },
 };
-
-export function getPageMeta(page: PageKey, locale: Locale): PageMeta {
-  return pageMeta[page][locale];
-}

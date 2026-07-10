@@ -2,6 +2,7 @@ import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join, resolve, sep } from 'node:path';
+import { createGzip } from 'node:zlib';
 
 const args = new Map();
 
@@ -32,6 +33,28 @@ const contentTypes = new Map([
   ['.woff2', 'font/woff2'],
   ['.xml', 'application/xml; charset=utf-8'],
 ]);
+
+// 本番 (Cloudflare Pages) はテキスト資産を圧縮配信するため、ローカル計測でも挙動を揃える
+const compressibleExtensions = new Set([
+  '.css',
+  '.html',
+  '.js',
+  '.json',
+  '.md',
+  '.svg',
+  '.txt',
+  '.webmanifest',
+  '.xml',
+]);
+
+function isCompressible(filePath) {
+  return compressibleExtensions.has(extname(filePath).toLowerCase());
+}
+
+function acceptsGzip(request) {
+  const acceptEncoding = request.headers['accept-encoding'] ?? '';
+  return /(^|,)\s*gzip\s*(;|,|$)/i.test(acceptEncoding);
+}
 
 function isSafePath(filePath) {
   return filePath === root || filePath.startsWith(`${root}${sep}`);
@@ -89,10 +112,17 @@ async function resolveNotFound() {
 }
 
 function sendFile(request, response, file) {
-  response.writeHead(file.statusCode, {
-    'Content-Length': file.fileStat.size,
+  const useGzip = isCompressible(file.filePath) && acceptsGzip(request);
+  const headers = {
     'Content-Type': getContentType(file.filePath),
-  });
+    Vary: 'Accept-Encoding',
+  };
+  if (useGzip) {
+    headers['Content-Encoding'] = 'gzip';
+  } else {
+    headers['Content-Length'] = file.fileStat.size;
+  }
+  response.writeHead(file.statusCode, headers);
 
   if (request.method === 'HEAD') {
     response.end();
@@ -100,13 +130,20 @@ function sendFile(request, response, file) {
   }
 
   const stream = createReadStream(file.filePath);
-
-  stream.on('error', (error) => {
+  const handleStreamError = (error) => {
     if (error.code !== 'EPIPE' && error.code !== 'ECONNRESET') {
       response.destroy(error);
     }
-  });
-  stream.pipe(response);
+  };
+
+  stream.on('error', handleStreamError);
+  if (useGzip) {
+    const gzip = createGzip();
+    gzip.on('error', handleStreamError);
+    stream.pipe(gzip).pipe(response);
+  } else {
+    stream.pipe(response);
+  }
 }
 
 const server = createServer(async (request, response) => {

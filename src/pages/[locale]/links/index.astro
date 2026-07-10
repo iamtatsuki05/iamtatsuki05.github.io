@@ -1,22 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { LinksPage } from '@/components/pages/LinksPage';
-import { getLinks } from '@/lib/data/links';
-import { resolveLocale, SUPPORTED_LOCALES, SUPPORTED_ROUTE_LOCALES } from '@/lib/i18n';
-import { buildLocalizedMetadata } from '@/lib/metadata';
-import { pageMeta } from '@/lib/seo/metaConfig';
-import { htmlLangFromLocale } from '@/lib/astro/metadata';
+import LinksIndexPage from '@/components/pages/LinksIndexPage.astro';
+import { localeStaticPaths } from '@/lib/astro/paths';
 
 export function getStaticPaths() {
-  return [...SUPPORTED_ROUTE_LOCALES, ...SUPPORTED_LOCALES].map((locale) => ({ params: { locale } }));
+  return localeStaticPaths();
 }
-
-const routeLocale = Astro.params.locale || 'ja-JP';
-const locale = resolveLocale(routeLocale);
-const links = await getLinks();
-const metadata = await buildLocalizedMetadata(Promise.resolve({ locale: routeLocale }), pageMeta.links);
 ---
 
-<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)}>
-  <LinksPage locale={locale} links={links} />
-</BaseLayout>
+<LinksIndexPage routeLocale={Astro.params.locale || 'ja-JP'} />

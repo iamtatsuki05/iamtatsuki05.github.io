@@ -1,4 +1,4 @@
-import React, { type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export function renderInlineLinks(text: string): ReactNode {
   const linkPattern = /\[([^\]]+)]\(([^)]+)\)/g;

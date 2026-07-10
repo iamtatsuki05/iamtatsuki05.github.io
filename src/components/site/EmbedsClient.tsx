@@ -4,7 +4,7 @@ import { createRoot, Root } from 'react-dom/client';
 
 // Twitter公式推奨スニペット（catnose99さんの記事の方針）を動的注入
 // ref: https://zenn.dev/catnose99/articles/329d7d61968efb
-function ensureTwitterSnippet() {
+function _ensureTwitterSnippet() {
   const w = window as any;
   if (w.twttr && typeof w.twttr.ready === 'function') return w.twttr;
   // 既に widgets.js が入っているならスキップ
@@ -22,7 +22,7 @@ function ensureTwitterSnippet() {
   return (w.twttr ||= { _e: [], ready: (f: any) => w.twttr._e.push(f) });
 }
 
-function loadOnce(src: string, globalReady: () => boolean) {
+function _loadOnce(src: string, globalReady: () => boolean) {
   if (globalReady()) return Promise.resolve();
   return new Promise<void>((resolve) => {
     const existing = Array.from(document.scripts).find((s) => s.src === src);

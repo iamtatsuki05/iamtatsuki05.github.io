@@ -7,14 +7,18 @@ import {
   filterSearchItems,
   readSearchField,
   resolveFusePath,
+  type SearchKey,
   type SearchSortMode,
 } from '@/lib/search/filterItems';
 
-export type { SearchSortMode } from '@/lib/search/filterItems';
+export type { SearchKey, SearchSortMode } from '@/lib/search/filterItems';
 
 type Options<T> = {
-  fuseKeys: string[];
+  fuseKeys: SearchKey[];
   threshold?: number;
+  // 長い本文フィールド(searchText など)を検索対象にする場合は true にする。
+  // Fuse.js の既定では location/distance の制約で本文後半の語がマッチしないため。
+  ignoreLocation?: boolean;
   extractYear: (item: T) => string | undefined;
   extractTags: (item: T) => string[];
   extractSortValue?: (item: T) => string | number | undefined;
@@ -67,7 +71,7 @@ function writeQueryState(next: Partial<ReturnType<typeof readQueryState>>) {
 
 export function useSearchFilters<T>(
   items: T[],
-  { fuseKeys, threshold = 0.35, extractYear, extractTags, extractSortValue }: Options<T>,
+  { fuseKeys, threshold = 0.35, ignoreLocation = false, extractYear, extractTags, extractSortValue }: Options<T>,
 ) {
   const [{ q, year: selectedYears, tags, sort: selectedSort }, setQueryState] = useState(readQueryState);
   const [fuse, setFuse] = useState<Fuse<T> | null>(null);
@@ -153,6 +157,7 @@ export function useSearchFilters<T>(
           new FuseClass(items, {
             keys: fuseKeys,
             threshold,
+            ignoreLocation,
             includeScore: true,
             getFn: (item, path) => readSearchField(item, resolveFusePath(path)).map((value) => normalizeSearchText(value)),
           }),
@@ -165,7 +170,7 @@ export function useSearchFilters<T>(
 
     fuseLoadPromiseRef.current = pending;
     return pending;
-  }, [fuse, items, fuseKeys, threshold]);
+  }, [fuse, items, fuseKeys, threshold, ignoreLocation]);
 
   useEffect(() => {
     if (!localQ || fuse) return;

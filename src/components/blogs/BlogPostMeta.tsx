@@ -1,6 +1,5 @@
 "use client";
 
-import React from 'react';
 import { formatDate } from '@/lib/date';
 import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
 import type { Locale } from '@/lib/i18n';

@@ -14,7 +14,7 @@ Ce sentiment apparaît directement dans les commits récents de `dotfiles`. Apr�
 
 Ce n'est plus seulement un endroit où déposer des fichiers de configuration. C'est presque une infrastructure de vie quotidienne.
 
-Dans cet article, je regarde cet entretien récent comme des "dotfiles bonsaï pour l'ère des AI Agents". Ce n'est pas une grande théorie. C'est plutôt ce que j'ai constaté en touchant plusieurs PC et plusieurs agents : sans entretien régulier, l'environnement se dérègle vite.
+Dans cet article, je raconte cet entretien récent comme on raconte la taille d'un bonsaï. Il vient d'un constat, fait en touchant plusieurs PC et plusieurs agents : sans entretien régulier, l'environnement se dérègle vite.
 
 ## Le problème
 
@@ -26,13 +26,13 @@ La solution naïve consiste à corriger les réglages sur chaque PC et dans chaq
 
 Si seuls des humains utilisaient l'environnement, la mémoire pourrait compenser en partie. Quand on confie du travail aux AI Agents, c'est plus difficile. Un agent dépend fortement des réglages et fichiers qu'il peut lire. Un environnement qui dérive produit un travail qui dérive.
 
-Mes dotfiles se sont donc rapprochés de trois directions.
+Mes dotfiles se sont donc rapprochés de ces directions :
 
-1. Absorber autant que possible les différences d'OS et de machine avec Nix.
-2. Rassembler les prompts, skills et hooks d'AI Agent dans `.agent`.
-3. Gérer les CLI tools qui changent vite avec mise.
+- absorber autant que possible les différences d'OS et de machine avec Nix
+- rassembler les prompts, skills et hooks d'AI Agent dans `.agent`
+- gérer les CLI tools qui changent vite avec mise
 
-Chaque élément est banal isolément. Ensemble, ils changent le sens des dotfiles. Ce ne sont plus seulement des réglages pratiques. Ce sont les racines qui soutiennent un travail reproductible.
+Chaque élément est banal isolément. Ensemble, en revanche, les dotfiles deviennent les racines qui soutiennent un travail reproductible.
 
 ## Décider ce que Nix doit aligner
 
@@ -40,7 +40,7 @@ D'abord, Nix.
 
 Dans mes dotfiles actuels, je sépare les profils en `full` pour macOS et `cli` pour Linux. Le profil `full` inclut nix-darwin, Home Manager, les applications GUI, les macOS defaults, les fichiers de configuration, mise et Neovim. Le profil `cli` est centré sur les outils CLI et plus facile à utiliser dans des environnements comme Ubuntu.
 
-Cette séparation est importante.
+Cette séparation est le point central.
 
 macOS et Linux n'ont pas besoin d'être identiques. Essayer de les rendre identiques devient même douloureux dès que l'on touche aux applications GUI et aux réglages propres à l'OS. Mais je veux garder la même sensation en CLI. Si `zsh`, `git`, `rg`, `mise`, `uv` et Neovim sont alignés, passer à une autre machine devient beaucoup moins gênant.
 
@@ -66,7 +66,7 @@ Pour un humain, ce sont peut-être des détails. Pour un agent, ce sont des pré
 
 J'ai donc arrêté de placer directement les prompts et skills dans le répertoire de configuration de chaque tool. Les dotfiles deviennent la source. `dotfiles/.agent/sync.sh` appelle `scripts/setup_agent_files.sh` et crée des symlinks vers chaque tool home.
 
-C'est très simple, mais cela fonctionne. Si les AI Agents font partie de l'environnement de développement plutôt que d'être des outils pratiques ponctuels, les présupposés qu'on leur donne doivent eux aussi être versionnés.
+Simple, mais efficace. Si les AI Agents font partie de l'environnement de développement, les présupposés qu'on leur donne doivent eux aussi être versionnés.
 
 ## Suivre les changements rapides avec mise
 
@@ -108,7 +108,7 @@ Les dotfiles sont similaires. Je ne les vois pas comme quelque chose que l'on te
 
 D'où vient le prompt lu par l'agent ? Quelle est la revision du skill ? Les hooks fonctionnent-ils de la même façon sur un autre PC ? À quelle granularité les CLI tools sont-ils mis à jour, et peut-on revenir en arrière ? Où se séparent les responsabilités de Nix, mise et chezmoi ?
 
-Si ces points sont flous, le travail assisté par IA devient difficile à reproduire. S'ils sont organisés, les AI Agents deviennent des outils beaucoup plus stables.
+Si ces points sont flous, le travail assisté par IA devient difficile à reproduire. S'ils sont organisés, les AI Agents deviennent des outils stables.
 
 Pour moi, les dotfiles ne sont plus une simple collection d'alias shell. C'est l'endroit où faire grandir ensemble plusieurs PC, un Nix package set, des tools mise, un chezmoi source state, des prompts d'AI Agent, des skills, des hooks et des evals.
 

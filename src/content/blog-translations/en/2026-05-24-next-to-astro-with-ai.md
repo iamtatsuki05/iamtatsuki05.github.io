@@ -14,9 +14,9 @@ Still, I was carrying App Router, static export, image optimization, and Cloudfl
 
 So I moved it to Astro.
 
-This time I did not rewrite it little by little by hand. I gave a large part of the work to Codex. Not only the implementation, but also before-and-after measurements, tests, fixes for failed checks, and review follow-up.
+This time I stopped rewriting things by hand and handed almost all of the work to Codex. Not only the implementation, but also before-and-after measurements, tests, fixes for failed checks, and review follow-up.
 
-"I let AI do it" sounds a bit sloppy. What actually happened was closer to giving it a detailed list of things it must not break, then letting it keep going until the work was done.
+"I let AI do it" sounds a bit sloppy. What I actually did was give it a detailed list of things it must not break, then let it run to the end.
 
 ## What I Wanted to Change
 
@@ -30,7 +30,7 @@ With Astro, pages live under `src/pages/**`, and the shared layout can be owned 
 
 But a framework migration is not done just because the page looks right. URLs, SEO, OGP, sitemap, RSS, Cloudflare Pages, accessibility, language switching, and the theme toggle are all easy places to miss things.
 
-So before anything else, I gave Codex a fairly detailed list of what it was not allowed to break.
+So before anything else, I gave Codex a detailed list of what it was not allowed to break.
 
 ## How I Asked Codex
 
@@ -50,7 +50,7 @@ Before the migration, Codex measured the existing Next.js version.
 
 It ran `bun run build`, checked output size, inspected representative HTML sizes, ran lint, Vitest, Playwright E2E, and collected Lighthouse results for mobile and desktop.
 
-This was plain work, but it mattered a lot. Migration is not fixing something broken. It is replacing something that already works. Without a baseline, it is hard to tell whether the result is better, broken, or merely lucky.
+Plain work, but it may have mattered most. Migration replaces something that already works, so without a baseline it is hard to tell whether the result is better, broken, or merely lucky.
 
 In this case, build time and output size improved clearly, so I was glad the baseline existed.
 
@@ -59,7 +59,7 @@ In this case, build time and output size improved clearly, so I was glad the bas
 The Next.js App Router under `src/app/**` disappeared and was replaced by Astro routes under `src/pages/**`.
 The shared layout moved to `BaseLayout.astro`, and the existing React components remained only where they were needed as Astro islands.
 
-It was not a full rewrite. If anything, I kept the UI components as much as possible. What I wanted to change was not the appearance, but the boundary with the framework.
+It was not a full rewrite; I kept the UI components as much as possible. What I wanted to change was the boundary with the framework.
 
 Small local wrappers replaced `next/link`, `next/image`, and `next/navigation`. I also removed `next-themes` and `nuqs`, and kept only the behavior this site actually needs as local code.
 
@@ -90,7 +90,7 @@ The sitemap still contained publication detail URLs that did not actually exist.
 
 These are hard to notice by just using the site. The page displays. Links work. But SEO and deployment details are still broken.
 
-After the review, Codex fixed the sitemap, article metadata, cache headers, and base path handling. At the end, it inspected the generated HTML directly and confirmed that the meta tags were really present.
+After the review, Codex fixed the sitemap, article metadata, cache headers, and base path handling. At the end, it inspected the generated HTML directly and confirmed the meta tags were present.
 
 That review was worth adding. When AI reviews what AI wrote, it can miss things under the same assumptions. A separate perspective changes what gets caught.
 
@@ -112,7 +112,7 @@ In the final state, the following checks passed:
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-Build time became much shorter. Output size was about cut in half.
+Build time dropped to an eighth of what it was. Output size is half.
 
 Lighthouse improved on every checked desktop route. Mobile improved on almost every route too. The blog detail performance score dropped by one point, from `72` to `71`, but LCP improved from `11040ms` to `8836ms`, and TBT improved from `65ms` to `28ms`.
 
@@ -124,8 +124,8 @@ What I felt from this migration is that the more I delegate to AI, the more clea
 
 If I had only said "migrate this to Astro," it probably would have reached the point where the site appeared to work. But once URLs, SEO, deployment, performance, E2E, and review are included, defining the conditions first matters a lot.
 
-The biggest human job was not writing code. It was deciding what must not break.
+The biggest human job was deciding what must not break. I barely wrote any code.
 
-For a personal site of this size, if the build and test loop already exists, AI-led framework migration is very realistic. But if the human side does not own the definition of done, the migration can easily stop at "it looks fine."
+For a personal site of this size, if the build and test loop already exists, AI-led framework migration is realistic. But if the human side does not own the definition of done, the migration can easily stop at "it looks fine."
 
 Next time I do a similar migration, I would add snapshot tests for SEO metadata and sitemap URLs before starting. Those were the points the reviewer caught this time, so I want them guarded mechanically from the beginning.

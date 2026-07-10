@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from '@/components/compat/Link';
 import Image from '@/components/compat/Image';
 import { formatDate } from '@/lib/date';
@@ -23,13 +23,14 @@ import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { useInitialReveal } from '@/hooks/useInitialReveal';
-import { buildBlogPostHref } from '@/lib/blog/navigation';
-import type { Locale } from '@/lib/i18n';
+import { BLOG_SEARCH_KEYS, buildBlogPostHref } from '@/lib/blog/navigation';
+import { type Locale, localeToRouteLocale } from '@/lib/i18n';
 
 const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
 const LATEST_POSTS_COUNT = 3;
 
+// タイトル/サマリ/タグのマッチを本文(searchText)より優先する。
 type Post = {
   slug: string;
   title: string;
@@ -37,7 +38,10 @@ type Post = {
   tags: string[];
   summary: string;
   headerImage?: string;
+  headerImageOptimizedSrc?: string;
+  headerImageSrcSet?: string;
   headerAlt?: string;
+  searchText?: string;
 };
 
 export function BlogsClient({
@@ -70,7 +74,8 @@ export function BlogsClient({
     sort,
     setSort,
   } = useSearchFilters(posts, {
-    fuseKeys: ['title', 'summary', 'tags'],
+    fuseKeys: BLOG_SEARCH_KEYS,
+    ignoreLocation: true,
     extractYear: (p) => p.date,
     extractTags: (p) => p.tags || [],
     extractSortValue: (p) => p.date,
@@ -154,6 +159,13 @@ export function BlogsClient({
         activeFilters={activeFilters}
         sortControls={<SearchSortControls visible={Boolean(q)} sort={sort} onSortChange={setSort} texts={t} />}
         stickyMetaOnMobile
+        voiceLang={localeToRouteLocale(locale)}
+        voiceStartLabel={t.voiceStart}
+        voiceStopLabel={t.voiceStop}
+        voiceListeningLabel={t.voiceListening}
+        voicePermissionMessage={t.voicePermission}
+        voiceNoSpeechMessage={t.voiceNoSpeech}
+        voiceUnavailableMessage={t.voiceUnavailable}
       >
         <YearSelect
           years={allYears}
@@ -189,7 +201,8 @@ export function BlogsClient({
                   data-testid="blog-image"
                 >
                   <Image
-                    src={p.headerImage}
+                    src={p.headerImageOptimizedSrc ?? p.headerImage}
+                    srcSet={p.headerImageSrcSet}
                     alt={p.headerAlt || p.title}
                     fill
                     className="object-cover"
@@ -239,7 +252,8 @@ export function BlogsClient({
                     data-testid="blog-image"
                   >
                     <Image
-                      src={p.headerImage}
+                      src={p.headerImageOptimizedSrc ?? p.headerImage}
+                      srcSet={p.headerImageSrcSet}
                       alt={p.headerAlt || p.title}
                       fill
                       className="object-contain"

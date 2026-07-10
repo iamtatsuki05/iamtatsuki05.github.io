@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { render } from '@testing-library/react';
 import { HomeContentView } from '@/components/home/HomeContentView';
 import type { BlogPost } from '@/lib/content/blog';
@@ -10,10 +10,13 @@ const dict = {
   intro: 'イントロ',
   alias: 'alias',
   handle: 'handle',
-  affiliation: '所属：[奈良先端科学技術大学院大学](https://www.naist.jp/) 情報科学領域 / [自然言語処理学研究室（渡辺研究室）](https://nlp.naist.jp/ja/)',
+  affiliation:
+    '所属：[奈良先端科学技術大学院大学 (NAIST)](https://www.naist.jp/)、先端科学技術研究科情報科学領域、[自然言語処理学研究室(渡辺研究室)](https://nlp.naist.jp/ja/)',
   latest_blog: '最新のブログ',
   latest_pub: '最近の公開物',
-  cta_more: 'もっと見る',
+  cta_more_links: 'リンクをもっと見る',
+  cta_more_blogs: 'ブログをもっと見る',
+  cta_more_publications: '公開物をもっと見る',
 };
 
 const latest: BlogPost[] = [
@@ -61,7 +64,7 @@ describe('HomeContentView', () => {
     expect(getByRole('heading', { name: '最近の公開物' })).toBeVisible();
     expect(getByText('Sample Post')).toBeVisible();
     expect(getByText('Paper 1')).toBeVisible();
-    expect(getByRole('link', { name: '奈良先端科学技術大学院大学' })).toBeVisible();
-    expect(getByRole('link', { name: '自然言語処理学研究室（渡辺研究室）' })).toBeVisible();
+    expect(getByRole('link', { name: '奈良先端科学技術大学院大学 (NAIST)' })).toBeVisible();
+    expect(getByRole('link', { name: '自然言語処理学研究室(渡辺研究室)' })).toBeVisible();
   });
 });

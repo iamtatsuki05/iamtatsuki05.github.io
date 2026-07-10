@@ -97,5 +97,8 @@ function formatRelatedLabel(
   copy: (typeof hobbiesPageCopy)[Locale],
 ) {
   if (count <= 0) return copy.emptyStateLabel;
-  return locale === 'ja' ? `関連するブログ記事 ${count}件` : `${count} related blog posts`;
+  if (locale === 'ja') return `関連するブログ記事 ${count}件`;
+  if (locale === 'zh') return `相关博客文章 ${count} 篇`;
+  if (locale === 'fr') return count === 1 ? '1 article de blog associé' : `${count} articles de blog associés`;
+  return count === 1 ? '1 related blog post' : `${count} related blog posts`;
 }

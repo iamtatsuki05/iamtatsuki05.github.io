@@ -1,24 +1,10 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { HobbiesPage } from '@/components/pages/HobbiesPage';
-import { getAllPosts } from '@/lib/content/blog';
-import { resolveLocale, SUPPORTED_LOCALES, SUPPORTED_ROUTE_LOCALES } from '@/lib/i18n';
-import { buildLocalizedMetadata } from '@/lib/metadata';
-import { pageMeta } from '@/lib/seo/metaConfig';
-import { htmlLangFromLocale } from '@/lib/astro/metadata';
-import { resolveHobbies } from '@/lib/data/hobbies';
+import HobbiesIndexPage from '@/components/pages/HobbiesIndexPage.astro';
+import { localeStaticPaths } from '@/lib/astro/paths';
 
 export function getStaticPaths() {
-  return [...SUPPORTED_ROUTE_LOCALES, ...SUPPORTED_LOCALES].map((locale) => ({ params: { locale } }));
+  return localeStaticPaths();
 }
-
-const routeLocale = Astro.params.locale || 'ja-JP';
-const locale = resolveLocale(routeLocale);
-const posts = await getAllPosts(locale);
-const hobbies = resolveHobbies(locale, posts);
-const metadata = await buildLocalizedMetadata(Promise.resolve({ locale: routeLocale }), pageMeta.hobbies);
 ---
 
-<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} preloadImages={hobbies[0]?.thumbnailSrc ? [hobbies[0].thumbnailSrc] : []}>
-  <HobbiesPage locale={locale} posts={posts} />
-</BaseLayout>
+<HobbiesIndexPage routeLocale={Astro.params.locale || 'ja-JP'} />

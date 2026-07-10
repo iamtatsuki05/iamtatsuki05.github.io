@@ -1,4 +1,4 @@
-import React from 'react';
+
 import clsx from 'clsx';
 import type { LinkItem } from '@/lib/data/links';
 import { ExternalIcon } from '@/components/ui/ExternalIcon';

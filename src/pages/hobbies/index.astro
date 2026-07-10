@@ -1,32 +1,5 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { HobbiesPage } from '@/components/pages/HobbiesPage';
-import { getAllPosts } from '@/lib/content/blog';
-import { absoluteUrl, buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildLanguageAlternates, buildPageMetadata } from '@/lib/seo';
-import { resolveHobbies } from '@/lib/data/hobbies';
-import { getPageMeta } from '@/lib/seo/metaConfig';
-
-const locale = 'ja';
-const posts = await getAllPosts();
-const hobbies = resolveHobbies(locale, posts);
-const pageMeta = getPageMeta('hobbies', locale);
-const metadata = buildPageMetadata({
-  title: pageMeta.metadataTitle,
-  description: pageMeta.metadataDescription,
-  locale,
-  path: pageMeta.path,
-  languageAlternates: buildLanguageAlternates(pageMeta.path),
-});
+import HobbiesIndexPage from '@/components/pages/HobbiesIndexPage.astro';
 ---
 
-<BaseLayout
-  metadata={metadata}
-  lang="ja"
-  preloadImages={hobbies[0]?.thumbnailSrc ? [hobbies[0].thumbnailSrc] : []}
-  jsonLd={[
-    buildCollectionPageJsonLd({ path: '/hobbies/', name: 'Hobbies', description: '趣味と最近ハマっていることの一覧', itemCount: hobbies.length }),
-    buildBreadcrumbJsonLd({ items: [{ name: 'Home', url: absoluteUrl('/') }, { name: 'Hobbies', url: absoluteUrl('/hobbies/') }] }),
-  ]}
->
-  <HobbiesPage locale={locale} posts={posts} />
-</BaseLayout>
+<HobbiesIndexPage />

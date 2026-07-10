@@ -6,7 +6,7 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 // jest-dom の matcher を Bun の expect に拡張
 bunExpect.extend(matchers);
 // Bun では expect はグローバルではないため、テストで参照できるように公開
-// @ts-ignore
+// @ts-expect-error
 globalThis.expect = bunExpect;
 
 // 既に DOM があればスキップ
@@ -24,12 +24,12 @@ if (typeof (globalThis as any).window === 'undefined') {
   // React の input 変更検出が jsdom で IE 用ポリフィル（attachEvent）に入らないように、
   // `isEventSupported('input')` の判定を真にする
   // https://github.com/jsdom/jsdom では document.oninput が未定義のため補う
-  // @ts-ignore
+  // @ts-expect-error
   if (!('oninput' in (globalThis as any).document)) {
     (globalThis as any).document.oninput = null;
   }
   // React の古い IE ポリフィルが参照する attachEvent を no-op で用意
-  // @ts-ignore
+  // @ts-expect-error
   if (!(dom.window as any).HTMLElement.prototype.attachEvent) {
     (dom.window as any).HTMLElement.prototype.attachEvent = () => {};
   }
@@ -42,7 +42,7 @@ class IO {
   disconnect() {}
   unobserve() {}
 }
-// @ts-ignore
+// @ts-expect-error
 globalThis.IntersectionObserver = (globalThis as any).IntersectionObserver || (IO as any);
 
 // 各テスト後に DOM をクリア

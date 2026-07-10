@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { waitForIslandHydration } from './helpers/hydration';
 import { localizedPath } from './helpers/paths';
 
 const viewports = [
@@ -200,6 +201,7 @@ for (const { label, use } of viewports) {
         }
         await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/(?:ja(?:-JP)?\/)?blogs\/[\w-]+\/?$/);
 
+        await waitForIslandHydration(page, 'MarkdownCopyButton');
         const copyButton = page.getByRole('button', { name: '記事のMarkdownをコピー' });
         await expect(copyButton).toBeVisible();
         await copyButton.click();
@@ -245,6 +247,8 @@ for (const { label, use } of viewports) {
         }
         await expect.poll(() => new URL(page.url()).pathname).toMatch(/\/en-US\/blogs\/[\w-]+\/?$/);
 
+        await waitForIslandHydration(page, 'MarkdownCopyButton');
+        await waitForIslandHydration(page, 'ShareButtons');
         const copyButton = page.getByRole('button', { name: 'Copy article markdown' });
         await expect(copyButton).toBeVisible();
         await expect(copyButton).toContainText('Copy Markdown');
@@ -397,7 +401,12 @@ for (const { label, use } of viewports) {
     });
 
     test('opens the primary link when clicking a publication card', async ({ page }) => {
-      await page.locator('[data-testid="publication-card"]').first().click();
+      const card = page.locator('[data-testid="publication-card"]').first();
+      const titleLink = card.locator('[data-testid="publication-card-link"]');
+      await expect(titleLink).toHaveAttribute('target', '_blank');
+      expect(await titleLink.getAttribute('href')).toBeTruthy();
+
+      await card.click({ position: { x: 10, y: 10 } });
       const openCalls = await page.evaluate(
         () => (window as unknown as { __publicationOpenCalls__?: string[] }).__publicationOpenCalls__ || [],
       );

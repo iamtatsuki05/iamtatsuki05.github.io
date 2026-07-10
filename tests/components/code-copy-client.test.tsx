@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { describe, it, expect, afterEach } from 'vitest';
 import { CodeCopyClient } from '@/components/site/CodeCopyClient';
 import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';

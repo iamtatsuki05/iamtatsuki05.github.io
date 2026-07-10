@@ -14,9 +14,9 @@ headerAlt: 显示代码的屏幕
 
 所以我迁到了 Astro。
 
-这次我没有自己一点点改，而是把相当大的一部分交给了 Codex。实现、迁移前后的测量、测试、失败点修复、reviewer 的反馈处理，基本都作为一整段工作交给了它。
+这次我不再自己一点点改，而是几乎都交给了 Codex。实现、迁移前后的测量、测试、失败点修复、reviewer 的反馈处理，作为一整段工作交给了它。
 
-说「交给 AI」听起来有点粗糙。实际更接近于：把不能弄坏的东西细细列出来，然后让它在这个范围内一直跑到结束。
+说「交给 AI」听起来有点粗糙。我实际做的，是把不能弄坏的东西细细列出来，然后让它一直跑到结束。
 
 ## 我想改变什么
 
@@ -50,16 +50,16 @@ headerAlt: 显示代码的屏幕
 
 它跑了 `bun run build`，检查输出大小、代表性 HTML 的大小，运行 lint、Vitest、Playwright E2E，并收集 mobile / desktop 的 Lighthouse 结果。
 
-这一步不华丽，但很重要。迁移不是修坏掉的东西，而是替换一个已经能工作的东西。如果没有 baseline，就很难判断结果到底是变好了、坏了，还是只是刚好能动。
+这一步不华丽，但可能是最有用的。迁移是替换一个已经能工作的东西，没有 baseline 就很难判断结果到底是变好了、坏了，还是只是刚好能动。
 
-这次 build time 和输出大小改善得很明显，所以提前取 baseline 很值得。
+结果 build time 和输出大小改善得很清楚，所以提前取 baseline 很值得。
 
 ## 实际改变了什么
 
 Next.js App Router 的 `src/app/**` 消失了，换成了 Astro 的 `src/pages/**`。
 共用 layout 移到了 `BaseLayout.astro`，已有的 React component 只在需要的地方作为 Astro island 留下。
 
-这不是一次完全重写。反而 UI component 尽量保留了下来。我想改变的不是外观，而是和 framework 的边界。
+这不是一次完全重写，UI component 尽量保留了下来。我想改变的是和 framework 的边界。
 
 我放了小的 local wrapper 来替代 `next/link`、`next/image`、`next/navigation`。`next-themes` 和 `nuqs` 也移除了，只留下这个网站实际需要的行为，用 local 实现处理。
 
@@ -112,7 +112,7 @@ sitemap 里还残着实际并不存在的 publication detail URL。blog article 
 | static output | 11M | 5.5M |
 | framework cache/output | `.next` 184M | `.astro` 12K |
 
-build time 明显缩短了。输出大小也差不多减半。
+build time 缩到了原来的八分之一。输出大小也减半了。
 
 Lighthouse 在 desktop 的所有检查 route 上都有改善。mobile 也几乎都改善了。只有 blog detail 的 performance score 从 `72` 到 `71`，降了 1 分，但 LCP 从 `11040ms` 到 `8836ms`，TBT 从 `65ms` 到 `28ms`，实际指标是改善的。
 
@@ -124,8 +124,8 @@ Lighthouse 在 desktop 的所有检查 route 上都有改善。mobile 也几乎�
 
 如果只说「迁移到 Astro」，大概也能到网站看起来能动的程度。可是把 URL、SEO、deploy、performance、E2E、review 都算进去，最开始写清楚条件就很有意义。
 
-人这边做的最大工作，不是写代码，而是决定什么不能坏。
+人这边做的最大工作，是决定什么不能坏。代码我几乎没写。
 
-个人网站这种规模，只要 build 和 test 的循环已经存在，AI 主导的 framework migration 是很现实的。只是如果人没有掌握「怎样才算完成」，它很容易停在「看起来能动」。
+个人网站这种规模，只要 build 和 test 的循环已经存在，AI 主导的 framework migration 是现实的。只是如果人没有掌握「怎样才算完成」，它很容易停在「看起来能动」。
 
 下次再做类似迁移，我会先加 SEO metadata 和 sitemap URL 的 snapshot test。因为这次 reviewer 捡到的正是这些地方，所以一开始就应该让机器守住。

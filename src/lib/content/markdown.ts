@@ -15,7 +15,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { Schema } from 'hast-util-sanitize';
 import GithubSlugger from 'github-slugger';
-import type { Root as MdastRoot, Heading, Text, InlineCode, RootContent } from 'mdast';
+import type { Root as MdastRoot, Text, InlineCode, RootContent } from 'mdast';
 import { cached } from '@/lib/server/cache';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';
@@ -137,4 +137,30 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
 
 export function slugFromFilename(fp: string) {
   return path.basename(fp).replace(/\.mdx?$/, '');
+}
+
+export const SEARCH_TEXT_MAX_LENGTH = 4000;
+
+// 一覧ページの全文検索用に、frontmatter・コードブロック・URL・markdown 記号を落とした
+// plain text を作る。ページ payload の肥大を防ぐため既定で 4000 文字に切り詰める。
+export function extractMarkdownSearchText(source: string, maxLength = SEARCH_TEXT_MAX_LENGTH): string {
+  const { content } = matter(source);
+  const text = content
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/~~~[\s\S]*?~~~/g, ' ')
+    .replace(/`([^`\n]*)`/g, '$1')
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]*)\]\[[^\]]*\]/g, '$1')
+    .replace(/^\s{0,3}\[[^\]]+\]:\s+\S+.*$/gm, ' ')
+    .replace(/<[^>\n]+>/g, ' ')
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/^\s{0,3}>\s?/gm, '')
+    .replace(/^\s{0,3}(?:[-*+]|\d+\.)\s+/gm, '')
+    .replace(/^[ \t]*[-*_]{3,}[ \t]*$/gm, ' ')
+    .replace(/[*_~|\\]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length > maxLength ? text.slice(0, maxLength) : text;
 }

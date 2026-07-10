@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { BlogPost } from '@/lib/content/blog';
 import { formatDate } from '@/lib/date';
 import { SectionHeader } from './SectionHeader';
