@@ -14,7 +14,9 @@ export type FilterTextKey =
   | 'searchKeyword'
   | 'sort'
   | 'sortRelevant'
-  | 'sortNewest';
+  | 'sortNewest'
+  | 'voiceStart'
+  | 'voiceStop';
 
 export type FilterTextDict = Record<FilterTextKey, string>;
 
@@ -33,6 +35,8 @@ export const filterTextJa: FilterTextDict = {
   sort: '並び替え',
   sortRelevant: '関連順',
   sortNewest: '新しい順',
+  voiceStart: '音声で検索',
+  voiceStop: '音声入力を停止',
 };
 
 export const filterTextEn: FilterTextDict = {
@@ -50,6 +54,8 @@ export const filterTextEn: FilterTextDict = {
   sort: 'Sort',
   sortRelevant: 'Relevant',
   sortNewest: 'Newest',
+  voiceStart: 'Search by voice',
+  voiceStop: 'Stop voice input',
 };
 
 export const filterTextZh: FilterTextDict = {
@@ -67,6 +73,8 @@ export const filterTextZh: FilterTextDict = {
   sort: '排序',
   sortRelevant: '相关度',
   sortNewest: '最新',
+  voiceStart: '语音搜索',
+  voiceStop: '停止语音输入',
 };
 
 export const filterTextFr: FilterTextDict = {
@@ -84,6 +92,8 @@ export const filterTextFr: FilterTextDict = {
   sort: 'Tri',
   sortRelevant: 'Pertinence',
   sortNewest: 'Plus récent',
+  voiceStart: 'Recherche vocale',
+  voiceStop: 'Arrêter la saisie vocale',
 };
 
 export function resolveFilterText(locale: Locale): FilterTextDict {
