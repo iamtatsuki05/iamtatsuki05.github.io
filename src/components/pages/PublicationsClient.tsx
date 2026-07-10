@@ -278,6 +278,9 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         voiceLang={localeToRouteLocale(locale)}
         voiceStartLabel={t.voiceStart}
         voiceStopLabel={t.voiceStop}
+        voicePermissionMessage={t.voicePermission}
+        voiceNoSpeechMessage={t.voiceNoSpeech}
+        voiceUnavailableMessage={t.voiceUnavailable}
       >
         <YearSelect
           years={years}

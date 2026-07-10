@@ -33,6 +33,10 @@ class MockSpeechRecognition {
   emitResult(transcript: string, isFinal: boolean) {
     this.onresult?.({ results: [{ isFinal, 0: { transcript } }] });
   }
+
+  emitError(error: string) {
+    this.onerror?.({ error });
+  }
 }
 
 function stubSpeechRecognition() {
@@ -94,6 +98,28 @@ describe('FilterBar voice input', () => {
     });
     expect(onQueryChange).toHaveBeenLastCalledWith('チャイ レシピ');
     expect(button).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('shows a permission message when microphone access is denied', () => {
+    stubSpeechRecognition();
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(
+      <FilterBar
+        query=""
+        onQueryChange={() => {}}
+        placeholder="Search..."
+        voiceLang="ja-JP"
+        voicePermissionMessage="マイクの使用が許可されていません"
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('filter-voice-button'));
+    act(() => {
+      MockSpeechRecognition.instances[0].emitError('not-allowed');
+    });
+
+    expect(screen.getByTestId('filter-voice-error')).toHaveTextContent('マイクの使用が許可されていません');
+    expect(screen.getByTestId('filter-voice-button')).toHaveAttribute('data-state', 'idle');
   });
 
   it('stops recognition when the mic button is clicked while listening', () => {

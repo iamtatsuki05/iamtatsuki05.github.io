@@ -159,6 +159,9 @@ export function BlogsClient({
         voiceLang={localeToRouteLocale(locale)}
         voiceStartLabel={t.voiceStart}
         voiceStopLabel={t.voiceStop}
+        voicePermissionMessage={t.voicePermission}
+        voiceNoSpeechMessage={t.voiceNoSpeech}
+        voiceUnavailableMessage={t.voiceUnavailable}
       >
         <YearSelect
           years={allYears}

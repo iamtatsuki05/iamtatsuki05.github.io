@@ -1006,6 +1006,19 @@
     right: 2.7rem;
   }
 
+  .filter-bar__search-status--error {
+    color: rgb(190 18 60);
+  }
+
+  .filter-bar__search-status--error::before {
+    background: linear-gradient(135deg, #f43f5e, #f59e0b);
+    animation: none;
+  }
+
+  .dark .filter-bar__search-status--error {
+    color: rgb(253 164 175);
+  }
+
   .filter-bar__search-status::before {
     content: '';
     width: 0.45rem;

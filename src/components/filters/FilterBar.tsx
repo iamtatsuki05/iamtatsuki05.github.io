@@ -29,6 +29,9 @@ type Props = {
   voiceLang?: string;
   voiceStartLabel?: string;
   voiceStopLabel?: string;
+  voicePermissionMessage?: string;
+  voiceNoSpeechMessage?: string;
+  voiceUnavailableMessage?: string;
 };
 
 export function FilterBar({
@@ -50,6 +53,9 @@ export function FilterBar({
   voiceLang,
   voiceStartLabel = 'Search by voice',
   voiceStopLabel = 'Stop voice input',
+  voicePermissionMessage = 'Microphone access is blocked',
+  voiceNoSpeechMessage = 'No speech detected',
+  voiceUnavailableMessage = 'Voice input is unavailable',
 }: Props) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const showClear = Boolean(hasActiveFilters) || Boolean(query);
@@ -58,6 +64,7 @@ export function FilterBar({
   const {
     supported: voiceSupported,
     listening: voiceListening,
+    error: voiceError,
     toggle: toggleVoice,
   } = useSpeechRecognition({
     lang: voiceLang ?? 'en-US',
@@ -66,6 +73,13 @@ export function FilterBar({
     },
   });
   const showVoiceButton = Boolean(voiceLang) && voiceSupported;
+  const voiceErrorMessage = voiceError
+    ? {
+        permission: voicePermissionMessage,
+        'no-speech': voiceNoSpeechMessage,
+        unavailable: voiceUnavailableMessage,
+      }[voiceError]
+    : null;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -116,6 +130,16 @@ export function FilterBar({
           {isSearchLoading ? (
             <span className="filter-bar__search-status" role="status" aria-live="polite">
               {searchLoadingLabel}
+            </span>
+          ) : null}
+          {!isSearchLoading && voiceErrorMessage ? (
+            <span
+              className="filter-bar__search-status filter-bar__search-status--error"
+              role="status"
+              aria-live="polite"
+              data-testid="filter-voice-error"
+            >
+              {voiceErrorMessage}
             </span>
           ) : null}
           {showVoiceButton ? (

@@ -10,13 +10,17 @@ type SpeechRecognitionEventLike = {
   results: ArrayLike<SpeechRecognitionResultLike>;
 };
 
+type SpeechRecognitionErrorEventLike = {
+  error?: string;
+};
+
 type SpeechRecognitionLike = {
   lang: string;
   interimResults: boolean;
   continuous: boolean;
   onresult: ((event: SpeechRecognitionEventLike) => void) | null;
   onend: (() => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
   start: () => void;
   stop: () => void;
   abort: () => void;
@@ -40,10 +44,19 @@ type Options = {
   onResult: (transcript: string, isFinal: boolean) => void;
 };
 
+export type SpeechRecognitionErrorKind = 'permission' | 'no-speech' | 'unavailable';
+
+function classifyError(error?: string): SpeechRecognitionErrorKind {
+  if (error === 'not-allowed' || error === 'service-not-allowed') return 'permission';
+  if (error === 'no-speech' || error === 'aborted') return 'no-speech';
+  return 'unavailable';
+}
+
 export function useSpeechRecognition({ lang, onResult }: Options) {
   // SSR とのハイドレーション不一致を避けるため、対応判定は mount 後に行う
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
+  const [error, setError] = useState<SpeechRecognitionErrorKind | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const onResultRef = useRef(onResult);
   onResultRef.current = onResult;
@@ -84,18 +97,22 @@ export function useSpeechRecognition({ lang, onResult }: Options) {
       recognitionRef.current = null;
       setListening(false);
     };
-    recognition.onerror = () => {
+    recognition.onerror = (event) => {
+      console.warn('[voice-search] speech recognition error:', event.error ?? 'unknown');
       recognitionRef.current = null;
       setListening(false);
+      setError(classifyError(event.error));
     };
 
     recognitionRef.current = recognition;
     setListening(true);
+    setError(null);
     try {
       recognition.start();
     } catch {
       recognitionRef.current = null;
       setListening(false);
+      setError('unavailable');
     }
   }, [lang]);
 
@@ -104,5 +121,12 @@ export function useSpeechRecognition({ lang, onResult }: Options) {
     else start();
   }, [start, stop]);
 
-  return { supported, listening, start, stop, toggle };
+  // エラー表示は数秒で自動的に消す
+  useEffect(() => {
+    if (!error) return;
+    const timer = window.setTimeout(() => setError(null), 5000);
+    return () => window.clearTimeout(timer);
+  }, [error]);
+
+  return { supported, listening, error, start, stop, toggle };
 }
