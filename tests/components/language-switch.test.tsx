@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';

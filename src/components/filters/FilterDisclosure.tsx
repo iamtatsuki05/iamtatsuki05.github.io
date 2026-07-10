@@ -132,6 +132,7 @@ export function FilterDisclosure({ label, count, selectedCount, className, panel
       data-state={isOpen ? 'open' : 'closed'}
       className={`filter-disclosure relative ${className || ''}`}
     >
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: summary is natively interactive */}
       <summary
         onClick={(event) => {
           event.preventDefault();

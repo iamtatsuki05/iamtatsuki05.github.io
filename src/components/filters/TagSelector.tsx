@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { FilterDisclosure } from './FilterDisclosure';
 
 type Props = {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { NavDisplayItem } from '@/components/site/navItems';
 import { NavLinks } from '@/components/site/NavLinks';
@@ -103,6 +103,7 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
       className="mobile-menu-overlay sm:hidden fixed inset-0 z-[100]"
       onClick={onClose}
     >
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: click handler only stops overlay-close propagation */}
       <div
         data-state={state}
         className="mobile-menu-panel"

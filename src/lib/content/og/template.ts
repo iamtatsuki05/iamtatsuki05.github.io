@@ -47,7 +47,7 @@ export function makeCardHTML(u: string, og: OGData | null) {
       <div class="og-card__body">
         <div class="og-card__site">${esc(site)}</div>
         <div class="og-card__title">${esc(title)}</div>
-        ${desc ? `<div class=\"og-card__desc\">${esc(desc)}</div>` : ''}
+        ${desc ? `<div class="og-card__desc">${esc(desc)}</div>` : ''}
         <div class="og-card__url">${esc(urlText)}</div>
       </div>
     </a>`

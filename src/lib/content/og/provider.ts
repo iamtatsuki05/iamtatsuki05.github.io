@@ -33,7 +33,7 @@ export function providerFallback(url: string): OGData | null {
     const u = new URL(url);
     // X (Twitter)
     if (u.hostname === 'x.com' || u.hostname === 'twitter.com') {
-      const m = u.pathname.match(/^\/(?:i\/web|home)?\/?([^\/]+)\/status\/(\d+)/);
+      const m = u.pathname.match(/^\/(?:i\/web|home)?\/?([^/]+)\/status\/(\d+)/);
       const user = m?.[1];
       return { url, title: user ? `Tweet by @${user}` : 'Tweet', siteName: 'X (Twitter)' };
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Link from '@/components/compat/Link';
 import Image from '@/components/compat/Image';
 import { renderInlineLinks } from '@/lib/ui/inlineMarkdown';

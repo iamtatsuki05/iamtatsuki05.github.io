@@ -1,7 +1,7 @@
 "use client";
 import clsx from 'clsx';
 import { useTheme } from '@/lib/compat/theme';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();

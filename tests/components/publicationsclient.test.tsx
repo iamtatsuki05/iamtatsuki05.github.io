@@ -53,7 +53,7 @@ describe('PublicationsClient', () => {
     const { render } = await import('@testing-library/react');
     const { within } = await import('@testing-library/react');
     const userEvent = await import('@testing-library/user-event');
-    const { container, getByText, getAllByRole, queryByText } = render(<PublicationsClient items={items} locale="en" />, {
+    const { container, getAllByRole, queryByText } = render(<PublicationsClient items={items} locale="en" />, {
       wrapper: Wrapper,
     });
 

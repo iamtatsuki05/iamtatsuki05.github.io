@@ -60,7 +60,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.5.3",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.61.1",
     "@storybook/addon-docs": "10.4.6",

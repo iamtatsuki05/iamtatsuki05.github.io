@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { render } from '@testing-library/react';
 import { HomeContentView } from '@/components/home/HomeContentView';
 import type { BlogPost } from '@/lib/content/blog';

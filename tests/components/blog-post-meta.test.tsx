@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { describe, it, expect, afterEach } from 'vitest';
 import { BlogPostMeta } from '@/components/blogs/BlogPostMeta';
 import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';

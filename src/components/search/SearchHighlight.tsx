@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { tokenizeSearchQuery } from '@/lib/search/queryTokens';
 
 type Props = {
