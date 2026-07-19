@@ -310,6 +310,10 @@ for (const { label, use } of viewports) {
       await expect(firstLink).toHaveAttribute('target', '_blank');
       await expect(firstLink).toHaveAttribute('rel', /noreferrer/);
       await expect(firstLink).toHaveAttribute('href', /^https?:\/\//);
+      await expect(page.getByRole('link', { name: 'Bluesky' })).toHaveAttribute(
+        'href',
+        'https://bsky.app/profile/iamtatsuki05.bsky.social',
+      );
     });
 
     if (label === 'mobile') {
@@ -319,7 +323,7 @@ for (const { label, use } of viewports) {
         const cards = firstSection.locator('li');
 
         await expect(list).toBeVisible();
-        await expect(cards).toHaveCount(5);
+        await expect(cards).toHaveCount(6);
 
         const listBox = await list.boundingBox();
         expect(listBox).not.toBeNull();
@@ -331,7 +335,7 @@ for (const { label, use } of viewports) {
         );
         const maxY = Math.max(...cardBoxes.map((box) => box.y));
         const finalRow = cardBoxes.filter((box) => Math.abs(box.y - maxY) < 2);
-        expect(finalRow).toHaveLength(1);
+        expect(finalRow).toHaveLength(2);
 
         const rowLeft = Math.min(...finalRow.map((box) => box.x));
         const rowRight = Math.max(...finalRow.map((box) => box.x + box.width));

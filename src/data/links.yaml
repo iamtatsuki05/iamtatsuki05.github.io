@@ -8,6 +8,11 @@
   desc: 日々の発信
   iconUrl: /images/links/x.svg
   category: Social
+- title: Bluesky
+  url: https://bsky.app/profile/iamtatsuki05.bsky.social
+  desc: 近況・日々の発信
+  iconUrl: /images/links/bluesky.svg
+  category: Social
 - title: Instagram
   url: https://www.instagram.com/iam_tatsuki05
   desc: 写真・日常
