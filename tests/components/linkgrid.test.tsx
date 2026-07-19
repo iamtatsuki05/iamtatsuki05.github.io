@@ -30,6 +30,7 @@ describe('LinkGrid', () => {
     const officialItems = [
       { title: 'GitHub', url: 'https://github.com', iconUrl: '/images/links/github.svg' },
       { title: 'X (Twitter)', url: 'https://x.com', iconUrl: '/images/links/x.svg' },
+      { title: 'Bluesky', url: 'https://bsky.app', iconUrl: '/images/links/bluesky.svg' },
       { title: 'Instagram', url: 'https://instagram.com', iconUrl: '/images/links/instagram.webp' },
       { title: 'LinkedIn', url: 'https://linkedin.com', iconUrl: '/images/links/linkedin.ico' },
       { title: 'Huggingface', url: 'https://huggingface.co/iamtatsuki05', iconUrl: '/images/links/huggingface.svg' },
