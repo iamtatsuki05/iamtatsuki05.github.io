@@ -94,6 +94,13 @@ describe('buildArticleJsonLd', () => {
 });
 
 describe('structured profile metadata', () => {
+  it('includes Bluesky in structured profile URLs', () => {
+    const blueskyUrl = 'https://bsky.app/profile/iamtatsuki05.bsky.social';
+
+    expect(buildPersonJsonLd().sameAs).toContain(blueskyUrl);
+    expect(buildOrganizationJsonLd().mainEntity.sameAs).toContain(blueskyUrl);
+  });
+
   it('includes the NLP laboratory under the university affiliation', () => {
     const person = buildPersonJsonLd();
 

@@ -31,6 +31,7 @@ export const siteConfig = {
   socials: {
     github: 'https://github.com/iamtatsuki05',
     x: 'https://x.com/iam_tatsuki05',
+    bluesky: 'https://bsky.app/profile/iamtatsuki05.bsky.social',
     instagram: 'https://www.instagram.com/iam_tatsuki05',
     linkedin: 'https://www.linkedin.com/in/iamtatsuki05',
     huggingface: 'https://huggingface.co/iamtatsuki05',
