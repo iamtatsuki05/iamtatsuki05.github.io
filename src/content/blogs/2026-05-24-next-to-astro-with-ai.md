@@ -6,6 +6,8 @@ summary: このサイトを Next.js から Astro へ移行する作業を、実�
 headerImage: https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80
 headerAlt: コードが表示された画面
 aiAssisted: true
+legacyAnchors:
+  '数字': '移行前後の数字'
 ---
 
 ## はじめに

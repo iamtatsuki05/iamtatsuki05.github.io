@@ -6,6 +6,8 @@ summary: Nix、mise、chezmoi、AI agent 設定を dotfiles に寄せながら�
 headerImage: https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=1600&q=80
 headerAlt: 鉢植えの植物
 aiAssisted: true
+legacyAnchors:
+  'agent-は-ai-に渡す前提である': 'agent-に-ai-用の前提を集める'
 ---
 
 ## はじめに

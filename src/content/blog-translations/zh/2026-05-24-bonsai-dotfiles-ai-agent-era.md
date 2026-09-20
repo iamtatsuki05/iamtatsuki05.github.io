@@ -2,6 +2,9 @@
 title: AI Agent 时代的盆栽 dotfiles
 summary: 这篇文章讲述我如何把 Nix、mise、chezmoi 和 AI agent 配置收进 dotfiles，并像照料盆栽一样维护变化很快的开发环境。
 headerAlt: 盆栽植物
+legacyAnchors:
+  'agent-是交给-ai-的前提': '把交给-ai-的前提集中到-agent'
+  '用-mise-追变化快的部分': '用-mise-跟上快速的变化'
 ---
 
 ## 前言

@@ -2,6 +2,8 @@
 title: I Let AI Handle Almost the Entire Migration from Next.js to Astro
 summary: A record of letting Codex handle the migration of this site from Next.js to Astro, from implementation through verification.
 headerAlt: A screen showing code
+legacyAnchors:
+  'numbers': 'numbers-before-and-after'
 ---
 
 ## Introduction

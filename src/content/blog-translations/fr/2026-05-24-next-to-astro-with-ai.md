@@ -2,6 +2,8 @@
 title: J'ai presque entièrement confié à l'IA la migration de Next.js vers Astro
 summary: Le récit de la migration de ce site de Next.js vers Astro, presque entièrement confiée à Codex, de l'implémentation à la vérification.
 headerAlt: Un écran affichant du code
+legacyAnchors:
+  'chiffres': 'les-chiffres-avant-et-après'
 ---
 
 ## Introduction

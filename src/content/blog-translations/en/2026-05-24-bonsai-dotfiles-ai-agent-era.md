@@ -2,6 +2,8 @@
 title: Bonsai Dotfiles for the AI Agent Era
 summary: How I keep tending a fast-changing development environment by bringing Nix, mise, chezmoi, and AI agent configuration into dotfiles.
 headerAlt: A potted plant
+legacyAnchors:
+  'agent-is-the-assumption-given-to-ai': 'collecting-the-ai-facing-assumptions-in-agent'
 ---
 
 ## Introduction

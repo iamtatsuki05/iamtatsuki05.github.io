@@ -762,3 +762,28 @@ test.describe('Special route pages', () => {
     await expect(page.getByRole('link', { name: 'ホームへ戻る' })).toHaveAttribute('href', '/');
   });
 });
+
+test.describe('Legacy heading anchors', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  // 見出しを改稿したあとも、旧アンカーの外部リンクが同じ節の同じ位置に着地すること。
+  // 空 span に scroll-margin-top が効かないと、見出しが固定ヘッダーの裏に隠れる。
+  test('lands a renamed section at the same place as its current anchor', async ({ page }) => {
+    const path = localizedPath('ja', '/blogs/2026-05-24-next-to-astro-with-ai/');
+    const heading = page.getByRole('heading', { level: 2, name: '移行前後の数字' });
+
+    await page.goto(`${path}#移行前後の数字`);
+    await expect(heading).toBeVisible();
+    const currentTop = Math.round((await heading.boundingBox())?.y ?? Number.NaN);
+
+    await page.goto(`${path}#数字`);
+    await expect(heading).toBeVisible();
+    const legacyTop = Math.round((await heading.boundingBox())?.y ?? Number.NaN);
+
+    // インライン box の丸めで 1px ずれることがある。壊れたときは 100px 以上ずれる。
+    expect(Math.abs(legacyTop - currentTop)).toBeLessThanOrEqual(2);
+
+    const headerHeight = Math.round((await page.locator('header').first().boundingBox())?.height ?? 0);
+    expect(legacyTop).toBeGreaterThanOrEqual(headerHeight);
+  });
+});

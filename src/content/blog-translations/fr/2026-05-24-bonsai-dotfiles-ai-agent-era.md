@@ -2,6 +2,8 @@
 title: Des dotfiles bonsaï pour l'ère des AI Agents
 summary: Comment je continue d'entretenir un environnement de développement qui change vite en y rassemblant Nix, mise, chezmoi et la configuration des AI agents.
 headerAlt: Plante en pot
+legacyAnchors:
+  'agent-est-le-présupposé-donné-à-lia': 'rassembler-dans-agent-les-présupposés-destinés-à-lia'
 ---
 
 ## Introduction
