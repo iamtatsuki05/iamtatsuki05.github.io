@@ -19,7 +19,7 @@ Here is what I did:
 
 ### Requirements Definition
 
-Because I use ChatGPT Plus, I started from there. I gave GPT a bullet list of routing ideas and the technical stack, then asked it to turn them into requirements.
+I use ChatGPT Plus, so I started from there. I gave GPT a bullet list of routing ideas and the technical stack, then asked it to turn them into requirements.
 
 <details>
 <summary>Prompt</summary>
@@ -115,16 +115,16 @@ Use GitHub Actions to build on push to the main branch and deploy the `out/` dir
 
 ### Asking Codex
 
-After setting up Codex, I gave it the requirements above and moved forward with development. I used the following article as a reference while setting things up:
+I set up Codex using the article below as a reference. Then I gave it the requirements above and moved forward with development.
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
 ### Feedback on the Generated Site
 
-I ran the site, pointed out anything that felt off in a few words, and let Codex fix it. Then I repeated that.
+I ran the site, pointed out anything that felt off in a few words, and let Codex fix it. I repeated that a few times.
 
 ## Impressions
 
 I barely implemented anything myself, yet a practical site came together in a short time. I kept Reasoning Effort at high in ChatGPT Plus and never hit a rate limit.
 
-Development with a coding agent works well as long as you have enough hands-on experience to judge the result. The process gave me little stress.
+Development with a coding agent works well enough with only minimal hands-on experience. There was not much stress, either.
