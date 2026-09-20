@@ -20,6 +20,7 @@ import { cached } from '@/lib/server/cache';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';
 import rehypeExternalLinks from './rehype-external-links';
+import rehypeLegacyAnchors, { parseLegacyAnchors } from './rehype-legacy-anchors';
 
 type SanitizerAttributes = NonNullable<Schema['attributes']>;
 type SanitizerAttribute = SanitizerAttributes[string][number];
@@ -94,6 +95,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
   return cached(cacheKey, async () => {
     const raw = await fs.readFile(filePath, 'utf8');
     const { content, data } = matter(raw);
+    const legacyAnchors = parseLegacyAnchors((data as Record<string, unknown>).legacyAnchors, filePath);
     // 1) 抽出: 見出し（h2/h3）を抽出し、GitHub互換のスラッグを付与
     const mdast = (await unified().use(remarkParse).parse(content)) as MdastRoot;
     const slugger = new GithubSlugger();
@@ -125,6 +127,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(rehypeSanitize, markdownSanitizeSchema)
       .use(rehypeSlug)
       .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
+      .use(rehypeLegacyAnchors, { aliases: legacyAnchors, sourcePath: filePath })
       .use(rehypeExternalLinks)
       .use(rehypeImgDefaults)
       .use(rehypeKatex, { strict: false })

@@ -26,6 +26,7 @@ Do not edit `src/content/generated/` directly. It is derived output from `script
    - `title`
    - `summary`
    - `headerAlt` when the original has a header image or useful alt text
+   - `legacyAnchors` when a heading in this locale was renamed after publication
 4. Translate the Markdown body below the frontmatter.
 5. Run `bun scripts/generate-blog-translations.ts` to regenerate derived Markdown.
 6. Run focused validation. Prefer:
@@ -43,6 +44,7 @@ Do not edit `src/content/generated/` directly. It is derived output from `script
 - Preserve code fences and inline code exactly unless the code comment itself is natural-language prose that clearly should be translated.
 - Do not invent facts, metrics, links, claims, or personal details that are not in the original.
 - Do not add `date`, `updated`, `tags`, `thumbnail`, `headerImage`, `draft`, `aiTranslated`, `originalLocale`, or `originalSlug` to translation source files. The generator copies or adds those.
+- When you rename a heading in an already published post, add the old anchor to `legacyAnchors` as `'<old slug>': '<current slug>'` so external `#...` links keep landing on the same section. Anchors are locale specific, so each translation keeps its own map; the generator copies it from the translation source, not from the Japanese original. A map entry that points at a heading which does not exist fails the build. Derive the old slug instead of guessing it: take the heading text from the commit before the rename (`git show <ref>:<path>`) and run it through `github-slugger` in document order, because the slugger dedupes across the whole document.
 - Keep the AI-translation disclosure in page rendering, not in each translation Markdown body.
 
 ## Quality Checklist

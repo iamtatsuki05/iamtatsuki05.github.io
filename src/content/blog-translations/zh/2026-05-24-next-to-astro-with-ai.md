@@ -2,6 +2,12 @@
 title: 我几乎把从 Next.js 迁移到 Astro 的工作都交给了 AI
 summary: 记录我把这个网站从 Next.js 迁移到 Astro 的过程，从实现到验证基本都交给了 Codex。
 headerAlt: 显示代码的屏幕
+legacyAnchors:
+  '开始': '前言'
+  '我怎么让-codex-做': '我是怎么向-codex-提要求的'
+  'reviewer-捡到的东西': 'reviewer-发现的问题'
+  '数字': '迁移前后的数字'
+  '结束': '结语'
 ---
 
 ## 前言

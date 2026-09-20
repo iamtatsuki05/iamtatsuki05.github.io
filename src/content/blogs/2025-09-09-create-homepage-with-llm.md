@@ -6,6 +6,8 @@ summary: このサイトを Vibe Coding で作成した流れを紹介します�
 headerImage: https://www.technologyreview.jp/wp-content/uploads/sites/2/2025/04/vibecoding-scaled.jpg
 headerAlt: Vibe Coding のイメージ
 aiAssisted: true
+legacyAnchors:
+  'codexに依頼': 'codex-に依頼'
 ---
 
 ## はじめに
