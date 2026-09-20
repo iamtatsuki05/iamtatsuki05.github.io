@@ -54,6 +54,19 @@ describe('content/markdown rendering', () => {
     expect(result.contentHtml).toContain('<h2 id="read-the-docs-now">');
   });
 
+  it('includes headings that come from raw html in the body', async () => {
+    const result = await parseMarkdown('## Intro\n\n<details>\n<summary>More</summary>\n\n### Buried\n\n</details>\n');
+
+    expect(result.headings.map((heading) => heading.id)).toEqual(['intro', 'buried']);
+    expect(result.contentHtml).toContain('<h3 id="buried">');
+  });
+
+  it('skips a heading that has no id to link to', async () => {
+    const result = await parseMarkdown('##\n\n## Intro\n');
+
+    expect(result.headings.map((heading) => heading.id)).toEqual(['intro']);
+  });
+
   it('renders inline and block LaTeX math', async () => {
     const result = await parseMarkdown('Inline $E = mc^2$.\n\n$$\n\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}\n$$');
 

@@ -76,7 +76,7 @@ const markdownSanitizeSchema: Schema = {
   clobberPrefix: '',
 };
 
-type HeadingEntry = { id: string; title: string; level: number };
+export type HeadingEntry = { id: string; title: string; level: number };
 
 type HastLike = {
   type?: string;
@@ -86,22 +86,28 @@ type HastLike = {
   children?: HastLike[];
 };
 
-const TOC_HEADING_LEVELS: Record<string, number> = { h2: 2, h3: 3 };
+const TOC_HEADING_LEVELS: Record<string, number | undefined> = { h2: 2, h3: 3 };
 
 function textOf(node: HastLike): string {
   if (node.type === 'text') return node.value || '';
   return (node.children || []).map(textOf).join('');
 }
 
-/** rehype-slug の後に置き、本文に出るのと同じ id で目次用の見出しを集める。 */
+/**
+ * rehype-slug の後に置き、本文に出るのと同じ id で目次用の見出しを集める。
+ * 生 HTML の見出しや脚注の見出しも本文にあるものは入る。
+ * `title` は KaTeX 描画前のテキストなので、数式を含む見出しでは本文の表示と一致しない。
+ */
 function collectHeadings(options: { into: HeadingEntry[] }) {
   return (tree: HastLike) => {
+    options.into.length = 0;
     const visit = (node?: HastLike) => {
       if (!node || typeof node !== 'object') return;
       if (node.type === 'element' && node.tagName) {
         const level = TOC_HEADING_LEVELS[node.tagName];
         const id = node.properties?.id;
-        if (level && typeof id === 'string') {
+        // 目次は id を持つ見出しだけを引くので、空 id は落とす。
+        if (level && typeof id === 'string' && id) {
           options.into.push({ id, title: textOf(node), level });
         }
       }
@@ -120,7 +126,7 @@ export type ParsedMarkdown<T> = {
 export async function parseMarkdownFile<T>(filePath: string): Promise<{
   data: T;
   contentHtml: string;
-  headings: { id: string; title: string; level: number }[];
+  headings: HeadingEntry[];
   raw: string;
 }> {
   const stat = await fs.stat(filePath);
@@ -129,9 +135,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
     const raw = await fs.readFile(filePath, 'utf8');
     const { content, data } = matter(raw);
     const legacyAnchors = parseLegacyAnchors((data as Record<string, unknown>).legacyAnchors, filePath);
-    // 見出しは rehype-slug が付けた id をそのまま読む。別に slug を計算すると、
-    // inline code を含む見出しや重複見出しで本文の id と食い違う。
-    const headings: { id: string; title: string; level: number }[] = [];
+    const headings: HeadingEntry[] = [];
 
     const file = await unified()
       .use(remarkParse)
@@ -142,6 +146,7 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(rehypeRaw) // enable raw HTML like <details><summary>
       .use(rehypeSanitize, markdownSanitizeSchema)
       .use(rehypeSlug)
+      // 別に slug を計算すると、inline code を含む見出しや重複見出しで本文の id と食い違う。
       .use(collectHeadings, { into: headings })
       .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
       .use(rehypeLegacyAnchors, { aliases: legacyAnchors, sourcePath: filePath })
