@@ -115,16 +115,16 @@ headerAlt: Vibe Coding 的示意图
 
 ### 交给 Codex
 
-导入 Codex 后，我参考下面的文章进行设置，然后把需求定义结果交给它推进开发。
+导入 Codex 后，我参考下面的文章做了设置。在此基础上，把需求定义的结果交给它推进开发。
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
 ### 对生成物的反馈
 
-我实际运行页面，把在意的点简短指出，让它修改，然后不断重复。
+我实际运行页面，把在意的点简短指出，让它修改。这样重复了几次。
 
 ## 感想
 
 几乎没有亲自实现，却在短时间内做出了实用级别的页面。在 ChatGPT Plus 上我一直把 Reasoning Effort 设为 high，一次也没有碰到 rate limit。
 
-只要有最低限度的动手经验，用 coding agent 开发就足够顺畅。压力也很小。
+只要有最低限度的动手经验，用 coding agent 开发就能顺利推进。压力也不大。
