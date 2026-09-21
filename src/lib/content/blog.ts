@@ -2,6 +2,7 @@ import path from 'node:path';
 import { shouldIncludeDrafts } from '@/lib/config/env';
 import { BlogFrontmatter } from './types';
 import { extractMarkdownSearchText, parseMarkdownFile, slugFromFilename } from './markdown';
+import type { HeadingEntry } from './markdown';
 import { loadCollection } from './loader';
 import { cached } from '@/lib/server/cache';
 import { resolveOptimizedBlogHeaderImage } from '@/lib/content/blogHeaderImages';
@@ -27,7 +28,7 @@ export type BlogPost = {
   aiAssisted?: boolean;
   draft?: boolean;
   html?: string;
-  headings?: { id: string; title: string; level: number }[];
+  headings?: HeadingEntry[];
   markdown?: string;
   searchText?: string;
   isAiTranslated?: boolean;

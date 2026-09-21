@@ -14,8 +14,6 @@ import rehypeStringify from 'rehype-stringify';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import type { Schema } from 'hast-util-sanitize';
-import GithubSlugger from 'github-slugger';
-import type { Root as MdastRoot, Text, InlineCode, RootContent } from 'mdast';
 import { cached } from '@/lib/server/cache';
 import remarkLinkCard from './remark-link-card';
 import rehypeImgDefaults from './rehype-img';
@@ -78,6 +76,47 @@ const markdownSanitizeSchema: Schema = {
   clobberPrefix: '',
 };
 
+export type HeadingEntry = { id: string; title: string; level: number };
+
+type HastLike = {
+  type?: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastLike[];
+};
+
+const TOC_HEADING_LEVELS: Record<string, number | undefined> = { h2: 2, h3: 3 };
+
+function textOf(node: HastLike): string {
+  if (node.type === 'text') return node.value || '';
+  return (node.children || []).map(textOf).join('');
+}
+
+/**
+ * rehype-slug の後に置き、本文に出るのと同じ id で目次用の見出しを集める。
+ * 生 HTML の見出しや脚注の見出しも本文にあるものは入る。
+ * `title` は KaTeX 描画前のテキストなので、数式を含む見出しでは本文の表示と一致しない。
+ */
+function collectHeadings(options: { into: HeadingEntry[] }) {
+  return (tree: HastLike) => {
+    options.into.length = 0;
+    const visit = (node?: HastLike) => {
+      if (!node || typeof node !== 'object') return;
+      if (node.type === 'element' && node.tagName) {
+        const level = TOC_HEADING_LEVELS[node.tagName];
+        const id = node.properties?.id;
+        // 目次は id を持つ見出しだけを引くので、空 id は落とす。
+        if (level && typeof id === 'string' && id) {
+          options.into.push({ id, title: textOf(node), level });
+        }
+      }
+      for (const child of node.children || []) visit(child);
+    };
+    visit(tree);
+  };
+}
+
 export type ParsedMarkdown<T> = {
   frontmatter: T;
   contentHtml: string;
@@ -87,7 +126,7 @@ export type ParsedMarkdown<T> = {
 export async function parseMarkdownFile<T>(filePath: string): Promise<{
   data: T;
   contentHtml: string;
-  headings: { id: string; title: string; level: number }[];
+  headings: HeadingEntry[];
   raw: string;
 }> {
   const stat = await fs.stat(filePath);
@@ -96,27 +135,8 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
     const raw = await fs.readFile(filePath, 'utf8');
     const { content, data } = matter(raw);
     const legacyAnchors = parseLegacyAnchors((data as Record<string, unknown>).legacyAnchors, filePath);
-    // 1) 抽出: 見出し（h2/h3）を抽出し、GitHub互換のスラッグを付与
-    const mdast = (await unified().use(remarkParse).parse(content)) as MdastRoot;
-    const slugger = new GithubSlugger();
-    const headings: { id: string; title: string; level: number }[] = [];
-    const visit = (node: RootContent) => {
-      if (!node) return;
-      if (node.type === 'heading' && (node.depth === 2 || node.depth === 3)) {
-        const text = (node.children || [])
-          .filter((c): c is Text | InlineCode => c.type === 'text' || c.type === 'inlineCode')
-          .map((c) => c.value)
-          .join(' ');
-        const id = slugger.slug(text || '');
-        headings.push({ id, title: text, level: node.depth });
-      }
-      if ('children' in node && Array.isArray(node.children)) {
-        node.children.forEach(visit);
-      }
-    };
-    mdast.children.forEach(visit);
+    const headings: HeadingEntry[] = [];
 
-    // 2) HTML へ変換
     const file = await unified()
       .use(remarkParse)
       .use(remarkGfm)
@@ -126,6 +146,8 @@ export async function parseMarkdownFile<T>(filePath: string): Promise<{
       .use(rehypeRaw) // enable raw HTML like <details><summary>
       .use(rehypeSanitize, markdownSanitizeSchema)
       .use(rehypeSlug)
+      // 別に slug を計算すると、inline code を含む見出しや重複見出しで本文の id と食い違う。
+      .use(collectHeadings, { into: headings })
       .use(rehypeAutolinkHeadings, { behavior: 'wrap' })
       .use(rehypeLegacyAnchors, { aliases: legacyAnchors, sourcePath: filePath })
       .use(rehypeExternalLinks)
