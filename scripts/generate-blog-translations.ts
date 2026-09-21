@@ -61,6 +61,8 @@ async function generateLocale(locale: Locale, files: string[]) {
       title: translated.data.title,
       summary: translated.data.summary,
       headerAlt: translated.data.headerAlt ?? source.data.headerAlt,
+      // 見出しが言語ごとに違うので、旧アンカーの対応表も翻訳側の frontmatter を正とする。
+      legacyAnchors: translated.data.legacyAnchors,
       aiTranslated: true,
       originalLocale: 'ja',
       originalSlug: slug,

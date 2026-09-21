@@ -29,6 +29,44 @@ describe('content/markdown rendering', () => {
     expect(result.contentHtml).toContain('class="token number"');
   });
 
+  it('reports heading ids that match the ones rendered in the html', async () => {
+    const result = await parseMarkdown('## `.agent` に AI 用の前提を集める\n\ntext\n');
+
+    expect(result.headings).toEqual([
+      { id: 'agent-に-ai-用の前提を集める', title: '.agent に AI 用の前提を集める', level: 2 },
+    ]);
+    expect(result.contentHtml).toContain('<h2 id="agent-に-ai-用の前提を集める">');
+  });
+
+  it('keeps the dedupe suffix in step with the rendered html', async () => {
+    const result = await parseMarkdown('# Notes\n\n## Notes\n\n## Notes\n');
+
+    expect(result.headings.map((heading) => heading.id)).toEqual(['notes-1', 'notes-2']);
+    expect(result.contentHtml).toContain('<h1 id="notes">');
+    expect(result.contentHtml).toContain('<h2 id="notes-1">');
+    expect(result.contentHtml).toContain('<h2 id="notes-2">');
+  });
+
+  it('keeps heading text that is not a plain text node', async () => {
+    const result = await parseMarkdown('## Read the [docs](https://example.com) **now**\n');
+
+    expect(result.headings[0]).toEqual({ id: 'read-the-docs-now', title: 'Read the docs now', level: 2 });
+    expect(result.contentHtml).toContain('<h2 id="read-the-docs-now">');
+  });
+
+  it('includes headings that come from raw html in the body', async () => {
+    const result = await parseMarkdown('## Intro\n\n<details>\n<summary>More</summary>\n\n### Buried\n\n</details>\n');
+
+    expect(result.headings.map((heading) => heading.id)).toEqual(['intro', 'buried']);
+    expect(result.contentHtml).toContain('<h3 id="buried">');
+  });
+
+  it('skips a heading that has no id to link to', async () => {
+    const result = await parseMarkdown('##\n\n## Intro\n');
+
+    expect(result.headings.map((heading) => heading.id)).toEqual(['intro']);
+  });
+
   it('renders inline and block LaTeX math', async () => {
     const result = await parseMarkdown('Inline $E = mc^2$.\n\n$$\n\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}\n$$');
 

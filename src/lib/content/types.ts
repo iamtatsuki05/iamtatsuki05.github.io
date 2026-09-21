@@ -17,6 +17,7 @@ export const BlogFrontmatter = z.object({
   headerAlt: z.string().optional(),
   aiAssisted: z.boolean().optional().default(false),
   draft: z.boolean().optional().default(false),
+  legacyAnchors: z.record(z.string(), z.string()).nullish(),
 });
 export type BlogFrontmatter = z.infer<typeof BlogFrontmatter>;
 

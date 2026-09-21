@@ -6,6 +6,8 @@ summary: このサイトを Vibe Coding で作成した流れを紹介します�
 headerImage: https://www.technologyreview.jp/wp-content/uploads/sites/2/2025/04/vibecoding-scaled.jpg
 headerAlt: Vibe Coding のイメージ
 aiAssisted: true
+legacyAnchors:
+  'codexに依頼': 'codex-に依頼'
 ---
 
 ## はじめに
@@ -22,7 +24,7 @@ aiAssisted: true
 - 自己紹介文などは自分で書いて、AI に添削してもらう
 
 ### 要件定義
-ChatGPT Plus を使っているため、今回はこれをベースに開発を進めました。
+ChatGPT Plus を使っているので、今回はこれをベースに進めました。
 GPT に箇条書きでページルーティングや技術スタックを伝え、要件定義を依頼しました。
 
 
@@ -295,16 +297,16 @@ GPT に箇条書きでページルーティングや技術スタックを伝え�
 </details>
 
 
-### Codexに依頼
-Codex を導入し、以下の記事を参考に設定したうえで、要件定義の結果を渡して開発を進めました。
+### Codex に依頼
+Codex を導入し、以下の記事を参考に設定しました。そのうえで、要件定義の結果を渡して開発を進めました。
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
 ### 生成物へのフィードバック
-実際に動かして、気になった点を短く指摘しては直してもらう、を繰り返しました。
+実際に動かしては、気になった点を短く指摘して直してもらう。これを何度か繰り返しました。
 
 
 ## 感想
 ほとんど自分で実装していないのに、実用レベルのページが短時間でできました。
 ChatGPT Plus で Reasoning Effort は常に high にしていましたが、レートリミットには一度もかかりませんでした。
-Coding Agent での開発は、最低限のハンズオン経験があれば十分回ります。ストレスも少なかったです。
+Coding Agent での開発は、最低限のハンズオン経験があれば十分に進められます。ストレスも少なめでした。

@@ -50,7 +50,7 @@ Requirements:
 - Read the Japanese original first and treat it as the source of truth.
 - Write translation source files under \`src/content/blog-translations/{locale}/<slug>.md\`.
 - Do not edit \`src/content/generated/\` directly.
-- Keep the source translation frontmatter limited to \`title\`, \`summary\`, and \`headerAlt\` when applicable.
+- Keep the source translation frontmatter limited to \`title\`, \`summary\`, \`headerAlt\`, and \`legacyAnchors\` when applicable.
 - Preserve commands, URLs, paths, code identifiers, package names, product names, numbers, dates, and measured values exactly.
 - Use natural English, Simplified Chinese for zh, and natural standard French with accents.
 - Do not add build-time external API calls, secrets, billing dependencies, telemetry, or unrelated refactors.
