@@ -5,7 +5,7 @@ publishedAt: 2026-11
 venue: AACL-IJCNLP 2026 System Demonstrations
 authors: [Tatsuki Okada, Yusuke Sakai, Taro Watanabe]
 links:
-  - { kind: pdf, url: https://aclanthology.org/2026.aacl-demo.9.pdf }
+  - { kind: paper, url: https://aclanthology.org/2026.aacl-demo.9/ }
   - { kind: app, url: https://iamtatsuki05.github.io/lenslapse/ }
   - { kind: code, url: https://github.com/iamtatsuki05/lenslapse }
   - { kind: video, url: https://www.youtube.com/watch?v=OBnvG9Ru3j8 }

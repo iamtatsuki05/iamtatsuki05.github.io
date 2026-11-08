@@ -5,7 +5,7 @@ publishedAt: 2026-07-13
 publisher: GitHub Pages
 links:
   - { kind: app, url: https://iamtatsuki05.github.io/lenslapse/ }
-  - { kind: pdf, url: https://aclanthology.org/2026.aacl-demo.9.pdf }
+  - { kind: paper, url: https://aclanthology.org/2026.aacl-demo.9/ }
   - { kind: code, url: https://github.com/iamtatsuki05/lenslapse }
   - { kind: video, url: https://www.youtube.com/watch?v=OBnvG9Ru3j8 }
 tags: [app, llm, interpretability, typescript, python]

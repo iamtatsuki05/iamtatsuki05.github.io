@@ -31,7 +31,7 @@ export const PublicationFrontmatter = z.object({
   links: z
     .array(
       z.object({
-        kind: z.enum(['pdf', 'doi', 'post', 'slides', 'video', 'code', 'model', 'data', 'app']),
+        kind: z.enum(['paper', 'pdf', 'doi', 'post', 'slides', 'video', 'code', 'model', 'data', 'app']),
         url: z.string(),
       }),
     )
