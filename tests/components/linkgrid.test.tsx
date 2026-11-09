@@ -9,7 +9,7 @@ const items = [
 ];
 
 describe('LinkGrid', () => {
-  it('renders links without client-side reveal state', () => {
+  it('renders links without reveal delays', () => {
     const { container } = render(<LinkGrid items={items} showDescription iconSize={40} />);
 
     const githubLinks = screen.getAllByRole('link', { name: 'GitHub' });
@@ -19,11 +19,11 @@ describe('LinkGrid', () => {
     expect(screen.getByText('GH')).toBeInTheDocument();
     expect(screen.getByText('Code hosting')).toBeVisible();
 
-    const list = container.querySelector('ul.content-reveal-list');
-    if (!list) throw new Error('Link grid list is missing');
-
-    expect(list).toHaveAttribute('data-state', 'open');
-    expect(list).not.toHaveAttribute('data-client-reveal');
+    const cards = container.querySelectorAll('ul > li');
+    expect(cards).toHaveLength(2);
+    cards.forEach((card) => {
+      expect((card as HTMLElement).style.transitionDelay).toBe('');
+    });
   });
 
   it('renders fetched official social assets as local images', () => {

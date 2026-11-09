@@ -26,10 +26,13 @@ describe('ContentCardList', () => {
     expect(plain?.tagName.toLowerCase()).toBe('div');
   });
 
-  it('renders cards without requiring client-side reveal state', () => {
+  it('renders cards without reveal delays', () => {
     render(<ContentCardList items={items} listTestId="list" cardTestId="card" />);
 
-    const list = screen.getByTestId('list');
-    expect(list).toHaveAttribute('data-state', 'open');
+    const cards = screen.getAllByTestId('card');
+    expect(cards).toHaveLength(3);
+    cards.forEach((card) => {
+      expect(card.style.transitionDelay).toBe('');
+    });
   });
 });

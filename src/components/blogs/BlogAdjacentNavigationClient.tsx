@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from 'react';
 import { useSearchParams } from '@/lib/compat/navigation';
 import type { BlogPost } from '@/lib/content/blog';

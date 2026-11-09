@@ -69,11 +69,10 @@ export const GET: APIRoute = async () => {
 
   const urls = [...staticPages, ...localizedStaticPages, ...defaultBlogPages, ...localizedBlogPages]
     .map((entry) => {
-      const lastmod = Number.isNaN(entry.lastModified.getTime()) ? now : entry.lastModified;
       return [
         '<url>',
         `<loc>${escapeXml(entry.url)}</loc>`,
-        `<lastmod>${lastmod.toISOString()}</lastmod>`,
+        `<lastmod>${entry.lastModified.toISOString()}</lastmod>`,
         `<changefreq>${entry.changeFrequency}</changefreq>`,
         `<priority>${entry.priority}</priority>`,
         '</url>',

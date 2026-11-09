@@ -56,8 +56,6 @@ NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 │   └── images
 ├── scripts
 │   ├── ensure-favicon.ts
-│   ├── generate-rss.ts
-│   ├── inspect-content.ts
 │   ├── optimize-images.ts
 │   └── utils
 ├── src

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from '@/components/compat/Link';
 import { useRouter } from '@/lib/compat/navigation';
 import { useRef } from 'react';
@@ -46,7 +44,7 @@ export function BlogAdjacentNavigation({
 
   return (
     <nav
-      aria-label="記事の前後ナビゲーション"
+      aria-label={adjacentCopy[locale].navLabel}
       className="not-prose mt-12 touch-pan-y border-t border-gray-200 pt-6 dark:border-gray-700"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -133,6 +131,7 @@ function AdjacentItem({
 const adjacentCopy: Record<
   Locale,
   {
+    navLabel: string;
     previous: string;
     next: string;
     noPrevious: string;
@@ -142,6 +141,7 @@ const adjacentCopy: Record<
   }
 > = {
   ja: {
+    navLabel: '記事の前後ナビゲーション',
     previous: '前の記事',
     next: '次の記事',
     noPrevious: '前の記事はありません',
@@ -150,6 +150,7 @@ const adjacentCopy: Record<
     swipeNext: '次の記事へスワイプ',
   },
   en: {
+    navLabel: 'Previous and next posts',
     previous: 'Previous post',
     next: 'Next post',
     noPrevious: 'No previous post',
@@ -158,6 +159,7 @@ const adjacentCopy: Record<
     swipeNext: 'Swipe to next post',
   },
   zh: {
+    navLabel: '上一篇和下一篇文章',
     previous: '上一篇',
     next: '下一篇',
     noPrevious: '没有上一篇',
@@ -166,6 +168,7 @@ const adjacentCopy: Record<
     swipeNext: '滑动到下一篇',
   },
   fr: {
+    navLabel: 'Articles précédent et suivant',
     previous: 'Article précédent',
     next: 'Article suivant',
     noPrevious: 'Aucun article précédent',

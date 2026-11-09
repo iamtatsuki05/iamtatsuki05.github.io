@@ -43,12 +43,10 @@ export function cached<T>(key: string, loader: () => Promise<T>, ttlMs?: number)
   }
 
   const expiresAt = computeExpiry(ttlMs);
-  const valuePromise = loader()
-    .then((result) => result)
-    .catch((error) => {
-      store.delete(key);
-      throw error;
-    });
+  const valuePromise = loader().catch((error) => {
+    store.delete(key);
+    throw error;
+  });
 
   store.set(key, { value: valuePromise, expiresAt });
   return valuePromise;

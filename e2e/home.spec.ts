@@ -42,7 +42,7 @@ for (const { label, use } of viewports) {
     test('renders highlighted sections with items', async ({ page }) => {
       const linksSection = page
         .locator('section')
-        .filter({ has: page.getByRole('heading', { level: 2, name: 'Links' }) })
+        .filter({ has: page.getByRole('heading', { level: 2, name: 'リンク' }) })
         .first();
       expect(await linksSection.locator('li').count()).toBeGreaterThanOrEqual(3);
 
@@ -63,7 +63,7 @@ for (const { label, use } of viewports) {
       test('centers the final row of social link cards', async ({ page }) => {
         const linksSection = page
           .locator('section')
-          .filter({ has: page.getByRole('heading', { level: 2, name: 'Links' }) })
+          .filter({ has: page.getByRole('heading', { level: 2, name: 'リンク' }) })
           .first();
         const list = linksSection.locator('ul').first();
         const cards = linksSection.locator('li');

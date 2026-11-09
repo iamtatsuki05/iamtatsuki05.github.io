@@ -19,7 +19,6 @@ type HobbyDefinition = {
   title: LocalizedText;
   currentFocus: LocalizedText;
   thumbnailSrc: string;
-  thumbnailAlt: LocalizedText;
   blogFilter: HobbyBlogFilter;
 };
 
@@ -30,7 +29,6 @@ export type HobbyItem = {
   title: string;
   currentFocus: string;
   thumbnailSrc: string;
-  thumbnailAlt: string;
   blogFilter: HobbyBlogFilter;
   href: string;
   relatedCount: number;
@@ -49,7 +47,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'Je m’intéresse à toutes sortes de gadgets, comme les PC, les claviers ou les switchers, et quand quelque chose attire mon attention, je finis souvent par l’acheter.',
     },
     thumbnailSrc: '/images/hobbies/nextImageExportOptimizer/gadgets-opt-1200.WEBP',
-    thumbnailAlt: { ja: 'ガジェットのサムネイル', en: 'Gadgets thumbnail', zh: '数码产品缩略图', fr: 'Miniature de gadgets' },
     blogFilter: { tags: ['gadgets'] },
   },
   {
@@ -64,7 +61,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'J’aime les instantanés et les portraits qui semblent pris au Leica, et je suis aussi attiré par les images au rendu cinématographique. Les œuvres visuelles m’intéressent également, et j’aimerais réaliser un film un jour.',
     },
     thumbnailSrc: '/images/hobbies/nextImageExportOptimizer/camera-opt-1200.WEBP',
-    thumbnailAlt: { ja: 'カメラのサムネイル', en: 'Camera thumbnail', zh: '相机缩略图', fr: 'Miniature photo' },
     blogFilter: { tags: ['camera'] },
   },
   {
@@ -79,7 +75,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'J’ai commencé à y aller avec des amis après les cours à l’université, puis je me suis pris au jeu au point d’acheter ma propre boule.',
     },
     thumbnailSrc: '/images/hobbies/bowling.svg',
-    thumbnailAlt: { ja: 'ボウリングのサムネイル', en: 'Bowling thumbnail', zh: '保龄球缩略图', fr: 'Miniature bowling' },
     blogFilter: { tags: ['bowling'] },
   },
   {
@@ -94,7 +89,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'J’aime particulièrement Hachiware, Rascal, Gachapin et Doraemon. Je suis attiré par les personnages dont les couleurs, les formes et les petits détails ont quelque chose de rassurant.',
     },
     thumbnailSrc: '/images/hobbies/nextImageExportOptimizer/cute-characters-opt-1200.WEBP',
-    thumbnailAlt: { ja: 'かわいいキャラクターのサムネイル', en: 'Cute characters thumbnail', zh: '可爱角色缩略图', fr: 'Miniature de personnages mignons' },
     blogFilter: { tags: ['cute-character'] },
   },
   {
@@ -109,7 +103,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'En utilisant une application de traduction à l’étranger, j’ai eu envie d’améliorer la vie des gens grâce à ce genre de technologie, et c’est ainsi que je me suis intéressé au NLP. En ce moment, l’analyse des modèles de langue m’intéresse particulièrement.',
     },
     thumbnailSrc: '/images/hobbies/huggingface-logo.svg',
-    thumbnailAlt: { ja: 'Hugging Face ロゴ', en: 'Hugging Face logo', zh: 'Hugging Face 标志', fr: 'Logo Hugging Face' },
     blogFilter: { q: 'LLM' },
   },
   {
@@ -124,7 +117,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'J’ai commencé avec du chai instantané, mais aujourd’hui j’aime le préparer à la casserole, en choisissant avec soin le thé et les épices.',
     },
     thumbnailSrc: '/images/hobbies/chai.svg',
-    thumbnailAlt: { ja: 'チャイのサムネイル', en: 'Chai thumbnail', zh: '印度奶茶缩略图', fr: 'Miniature chai' },
     blogFilter: { tags: ['chai'] },
   },
   {
@@ -139,7 +131,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'J’ai commencé le piano pour apprendre à mes deux mains à bouger indépendamment et pour acquérir une culture musicale, mais j’y ai pris beaucoup plus de plaisir que prévu.',
     },
     thumbnailSrc: '/images/hobbies/piano.svg',
-    thumbnailAlt: { ja: 'ピアノのサムネイル', en: 'Piano thumbnail', zh: '钢琴缩略图', fr: 'Miniature piano' },
     blogFilter: { tags: ['piano'] },
   },
   {
@@ -154,7 +145,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'Je m’intéresse beaucoup à l’étalonnage, à la composition et à la mise en scène. Je regarde aussi Netflix, mais je vais souvent au cinéma, environ deux fois par mois, et j’aimerais réaliser un film un jour.',
     },
     thumbnailSrc: '/images/hobbies/visual-works.svg',
-    thumbnailAlt: { ja: '映像作品のサムネイル', en: 'Visual works thumbnail', zh: '影像作品缩略图', fr: 'Miniature œuvres visuelles' },
     blogFilter: { tags: ['visual-works'] },
   },
   {
@@ -169,7 +159,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'Je m’intéresse à la jurisprudence civile et j’aime comprendre le processus et le contexte qui mènent à une décision. Ce qui m’attire surtout, c’est la manière dont le droit est interprété dans chaque affaire.',
     },
     thumbnailSrc: '/images/hobbies/legal-cases.svg',
-    thumbnailAlt: { ja: '法律の判例のサムネイル', en: 'Legal cases thumbnail', zh: '法律判例缩略图', fr: 'Miniature jurisprudence' },
     blogFilter: { tags: ['legal-case'] },
   },
   {
@@ -184,7 +173,6 @@ const HOBBIES: readonly HobbyDefinition[] = [
       fr: 'Quand « Cinderella » est apparu dans mes recommandations YouTube, j’ai été touché comme rarement auparavant. J’ai été attiré par l’intro, le rythme de la chanson et l’écriture des paroles. J’aime aussi beaucoup l’univers visuel des clips, et c’est ce monde qui m’a donné envie d’aller aux concerts.',
     },
     thumbnailSrc: '/images/hobbies/nextImageExportOptimizer/tomoo-opt-1200.WEBP',
-    thumbnailAlt: { ja: 'TOMOO のサムネイル', en: 'TOMOO thumbnail', zh: 'TOMOO 缩略图', fr: 'Miniature TOMOO' },
     blogFilter: { tags: ['tomoo'] },
   },
 ] as const;
@@ -227,7 +215,6 @@ export function resolveHobbies(locale: Locale, posts: readonly BlogPost[] = []):
     title: hobby.title[locale],
     currentFocus: hobby.currentFocus[locale],
     thumbnailSrc: hobby.thumbnailSrc,
-    thumbnailAlt: hobby.thumbnailAlt[locale],
     blogFilter: hobby.blogFilter,
     href: buildBlogsFilterPath(locale, hobby.blogFilter),
     relatedCount: posts.filter((post) => matchesBlogFilter(post, hobby.blogFilter)).length,

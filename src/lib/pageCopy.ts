@@ -1,8 +1,5 @@
 import type { Locale } from '@/lib/i18n';
-import { SUPPORTED_LOCALES, resolveLocale } from '@/lib/i18n';
 import { pageMeta } from '@/lib/seo/metaConfig';
-
-export { SUPPORTED_LOCALES, resolveLocale };
 
 export type PageCopy<T extends Record<string, unknown> = {}> = {
   metadataTitle: string;

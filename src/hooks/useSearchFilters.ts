@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import type Fuse from 'fuse.js';
-import { notifyLocationChange } from '@/lib/compat/navigation';
+import { LOCATION_CHANGE_EVENT, notifyLocationChange } from '@/lib/compat/navigation';
 import { buildSearchFilterMetadata } from '@/lib/search/filterMetadata';
 import { normalizeSearchText } from '@/lib/search/queryTokens';
 import {
@@ -95,11 +95,11 @@ export function useSearchFilters<T>(
   useEffect(() => {
     const update = () => setQueryState(readQueryState());
     window.addEventListener('popstate', update);
-    window.addEventListener('app-location-change', update);
+    window.addEventListener(LOCATION_CHANGE_EVENT, update);
     update();
     return () => {
       window.removeEventListener('popstate', update);
-      window.removeEventListener('app-location-change', update);
+      window.removeEventListener(LOCATION_CHANGE_EVENT, update);
     };
   }, []);
 

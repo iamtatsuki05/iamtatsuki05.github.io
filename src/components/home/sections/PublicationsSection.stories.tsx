@@ -37,6 +37,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     publications,
+    locale: 'ja',
     title: '📚 最近の公開物',
     ctaLabel: 'もっと見る',
   },

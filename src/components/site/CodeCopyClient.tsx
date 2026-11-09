@@ -1,4 +1,3 @@
-"use client";
 import { useEffect } from 'react';
 import type { Locale } from '@/lib/i18n';
 import { useResolvedPreferredLocale } from '@/hooks/useResolvedPreferredLocale';
@@ -50,19 +49,7 @@ export function CodeCopyClient({ enabled = true, locale: initialLocale = 'ja' }:
           const failureText = current.dataset.labelFailure || 'Failed';
 
           try {
-            const codeText = code.innerText;
-            if (navigator.clipboard?.writeText) {
-              await navigator.clipboard.writeText(codeText);
-            } else {
-              const ta = document.createElement('textarea');
-              ta.value = codeText;
-              ta.style.position = 'fixed';
-              ta.style.opacity = '0';
-              document.body.appendChild(ta);
-              ta.select();
-              document.execCommand('copy');
-              document.body.removeChild(ta);
-            }
+            await navigator.clipboard.writeText(code.innerText);
             current.textContent = successText;
             current.classList.add('copied');
             setTimeout(() => {

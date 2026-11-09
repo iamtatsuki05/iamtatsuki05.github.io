@@ -388,7 +388,7 @@ for (const { label, use } of viewports) {
         }) as typeof window.open;
       });
       await page.goto(localizedPath('en', '/publications/'), { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('.content-reveal-list').first()).toHaveAttribute('data-state', 'open');
+      await expect(page.getByTestId('publication-card').first()).toBeVisible();
     });
 
     test('shows publication list with outbound links', async ({ page }) => {

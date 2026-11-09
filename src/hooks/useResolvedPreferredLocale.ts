@@ -1,5 +1,3 @@
-"use client";
-
 import { usePathname } from '@/lib/compat/navigation';
 import { useEffect, useState } from 'react';
 import type { Locale } from '@/lib/i18n';
