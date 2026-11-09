@@ -1,27 +1,28 @@
 ---
 title: AI Agent 时代的盆栽 dotfiles
-summary: 这篇文章讲述我如何把 Nix、mise、chezmoi 和 AI agent 配置收进 dotfiles，并像照料盆栽一样维护变化很快的开发环境。
+summary: 这篇文章讲述我如何把 Nix、mise、chezmoi 和 AI Agent 配置收进 dotfiles，并像照料盆栽一样维护变化很快的开发环境。
 headerAlt: 盆栽植物
 legacyAnchors:
   'agent-是交给-ai-的前提': '把交给-ai-的前提集中到-agent'
   '用-mise-追变化快的部分': '用-mise-跟上快速的变化'
+  '用-nix-决定要对齐的部分': '确定用-nix-统一哪些部分'
 ---
 
 ## 前言
 
 我喜欢 dotfiles。
 
-与其说喜欢，不如说已经不能放着不管了。以前只要有 shell alias 和 Neovim 设置就足够了。现在不是这样。增加一台 PC、使用 Linux 环境、切换 AI Agent、追 CLI 工具更新，每做一次，各个环境里装了什么就会一点点地错开。
+与其说喜欢，不如说已经不能放着不管了。以前只要有 shell alias 和 Neovim 设置就足够了。现在不是这样。增加一台 PC、使用 Linux 环境、切换 AI Agent、跟进 CLI 工具的更新，每做一次，各个环境里装的东西就会变得更不一致一点。
 
-这种感觉也直接出现在最近的 `dotfiles` commit 里。2026-04-25 我加入了向 chezmoi 的迁移和 Nix 周边的整理。在那之后，也一直在改 Nix、mise、AI Agent 设置、skill、eval、hook 周边。
+这种感觉也直接出现在最近的 `dotfiles` commit 里。2026-04-25 我提交了迁移到 chezmoi 和整理 Nix 相关部分的改动。在那之后，也一直在改 Nix、mise、AI Agent 设置、skill、eval、hook 这些部分。
 
-这已经不只是配置文件的存放处了。更接近日常工作的基础设施。在接触多台 PC 和多个 agent 的过程中，我逐渐觉得：不持续维护，环境很快就会变乱。下面就把最近的维护，比作打理盆栽来写一写。
+现在的 dotfiles，与其说是存放配置文件的地方，不如说更接近日常的基础设施。在接触多台 PC 和多个 agent 的过程中，我逐渐觉得：不持续维护，环境很快就会变乱。下面就把最近的维护，比作打理盆栽来写一写。
 
 ## 问题设定
 
 对我来说，环境不止一个。有日常使用的 macOS，有 Linux CLI 环境，有研究和课程的工作目录，AI Agent 也不只是 Codex。`codex`、`claude-code`、`copilot`、`cursor-agent`、`devin`、`hermes`、`opencode`，工具越多，就越容易在不同的前提下做着自以为相同的工作。
 
-最朴素的做法，是在每台 PC 和每个 tool 上当场修设置。这样可以动起来。但很快会坏掉。哪台 PC 装了什么会变得不清楚。哪个 agent 读的是哪个 prompt 会变得不清楚。以为更新了工具，但另一个环境仍然是旧版本。
+最朴素的做法，是在每台 PC 和每个 tool 上当场修设置。这样也能用，但很快就会出问题。你会记不清哪台 PC 装了什么，也说不清哪个 agent 在读哪个 prompt。以为装上了新版的 tool，另一个环境里却还是旧版本。
 
 如果只有人类使用环境，还可以靠记忆补一部分。开始把工作交给 AI Agent 后，这就不行了。agent 的工作会在很大程度上受它当场能读到的设置和文件影响。环境有偏差，返回来的结果也会有偏差。
 
@@ -33,27 +34,27 @@ legacyAnchors:
 
 单独看都很普通。不过这三点凑齐之后，即使换到另一台 machine，也能从同样的前提开始工作。
 
-## 用 Nix 决定要对齐的部分
+## 确定用 Nix 统一哪些部分
 
-现在我的 dotfiles 里，macOS 用 `full`，Linux 用 `cli` 这两个 profile 来分。`full` 包括 nix-darwin、Home Manager、GUI 应用、macOS defaults、配置文件、mise 和 Neovim。`cli` 则以 CLI 为中心，更容易在 Ubuntu 等环境中使用。
+现在我的 dotfiles 分成两个 profile：macOS 用 `full`，Linux 用 `cli`。`full` 包括 nix-darwin、Home Manager、GUI 应用、macOS defaults、配置文件、mise 和 Neovim。`cli` 则以 CLI 为中心，更容易在 Ubuntu 等环境中使用。
 
-macOS 和 Linux 不需要完全一样。硬要完全一样，GUI 应用和 OS 固有设置会很痛苦。但是，CLI 的手感应该尽量一致。`zsh`、`git`、`rg`、`mise`、`uv`、Neovim 这些东西一致时，进入另一台 machine 的违和感会小很多。
+macOS 和 Linux 不需要完全一样。硬要做成完全一样，反而会在 GUI 应用和 OS 特有的设置上吃苦头。但我还是希望 CLI 用起来一致。`zsh`、`git`、`rg`、`mise`、`uv`、Neovim 这些东西一致时，换到另一台 machine 时的别扭感会少很多。
 
 因此 `flake.nix` 处理 `aarch64-darwin`、`x86_64-darwin`、`aarch64-linux` 和 `x86_64-linux`。macOS 上我使用 nix-darwin 和 Home Manager，Linux 上使用 Home Manager。
 
 不过，我并不想把所有东西都放进 Nix。像 zsh 和 Neovim 这样想声明式固定的东西放到 Nix 侧。终端设置、bash 启动文件、`mise` config、本地配置模板等更自然地放在 home 里的东西，则交给 chezmoi。有这个分工后，修改时就更容易判断应该写在哪里。
 
-对我来说，Nix 是放那些每次都希望以同样方式安装的东西的地方。反过来，如果把仍然想轻松调整的设置也全部放进去，每次修改都会显得太重。
+对我来说，Nix 是放那些每次都希望以同样方式安装的东西的地方。反过来，如果把还想反复试验的设置也全部放进去，每次修改都会觉得很笨重。
 
 ## 把交给 AI 的前提集中到 `.agent`
 
-我把 AI CLI agent 相关文件集中放在 `dotfiles/.agent/`。这里有共通 prompt `AGENTS.md`、agent 别设置 `apps/`、共通 hook `hooks/`、供 Codex 兼容 agent 和 Waza 使用的 `skills/`，以及每个 skill 的 `evals/`。
+我把 AI CLI agent 相关文件集中放在 `dotfiles/.agent/`。这里有通用 prompt `AGENTS.md`、按 agent 区分的设置 `apps/`、通用 hook `hooks/`、供 Codex 兼容 agent 和 Waza 使用的 `skills/`，以及每个 skill 的 `evals/`。
 
-使用 AI Agent 时，很容易只看模型能力和 prompt 写法。当然这些也重要。但实际反复使用后，差别其实出现在更不起眼的地方。某个 agent 有最新的注意事项，另一个还在用旧 prompt。某台 PC 有必要的 skill，另一台没有。hook 的行为因 tool 而异，即使是同样的请求，作业日志和验证记录的留下方式也不同。
+使用 AI Agent 时，很容易只看模型能力和 prompt 写法。当然这些也重要。但实际反复使用后，差别其实出现在更不起眼的地方。某个 agent 有最新的注意事项，另一个还在用旧 prompt。某台 PC 有必要的 skill，另一台没有。hook 的行为因 tool 而异，即使是同样的请求，留下的工作日志和验证记录也不一样。
 
-在人类看来，这些可能只是小差异。但对 agent 来说，这是可读取前提的差异。前提不同，出来的工作也会不同。
+在人类看来，这些可能只是小差异。但对 agent 来说，这意味着它能读到的前提不同。前提不同，做出来的工作也会不同。
 
-所以，我不再把 prompt 和 skill 直接放进每个 tool 的配置目录，而是让 dotfiles 成为源头。`dotfiles/.agent/sync.sh` 调用 `scripts/setup_agent_files.sh`，向各个 tool home 创建 symlink。这样一来，无论哪台 PC 上的哪个 agent，读到的 prompt 和 skill 都指向同一个实体。如果把 AI Agent 当作开发环境的一部分，那么交给 agent 的前提也应该被 version control。
+所以，我不再把 prompt 和 skill 直接放进每个 tool 的配置目录，而是以 dotfiles 为准。`dotfiles/.agent/sync.sh` 调用 `scripts/setup_agent_files.sh`，向各个 tool home 创建 symlink。这样一来，无论哪台 PC 上的哪个 agent，读到的 prompt 和 skill 都指向同一份文件。如果把 AI Agent 当作开发环境的一部分，那么交给 agent 的前提也应该纳入 version control。
 
 ## 用 mise 跟上快速的变化
 
@@ -61,28 +62,28 @@ macOS 和 Linux 不需要完全一样。硬要完全一样，GUI 应用和 OS �
 
 这部分我交给了 mise。`config/mise/config.toml` 里列出了 `bun`、`node`、`go`、`python`、`uv`、`rust`、`chezmoi` 等开发工具，也列出了 `codex`、`claude-code`、`opencode`、`npm:@github/copilot`、`npm:openclaw`、通过 `pipx` 安装的 Hermes Agent、`http:devin`、`http:cursor-agent` 等 AI CLI。
 
-使用 mise 后，哪些 tool 跟随哪个 release line 会留在文件里。再让它和 `home/.chezmoitemplates/mise-config.toml` 保持一致，就能对应到实际展开到 home 的设置。
+使用 mise 后，每个 tool 用哪个 release line 都能记在文件里。再让它和 `home/.chezmoitemplates/mise-config.toml` 保持一致，它也就和实际展开到 home 目录的设置对应起来了。
 
 更新也分开处理。`mise run nix-update` 更新 Nix 管理的 tool，`mise run mise-update` 更新 mise 管理的 tool，`mise run package-update` 同时更新 Nix 和 mise。如果要把 `node@22` 这样的 major line 往上提，我会先明确修改 `config/mise/config.toml`。
 
-我觉得这种距离感正好。停止更新就会很快变旧，而什么都不想就更新，又可能改变昨天还能正常工作的前提。写进 mise 后，至少可以把这种变化作为 diff 看见。
+对待更新，我觉得这样的方式正好。停止更新就会很快变旧，而不假思索地更新，又可能改变昨天还能正常工作的前提。写进 mise 后，至少可以以 diff 的形式看到这种变化。
 
 ## 作为盆栽的 dotfiles
 
-说到底，dotfiles 很像盆栽。盆栽不是做出形状就结束。长出来的地方要修剪，盆也会换，还要持续做一些小调整。
+说到底，dotfiles 很像盆栽。盆栽定型之后，也要修剪长出来的部分、换盆，一点点地持续打理。
 
-如果只是增加新 tool，很快就会变得拥挤。不用的 GUI 应用要从 package list 中移除。能从 Homebrew 迁到 Nix 的就迁过去。修改 agent prompt 时，也要看 sync 和 test。加入外部 skill 时，要在 `upstreams.json` 里记录来源和固定 commit，review 后再更新。
+如果只是增加新 tool，很快就会变得拥挤。不用的 GUI 应用要从 package list 中移除。能从 Homebrew 迁到 Nix 的就迁过去。修改 agent prompt 时，也要检查 sync 和 test。加入外部 skill 时，要在 `upstreams.json` 里记录来源和固定 commit，review 后再更新。
 
-最近我也做了不少这样的维护。让 Nix 的 user 解析变成动态。修正 nix-darwin 的 primary user。从 managed apps 中移除 Discord、Cinebench、Bitwarden。明确 agent logging 和 local wiki 的运用规则。
+最近我也做了不少这样的维护。让 Nix 的 user 解析变成动态。修正 nix-darwin 的 primary user。从 managed apps 中移除 Discord、Cinebench、Bitwarden。把 agent logging 和 local wiki 的使用规则写成文档。
 
 每个改动单独看都很小，也不是什么华丽的新功能。但这些小整理积累起来，环境就会更贴合现在的生活。
 
 ## 结语
 
-随着交给 AI Agent 的工作增加，我自己直接写的代码行数也许会减少。但环境如何构建的重要性并不会下降。反而会上升。
+随着交给 AI Agent 的工作增加，我自己直接写的代码行数也许会减少。但环境如何构建，反而会变得更重要。
 
 Agent 读取的 prompt 从哪里来？skill 是哪个 revision？hook 在另一台 PC 上也会同样运行吗？CLI tool 按什么粒度更新，需要时能不能回退？Nix、mise、chezmoi 的职责在哪里分开？
 
 这些点如果模糊，AI 辅助工作的可复现性也会模糊。反过来，如果这些点整理好了，AI Agent 就会成为稳定的工具。
 
-对我来说，dotfiles 已经不只是 shell alias 集合了。它是一起培育多台 PC、Nix package set、mise tool、chezmoi source state、AI Agent prompt、skill、hook 和 eval 的地方。我想以后也偶尔回头看看，移除已经不适合现在生活的设置，再加入新需要的东西。这种普通的维护，我想继续做下去。
+对我来说，dotfiles 已经不只是 shell alias 集合了。它是一起培育多台 PC、Nix package set、mise tool、chezmoi source state、AI Agent prompt、skill、hook 和 eval 的地方。偶尔回头看看，移除已经不适合现在生活的设置，再加入新需要的东西。这种程度的普通维护，我想一直做下去。

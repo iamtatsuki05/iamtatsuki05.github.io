@@ -6,7 +6,7 @@ headerAlt: Illustration of vibe coding
 
 ## Introduction
 
-I had wanted to build a personal introduction site for a while, but I never had enough time to start. Recently, vibe coding, where you drive tools such as Claude Code and Codex through conversation, has become a popular topic. When I finally had some time, I built this site that way.
+I had wanted to build a site to introduce myself for a long time, but I never found the time and kept putting it off. Lately, vibe coding, where you build software by giving instructions to tools like Claude Code or Codex in a chat, has been getting a lot of attention. I happened to have some free time, so I tried building this site that way.
 
 ## Process
 
@@ -15,11 +15,11 @@ Here is what I did:
 - Define requirements
 - Ask Codex to implement them
 - Give feedback on the generated code several times
-- Write the self-introduction text myself, then ask AI to polish it
+- Write the self-introduction and other text myself, then have an AI edit it
 
-### Requirements Definition
+### Requirements definition
 
-I use ChatGPT Plus, so I started from there. I gave GPT a bullet list of routing ideas and the technical stack, then asked it to turn them into requirements.
+I use ChatGPT Plus, so I started from there. I gave GPT a bullet list of page routes and the tech stack, then asked it to write up the requirements.
 
 <details>
 <summary>Prompt</summary>
@@ -291,16 +291,16 @@ Requirements definition for a personal website. A modern UI/UX built with TypeSc
 
 ### Asking Codex
 
-I set up Codex using the article below as a reference. Then I gave it the requirements above and moved forward with development.
+I installed Codex and configured it following the article below. Then I gave it the requirements and started development.
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
-### Feedback on the Generated Site
+### Feedback on the generated site
 
 I ran the site, pointed out anything that felt off in a few words, and let Codex fix it. I repeated that a few times.
 
 ## Impressions
 
-I barely implemented anything myself, yet a practical site came together in a short time. I kept Reasoning Effort at high in ChatGPT Plus and never hit a rate limit.
+I barely implemented anything myself, yet I had a site good enough for real use in a short time. I kept Reasoning Effort at high in ChatGPT Plus the whole time and never hit a rate limit.
 
-Development with a coding agent works well enough with only minimal hands-on experience. There was not much stress, either.
+With a bare minimum of hands-on experience, you can develop with a coding agent just fine. It wasn't very stressful, either.

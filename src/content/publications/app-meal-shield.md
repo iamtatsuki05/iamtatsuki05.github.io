@@ -6,5 +6,5 @@ publisher: GitHub
 links:
   - { kind: code, url: https://github.com/al22-1B-01/meal_shield }
 tags: [app, llm, python]
-abstract: 大学の授業でチームで開発した、LLMを用いたアレルギーを除去したレシピを検索するアプリ。
+abstract: 大学の授業でチーム開発した、LLMを用いたアプリ。アレルゲンを除いたレシピを検索できます。
 ---

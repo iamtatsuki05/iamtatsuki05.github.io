@@ -103,11 +103,11 @@ export const filterTextFr: FilterTextDict = {
   clear: 'Effacer',
   types: 'Types',
   all: 'Tout',
-  searching: 'Recherche...',
+  searching: 'Recherche en cours...',
   searchKeyword: 'Recherche',
   sort: 'Tri',
   sortRelevant: 'Pertinence',
-  sortNewest: 'Plus récent',
+  sortNewest: 'Plus récents',
   voiceStart: 'Recherche vocale',
   voiceStop: 'Arrêter la saisie vocale',
   voiceListening: 'À l’écoute...',
@@ -165,6 +165,6 @@ export function formatNoResultMessage(locale: Locale, query?: string) {
 
   if (locale === 'ja') return `「${trimmedQuery}」に一致する項目がありません`;
   if (locale === 'zh') return `没有找到与“${trimmedQuery}”匹配的项目`;
-  if (locale === 'fr') return `Aucun élément trouvé pour "${trimmedQuery}"`;
+  if (locale === 'fr') return `Aucun élément trouvé pour « ${trimmedQuery} »`;
   return `No items found for "${trimmedQuery}"`;
 }
