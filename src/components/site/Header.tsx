@@ -1,4 +1,3 @@
-"use client";
 import Link from '@/components/compat/Link';
 import { ThemeToggle } from '@/components/site/ThemeToggle';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
@@ -75,7 +74,7 @@ function HeaderContent({ currentPath }: HeaderProps) {
       <div className="container mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-4 py-4">
         <Link
           href={localizedPath('/', locale)}
-          className="flex min-w-0 flex-1 items-center gap-3 truncate text-lg font-semibold sm:flex-none"
+          className="flex min-w-0 flex-1 items-center gap-3 truncate text-lg font-semibold lg:flex-none"
         >
           <img
             src={withBasePath('/header-icon-56.webp')}
@@ -88,19 +87,17 @@ function HeaderContent({ currentPath }: HeaderProps) {
             className="h-7 w-7 shrink-0 rounded-full border border-white/70 bg-white/80 object-cover shadow-sm transition-transform duration-150 ease-out will-change-transform motion-reduce:transition-none dark:border-white/15 dark:bg-gray-950/70"
             style={{ transform: iconTransform, transformOrigin: '50% 85%' }}
           />
-          <span className="truncate bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
+          <span className="truncate text-purple-800 max-[32rem]:sr-only dark:text-purple-200">
             Tatsuki Okada
           </span>
         </Link>
-        {/* Desktop nav */}
-        <nav aria-label="Main navigation" className="hidden sm:flex items-center gap-4">
+        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-4">
           <NavLinks items={navItems} activePath={activePath} localePrefix={localePrefix} />
           <LanguageSwitch currentPath={pathname} />
           <ThemeToggle />
         </nav>
 
-        {/* Mobile buttons */}
-        <div className="sm:hidden flex items-center gap-2">
+        <div className="lg:hidden flex items-center gap-2">
           <LanguageSwitch currentPath={pathname} />
           <ThemeToggle />
           <button
@@ -108,7 +105,7 @@ function HeaderContent({ currentPath }: HeaderProps) {
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => setOpen(true)}
-            className="mobile-menu-trigger flex h-11 w-11 items-center justify-center rounded-[1.15rem] border border-white/70 bg-white/75 text-gray-700 shadow-[0_18px_36px_-28px_rgba(192,132,252,0.9)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:border-purple-200 hover:bg-white/90 dark:border-white/10 dark:bg-[#171022]/80 dark:text-gray-100 dark:hover:border-amber-200/30 dark:hover:bg-[#1d1630]/88 focus-ring"
+            className="flex h-11 w-11 items-center justify-center rounded-[1.15rem] border border-white/70 bg-white/75 text-gray-700 shadow-[0_18px_36px_-28px_rgba(192,132,252,0.9)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:border-purple-200 hover:bg-white/90 dark:border-white/10 dark:bg-[#171022]/80 dark:text-gray-100 dark:hover:border-amber-200/30 dark:hover:bg-[#1d1630]/88 focus-ring"
           >
             <span aria-hidden="true" className="flex flex-col items-center gap-1.5">
               <span className="block h-0.5 w-5 rounded-full bg-current" />

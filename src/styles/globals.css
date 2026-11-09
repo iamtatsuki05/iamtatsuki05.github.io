@@ -30,8 +30,6 @@
 :root {
   --bg: 252 249 243;
   --fg: 23 23 23;
-  --accent: #c084fc; /* lilac */
-  --accent-2: #fcd34d; /* cream/gold */
   --link: #6b21a8;
   --body-gradient:
     radial-gradient(60% 60% at 15% 20%, rgba(192, 132, 252, 0.18), transparent),
@@ -42,8 +40,6 @@
 .dark {
   --bg: 16 12 30;
   --fg: 243 244 246;
-  --accent: #c084fc;
-  --accent-2: #fcd34d;
   --link: #d8b4fe;
   --body-gradient:
     radial-gradient(50% 50% at 20% 10%, rgba(192, 132, 252, 0.22), transparent),
@@ -72,6 +68,7 @@ a:hover {
 
 .prose pre {
   @apply overflow-x-auto rounded-md border border-gray-200 bg-gray-950 text-gray-100 shadow-sm dark:border-gray-700 dark:bg-[#0b1020];
+  position: relative;
 }
 
 .prose pre code {
@@ -115,8 +112,6 @@ a:hover {
   content: none;
 }
 
-/* Code copy button (injected at runtime) */
-.prose pre { position: relative; }
 .code-copy-btn {
   position: absolute;
   top: 0.5rem;
@@ -138,16 +133,16 @@ a:hover {
 }
 .code-copy-btn.copied { background: #10b981; color: white; border-color: transparent; }
 .focus-ring { @apply focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand; }
-.prose h2 { @apply mt-10 border-b border-gray-200 dark:border-gray-800 pb-1; }
-.prose h3 { @apply mt-8; }
+/* typography プラグイン自身の要素スタイルと同じく、.not-prose とその中には効かせない */
+.prose h2:not(:where(.not-prose, .not-prose *)) { @apply mt-10 border-b border-gray-200 dark:border-gray-800 pb-1; }
+.prose h3:not(:where(.not-prose, .not-prose *)) { @apply mt-8; }
 .prose { --heading-scroll-margin: 7rem; }
 /* 見出しの中に置いた旧アンカーも、見出し本体と同じ位置に着地させる */
 .prose :is(h2, h3), .prose :is(h2, h3) > .legacy-anchor { scroll-margin-top: var(--heading-scroll-margin); }
-.prose ul { @apply list-disc pl-6; }
-.prose ol { @apply list-decimal pl-6; }
-.prose a { @apply underline underline-offset-2; }
+.prose ul:not(:where(.not-prose, .not-prose *)) { @apply list-disc pl-6; }
+.prose ol:not(:where(.not-prose, .not-prose *)) { @apply list-decimal pl-6; }
+.prose a:not(:where(.not-prose, .not-prose *)) { @apply underline underline-offset-2; }
 
-/* details/summary tweaks for GitHub-like toggles */
 .prose details { @apply my-4 rounded-md border border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60; }
 .prose details > summary {
   @apply cursor-pointer select-none font-medium px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-t-md;
@@ -156,7 +151,6 @@ a:hover {
 .prose details[open] > summary { @apply border-b border-gray-200 dark:border-gray-800; }
 .prose details > *:not(summary) { @apply px-3 py-2; }
 
-/* --- Link preview card (OG) --- */
 .og-card { @apply grid gap-4 no-underline p-3; grid-template-columns: 180px 1fr; align-items: start; }
 .og-card:hover { @apply bg-gray-50 dark:bg-gray-800; }
 .og-card--noimg { grid-template-columns: 1fr; }
@@ -168,6 +162,5 @@ a:hover {
 .og-card__desc { @apply text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2; }
 .og-card__url { @apply text-xs text-gray-500 dark:text-gray-400 mt-2; word-break: break-all; }
 
-/* --- Embeds (center only) --- */
 .prose .rse-embed { display: flex; justify-content: center; }
 .prose .rse-embed > * { margin-left: auto !important; margin-right: auto !important; }

@@ -28,6 +28,19 @@ describe('MobileMenu', () => {
     vi.useRealTimers();
   });
 
+  it('画面幅がデスクトップ幅になると、開いているメニューを閉じる', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query === '(min-width: 1024px)',
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }));
+    const onClose = vi.fn();
+    renderMobileMenu(true, onClose);
+
+    expect(onClose).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
   it('開いた直後はclosed状態から始まり、アニメーション後にopenになる', () => {
     renderMobileMenu(true);
 
