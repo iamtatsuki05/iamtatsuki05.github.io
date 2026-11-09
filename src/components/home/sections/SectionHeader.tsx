@@ -35,13 +35,12 @@ export function SectionHeader({ title, subtitle, ctaLabel, ctaHref, actions, cla
   return (
     <div className={clsx('flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2 sm:mb-1', className)}>
       <div className="space-y-1">
-        <h2 className="sr-only">{title}</h2>
-        <div className={clsx(
+        <h2 className={clsx(
           'ui-section-badge inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold shadow-sm',
           toneMap[tone].badge,
         )}>
           {title}
-        </div>
+        </h2>
         {subtitle ? <p className="text-sm text-gray-500 dark:text-gray-400">{subtitle}</p> : null}
       </div>
       <div className="flex items-center gap-3 text-sm sm:self-end">

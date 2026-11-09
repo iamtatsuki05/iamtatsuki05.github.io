@@ -1,4 +1,3 @@
-"use client";
 import clsx from 'clsx';
 import { useTheme } from '@/lib/compat/theme';
 import { useEffect, useState } from 'react';
@@ -17,17 +16,8 @@ export function ThemeToggle() {
       data-theme={resolvedTheme}
       data-next-theme={next}
       onClick={() => setTheme(next)}
-      className="theme-toggle group relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-[1.15rem] border border-white/70 bg-white/78 text-gray-700 shadow-[0_18px_36px_-28px_rgba(192,132,252,0.85)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:border-purple-200 hover:bg-white/92 dark:border-white/10 dark:bg-[#171022]/80 dark:text-gray-100 dark:hover:border-amber-200/30 dark:hover:bg-[#1d1630]/88 focus-ring"
+      className="theme-toggle group flex h-11 w-11 items-center justify-center rounded-[1.15rem] border border-white/70 bg-white/78 text-gray-700 shadow-[0_18px_36px_-28px_rgba(192,132,252,0.85)] backdrop-blur-md transition duration-200 hover:-translate-y-0.5 hover:border-purple-200 hover:bg-white/92 dark:border-white/10 dark:bg-[#171022]/80 dark:text-gray-100 dark:hover:border-amber-200/30 dark:hover:bg-[#1d1630]/88 focus-ring"
     >
-      <span
-        aria-hidden="true"
-        className={clsx(
-          'pointer-events-none absolute inset-0 rounded-[1.15rem] opacity-70 transition duration-300',
-          resolvedTheme === 'light'
-            ? 'bg-[radial-gradient(circle_at_35%_30%,rgba(253,224,71,0.45),transparent_38%)]'
-            : 'bg-[radial-gradient(circle_at_65%_30%,rgba(196,181,253,0.34),transparent_42%)]',
-        )}
-      />
       <span className="relative block h-5 w-5">
         <span
           aria-hidden="true"

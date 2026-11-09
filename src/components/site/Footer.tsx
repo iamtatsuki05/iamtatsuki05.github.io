@@ -1,5 +1,3 @@
-"use client";
-
 import Link from '@/components/compat/Link';
 import { usePathname } from '@/lib/compat/navigation';
 import { absoluteUrl } from '@/lib/seo';
@@ -16,11 +14,9 @@ export function Footer({ currentPath }: FooterProps) {
   const navLinks = resolveNavItems(locale);
   const sitemapHref = absoluteUrl('/sitemap.xml');
   const rssHref = absoluteUrl('/rss.xml');
-  const robotsHref = absoluteUrl('/robots.txt');
   const resourceLinks = [
     { href: sitemapHref, label: 'Sitemap' },
     { href: rssHref, label: 'RSS' },
-    { href: robotsHref, label: 'Robots' },
   ];
 
   return (
@@ -28,7 +24,7 @@ export function Footer({ currentPath }: FooterProps) {
       <div className="container mx-auto max-w-screen-2xl px-4 py-8 text-sm text-gray-700 dark:text-gray-300">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
-            <p className="text-lg font-semibold bg-gradient-to-r from-purple-400 via-amber-300 to-purple-500 bg-clip-text text-transparent dark:from-purple-300 dark:via-amber-200 dark:to-purple-200">
+            <p className="text-lg font-semibold text-purple-800 dark:text-purple-200">
               Tatsuki Okada
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
