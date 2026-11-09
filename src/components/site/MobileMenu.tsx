@@ -98,7 +98,7 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
       aria-modal="true"
       aria-hidden={!open}
       data-state={state}
-      className="mobile-menu-overlay sm:hidden fixed inset-0 z-[100]"
+      className="mobile-menu-overlay lg:hidden fixed inset-0 z-[100]"
       onClick={onClose}
     >
       {/* biome-ignore lint/a11y/noStaticElementInteractions: click handler only stops overlay-close propagation */}
