@@ -79,7 +79,7 @@ function toIsoString(input?: string | null) {
           <img
             src={post.headerImageOptimizedSrc ?? withBasePath(headerImage)}
             srcset={post.headerImageSrcSet}
-            alt={headerAlt || title}
+            alt={headerAlt ?? ''}
             class="absolute inset-0 h-full w-full object-cover"
             sizes="(max-width: 640px) 100vw, 896px"
             loading="eager"
@@ -111,7 +111,7 @@ function toIsoString(input?: string | null) {
       <div set:html={html || ''} />
       <RelatedPosts posts={allPosts} currentSlug={slug} locale={locale} {...(routeLocale ? { hrefLocale: locale } : {})} />
       <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} {...navigationProps} client:load />
-      <section class="not-prose mt-12 border-t border-gray-200 pt-8 dark:border-gray-700" aria-label={blogCommentsHeading[locale]}>
+      <section class="not-prose mt-12 border-t border-gray-200 pt-8 dark:border-gray-700">
         <h2 class="text-xl font-semibold">{blogCommentsHeading[locale]}</h2>
         <GiscusComments term={slug} locale={locale} client:visible />
       </section>

@@ -32,7 +32,7 @@ for (const { label, use } of viewports) {
 
     test('shows main hero and contact info', async ({ page }) => {
       await expect(page.getByRole('heading', { level: 1, name: 'ホームページ' })).toBeVisible();
-      await expect(page.getByText('自然言語処理 | 機械学習 | ソフトウェア のエンジニアをしています。')).toBeVisible();
+      await expect(page.getByText('自然言語処理・機械学習・ソフトウェアのエンジニアをしています。')).toBeVisible();
       await expect(page.getByRole('link', { name: 'tatsukio0522@gmail.com' })).toHaveAttribute(
         'href',
         'mailto:tatsukio0522@gmail.com',
@@ -42,7 +42,7 @@ for (const { label, use } of viewports) {
     test('renders highlighted sections with items', async ({ page }) => {
       const linksSection = page
         .locator('section')
-        .filter({ has: page.getByRole('heading', { level: 2, name: 'Links' }) })
+        .filter({ has: page.getByRole('heading', { level: 2, name: 'リンク' }) })
         .first();
       expect(await linksSection.locator('li').count()).toBeGreaterThanOrEqual(3);
 
@@ -63,7 +63,7 @@ for (const { label, use } of viewports) {
       test('centers the final row of social link cards', async ({ page }) => {
         const linksSection = page
           .locator('section')
-          .filter({ has: page.getByRole('heading', { level: 2, name: 'Links' }) })
+          .filter({ has: page.getByRole('heading', { level: 2, name: 'リンク' }) })
           .first();
         const list = linksSection.locator('ul').first();
         const cards = linksSection.locator('li');

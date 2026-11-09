@@ -1,5 +1,4 @@
 
-import clsx from 'clsx';
 import { Card } from '@/components/ui/Card';
 
 type CardItem = {
@@ -14,19 +13,14 @@ type CardItem = {
 
 type Props = {
   items: CardItem[];
-  gridClassName?: string;
   listTestId?: string;
   cardTestId?: string;
 };
 
-export function ContentCardList({ items, gridClassName, listTestId, cardTestId }: Props) {
+export function ContentCardList({ items, listTestId, cardTestId }: Props) {
   return (
-    <ul
-      className={clsx('content-reveal-list grid gap-3 sm:grid-cols-2', gridClassName)}
-      data-state="open"
-      data-testid={listTestId}
-    >
-      {items.map((item, index) => {
+    <ul className="grid gap-3 sm:grid-cols-2" data-testid={listTestId}>
+      {items.map((item) => {
         const body = (
           <>
             <h3 className="content-card-title font-medium mb-1">{item.title}</h3>
@@ -51,12 +45,7 @@ export function ContentCardList({ items, gridClassName, listTestId, cardTestId }
         );
 
         return (
-          <li
-            key={item.key}
-            className="content-reveal-card content-reveal-card--soft h-full"
-            data-testid={cardTestId}
-            style={{ transitionDelay: `${80 + index * 34}ms` }}
-          >
+          <li key={item.key} className="h-full" data-testid={cardTestId}>
             {card}
           </li>
         );

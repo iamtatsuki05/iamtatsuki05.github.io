@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import type { Locale } from '@/lib/i18n';

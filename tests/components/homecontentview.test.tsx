@@ -12,6 +12,7 @@ const dict = {
   handle: 'handle',
   affiliation:
     '所属：[奈良先端科学技術大学院大学 (NAIST)](https://www.naist.jp/)、先端科学技術研究科情報科学領域、[自然言語処理学研究室(渡辺研究室)](https://nlp.naist.jp/ja/)',
+  links_title: 'リンク',
   latest_blog: '最新のブログ',
   latest_pub: '最近の公開物',
   cta_more_links: 'リンクをもっと見る',
@@ -35,7 +36,7 @@ const publications: Publication[] = [
     title: 'Paper 1',
     tags: [],
     type: 'paper',
-    links: [{ kind: 'pdf', url: 'https://example.com' }],
+    links: [{ kind: 'paper', url: 'https://example.com' }],
     publishedAt: '2024-01-01',
   },
 ];
@@ -60,11 +61,28 @@ describe('HomeContentView', () => {
     );
 
     expect(getByRole('heading', { name: 'ホームページ' })).toBeVisible();
+    expect(getByRole('heading', { name: 'リンク' })).toBeVisible();
     expect(getByRole('heading', { name: '最新のブログ' })).toBeVisible();
     expect(getByRole('heading', { name: '最近の公開物' })).toBeVisible();
     expect(getByText('Sample Post')).toBeVisible();
     expect(getByText('Paper 1')).toBeVisible();
     expect(getByRole('link', { name: '奈良先端科学技術大学院大学 (NAIST)' })).toBeVisible();
     expect(getByRole('link', { name: '自然言語処理学研究室(渡辺研究室)' })).toBeVisible();
+  });
+
+  it('points every section CTA at the current locale', () => {
+    const { getByRole } = render(
+      <HomeContentView
+        locale="en"
+        dict={dict}
+        latest={latest}
+        publications={publications}
+        links={links}
+      />,
+    );
+
+    expect(getByRole('link', { name: 'リンクをもっと見る' })).toHaveAttribute('href', '/en-US/links/');
+    expect(getByRole('link', { name: 'ブログをもっと見る' })).toHaveAttribute('href', '/en-US/blogs/');
+    expect(getByRole('link', { name: '公開物をもっと見る' })).toHaveAttribute('href', '/en-US/publications/');
   });
 });

@@ -1,8 +1,5 @@
 import type { Locale } from '@/lib/i18n';
-import { SUPPORTED_LOCALES, resolveLocale } from '@/lib/i18n';
 import { pageMeta } from '@/lib/seo/metaConfig';
-
-export { SUPPORTED_LOCALES, resolveLocale };
 
 export type PageCopy<T extends Record<string, unknown> = {}> = {
   metadataTitle: string;
@@ -114,7 +111,7 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     breadcrumb: '🏠 Home / 🧸 趣味',
     introHeading: '趣味について',
     introBody:
-      'ある日突然ハマり、3ヶ月くらい集中的に没頭してしまいます。各カードから、そのテーマに関連するブログの絞り込み一覧へ移動できます。',
+      'ある日突然ハマり、3ヶ月くらい没頭してしまいます。各カードから、そのテーマに関連するブログの絞り込み一覧へ移動できます。',
     gridHeading: '趣味一覧',
     currentFocusLabel: '魅力・ハマった理由',
     emptyStateLabel: '関連するブログ記事は準備中',
@@ -124,13 +121,13 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     ...pageMeta.hobbies.en,
     heading: '🧸 Hobbies',
     breadcrumb: '🏠 Home / 🧸 Hobbies',
-    introHeading: 'What I am Into Lately',
+    introHeading: "What I'm Into Lately",
     introBody:
       'I sometimes get hooked on something out of nowhere and spend around three months diving into it. Each card takes you to a filtered list of blog posts related to that topic.',
     gridHeading: 'Hobby List',
     currentFocusLabel: "Why I'm Into It",
     emptyStateLabel: 'Related blog posts are coming soon',
-    ctaLabel: 'Open Blogs',
+    ctaLabel: 'See Blog Posts',
   },
   zh: {
     ...pageMeta.hobbies.zh,
@@ -154,6 +151,6 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     gridHeading: 'Liste des centres d’intérêt',
     currentFocusLabel: 'Pourquoi cela m’intéresse',
     emptyStateLabel: 'Les articles associés arrivent bientôt',
-    ctaLabel: 'Ouvrir les articles',
+    ctaLabel: 'Voir les articles',
   },
 };

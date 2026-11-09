@@ -17,7 +17,6 @@ type Props = React.HTMLAttributes<HTMLElement> & {
   tone?: 'lilac' | 'amber' | 'blue' | 'teal';
 };
 
-// 共通セクションの外枠（背景・枠・余白）
 export function SectionShell({ children, className, tone = 'lilac', ...rest }: Props) {
   return (
     <section

@@ -41,6 +41,6 @@ const jsonLd = [
   <div class="space-y-4">
     <div class="text-sm opacity-70">{copy.breadcrumb}</div>
     <h1 class="text-3xl font-bold">{copy.heading}</h1>
-    <BlogsClient posts={posts} locale={locale} initialCardsVisible client:load />
+    <BlogsClient posts={posts} locale={locale} client:load />
   </div>
 </BaseLayout>

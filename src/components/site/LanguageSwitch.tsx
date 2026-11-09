@@ -1,4 +1,3 @@
-"use client";
 import React from 'react';
 import Link from '@/components/compat/Link';
 import { usePathname } from '@/lib/compat/navigation';
@@ -61,7 +60,9 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
   }));
 
   const baseOptionClass = 'language-switch-option inline-flex min-w-9 items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold tracking-[0.08em] no-underline hover:no-underline transition-[color,transform] duration-200 focus-ring sm:min-w-10 sm:px-2.5';
-  const activeOptionClass = 'text-[#2a143f] dark:text-[#2a143f]';
+  // globals.css の未レイヤーの `a { color: var(--link) }` が通常の utility より優先されるため important を付ける。
+  // ピルが表示される前（ハイドレーション前）に付けると、ダークでは暗い枠の上に暗い文字が乗るので待つ
+  const activeOptionClass = indicatorStyle ? 'text-[#2a143f]!' : '';
   const inactiveOptionClass = 'text-gray-700 hover:text-purple-600 hover:-translate-y-px dark:text-gray-200 dark:hover:text-amber-200';
   const disabledOptionClass = 'cursor-default text-gray-500 dark:text-gray-400';
 
@@ -77,7 +78,7 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
         aria-hidden="true"
         data-testid="language-switch-indicator"
         data-active-locale={currentLocale}
-        className="language-switch-indicator pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-gradient-to-r from-purple-400 via-purple-300 to-amber-300 shadow-[0_12px_24px_-18px_rgba(126,34,206,0.9)] transition-[transform,width,opacity] duration-300 ease-out dark:from-purple-300 dark:via-purple-200 dark:to-amber-200"
+        className="pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-gradient-to-r from-purple-400 via-purple-300 to-amber-300 shadow-[0_12px_24px_-18px_rgba(126,34,206,0.9)] transition-[transform,width,opacity] duration-300 ease-out dark:from-purple-300 dark:via-purple-200 dark:to-amber-200"
         style={{
           opacity: indicatorStyle ? 1 : 0,
           width: indicatorStyle?.width,

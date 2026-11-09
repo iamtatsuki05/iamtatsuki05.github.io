@@ -1,12 +1,6 @@
-import { getAssetVersion, getBasePath } from '@/lib/config/env';
+import { getBasePath } from '@/lib/config/env';
 
 export const BASE_PATH = getBasePath();
-export const ASSET_VERSION = getAssetVersion();
-
-export function assetPath(src: string): string | undefined {
-  const withBase = withBasePath(src.startsWith('/') ? src : `/${src}`);
-  return withVersion(withBase);
-}
 
 export function withBasePath(src?: string | null): string | undefined {
   if (!src) return undefined;
@@ -18,13 +12,4 @@ export function withBasePath(src?: string | null): string | undefined {
   }
   // 先頭スラッシュがない相対パスも必ず絶対パスにする
   return `${BASE_PATH}/${src}`.replace(/\/+/g, '/');
-}
-
-export function withVersion(src?: string | null): string | undefined {
-  if (!src) return undefined;
-  if (!ASSET_VERSION) return src || undefined;
-  if (/\.ico($|\?)/i.test(src)) return src;
-  const hasQuery = src.includes('?');
-  const sep = hasQuery ? '&' : '?';
-  return `${src}${sep}v=${ASSET_VERSION}`;
 }

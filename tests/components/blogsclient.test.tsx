@@ -1,6 +1,6 @@
 import React from 'react';
-import { act, screen } from '@testing-library/react';
-import { describe, it, vi } from 'vitest';
+import { screen } from '@testing-library/react';
+import { describe, it } from 'vitest';
 import { BlogsClient } from '@/components/pages/BlogsClient';
 
 const sample = Array.from({ length: 12 }).map((_, i) => ({
@@ -30,6 +30,17 @@ describe('BlogsClient', () => {
     expect(getAllByText('✨ Latest').length).toBeGreaterThan(0);
     expect(getAllByText('🗂 All Posts').length).toBeGreaterThan(0);
     expect(getAllByText('Sample 0').length).toBeGreaterThan(0);
+  });
+  it('hides the latest section when no post matches the filter', async () => {
+    const { render } = await import('@testing-library/react');
+    const NoMatchWrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryWrapper searchParams="?tags=missing-tag">{children}</QueryWrapper>
+    );
+    const { queryByText, getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
+      wrapper: NoMatchWrapper,
+    });
+    expect(queryByText('✨ Latest')).toBeNull();
+    expect(getAllByText('🗂 All Posts').length).toBeGreaterThan(0);
   });
   it('filters by search query and shows result summary with removable chips', async () => {
     const { render } = await import('@testing-library/react');
@@ -215,24 +226,18 @@ describe('BlogsClient', () => {
     });
   });
 
-  it('reveals blog lists after the initial enter delay', async () => {
-    vi.useFakeTimers();
+  it('renders blog cards without reveal delays', async () => {
     const { render } = await import('@testing-library/react');
 
     render(<BlogsClient posts={sample} locale="en" />, {
       wrapper: Wrapper,
     });
 
-    expect(screen.getByTestId('blog-latest-list')).toHaveAttribute('data-state', 'hidden');
-    expect(screen.getByTestId('blog-all-list')).toHaveAttribute('data-state', 'hidden');
-
-    act(() => {
-      vi.runOnlyPendingTimers();
+    const cards = [...screen.getAllByTestId('blog-latest-card'), ...screen.getAllByTestId('blog-card')];
+    expect(cards.length).toBeGreaterThan(0);
+    cards.forEach((card) => {
+      expect(card.style.transitionDelay).toBe('');
     });
-
-    expect(screen.getByTestId('blog-latest-list')).toHaveAttribute('data-state', 'open');
-    expect(screen.getByTestId('blog-all-list')).toHaveAttribute('data-state', 'open');
-    vi.useRealTimers();
   });
 
   it('adds linked-card classes so title hover can affect the whole card', async () => {

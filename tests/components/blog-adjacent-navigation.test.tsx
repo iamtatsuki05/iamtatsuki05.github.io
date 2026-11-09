@@ -32,6 +32,14 @@ describe('BlogAdjacentNavigation', () => {
   beforeEach(() => {
     (globalThis as any).__NEXT_TEST_ROUTER_PUSH__ = vi.fn();
     (globalThis as any).__NEXT_TEST_SEARCH_PARAMS__ = '';
+    delete (globalThis as any).__NEXT_TEST_PATHNAME__;
+  });
+
+  it('labels the navigation in the page locale', () => {
+    (globalThis as any).__NEXT_TEST_PATHNAME__ = '/en-US/blogs/current/';
+    render(<BlogAdjacentNavigation previous={null} next={null} locale="en" />);
+
+    expect(screen.getByRole('navigation', { name: 'Previous and next posts' })).toBeInTheDocument();
   });
 
   it('renders previous and next links with retained filter hrefs', () => {

@@ -1,7 +1,6 @@
-"use client";
 import React, { useCallback, useMemo, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
-import { notifyLocationChange } from '@/lib/compat/navigation';
+import { LOCATION_CHANGE_EVENT, notifyLocationChange } from '@/lib/compat/navigation';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
 import { TagSelector } from '@/components/filters/TagSelector';
@@ -71,9 +70,9 @@ const publicationTypeLabels: Record<Locale, Record<Item['type'], string>> = {
   fr: {
     paper: '📄 Articles scientifiques',
     article: '📝 Articles techniques',
-    talk: '🎤 Presentations',
+    talk: '🎤 Présentations',
     slide: '📑 Slides',
-    media: '📰 Medias',
+    media: '📰 Médias',
     app: '📱 Apps',
   },
 };
@@ -108,11 +107,11 @@ function useSelectedPublicationTypes() {
   React.useEffect(() => {
     const update = () => setTypes(readSelectedTypes());
     window.addEventListener('popstate', update);
-    window.addEventListener('app-location-change', update);
+    window.addEventListener(LOCATION_CHANGE_EVENT, update);
     update();
     return () => {
       window.removeEventListener('popstate', update);
-      window.removeEventListener('app-location-change', update);
+      window.removeEventListener(LOCATION_CHANGE_EVENT, update);
     };
   }, []);
 
@@ -129,7 +128,6 @@ function useSelectedPublicationTypes() {
 }
 
 export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; locale?: Locale }) {
-  const areCardsVisible = true;
   const [selectedTypes, setSelectedTypes] = useSelectedPublicationTypes();
 
   const availableTypes = useMemo(
@@ -336,7 +334,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
         return (
           <SectionShell key={type} tone={tone}>
             <SectionHeader title={typeLabels[type]} tone={tone} />
-            <ul className="content-reveal-list space-y-3" data-state={areCardsVisible ? 'open' : 'hidden'}>
+            <ul className="space-y-3">
               {arr.map((i, index) => {
                 const primaryLink = i.links[0]?.url;
                 const isFirstImage = index === 0 && Boolean(i.headerImage);
@@ -354,8 +352,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                   <li
                     key={i.slug}
                     data-testid="publication-card"
-                    className={`content-reveal-card card p-3 gap-3 items-start sm:flex ${primaryLink ? 'pressable-card cursor-pointer' : ''}`}
-                    style={areCardsVisible ? { transitionDelay: `${100 + index * 24}ms` } : undefined}
+                    className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'pressable-card cursor-pointer' : ''}`}
                     {...cardClickProps}
                   >
                     {i.headerImage ? (
@@ -365,7 +362,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                       >
                         <Image
                           src={i.headerImage}
-                          alt={i.headerAlt || i.title}
+                          alt={i.headerAlt ?? ''}
                           fill
                           className="object-contain"
                           sizes="120px"

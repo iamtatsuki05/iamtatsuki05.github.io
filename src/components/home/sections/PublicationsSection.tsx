@@ -3,14 +3,17 @@ import type { Publication } from '@/lib/content/publication';
 import { SectionHeader } from './SectionHeader';
 import { ContentCardList } from './ContentCardList';
 import { SectionShell } from '@/components/home/SectionShell';
+import type { Locale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
 
 type Props = {
   publications: Publication[];
+  locale: Locale;
   title: string;
   ctaLabel: string;
 };
 
-export function PublicationsSection({ publications, title, ctaLabel }: Props) {
+export function PublicationsSection({ publications, locale, title, ctaLabel }: Props) {
   const items = useMemo(
     () =>
       publications.map((pub) => {
@@ -29,7 +32,7 @@ export function PublicationsSection({ publications, title, ctaLabel }: Props) {
 
   return (
     <SectionShell id="publications" tone="teal">
-      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref="/publications/" tone="teal" />
+      <SectionHeader title={title} ctaLabel={ctaLabel} ctaHref={localizedPath('/publications/', locale)} tone="teal" />
       <ContentCardList items={items} />
     </SectionShell>
   );

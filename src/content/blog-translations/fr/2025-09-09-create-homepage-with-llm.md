@@ -6,7 +6,7 @@ headerAlt: Illustration du vibe coding
 
 ## Introduction
 
-Je voulais depuis quelque temps créer une page de présentation personnelle, mais je n’avais jamais le temps de commencer. Récemment, le vibe coding, où l’on pilote par le dialogue des outils comme Claude Code ou Codex, est devenu un sujet courant. Comme j’avais enfin un peu de temps, j’ai construit ce site de cette manière.
+Cela faisait longtemps que je voulais créer un site pour me présenter, mais faute de temps, je remettais toujours à plus tard. Ces derniers temps, on parle beaucoup du vibe coding, qui consiste à développer en donnant des instructions à des outils comme Claude Code ou Codex au fil d’une conversation. Comme j’avais justement un peu de temps, j’ai essayé de construire ce site de cette façon.
 
 ## Processus
 
@@ -291,7 +291,7 @@ Définition des exigences pour un site web personnel. UI/UX moderne avec TypeScr
 
 ### Demande à Codex
 
-J’ai installé Codex et je l’ai configuré en m’appuyant sur l’article ci-dessous. Je lui ai ensuite donné le cahier des charges ci-dessus et j’ai avancé le développement.
+J’ai installé Codex et je l’ai configuré en m’appuyant sur l’article ci-dessous. Je lui ai ensuite transmis le cahier des charges, puis j’ai fait avancer le développement à partir de là.
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
@@ -301,6 +301,6 @@ Je lançais le site, j’indiquais brièvement les points qui me gênaient et je
 
 ## Impressions
 
-Sans presque rien implémenter moi-même, j’ai obtenu en peu de temps une page d’un niveau pratique. Dans ChatGPT Plus, je gardais Reasoning Effort sur high et je n’ai jamais atteint la limite de débit.
+Sans presque rien implémenter moi-même, j’ai obtenu en peu de temps une page réellement utilisable. Dans ChatGPT Plus, je gardais Reasoning Effort sur high et je n’ai jamais atteint la limite de débit.
 
-Développer avec un coding agent fonctionne bien dès qu’on a un minimum d’expérience pratique. Et le stress reste limité.
+Dès qu’on a un minimum d’expérience pratique, on peut tout à fait développer avec un coding agent. En plus, c’était assez peu stressant.

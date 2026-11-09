@@ -6,7 +6,7 @@ type Props = {
   selectedCount?: number;
   className?: string;
   panelClassName?: string;
-  autoCloseOnSelect?: 'mobile' | 'always';
+  autoCloseOnSelect?: 'mobile';
   children: React.ReactNode | ((actions: { requestCloseIfNeeded: () => void }) => React.ReactNode);
 };
 
@@ -68,7 +68,6 @@ export function FilterDisclosure({ label, count, selectedCount, className, panel
 
   const shouldAutoCloseOnSelect = useCallback(() => {
     if (!autoCloseOnSelect) return false;
-    if (autoCloseOnSelect === 'always') return true;
     if (typeof window === 'undefined') return false;
 
     const viewportWidth = window.visualViewport?.width ?? window.innerWidth;

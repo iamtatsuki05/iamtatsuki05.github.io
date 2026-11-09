@@ -2,11 +2,13 @@
 title: 和 LLM 一起制作这个网站的过程
 summary: 介绍我如何通过 Vibe Coding 制作这个网站。
 headerAlt: Vibe Coding 的示意图
+legacyAnchors:
+  '对生成物的反馈': '对生成结果的反馈'
 ---
 
 ## 前言
 
-我一直想做一个自我介绍页面，但总没有时间开始。最近，通过对话驱动 Claude Code 和 Codex 等工具的 Vibe Coding 很受关注。正好有了时间，于是我用这种方式做了这个网站。
+我一直想做一个自我介绍网站，但总抽不出时间，就一直搁着。最近，通过对话给 Claude Code、Codex 等工具下指令来推进开发的 Vibe Coding 很受关注。正好有了时间，我就试着用这种方式做了这个网站。
 
 ## 制作过程
 
@@ -14,12 +16,12 @@ headerAlt: Vibe Coding 的示意图
 
 - 定义需求
 - 交给 Codex
-- 多次给生成代码反馈
+- 对生成的代码多次提出反馈
 - 自己写自我介绍等文字，再让 AI 润色
 
 ### 需求定义
 
-因为我使用 ChatGPT Plus，所以这次从它开始。我用项目符号告诉 GPT 页面路由和技术栈，然后请它整理成需求文档。
+我在用 ChatGPT Plus，所以这次以它为基础。我把页面路由、技术栈等以列表形式告诉 GPT，然后请它整理成需求文档。
 
 <details>
 <summary>请求内容</summary>
@@ -291,16 +293,16 @@ headerAlt: Vibe Coding 的示意图
 
 ### 交给 Codex
 
-导入 Codex 后，我参考下面的文章做了设置。在此基础上，把需求定义的结果交给它推进开发。
+我安装了 Codex，并参考下面的文章做了设置。然后把需求定义的结果交给它，推进开发。
 
 https://zenn.dev/dely_jp/articles/codex-cli-matome#%E3%81%AA%E3%81%9C%E4%BB%8A%E3%80%81codex-cli%E3%81%8C%E8%A9%B1%E9%A1%8C%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F
 
-### 对生成物的反馈
+### 对生成结果的反馈
 
-我实际运行页面，把在意的点简短指出，让它修改。这样重复了几次。
+我实际运行页面，把觉得不对劲的地方简单指出来，让它修改。这样反复了几次。
 
 ## 感想
 
-几乎没有亲自实现，却在短时间内做出了实用级别的页面。在 ChatGPT Plus 上我一直把 Reasoning Effort 设为 high，一次也没有碰到 rate limit。
+我几乎没有亲自实现，却在短时间内做出了达到实用水平的页面。在 ChatGPT Plus 上我一直把 Reasoning Effort 设为 high，但一次也没有碰到 rate limit。
 
 只要有最低限度的动手经验，用 coding agent 开发就能顺利推进。压力也不大。

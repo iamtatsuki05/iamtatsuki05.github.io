@@ -388,7 +388,7 @@ for (const { label, use } of viewports) {
         }) as typeof window.open;
       });
       await page.goto(localizedPath('en', '/publications/'), { waitUntil: 'domcontentloaded' });
-      await expect(page.locator('.content-reveal-list').first()).toHaveAttribute('data-state', 'open');
+      await expect(page.getByTestId('publication-card').first()).toBeVisible();
     });
 
     test('shows publication list with outbound links', async ({ page }) => {
@@ -549,7 +549,7 @@ for (const { label, use } of viewports) {
 
     test('shows hobby cards and filtered blog links', async ({ page }) => {
       await expect(page.getByRole('heading', { level: 1, name: '🧸 Hobbies' })).toBeVisible();
-      await expect(page.getByRole('heading', { level: 2, name: 'What I am Into Lately' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 2, name: "What I'm Into Lately" })).toBeVisible();
       await expect(page.getByTestId('hobby-card')).toHaveCount(10);
 
       const firstCard = page.getByTestId('hobby-card').first();
@@ -712,7 +712,7 @@ test.describe('Localized page variants', () => {
     const detailPath = await detailLink.getAttribute('href');
     expect(detailPath).toMatch(/^\/fr-FR\/blogs\/[\w-]+\/$/);
     await page.goto(detailPath!);
-    await expect(page.getByText('Cet article a été traduit par IA.')).toBeVisible();
+    await expect(page.getByText('Cet article a été traduit par une IA.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Lire l’original japonais' })).toHaveAttribute(
       'href',
       /^\/blogs\/[\w-]+\/$/,

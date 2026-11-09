@@ -7,7 +7,7 @@ authors: [岡田 龍樹]
 links:
   - { kind: post, url: https://engineering.dena.com/blog/2024/12/intern_report_quickmtg/ }
 tags: [internship, go, slack, google-cloud, workstyle]
-abstract: DeNAでの内定者インターンシップの技術ブログです。
+abstract: DeNAでの内定者インターンシップについて書いた技術ブログ記事です。
 headerImage: https://engineering.dena.com/blog/2024/12/intern_report_quickmtg/cover.png
-headerAlt: ヘッダー
+headerAlt: ヘッダー画像
 ---

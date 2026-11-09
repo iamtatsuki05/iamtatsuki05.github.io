@@ -2,7 +2,7 @@
 title: AI Agent 時代の盆栽 dotfiles
 date: 2026-05-24
 tags: [dotfiles, nix, mise, ai, codex]
-summary: Nix、mise、chezmoi、AI agent 設定を dotfiles に寄せながら、変化の速い開発環境を盆栽のように手入れしていく話です。
+summary: Nix、mise、chezmoi、AI Agent 設定を dotfiles に寄せながら、変化の速い開発環境を盆栽のように手入れしていく話です。
 headerImage: https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=1600&q=80
 headerAlt: 鉢植えの植物
 aiAssisted: true
@@ -18,7 +18,7 @@ dotfiles が好きです。
 
 その感覚は、最近の `dotfiles` の commit にもそのまま出ています。2026-04-25 に chezmoi への移行と Nix 周辺の整理を入れました。それ以降も、Nix、mise、AI Agent 設定、skill、eval、hook まわりを続けて触っています。
 
-これはもう、設定ファイル置き場というより生活基盤です。複数台の PC と複数の agent を触っているうちに、手を入れ続けないとすぐ荒れるなと思うようになりました。最近の手入れを、盆栽になぞらえて書いてみます。
+dotfiles はもう、設定ファイル置き場というより生活基盤です。複数台の PC と複数の agent を触っているうちに、手を入れ続けないとすぐ荒れるなと思うようになりました。最近の手入れを、盆栽になぞらえて書いてみます。
 
 ## 問題設定
 
@@ -52,7 +52,7 @@ macOS と Linux を完全に同じにする必要はありません。むしろ�
 
 AI CLI agent 関連のファイルは `dotfiles/.agent/` に集めています。共通 prompt の `AGENTS.md`、agent 別設定の `apps/`、共通 hook の `hooks/`、Codex 互換 agent と Waza で使う `skills/`、skill ごとの `evals/` などです。
 
-AI Agent を使うとき、モデル性能やプロンプトの書き方に目が行きがちです。もちろんそれも重要です。しかし、実際に何度も使っていると、もっと地味なところで差が出ます。ある agent には最近の注意書きが入っているが、別の agent は古いまま。ある PC には必要な skill があるが、別の PC では使えない。hook の挙動が tool ごとに違い、同じつもりの依頼でも作業ログや検証の残り方が変わる。
+AI Agent を使うとき、モデル性能や prompt の書き方に目が行きがちです。もちろんそれも重要です。しかし、実際に何度も使っていると、もっと地味なところで差が出ます。ある agent には最近の注意書きが入っているが、別の agent は古いまま。ある PC には必要な skill があるが、別の PC では使えない。hook の挙動が tool ごとに違い、同じつもりの依頼でも作業ログや検証の残り方が変わる。
 
 人間が見ると些細な差です。しかし agent にとっては、読める前提が違うということです。前提が違えば、出てくる作業も違います。
 
@@ -68,11 +68,11 @@ mise に寄せると、どの tool をどの release line で使うかをファ�
 
 更新も分けています。`mise run nix-update` は Nix 管理 tool の更新、`mise run mise-update` は mise 管理 tool の更新、`mise run package-update` は Nix / mise をまとめた更新です。`node@22` のように major line 自体を上げるときは、先に `config/mise/config.toml` を明示的に変えることにしています。
 
-この距離感がちょうどよいと思っています。更新を止めればすぐ古くなる一方で、何も考えずに更新すると、昨日まで動いていた前提が変わります。mise に書いておけば、その変化を少なくとも diff として見られます。
+更新との付き合い方は、このくらいがちょうどよいと思っています。更新を止めればすぐ古くなる一方で、何も考えずに更新すると、昨日まで動いていた前提が変わります。mise に書いておけば、その変化を少なくとも diff として見られます。
 
 ## 盆栽としての dotfiles
 
-結局、dotfiles は盆栽に近いと思っています。盆栽は一度形を作ったら終わりではありません。伸びたところを切ったり、鉢を替えたり、少しずつ手を入れ続けます。
+結局、dotfiles は盆栽に近いと思っています。盆栽は、一度形を作ったあとも、伸びたところを切ったり、鉢を替えたりして、少しずつ手を入れ続けます。
 
 新しい tool を足すだけではすぐに混み合います。使わなくなった GUI アプリは package list から外す。Homebrew から Nix に移せるものは移す。agent prompt を変えたら sync と test も見る。外部 skill を入れるなら、`upstreams.json` に由来と固定 commit を残し、review してから更新する。
 
@@ -82,7 +82,7 @@ mise に寄せると、どの tool をどの release line で使うかをファ�
 
 ## おわりに
 
-AI Agent に任せる作業が増えるほど、人間が直接書くコードは減るかもしれません。しかし、環境をどう作るかの重要性は下がりません。むしろ上がります。
+AI Agent に任せる作業が増えるほど、人間が直接書くコードは減るかもしれません。しかし、環境をどう作るかの重要性は、むしろ上がります。
 
 Agent が読む prompt はどこから来るのか。skill はどの revision なのか。hook は別の PC でも同じように動くのか。CLI tool はどの単位で更新され、必要なら戻せるのか。Nix、mise、chezmoi の責務はどこで分けるのか。
 
