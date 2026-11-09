@@ -20,7 +20,7 @@
     box-shadow: 0 12px 32px -18px rgba(192, 132, 252, 0.32), 0 10px 24px -20px rgba(252, 211, 77, 0.32);
   }
 
-  .card:is(a, :has(a[href])):hover {
+  .card:where(a, :has(a[href])):hover {
     transform: translate3d(0, -2px, 0);
     border-color: rgba(196, 181, 253, 0.88);
     box-shadow: 0 20px 38px -24px rgba(192, 132, 252, 0.34), 0 14px 28px -22px rgba(252, 211, 77, 0.32);
@@ -97,7 +97,7 @@
       0 10px 20px -18px rgba(252, 211, 77, 0.22);
   }
 
-  .dark .card:is(a, :has(a[href])):hover {
+  .dark .card:where(a, :has(a[href])):hover {
     border-color: rgba(252, 211, 77, 0.28);
     box-shadow: 0 20px 38px -24px rgba(0, 0, 0, 0.72), 0 14px 28px -22px rgba(252, 211, 77, 0.18);
   }

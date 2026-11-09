@@ -77,6 +77,19 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
   }, [isRendered]);
 
   useEffect(() => {
+    if (!isRendered || typeof window.matchMedia !== 'function') return;
+
+    // The overlay is hidden from 1024px up, so an open menu would leave the body scroll lock behind.
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) onClose();
+    };
+    closeOnDesktop();
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, [isRendered, onClose]);
+
+  useEffect(() => {
     if (!isRendered) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
