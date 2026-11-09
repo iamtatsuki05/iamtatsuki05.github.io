@@ -295,6 +295,33 @@
     box-shadow: 0 22px 34px -28px rgba(0, 0, 0, 0.64), 0 14px 24px -22px rgba(252, 211, 77, 0.16);
   }
 
+  .nav-link--active {
+    position: relative;
+  }
+
+  .nav-link--active::after {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.18rem;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.72), rgba(251, 191, 36, 0.62));
+    opacity: 0.84;
+    pointer-events: none;
+  }
+
+  .mobile-menu__nav nav > a.nav-link--active::after {
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.48rem;
+  }
+
+  .dark .nav-link--active::after {
+    background: linear-gradient(90deg, rgba(252, 211, 77, 0.62), rgba(192, 132, 252, 0.62));
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .ui-section-badge {
       animation: none;

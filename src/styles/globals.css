@@ -133,15 +133,15 @@ a:hover {
 }
 .code-copy-btn.copied { background: #10b981; color: white; border-color: transparent; }
 .focus-ring { @apply focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand; }
-/* typography プラグイン自身の要素スタイルと同じく、.not-prose の中には効かせない */
-.prose h2:not(:where(.not-prose *)) { @apply mt-10 border-b border-gray-200 dark:border-gray-800 pb-1; }
-.prose h3:not(:where(.not-prose *)) { @apply mt-8; }
+/* typography プラグイン自身の要素スタイルと同じく、.not-prose とその中には効かせない */
+.prose h2:not(:where(.not-prose, .not-prose *)) { @apply mt-10 border-b border-gray-200 dark:border-gray-800 pb-1; }
+.prose h3:not(:where(.not-prose, .not-prose *)) { @apply mt-8; }
 .prose { --heading-scroll-margin: 7rem; }
 /* 見出しの中に置いた旧アンカーも、見出し本体と同じ位置に着地させる */
 .prose :is(h2, h3), .prose :is(h2, h3) > .legacy-anchor { scroll-margin-top: var(--heading-scroll-margin); }
-.prose ul:not(:where(.not-prose *)) { @apply list-disc pl-6; }
-.prose ol:not(:where(.not-prose *)) { @apply list-decimal pl-6; }
-.prose a:not(:where(.not-prose *)) { @apply underline underline-offset-2; }
+.prose ul:not(:where(.not-prose, .not-prose *)) { @apply list-disc pl-6; }
+.prose ol:not(:where(.not-prose, .not-prose *)) { @apply list-decimal pl-6; }
+.prose a:not(:where(.not-prose, .not-prose *)) { @apply underline underline-offset-2; }
 
 .prose details { @apply my-4 rounded-md border border-gray-200 dark:border-gray-800 bg-white/60 dark:bg-gray-900/60; }
 .prose details > summary {
