@@ -39,7 +39,7 @@ const samplePublications: Publication[] = [
     publishedAt: '2024-05-01',
     authors: ['Tatsuki Okada', 'Research Partner'],
     links: [
-      { kind: 'pdf', url: 'https://example.com/paper.pdf' },
+      { kind: 'paper', url: 'https://example.com/paper.pdf' },
       { kind: 'code', url: 'https://github.com/iamtatsuki05/sample' },
     ],
     tags: ['NLP', 'Multimodal'],

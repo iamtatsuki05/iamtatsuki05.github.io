@@ -30,4 +30,12 @@ describe('Frontmatter schemas', () => {
     });
     expect(parsed.links[0].kind).toBe('paper');
   });
+  it('rejects the retired pdf link kind', () => {
+    const result = PublicationFrontmatter.safeParse({
+      title: 'p',
+      type: 'paper',
+      links: [{ kind: 'pdf', url: 'https://example.com/paper.pdf' }],
+    });
+    expect(result.success).toBe(false);
+  });
 });
