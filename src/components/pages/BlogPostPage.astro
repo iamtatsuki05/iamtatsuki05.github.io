@@ -111,8 +111,8 @@ function toIsoString(input?: string | null) {
       <div set:html={html || ''} />
       <RelatedPosts posts={allPosts} currentSlug={slug} locale={locale} {...(routeLocale ? { hrefLocale: locale } : {})} />
       <BlogAdjacentNavigationClient posts={allPosts} currentSlug={slug} {...navigationProps} client:load />
-      <section class="not-prose mt-12 border-t border-gray-200 pt-8 dark:border-gray-700" aria-labelledby="blog-comments-heading">
-        <h2 id="blog-comments-heading" class="text-xl font-semibold">{blogCommentsHeading[locale]}</h2>
+      <section class="not-prose mt-12 border-t border-gray-200 pt-8 dark:border-gray-700">
+        <h2 class="text-xl font-semibold">{blogCommentsHeading[locale]}</h2>
         <GiscusComments term={slug} locale={locale} client:visible />
       </section>
       <CodeCopyClient locale={locale} client:load />

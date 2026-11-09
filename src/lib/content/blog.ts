@@ -34,6 +34,10 @@ export type BlogPost = {
   originalPath?: string;
 };
 
+function isDraft(data: unknown): boolean {
+  return typeof data === 'object' && data !== null && 'draft' in data && data.draft === true;
+}
+
 function blogDirForLocale(locale: Locale) {
   return locale === 'ja' ? BLOG_DIR : path.join(GENERATED_BLOG_DIR, locale);
 }
@@ -59,8 +63,8 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
     cacheKey,
     parse: async (full, filename) => {
       const { data, raw } = await parseMarkdownFile(full);
+      if (isDraft(data) && !includeDrafts) return null;
       const fm = parseFrontmatter(BlogFrontmatter, data, full);
-      if (fm.draft && !includeDrafts) return null;
       return enrichPost({
         slug: slugFromFilename(filename),
         title: fm.title,
@@ -91,8 +95,8 @@ export async function getPostBySlug(slug: string, locale: Locale = 'ja'): Promis
   return cached(cacheKey, async () => {
     const full = path.join(blogDirForLocale(locale), `${slug}.md`);
     const { data, contentHtml, headings, raw } = await parseMarkdownFile(full);
+    if (isDraft(data) && !includeDrafts) return null;
     const fm = parseFrontmatter(BlogFrontmatter, data, full);
-    if (fm.draft && !includeDrafts) return null;
     return enrichPost({
       slug,
       title: fm.title,
