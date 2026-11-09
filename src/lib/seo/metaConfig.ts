@@ -64,7 +64,7 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
     },
     en: {
       metadataTitle: 'Links',
-      metadataDescription: "A curated list of Tatsuki Okada social accounts, projects, and recommended resources.",
+      metadataDescription: "A list of links to Tatsuki Okada's social accounts, projects, and related resources.",
       path: '/en-US/links/',
     },
     zh: {
@@ -74,20 +74,20 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
     },
     fr: {
       metadataTitle: 'Liens',
-      metadataDescription: 'Une sélection de comptes sociaux, projets et ressources liés à Tatsuki Okada.',
+      metadataDescription: 'Une sélection de liens vers les réseaux sociaux, les projets et d’autres ressources liées à Tatsuki Okada.',
       path: '/fr-FR/links/',
     },
   },
   publications: {
     ja: {
       metadataTitle: '公開物',
-      metadataDescription: '研究論文や記事、登壇資料など、岡田龍樹が携わった公開物の一覧です。',
+      metadataDescription: '研究論文や記事、登壇資料など、岡田 龍樹が携わった公開物の一覧です。',
       path: '/ja-JP/publications/',
     },
     en: {
       metadataTitle: 'Publications',
       metadataDescription:
-        'Academic publications, articles, and talks by Tatsuki Okada in the field of NLP and machine learning.',
+        'Academic publications, articles, and talks by Tatsuki Okada on NLP and machine learning.',
       path: '/en-US/publications/',
     },
     zh: {
@@ -98,20 +98,20 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
     fr: {
       metadataTitle: 'Publications',
       metadataDescription:
-        'Publications académiques, articles et présentations de Tatsuki Okada dans le NLP et le machine learning.',
+        'Publications académiques, articles et présentations de Tatsuki Okada en NLP et en machine learning.',
       path: '/fr-FR/publications/',
     },
   },
   hobbies: {
     ja: {
       metadataTitle: '趣味',
-      metadataDescription: 'ガジェット、NLP、チャイ、ピアノなど、岡田龍樹の趣味と最近ハマっていることをまとめています。',
+      metadataDescription: 'ガジェット、NLP、チャイ、ピアノなど、岡田 龍樹の趣味と最近ハマっていることをまとめています。',
       path: '/ja-JP/hobbies/',
     },
     en: {
       metadataTitle: 'Hobbies',
       metadataDescription:
-        'A collection of Tatsuki Okada hobbies and current obsessions, from gadgets and NLP to chai, piano, and visual works.',
+        "Tatsuki Okada's hobbies and current obsessions, including gadgets, NLP, chai, piano, and visual works.",
       path: '/en-US/hobbies/',
     },
     zh: {
@@ -122,7 +122,7 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
     fr: {
       metadataTitle: 'Centres d’intérêt',
       metadataDescription:
-        'Les hobbies et sujets du moment de Tatsuki Okada, des gadgets et du NLP au chai, au piano et aux œuvres visuelles.',
+        'Les centres d’intérêt de Tatsuki Okada et ce qui le passionne en ce moment : gadgets, NLP, chai, piano, œuvres visuelles et plus encore.',
       path: '/fr-FR/hobbies/',
     },
   },

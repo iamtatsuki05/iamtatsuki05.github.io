@@ -13,7 +13,7 @@ export const blogTranslationNotice: Record<Exclude<Locale, 'ja'>, {
     originalLinkLabel: '阅读日语原文',
   },
   fr: {
-    label: 'Cet article a été traduit par IA.',
+    label: 'Cet article a été traduit par une IA.',
     originalLinkLabel: 'Lire l’original japonais',
   },
 };

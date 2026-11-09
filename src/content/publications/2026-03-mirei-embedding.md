@@ -9,7 +9,7 @@ links:
   - { kind: model, url: https://huggingface.co/collections/iamtatsuki05/mirei }
   - { kind: code, url: https://github.com/iamtatsuki05/MIREI/tree/main }
 tags: [LLM, sentence embedding, embedding, LLM2Vec, research]
-abstract: LLMを用いた文埋め込みモデルの構築手法の比較評価を行った研究です。
+abstract: LLMを用いた文埋め込みモデルの構築手法を比較評価した研究です。
 headerImage: https://huggingface.co/iamtatsuki05/Sentence-ModernBERT-JP-0.5B/resolve/main/assets/concept.jpg
 headerAlt: 概念図
 ---

@@ -171,6 +171,6 @@ const adjacentCopy: Record<
     noPrevious: 'Aucun article précédent',
     noNext: 'Aucun article suivant',
     swipePrevious: 'Glisser vers l’article précédent',
-    swipeNext: 'Glisser vers l article suivant',
+    swipeNext: 'Glisser vers l’article suivant',
   },
 };

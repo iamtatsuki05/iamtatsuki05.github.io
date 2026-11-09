@@ -14,25 +14,25 @@ legacyAnchors:
 
 このサイトを Next.js から Astro に移しました。
 
-Next.js が嫌になったわけではありません。困っていたというほどでもありません。ただ、このサイトの実態を考えると、少し大げさになっていました。ブログ、リンク集、公開物一覧、言語切り替え、ダークモード。やっていることはほぼ静的サイトです。それなのに、App Router、静的 export、画像最適化、Cloudflare Pages の設定を抱えていました。もちろん動いてはいましたが、サイトの規模に対して持ち物が多い感じがありました。
+Next.js が嫌になったわけではありません。困っていたというほどでもありません。ただ、このサイトの実態を考えると、構成が少し大げさになっていました。ブログ、リンク集、公開物一覧、言語切り替え、ダークモード。やっていることはほぼ静的サイトです。それなのに、App Router、静的 export、画像最適化、Cloudflare Pages の設定を抱えていました。もちろん動いてはいましたが、サイトの規模に対して持ち物が多い感じがありました。
 
 今回は、自分で少しずつ書き換えるのをやめて、Codex にほぼ任せました。実装だけでなく、移行前後の計測、テスト、失敗した箇所の修正、reviewer の指摘対応まで、一連の作業として渡しています。
 
-AI に丸投げした、というと少し雑です。実際にやったのは、壊してはいけないものを細かく渡して、最後まで走らせることでした。
+AI に丸投げした、というと少し雑です。実際にやったのは、壊してはいけないものを細かく伝えて、最後まで走らせることでした。
 
 ## 何を変えたかったのか
 
 移行の目的は、流行りの framework に乗り換えることではありません。このサイトは、ほとんどのページがビルド時に決まります。ログインもなければ、サーバ側で動的に返す必要もほぼありません。React component はありますが、全部が常に client-side で動く必要もありません。だとすれば、静的サイトを静的サイトとして扱いやすい形にした方が楽です。
 
-Astro にすると、ページは `src/pages/**` に置き、共通 layout は Astro 側で持てます。必要な React component だけ island として残せます。自分のサイトにはこの分け方が合っていました。
+Astro では、ページを `src/pages/**` に置き、共通 layout も Astro 側で持てます。client 側で動く必要がある React component だけを island として残せます。自分のサイトにはこの分け方が合っていました。
 
 ただし、framework migration は見た目だけ合っていればよいわけではありません。URL、SEO、OGP、sitemap、RSS、Cloudflare Pages、アクセシビリティ、言語切り替え、theme toggle など、見落としやすいものが多いです。
 
 ## Codex への頼み方
 
-Codex には、単に「Astro に移行して」とは頼みませんでした。既存の見た目、URL、SEO、アクセシビリティ、Cloudflare Pages のデプロイ経路を維持すること。移行前後で build time、出力サイズ、Lighthouse の値を比較すること。lint、型チェック、Vitest、E2E、preview の smoke check まで通すこと。最後に別の read-only reviewer に見てもらうこと。このあたりをまとめて渡しました。
+Codex には、単に「Astro に移行して」とは頼まず、次のような条件をまとめて渡しました。既存の見た目、URL、SEO、アクセシビリティ、Cloudflare Pages のデプロイ経路を維持すること。移行前後で build time、出力サイズ、Lighthouse の値を比較すること。lint、型チェック、Vitest、E2E、preview の smoke check まで通すこと。最後に別の read-only reviewer に見てもらうこと。
 
-AI に任せるとき、実装方針だけ渡すと危ないです。特に移行作業では、画面が表示されているだけでは安心できません。sitemap が変だったり、OGP meta が落ちていたり、Cloudflare の cache header が古い path のままだったりします。だから、実装の細かい方法よりも、完了条件の方を先に縛りました。
+AI に任せるとき、実装方針だけ渡すと危ないです。特に移行作業では、画面が表示されているだけでは安心できません。sitemap が変だったり、OGP meta が抜けていたり、Cloudflare の cache header が古い path のままだったりします。だから、実装の細かい方法よりも、完了条件の方を先に固めました。
 
 ## まず baseline を取る
 
@@ -46,7 +46,7 @@ Next.js App Router の `src/app/**` はなくなり、Astro の `src/pages/**` �
 
 `next/link`、`next/image`、`next/navigation` の代わりに、小さな local wrapper を置きました。`next-themes` や `nuqs` も外して、このサイトで必要な分だけ local 実装にしています。RSS、sitemap、robots、metadata、OGP、JSON-LD も Astro 側で生成するようにしました。Cloudflare Pages の workflow も Astro build 前提に変えています。
 
-どれも派手な変更ではありません。依存していた framework の前提を一つずつ外す作業としては、こういう地味な置き換えが中心でした。
+どれも地味な置き換えです。依存していた framework の前提を一つずつ外す作業は、こういう置き換えが中心でした。
 
 ## 詰まったところ
 
@@ -58,11 +58,11 @@ Codex は E2E の failure log を読みながら直していました。Header �
 
 ## reviewer が拾ったもの
 
-一通り動いたあと、別の read-only reviewer に差分を見てもらいました。sitemap には、実際には存在しない publication detail URL が残っていました。blog article の `article:published_time` などの OGP meta も落ちていました。Cloudflare の headers も `/_next/static/*` のままで、Astro の `/_astro/*` を指していませんでした。
+一通り動いたあと、別の read-only reviewer に差分を見てもらいました。sitemap には、実際には存在しない publication detail URL が残っていました。blog article の `article:published_time` などの OGP meta も抜けていました。Cloudflare の headers も `/_next/static/*` のままで、Astro の `/_astro/*` を指していませんでした。
 
 どれも、普通にページを触っているだけでは気づきにくいです。画面は表示されます。リンクも押せます。でも SEO や deploy の細部は壊れています。
 
-指摘後に、sitemap、article meta、cache header、base path 対応を直しました。最後は生成された HTML を直接見て、meta tag が本当に出ているところまで確認しています。この review は入れて良かったです。AI が書いたものを AI が見直しても、同じ前提のまま見落とすことがあります。別の視点を挟むだけで、拾える種類が変わります。
+指摘を受けて、sitemap、article meta、cache header、base path の扱いを直しました。最後は生成された HTML を直接見て、meta tag が本当に出ているところまで確認しています。この review は入れて良かったです。AI が書いたものを AI が見直しても、同じ前提のまま見落とすことがあります。別の視点を挟むだけで、見つかる問題の種類が変わります。
 
 ## 移行前後の数字
 
@@ -84,7 +84,7 @@ Codex は E2E の failure log を読みながら直していました。Header �
 
 build time は 8 分の 1 になりました。出力サイズも半分です。
 
-Lighthouse は desktop だと全対象 route で改善しました。mobile もほとんど改善しています。blog detail だけ performance score が `72 -> 71` と 1 点下がりましたが、LCP は `11040ms -> 8836ms`、TBT は `65ms -> 28ms` に改善していました。この規模の個人サイトとしては、十分な結果です。
+Lighthouse は desktop だと全対象 route で改善しました。mobile もほとんどの route で改善しています。blog detail だけ performance score が `72 -> 71` と 1 点下がりましたが、LCP は `11040ms -> 8836ms`、TBT は `65ms -> 28ms` に改善していました。この規模の個人サイトとしては、十分な結果です。
 
 ## おわりに
 

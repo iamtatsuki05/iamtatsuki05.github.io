@@ -71,9 +71,9 @@ const publicationTypeLabels: Record<Locale, Record<Item['type'], string>> = {
   fr: {
     paper: '📄 Articles scientifiques',
     article: '📝 Articles techniques',
-    talk: '🎤 Presentations',
+    talk: '🎤 Présentations',
     slide: '📑 Slides',
-    media: '📰 Medias',
+    media: '📰 Médias',
     app: '📱 Apps',
   },
 };
