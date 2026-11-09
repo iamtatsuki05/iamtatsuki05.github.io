@@ -22,4 +22,20 @@ describe('Frontmatter schemas', () => {
     expect(parsed.type).toBe('paper');
     expect(typeof parsed.publishedAt).toBe('string');
   });
+  it('accepts a paper landing-page link', () => {
+    const parsed = PublicationFrontmatter.parse({
+      title: 'p',
+      type: 'paper',
+      links: [{ kind: 'paper', url: 'https://aclanthology.org/2026.aacl-demo.9/' }],
+    });
+    expect(parsed.links[0].kind).toBe('paper');
+  });
+  it('rejects the retired pdf link kind', () => {
+    const result = PublicationFrontmatter.safeParse({
+      title: 'p',
+      type: 'paper',
+      links: [{ kind: 'pdf', url: 'https://example.com/paper.pdf' }],
+    });
+    expect(result.success).toBe(false);
+  });
 });

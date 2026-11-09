@@ -10,7 +10,7 @@ const items = [
     tags: ['llm'],
     publishedAt: '2025-01-01',
     venue: 'Conf',
-    links: [{ kind: 'pdf', url: 'https://example.com/paper.pdf' }],
+    links: [{ kind: 'paper', url: 'https://example.com/paper.pdf' }],
     headerImage: 'https://example.com/paper.png',
   },
   {
@@ -71,7 +71,7 @@ describe('PublicationsClient', () => {
     await user.click(titleLink);
     expect(openSpy).toHaveBeenCalledTimes(1);
 
-    await user.click(getByRole('link', { name: 'pdf' }));
+    await user.click(getByRole('link', { name: 'paper' }));
     expect(openSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -257,7 +257,7 @@ describe('PublicationsClient', () => {
         tags: ['llm'],
         publishedAt: '2024-01-01',
         venue: 'Conf',
-        links: [{ kind: 'pdf', url: 'https://example.com/older.pdf' }],
+        links: [{ kind: 'paper', url: 'https://example.com/older.pdf' }],
       },
       {
         slug: 'newer-paper',
@@ -266,7 +266,7 @@ describe('PublicationsClient', () => {
         tags: ['llm'],
         publishedAt: '2025-01-01',
         venue: 'Conf',
-        links: [{ kind: 'pdf', url: 'https://example.com/newer.pdf' }],
+        links: [{ kind: 'paper', url: 'https://example.com/newer.pdf' }],
       },
     ];
 
@@ -296,7 +296,7 @@ describe('PublicationsClient', () => {
         tags: ['llm'],
         publishedAt: '2024-01-01',
         venue: 'Notes',
-        links: [{ kind: 'pdf', url: 'https://example.com/older.pdf' }],
+        links: [{ kind: 'paper', url: 'https://example.com/older.pdf' }],
       },
       {
         slug: 'newer-secondary',
@@ -305,7 +305,7 @@ describe('PublicationsClient', () => {
         tags: ['encoder'],
         publishedAt: '2025-01-01',
         venue: 'Notes',
-        links: [{ kind: 'pdf', url: 'https://example.com/newer.pdf' }],
+        links: [{ kind: 'paper', url: 'https://example.com/newer.pdf' }],
       },
     ];
 

@@ -35,7 +35,7 @@ const publications: Publication[] = [
     title: 'Paper 1',
     tags: [],
     type: 'paper',
-    links: [{ kind: 'pdf', url: 'https://example.com' }],
+    links: [{ kind: 'paper', url: 'https://example.com' }],
     publishedAt: '2024-01-01',
   },
 ];
