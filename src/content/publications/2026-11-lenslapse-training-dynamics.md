@@ -3,6 +3,8 @@ title: 'LensLapse: In-Browser Logit Lens for Interactive Exploration of Language
 type: paper
 publishedAt: 2026-11
 venue: AACL-IJCNLP 2026 System Demonstrations
+region: international
+refereed: true
 authors: [Tatsuki Okada, Yusuke Sakai, Taro Watanabe]
 links:
   - { kind: paper, url: https://aclanthology.org/2026.aacl-demo.9/ }

@@ -1,5 +1,4 @@
-import React, { useCallback, useMemo, type MouseEvent } from 'react';
-import Image from '@/components/compat/Image';
+import React, { useCallback, useMemo } from 'react';
 import { LOCATION_CHANGE_EVENT, notifyLocationChange } from '@/lib/compat/navigation';
 import { useSearchFilters } from '@/hooks/useSearchFilters';
 import { YearSelect } from '@/components/filters/YearSelect';
@@ -22,22 +21,13 @@ import {
 } from '@/components/filters/filterTexts';
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
-import { SearchHighlight } from '@/components/search/SearchHighlight';
+import { PublicationCard, type PublicationCardItem } from '@/components/publications/PublicationCard';
 import { buildOrderedFacetValues } from '@/lib/search/filterMetadata';
 import { type Locale, localeToRouteLocale } from '@/lib/i18n';
 
-type Item = {
-  slug: string;
-  title: string;
+type Item = PublicationCardItem & {
   type: 'paper' | 'article' | 'talk' | 'slide' | 'media' | 'app';
   tags: string[];
-  publishedAt?: string;
-  venue?: string;
-  publisher?: string;
-  links: { kind: string; url: string }[];
-  headerImage?: string;
-  headerAlt?: string;
-  abstract?: string;
 };
 
 const publicationTypeOrder: Item['type'][] = ['paper', 'app', 'article', 'talk', 'slide', 'media'];
@@ -249,8 +239,8 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
     return actions;
   }, [availableTypes.length, locale, q, selectedTypeSet.size, setQ, setSelectedTypes, setTagSet, setYearSet, t, tagSet.size, yearSet.size]);
 
-  const openInNewTab = (url?: string) => {
-    if (!url || typeof window === 'undefined') return;
+  const openInNewTab = (url: string) => {
+    if (typeof window === 'undefined') return;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -335,93 +325,15 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
           <SectionShell key={type} tone={tone}>
             <SectionHeader title={typeLabels[type]} tone={tone} />
             <ul className="space-y-3">
-              {arr.map((i, index) => {
-                const primaryLink = i.links[0]?.url;
-                const isFirstImage = index === 0 && Boolean(i.headerImage);
-                // マウス操作の利便のためカード全域クリックを維持する。キーボードと支援技術には
-                // タイトルの実リンクがあるため、li には role を与えずクリックのみ委譲する。
-                const cardClickProps = primaryLink
-                  ? {
-                      onClick: (event: MouseEvent<HTMLLIElement>) => {
-                        if ((event.target as HTMLElement).closest('a')) return;
-                        openInNewTab(primaryLink);
-                      },
-                    }
-                  : {};
-                return (
-                  <li
-                    key={i.slug}
-                    data-testid="publication-card"
-                    className={`card p-3 gap-3 items-start sm:flex ${primaryLink ? 'pressable-card cursor-pointer' : ''}`}
-                    {...cardClickProps}
-                  >
-                    {i.headerImage ? (
-                      <div
-                        className="relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
-                        data-testid="publication-image"
-                      >
-                        <Image
-                          src={i.headerImage}
-                          alt={i.headerAlt ?? ''}
-                          fill
-                          className="object-contain"
-                          sizes="120px"
-                          loading={isFirstImage ? 'eager' : 'lazy'}
-                          priority={isFirstImage}
-                        />
-                      </div>
-                    ) : null}
-                    <div className="flex-1 min-w-0 mt-2 sm:mt-0">
-                      <h3 className="text-base font-semibold">
-                        {primaryLink ? (
-                          <a
-                            href={primaryLink}
-                            target="_blank"
-                            rel="noreferrer"
-                            data-testid="publication-card-link"
-                            className="underline-offset-2 hover:underline"
-                          >
-                            <SearchHighlight text={i.title} query={q} />
-                          </a>
-                        ) : (
-                          <SearchHighlight text={i.title} query={q} />
-                        )}
-                      </h3>
-                      <p className="text-xs opacity-70">
-                        {(i.publishedAt || '').slice(0, 10)} ・{' '}
-                        <SearchHighlight text={i.venue || i.publisher || ''} query={q} />
-                      </p>
-                      {i.abstract ? (
-                        <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                          <SearchHighlight text={i.abstract} query={q} />
-                        </p>
-                      ) : null}
-                      {i.tags?.length ? (
-                        <div className="flex flex-wrap gap-2 mt-1 text-xs opacity-70">
-                          {i.tags.map((t) => (
-                            <span key={t} className="px-2 py-0.5 rounded-sm bg-gray-100 dark:bg-gray-800">
-                              #<SearchHighlight text={t} query={q} />
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                      <div className="-mx-1.5 mt-1 flex flex-wrap text-sm">
-                        {i.links.map((l) => (
-                          <a
-                            key={l.url}
-                            href={l.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex min-h-6 items-center px-1.5 py-1 underline"
-                          >
-                            {l.kind}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
+              {arr.map((i, index) => (
+                <PublicationCard
+                  key={i.slug}
+                  item={i}
+                  query={q}
+                  eagerImage={index === 0 && Boolean(i.headerImage)}
+                  onOpen={openInNewTab}
+                />
+              ))}
             </ul>
           </SectionShell>
         );

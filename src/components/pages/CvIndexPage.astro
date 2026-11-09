@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { CvPage } from '@/components/pages/CvPage';
+import { getAllPublications } from '@/lib/content/publication';
+import { getCvData } from '@/lib/data/cv';
+import { dictionaries, resolveLocale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/routing';
+import { absoluteUrl, buildBreadcrumbJsonLd, buildLocalizedMetadata } from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
+import { htmlLangFromLocale } from '@/lib/astro/metadata';
+
+type Props = {
+  routeLocale?: string;
+};
+
+const { routeLocale } = Astro.props;
+const locale = routeLocale ? resolveLocale(routeLocale) : 'ja';
+const dict = dictionaries[locale];
+const [cv, publications] = await Promise.all([getCvData(), getAllPublications()]);
+const metadata = buildLocalizedMetadata(routeLocale ?? 'ja', pageMeta.cv);
+const pagePath = routeLocale ? localizedPath('/cv/', locale) : '/cv/';
+const homePath = routeLocale ? localizedPath('/', locale) : '/';
+const jsonLd = [
+  buildBreadcrumbJsonLd({
+    items: [
+      { name: 'Home', url: absoluteUrl(homePath) },
+      { name: 'CV', url: absoluteUrl(pagePath) },
+    ],
+  }),
+];
+---
+
+<BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
+  <CvPage locale={locale} cv={cv} publications={publications} alias={dict.alias} affiliation={dict.affiliation} />
+</BaseLayout>

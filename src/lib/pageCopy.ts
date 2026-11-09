@@ -1,3 +1,4 @@
+import type { PaperGroupKey } from '@/lib/data/cv';
 import type { Locale } from '@/lib/i18n';
 import { pageMeta } from '@/lib/seo/metaConfig';
 
@@ -152,5 +153,106 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     currentFocusLabel: 'Pourquoi cela m’intéresse',
     emptyStateLabel: 'Les articles associés arrivent bientôt',
     ctaLabel: 'Voir les articles',
+  },
+};
+
+export type CvPageCopy = PageCopy<{
+  sections: {
+    education: string;
+    experience: string;
+    publications: string;
+    others: string;
+    software: string;
+    grants: string;
+    awards: string;
+  };
+  paperGroups: Record<PaperGroupKey, string>;
+  present: string;
+}>;
+
+export const cvPageCopy: Record<Locale, CvPageCopy> = {
+  ja: {
+    ...pageMeta.cv.ja,
+    heading: '📄 CV',
+    breadcrumb: '🏠 Home / 📄 CV',
+    sections: {
+      education: '🎓 学歴',
+      experience: '💼 職歴',
+      publications: '📚 論文',
+      others: '📝 記事・その他',
+      software: '🛠 ソフトウェア',
+      grants: '💰 奨学金・助成',
+      awards: '🏆 受賞',
+    },
+    paperGroups: {
+      'international-refereed': '国際会議（査読あり）',
+      'international-nonrefereed': '国際会議（査読なし）',
+      'domestic-refereed': '国内会議（査読あり）',
+      'domestic-nonrefereed': '国内会議（査読なし）',
+    },
+    present: '現在',
+  },
+  en: {
+    ...pageMeta.cv.en,
+    heading: '📄 CV',
+    breadcrumb: '🏠 Home / 📄 CV',
+    sections: {
+      education: '🎓 Education',
+      experience: '💼 Work Experience',
+      publications: '📚 Publications',
+      others: '📝 Articles and Other Works',
+      software: '🛠 Software',
+      grants: '💰 Scholarships and Grants',
+      awards: '🏆 Awards',
+    },
+    paperGroups: {
+      'international-refereed': 'International Conferences (Refereed)',
+      'international-nonrefereed': 'International Conferences (Non-refereed)',
+      'domestic-refereed': 'Domestic Conferences in Japan (Refereed)',
+      'domestic-nonrefereed': 'Domestic Conferences in Japan (Non-refereed)',
+    },
+    present: 'Present',
+  },
+  zh: {
+    ...pageMeta.cv.zh,
+    heading: '📄 简历',
+    breadcrumb: '🏠 首页 / 📄 简历',
+    sections: {
+      education: '🎓 教育经历',
+      experience: '💼 工作经历',
+      publications: '📚 论文',
+      others: '📝 文章及其他',
+      software: '🛠 软件',
+      grants: '💰 奖学金与资助',
+      awards: '🏆 获奖',
+    },
+    paperGroups: {
+      'international-refereed': '国际会议（经同行评审）',
+      'international-nonrefereed': '国际会议（未经同行评审）',
+      'domestic-refereed': '日本国内会议（经同行评审）',
+      'domestic-nonrefereed': '日本国内会议（未经同行评审）',
+    },
+    present: '至今',
+  },
+  fr: {
+    ...pageMeta.cv.fr,
+    heading: '📄 CV',
+    breadcrumb: '🏠 Accueil / 📄 CV',
+    sections: {
+      education: '🎓 Formation',
+      experience: '💼 Expérience professionnelle',
+      publications: '📚 Publications',
+      others: '📝 Articles et autres travaux',
+      software: '🛠 Logiciels',
+      grants: '💰 Bourses et financements',
+      awards: '🏆 Distinctions',
+    },
+    paperGroups: {
+      'international-refereed': 'Conférences internationales (avec comité de lecture)',
+      'international-nonrefereed': 'Conférences internationales (sans comité de lecture)',
+      'domestic-refereed': 'Conférences au Japon (avec comité de lecture)',
+      'domestic-nonrefereed': 'Conférences au Japon (sans comité de lecture)',
+    },
+    present: 'aujourd’hui',
   },
 };
