@@ -44,17 +44,14 @@ export function HobbiesPage({ locale, posts = [] }: { locale: Locale; posts?: Bl
       <SectionShell tone="blue">
         <SectionHeader title={copy.gridHeading} tone="blue" />
         <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {hobbies.map((hobby, index) => (
-            <li key={hobby.id}>
-              <Link
-                href={hobby.href}
-                className="card pressable-card group flex h-full flex-col overflow-hidden p-0"
-                data-testid="hobby-card"
-              >
+          {hobbies.map((hobby, index) => {
+            const hasPosts = hobby.relatedCount > 0;
+            const content = (
+              <>
                 <div className="relative aspect-[16/10] overflow-hidden border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
                   <Image
                     src={hobby.thumbnailSrc}
-                    alt={hobby.thumbnailAlt}
+                    alt=""
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                     className="object-cover transition duration-500 group-hover:scale-[1.03]"
@@ -77,14 +74,33 @@ export function HobbiesPage({ locale, posts = [] }: { locale: Locale; posts?: Bl
                     <span className="text-gray-600 dark:text-gray-300">
                       {formatRelatedLabel(locale, hobby.relatedCount, copy)}
                     </span>
-                    <span className="font-medium text-purple-700 transition group-hover:translate-x-0.5 dark:text-amber-200">
-                      {copy.ctaLabel}
-                    </span>
+                    {hasPosts ? (
+                      <span className="font-medium text-purple-700 transition group-hover:translate-x-0.5 dark:text-amber-200">
+                        {copy.ctaLabel}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
-              </Link>
-            </li>
-          ))}
+              </>
+            );
+            return (
+              <li key={hobby.id}>
+                {hasPosts ? (
+                  <Link
+                    href={hobby.href}
+                    className="card pressable-card group flex h-full flex-col overflow-hidden p-0"
+                    data-testid="hobby-card"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <div className="card flex h-full flex-col overflow-hidden p-0" data-testid="hobby-card">
+                    {content}
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </SectionShell>
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const LOCATION_CHANGE_EVENT = 'app-location-change';
+export const LOCATION_CHANGE_EVENT = 'app-location-change';
 
 function readPathname() {
   const testPathname = (globalThis as { __NEXT_TEST_PATHNAME__?: string }).__NEXT_TEST_PATHNAME__;

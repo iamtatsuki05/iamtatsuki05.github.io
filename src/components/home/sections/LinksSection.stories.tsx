@@ -10,6 +10,8 @@ const meta = {
   },
   args: {
     links: sampleLinks,
+    locale: 'ja',
+    title: '🔗 リンク',
     ctaLabel: 'もっと見る',
   },
   tags: ['autodocs'],

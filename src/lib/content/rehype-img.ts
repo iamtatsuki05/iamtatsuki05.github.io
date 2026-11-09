@@ -1,28 +1,17 @@
-import type { Root } from 'hast';
+import type { Root, RootContent } from 'hast';
 
-// rehype プラグイン: <img> にデフォルト属性を付与
-// - loading="lazy"
-// - decoding="async"
-// - 外部画像には referrerpolicy="no-referrer"
 export default function rehypeImgDefaults() {
   return (tree: Root) => {
-    const visit = (node: any) => {
-      if (!node) return;
+    const visit = (node: Root | RootContent) => {
       if (node.type === 'element' && node.tagName === 'img') {
-        const props = (node.properties ||= {} as Record<string, any>);
+        const props = node.properties;
         if (!props.loading) props.loading = 'lazy';
         if (!props.decoding) props.decoding = 'async';
-        const src = String(props.src || '');
-        try {
-          const isHttp = /^https?:\/\//i.test(src);
-          if (isHttp && !props.referrerpolicy) props.referrerpolicy = 'no-referrer';
-        } catch (err) {
-          console.warn('[rehypeImgDefaults] Failed to process image src:', err);
-        }
+        const isHttp = /^https?:\/\//i.test(String(props.src || ''));
+        if (isHttp && !props.referrerpolicy) props.referrerpolicy = 'no-referrer';
       }
-      (node.children || []).forEach(visit);
+      if ('children' in node) node.children.forEach(visit);
     };
-    visit(tree as any);
+    visit(tree);
   };
 }
-

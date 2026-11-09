@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import type { Locale } from '@/lib/i18n';
@@ -74,19 +72,7 @@ export function MarkdownCopyButton({ markdown, className, locale: initialLocale 
     if (disabled || typeof navigator === 'undefined') return;
 
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(markdown);
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = markdown;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      }
-
+      await navigator.clipboard.writeText(markdown);
       setStatus('success');
       scheduleReset();
     } catch {

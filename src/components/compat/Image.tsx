@@ -8,7 +8,6 @@ type ImageProps = Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'width
   height?: number | `${number}`;
   fill?: boolean;
   priority?: boolean;
-  quality?: number | `${number}`;
 };
 
 export default function Image({
@@ -18,7 +17,6 @@ export default function Image({
   height,
   fill,
   priority,
-  quality: _quality,
   loading,
   decoding,
   style,

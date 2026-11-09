@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import type { LinkItem } from '@/lib/data/links';
 import { LinkIcon } from '@/components/links/LinkIcon';
 
@@ -17,19 +16,12 @@ export function LinkGrid({
   gridClassName = 'flex flex-wrap justify-center gap-4 sm:grid sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6',
   idPrefix = 'link-grid',
 }: Props) {
-  const renderItem = (key: string, item: LinkItem, index: number, extraClassName?: string) => {
+  const renderItem = (key: string, item: LinkItem, index: number) => {
     const titleId = `${idPrefix}-${index}-title`;
     const descriptionId = showDescription && item.desc ? `${idPrefix}-${index}-description` : undefined;
 
     return (
-      <li
-        key={key}
-        className={clsx(
-          'content-reveal-card content-reveal-card--soft link-grid__item text-center card p-4',
-          extraClassName,
-        )}
-        style={{ transitionDelay: `${90 + index * 26}ms` }}
-      >
+      <li key={key} className="link-grid__item text-center card p-4">
         <a
           href={item.url}
           target="_blank"
@@ -58,10 +50,8 @@ export function LinkGrid({
   };
 
   return (
-    <div className="space-y-3">
-      <ul className={clsx('content-reveal-list', gridClassName)} data-state="open">
-        {items.map((item, index) => renderItem(`${item.url}-${index}`, item, index))}
-      </ul>
-    </div>
+    <ul className={gridClassName}>
+      {items.map((item, index) => renderItem(`${item.url}-${index}`, item, index))}
+    </ul>
   );
 }

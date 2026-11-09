@@ -1,4 +1,4 @@
-import { getOgCacheTtlMs, shouldDisableOgFetch } from '@/lib/config/env';
+import { shouldDisableOgFetch } from '@/lib/config/env';
 import type { OGData } from './types';
 import { providerFallback } from './provider';
 
@@ -234,8 +234,4 @@ function extractMeta(html: string, url: string): OGData {
     siteName: pick('og:site_name', 'twitter:site', 'twitter:domain'),
   };
   return data;
-}
-
-export function ogTtlMs(defaultTtl = getOgCacheTtlMs()): number {
-  return defaultTtl;
 }

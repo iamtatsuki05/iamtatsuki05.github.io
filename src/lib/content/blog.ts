@@ -1,12 +1,11 @@
 import path from 'node:path';
 import { shouldIncludeDrafts } from '@/lib/config/env';
-import { BlogFrontmatter } from './types';
+import { BlogFrontmatter, parseFrontmatter } from './types';
 import { extractMarkdownSearchText, parseMarkdownFile, slugFromFilename } from './markdown';
 import type { HeadingEntry } from './markdown';
 import { loadCollection } from './loader';
 import { cached } from '@/lib/server/cache';
 import { resolveOptimizedBlogHeaderImage } from '@/lib/content/blogHeaderImages';
-import { safeParseLocalized } from '@/lib/validation/zodI18n';
 import type { Locale } from '@/lib/i18n';
 
 const BLOG_DIR = path.join(process.cwd(), 'src', 'content', 'blogs');
@@ -35,6 +34,10 @@ export type BlogPost = {
   originalPath?: string;
 };
 
+function isDraft(data: unknown): boolean {
+  return typeof data === 'object' && data !== null && 'draft' in data && data.draft === true;
+}
+
 function blogDirForLocale(locale: Locale) {
   return locale === 'ja' ? BLOG_DIR : path.join(GENERATED_BLOG_DIR, locale);
 }
@@ -60,10 +63,8 @@ export async function getAllPosts(locale: Locale = 'ja'): Promise<BlogPost[]> {
     cacheKey,
     parse: async (full, filename) => {
       const { data, raw } = await parseMarkdownFile(full);
-      const parsed = safeParseLocalized(BlogFrontmatter, data);
-      if (!parsed.success) return null;
-      const fm = parsed.data;
-      if (fm.draft && !includeDrafts) return null;
+      if (isDraft(data) && !includeDrafts) return null;
+      const fm = parseFrontmatter(BlogFrontmatter, data, full);
       return enrichPost({
         slug: slugFromFilename(filename),
         title: fm.title,
@@ -93,30 +94,24 @@ export async function getPostBySlug(slug: string, locale: Locale = 'ja'): Promis
   const cacheKey = `blog:detail:${locale}:${slug}:${includeDrafts ? 'drafts' : 'public'}`;
   return cached(cacheKey, async () => {
     const full = path.join(blogDirForLocale(locale), `${slug}.md`);
-    try {
-      const { data, contentHtml, headings, raw } = await parseMarkdownFile(full);
-      const parsed = safeParseLocalized(BlogFrontmatter, data);
-      if (!parsed.success) return null;
-      const fm = parsed.data;
-      if (fm.draft && !includeDrafts) return null;
-      return enrichPost({
-        slug,
-        title: fm.title,
-        date: fm.date,
-        updated: fm.updated,
-        tags: fm.tags,
-        summary: fm.summary || '',
-        thumbnail: fm.thumbnail,
-        headerImage: fm.headerImage,
-        headerAlt: fm.headerAlt,
-        aiAssisted: fm.aiAssisted,
-        draft: fm.draft,
-        html: contentHtml,
-        headings,
-        markdown: raw,
-      }, locale);
-    } catch {
-      return null;
-    }
+    const { data, contentHtml, headings, raw } = await parseMarkdownFile(full);
+    if (isDraft(data) && !includeDrafts) return null;
+    const fm = parseFrontmatter(BlogFrontmatter, data, full);
+    return enrichPost({
+      slug,
+      title: fm.title,
+      date: fm.date,
+      updated: fm.updated,
+      tags: fm.tags,
+      summary: fm.summary || '',
+      thumbnail: fm.thumbnail,
+      headerImage: fm.headerImage,
+      headerAlt: fm.headerAlt,
+      aiAssisted: fm.aiAssisted,
+      draft: fm.draft,
+      html: contentHtml,
+      headings,
+      markdown: raw,
+    }, locale);
   });
 }

@@ -25,11 +25,6 @@ export function getBasePath(): string {
   return normalizeBasePath(readEnv('NEXT_PUBLIC_BASE_PATH') || readEnv('PUBLIC_BASE_PATH'));
 }
 
-export function getAssetVersion(): string {
-  const raw = normalize(readEnv('NEXT_PUBLIC_ASSET_VERSION') || readEnv('PUBLIC_ASSET_VERSION')) || '';
-  return raw.slice(0, 8);
-}
-
 export function getGoogleAnalyticsId(): string | undefined {
   return normalize(readEnv('NEXT_PUBLIC_GOOGLE_ANALYTICS_ID') || readEnv('PUBLIC_GOOGLE_ANALYTICS_ID')) || undefined;
 }

@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from '@/components/compat/Link';
 import Image from '@/components/compat/Image';
@@ -22,7 +21,6 @@ import {
 import { SectionShell } from '@/components/home/SectionShell';
 import { SectionHeader } from '@/components/home/sections/SectionHeader';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
-import { useInitialReveal } from '@/hooks/useInitialReveal';
 import { BLOG_SEARCH_KEYS, buildBlogPostHref } from '@/lib/blog/navigation';
 import { type Locale, localeToRouteLocale } from '@/lib/i18n';
 
@@ -30,7 +28,6 @@ const INITIAL_VISIBLE_COUNT = 10;
 const LOAD_MORE_INCREMENT = 10;
 const LATEST_POSTS_COUNT = 3;
 
-// タイトル/サマリ/タグのマッチを本文(searchText)より優先する。
 type Post = {
   slug: string;
   title: string;
@@ -44,19 +41,9 @@ type Post = {
   searchText?: string;
 };
 
-export function BlogsClient({
-  posts,
-  locale = 'en',
-  initialCardsVisible = false,
-}: {
-  posts: Post[];
-  locale?: Locale;
-  initialCardsVisible?: boolean;
-}) {
+export function BlogsClient({ posts, locale = 'en' }: { posts: Post[]; locale?: Locale }) {
   const [visible, setVisible] = useState(INITIAL_VISIBLE_COUNT);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const hasRevealedCards = useInitialReveal(56);
-  const areCardsVisible = initialCardsVisible || hasRevealedCards;
 
   const {
     q,
@@ -185,67 +172,59 @@ export function BlogsClient({
         />
       </FilterBar>
 
-      <SectionShell tone="amber">
-        <SectionHeader title={t.latest} tone="amber" />
-        <ul className="content-reveal-list grid gap-3 sm:grid-cols-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-latest-list">
-          {latest.map((p, index) => (
-            <li
-              key={p.slug}
-              className="content-reveal-card card blog-linked-card overflow-hidden"
-              data-testid="blog-latest-card"
-              style={areCardsVisible ? { transitionDelay: `${100 + index * 34}ms` } : undefined}
-            >
-              {p.headerImage ? (
-                <div
-                  className="blog-linked-card__media relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
-                  data-testid="blog-image"
-                >
-                  <Image
-                    src={p.headerImageOptimizedSrc ?? p.headerImage}
-                    srcSet={p.headerImageSrcSet}
-                    alt={p.headerAlt || p.title}
-                    fill
-                    className="object-cover"
-                    sizes="50vw"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    priority={index === 0}
-                  />
-                </div>
-              ) : null}
-              <div className="p-3">
-                <h3 className="font-medium">
-                  <Link
-                    href={buildBlogPostHref(p.slug, linkFilters, locale)}
-                    className="blog-linked-card__title-link underline-offset-2 hover:underline"
+      {latest.length > 0 ? (
+        <SectionShell tone="amber">
+          <SectionHeader title={t.latest} tone="amber" />
+          <ul className="grid gap-3 sm:grid-cols-2" data-testid="blog-latest-list">
+            {latest.map((p, index) => (
+              <li key={p.slug} className="card blog-linked-card overflow-hidden" data-testid="blog-latest-card">
+                {p.headerImage ? (
+                  <div
+                    className="blog-linked-card__media relative hidden h-24 w-full border-b border-gray-200 dark:border-gray-700 sm:block"
+                    data-testid="blog-image"
                   >
-                    <SearchHighlight text={p.title} query={q} />
-                  </Link>
-                </h3>
-              <p className="text-xs opacity-70 mt-1">{formatDate(p.date, locale)}</p>
-                {p.summary && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-2">
-                    <SearchHighlight text={p.summary} query={q} />
-                  </p>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </SectionShell>
+                    <Image
+                      src={p.headerImageOptimizedSrc ?? p.headerImage}
+                      srcSet={p.headerImageSrcSet}
+                      alt={p.headerAlt ?? ''}
+                      fill
+                      className="object-cover"
+                      sizes="50vw"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      priority={index === 0}
+                    />
+                  </div>
+                ) : null}
+                <div className="p-3">
+                  <h3 className="font-medium">
+                    <Link
+                      href={buildBlogPostHref(p.slug, linkFilters, locale)}
+                      className="blog-linked-card__title-link underline-offset-2 hover:underline"
+                    >
+                      <SearchHighlight text={p.title} query={q} />
+                    </Link>
+                  </h3>
+                <p className="text-xs opacity-70 mt-1">{formatDate(p.date, locale)}</p>
+                  {p.summary && (
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-2">
+                      <SearchHighlight text={p.summary} query={q} />
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </SectionShell>
+      ) : null}
 
       <SectionShell tone="lilac">
         <SectionHeader title={t.allPosts} tone="lilac" />
         {filtered.length === 0 ? (
           <FilterEmptyState locale={locale} query={q} actions={emptyStateActions} />
         ) : (
-          <ul className="content-reveal-list space-y-2" data-state={areCardsVisible ? 'open' : 'hidden'} data-testid="blog-all-list">
+          <ul className="space-y-2" data-testid="blog-all-list">
             {items.map((p, index) => (
-              <li
-                key={p.slug}
-                className="content-reveal-card card blog-linked-card p-3 gap-3 items-start sm:flex"
-                data-testid="blog-card"
-                style={areCardsVisible ? { transitionDelay: `${140 + index * 22}ms` } : undefined}
-              >
+              <li key={p.slug} className="card blog-linked-card p-3 gap-3 items-start sm:flex" data-testid="blog-card">
                 {p.headerImage ? (
                   <div
                     className="blog-linked-card__media relative hidden h-36 w-full shrink-0 overflow-hidden rounded-sm border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 sm:block sm:h-20 sm:w-28"
@@ -254,7 +233,7 @@ export function BlogsClient({
                     <Image
                       src={p.headerImageOptimizedSrc ?? p.headerImage}
                       srcSet={p.headerImageSrcSet}
-                      alt={p.headerAlt || p.title}
+                      alt={p.headerAlt ?? ''}
                       fill
                       className="object-contain"
                       sizes="120px"

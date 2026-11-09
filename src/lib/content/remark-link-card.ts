@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { Parent, Root, RootContent } from 'mdast';
 import { getOgCacheTtlMs } from '@/lib/config/env';
 import { fetchOG } from './og/fetch';
 import { hasPreview, isFresh, readCache, upsertCache, writeCache } from './og/cache';
@@ -23,20 +24,19 @@ function isAllowed(url: string, allow: string[]) {
   }
 }
 
-// naive walk over mdast
-function walk(node: any, fn: (n: any, parent: any, index: number) => void, _parent: any = null) {
-  const children = (node && node.children) || [];
+function walk(node: Root | RootContent, fn: (n: RootContent, parent: Parent, index: number) => void) {
+  if (!('children' in node)) return;
+  const children = node.children;
   for (let i = 0; i < children.length; i++) {
     fn(children[i], node, i);
-    walk(children[i], fn, node);
+    walk(children[i], fn);
   }
 }
 
-function isBareLinkParagraph(node: any) {
-  if (!node || node.type !== 'paragraph' || !Array.isArray(node.children)) return false;
-  const ch = node.children.filter((c: any) => c.type !== 'text' || (c.value || '').trim() !== '');
-  if (ch.length !== 1) return false;
-  return ch[0].type === 'link' && typeof ch[0].url === 'string';
+function bareLinkUrl(node: RootContent): string | null {
+  if (node.type !== 'paragraph') return null;
+  const ch = node.children.filter((c) => c.type !== 'text' || c.value.trim() !== '');
+  return ch.length === 1 && ch[0].type === 'link' ? ch[0].url : null;
 }
 
 export default function remarkLinkCard(options?: Options) {
@@ -46,28 +46,23 @@ export default function remarkLinkCard(options?: Options) {
     ? (options?.ttlMs as number)
     : getOgCacheTtlMs();
 
-  return async function transformer(tree: any) {
-    const targets: { parent: any; index: number; url: string }[] = [];
+  return async function transformer(tree: Root) {
+    const targets: { parent: Parent; index: number; url: string }[] = [];
     walk(tree, (node, parent, index) => {
-      if (!parent) return;
-      if (isBareLinkParagraph(node)) {
-        const link = node.children.find((c: any) => c.type === 'link');
-        const url = String(link.url || '');
-        // http/https のみ対象
-        if (!/^https?:\/\//i.test(url)) return;
-        // 許可リストが指定されている場合のみ制限
-        if (Array.isArray(allow) && allow.length > 0) {
-          if (!isAllowed(url, allow)) return;
-        }
-        targets.push({ parent, index, url });
+      const url = bareLinkUrl(node);
+      if (url === null) return;
+      if (!/^https?:\/\//i.test(url)) return;
+      if (Array.isArray(allow) && allow.length > 0) {
+        if (!isAllowed(url, allow)) return;
       }
+      targets.push({ parent, index, url });
     });
 
     if (targets.length === 0) return;
 
     const cache = await readCache(cacheFile);
     let cacheChanged = false;
-    const outNodes: { html: string; parent: any; index: number; url: string }[] = [];
+    const outNodes: { html: string; parent: Parent; index: number; url: string }[] = [];
 
     for (const t of targets) {
       const provider = providerOf(t.url);
@@ -100,7 +95,6 @@ export default function remarkLinkCard(options?: Options) {
         outNodes.push({ html: makeCardHTML(t.url, og), parent: t.parent, index: t.index, url: t.url });
       }
     }
-    // Write back cache best-effort
     if (cacheChanged) {
       try {
         await writeCache(cacheFile, cache);
@@ -109,9 +103,8 @@ export default function remarkLinkCard(options?: Options) {
       }
     }
 
-    // Replace nodes
     for (const n of outNodes) {
-      n.parent.children[n.index] = { type: 'html', value: n.html } as any;
+      n.parent.children[n.index] = { type: 'html', value: n.html };
     }
   };
 }

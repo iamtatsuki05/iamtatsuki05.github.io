@@ -1,122 +1,43 @@
-"use client";
 import { useEffect } from 'react';
-import { createRoot, Root } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 
-// Twitter公式推奨スニペット（catnose99さんの記事の方針）を動的注入
-// ref: https://zenn.dev/catnose99/articles/329d7d61968efb
-function _ensureTwitterSnippet() {
-  const w = window as any;
-  if (w.twttr && typeof w.twttr.ready === 'function') return w.twttr;
-  // 既に widgets.js が入っているならスキップ
-  if (document.getElementById('twitter-wjs')) return (w.twttr ||= { _e: [], ready: (f: any) => w.twttr._e.push(f) });
-  const loader = document.createElement('script');
-  loader.type = 'text/javascript';
-  loader.text = `window.twttr = (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-  if (d.getElementById(id)) return t;
-  js = d.createElement(s); js.id = id; js.src = "https://platform.twitter.com/widgets.js";
-  fjs.parentNode.insertBefore(js, fjs);
-  t._e = []; t.ready = function(f){ t._e.push(f); }; return t;
-}(document, "script", "twitter-wjs"));`;
-  document.head.appendChild(loader);
-  return (w.twttr ||= { _e: [], ready: (f: any) => w.twttr._e.push(f) });
-}
+type EmbedModule = typeof import('react-social-media-embed');
 
-function _loadOnce(src: string, globalReady: () => boolean) {
-  if (globalReady()) return Promise.resolve();
-  return new Promise<void>((resolve) => {
-    const existing = Array.from(document.scripts).find((s) => s.src === src);
-    if (existing) {
-      const onload = () => resolve();
-      existing.addEventListener('load', onload, { once: true });
-      // Safari
-      if ((existing as any).readyState === 'complete') resolve();
-      return;
-    }
-    const s = document.createElement('script');
-    s.async = true;
-    s.src = src;
-    s.onload = () => resolve();
-    document.body.appendChild(s);
-  });
+const EMBED_SELECTOR = '.rse-embed[data-provider][data-url]';
+
+function renderEmbed(provider: string, url: string, { XEmbed, InstagramEmbed, YouTubeEmbed }: EmbedModule) {
+  if (provider === 'twitter') return <XEmbed url={url} width={440} />;
+  if (provider === 'instagram') return <InstagramEmbed url={url} width={440} />;
+  if (provider === 'youtube') return <YouTubeEmbed url={url} />;
+  return null;
 }
 
 export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
   useEffect(() => {
     if (!enabled) return;
     let disposed = false;
-    const roots = new WeakMap<Element, Root>();
-    let embedModule: any | null = null;
-
-    const resolveComponent = (provider: string, mod: any) => {
-      const TwitterComp = mod.TwitterEmbed || mod.TwitterTweetEmbed || mod.XEmbed;
-      const InstaComp = mod.InstagramEmbed || mod.InstagramPostEmbed;
-      const YtComp = mod.YouTubeEmbed || mod.YoutubeEmbed;
-      if (provider === 'twitter') return TwitterComp;
-      if (provider === 'instagram') return InstaComp;
-      if (provider === 'youtube') return YtComp;
-      return null;
-    };
-
-    const loadModule = async () => {
-      if (embedModule) return embedModule;
-      embedModule = await import('react-social-media-embed');
-      return embedModule;
-    };
+    const roots: Root[] = [];
 
     const mountAll = async () => {
       if (disposed) return;
-      const targets = Array.from(
-        document.querySelectorAll<HTMLElement>('.rse-embed[data-provider][data-url]'),
-      );
+      const targets = Array.from(document.querySelectorAll<HTMLElement>(EMBED_SELECTOR));
       if (targets.length === 0) return; // 使うページだけ動的 import
 
-      const mod = await loadModule();
+      const mod = await import('react-social-media-embed');
       if (disposed) return;
       targets.forEach((el) => {
         if (el.dataset.mounted === '1') return;
-        const url = el.dataset.url!;
-        const provider = el.dataset.provider!;
-        const Comp = resolveComponent(provider, mod);
-        if (!Comp) return;
+        const embed = renderEmbed(el.dataset.provider!, el.dataset.url!, mod);
+        if (!embed) return;
         const root = createRoot(el);
-        roots.set(el, root);
+        roots.push(root);
         el.dataset.mounted = '1';
-        const compProps: any = { url };
-        if (provider === 'twitter') compProps.width = 440;
-        if (provider === 'instagram') compProps.width = 440;
-
-        root.render(
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Comp {...compProps} />
-          </div>,
-        );
-      });
-    };
-
-    const reflow = () => {
-      document.querySelectorAll<HTMLElement>('.rse-embed[data-provider][data-url]').forEach((el) => {
-        if (el.dataset.mounted !== '1') return;
-        const root = roots.get(el);
-        if (!root) return;
-        const url = el.dataset.url!;
-        const provider = el.dataset.provider!;
-        loadModule().then((mod: any) => {
-          const Comp = resolveComponent(provider, mod);
-          if (!Comp) return;
-          const compProps: any = { url };
-          if (provider !== 'twitter') compProps.width = '100%';
-          root.render(
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Comp {...compProps} />
-            </div>
-          );
-        });
+        root.render(<div style={{ display: 'flex', justifyContent: 'center' }}>{embed}</div>);
       });
     };
 
     // 直下に埋め込みがある場合のみロード。視認範囲で初回ロードする最適化。
-    const first = document.querySelector<HTMLElement>('.rse-embed[data-provider][data-url]');
+    const first = document.querySelector<HTMLElement>(EMBED_SELECTOR);
     if (first) {
       const io = new IntersectionObserver(
         (entries) => {
@@ -130,8 +51,6 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
       );
       io.observe(first);
     }
-    // 念のため遅延実行（埋め込みが下部にあるケース）
-    // requestIdleCallback でブラウザアイドル時に実行
     let idleId: number | undefined;
     let timeoutId: number | undefined;
 
@@ -141,21 +60,13 @@ export function EmbedsClient({ enabled = true }: { enabled?: boolean } = {}) {
       timeoutId = window.setTimeout(() => mountAll(), 5000);
     }
 
-    const onResize = () => reflow();
-    window.addEventListener('resize', onResize);
     return () => {
       disposed = true;
-      window.removeEventListener('resize', onResize);
       if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
         window.cancelIdleCallback(idleId);
       }
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
-      document
-        .querySelectorAll<HTMLElement>('.rse-embed[data-provider][data-url]')
-        .forEach((el) => {
-          const root = roots.get(el);
-          if (root) root.unmount();
-        });
+      for (const root of roots) root.unmount();
     };
   }, [enabled]);
 

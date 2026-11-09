@@ -39,10 +39,7 @@ export function providerFallback(url: string): OGData | null {
     }
     // YouTube
     if (u.hostname === 'youtu.be' || u.hostname.endsWith('youtube.com')) {
-      let id = '';
-      if (u.hostname === 'youtu.be') id = u.pathname.slice(1);
-      else if (u.pathname.startsWith('/watch')) id = u.searchParams.get('v') || '';
-      else if (u.pathname.startsWith('/shorts/')) id = u.pathname.split('/')[2] || '';
+      const id = ytIdFrom(url);
       if (id) {
         return {
           url,

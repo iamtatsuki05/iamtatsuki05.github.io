@@ -4,7 +4,15 @@ const dateString = z.preprocess((v) => {
   if (v instanceof Date) return v.toISOString();
   if (typeof v === 'string') return v;
   return undefined;
-}, z.string());
+}, z.string().refine((v) => !Number.isNaN(Date.parse(v)), 'Invalid date'));
+
+export function parseFrontmatter<T extends z.ZodType>(schema: T, data: unknown, filePath: string): z.output<T> {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    throw new Error(`Invalid frontmatter in ${filePath}:\n${z.prettifyError(result.error)}`);
+  }
+  return result.data;
+}
 
 export const BlogFrontmatter = z.object({
   title: z.string(),
