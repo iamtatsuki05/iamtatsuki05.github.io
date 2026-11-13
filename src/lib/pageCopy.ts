@@ -202,8 +202,8 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     paperGroups: {
       'international-refereed': 'International Conferences (Refereed)',
       'international-nonrefereed': 'International Conferences (Non-refereed)',
-      'domestic-refereed': 'Domestic Conferences in Japan (Refereed)',
-      'domestic-nonrefereed': 'Domestic Conferences in Japan (Non-refereed)',
+      'domestic-refereed': 'Domestic Conferences (Refereed)',
+      'domestic-nonrefereed': 'Domestic Conferences (Non-refereed)',
     },
     present: 'Present',
   },
@@ -221,8 +221,8 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     paperGroups: {
       'international-refereed': '国际会议（经同行评审）',
       'international-nonrefereed': '国际会议（未经同行评审）',
-      'domestic-refereed': '日本国内会议（经同行评审）',
-      'domestic-nonrefereed': '日本国内会议（未经同行评审）',
+      'domestic-refereed': '国内会议（经同行评审）',
+      'domestic-nonrefereed': '国内会议（未经同行评审）',
     },
     present: '至今',
   },
@@ -240,8 +240,8 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     paperGroups: {
       'international-refereed': 'Conférences internationales (avec comité de lecture)',
       'international-nonrefereed': 'Conférences internationales (sans comité de lecture)',
-      'domestic-refereed': 'Conférences au Japon (avec comité de lecture)',
-      'domestic-nonrefereed': 'Conférences au Japon (sans comité de lecture)',
+      'domestic-refereed': 'Conférences nationales (avec comité de lecture)',
+      'domestic-nonrefereed': 'Conférences nationales (sans comité de lecture)',
     },
     present: 'aujourd’hui',
   },

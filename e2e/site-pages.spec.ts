@@ -770,7 +770,7 @@ test.describe('CV page', () => {
   test('renders the English CV page', async ({ page }) => {
     await page.goto('/en-US/cv/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 3, name: 'Domestic Conferences in Japan (Non-refereed)' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Domestic Conferences (Non-refereed)' })).toBeVisible();
   });
 });
 
