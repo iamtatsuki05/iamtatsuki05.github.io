@@ -22,14 +22,14 @@ const publications: Publication[] = [
 const emptyCv = { education: [], experience: [], grants: [], awards: [] };
 
 describe('CvPage', () => {
-  it('lists papers under their group and marks the owner in the author list', () => {
+  it('lists only papers, under their group, and marks the owner in the author list', () => {
     render(<CvPage locale="en" cv={emptyCv} publications={publications} alias="Name" affiliation="Affiliation" />);
 
     const group = screen.getByTestId('cv-papers-international-refereed');
     expect(within(group).getByText('International Conferences (Refereed)')).toBeInTheDocument();
     expect(within(group).getByRole('link', { name: 'Demo paper' })).toHaveAttribute('href', 'https://example.com/paper');
     expect(within(group).getByText('Tatsuki Okada').tagName).toBe('STRONG');
-    expect(screen.getByRole('heading', { level: 2, name: '🛠 Software' })).toBeInTheDocument();
+    expect(screen.queryByText('A tool')).toBeNull();
   });
 
   it('hides sections that have no entries', () => {

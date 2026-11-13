@@ -82,22 +82,11 @@ const PAPER_GROUPS = [
 ] as const;
 export type PaperGroupKey = (typeof PAPER_GROUPS)[number]['key'];
 
-type CvPublications = {
-  papers: { key: PaperGroupKey; items: Publication[] }[];
-  others: Publication[];
-  software: Publication[];
-};
-
-export function groupPublicationsForCv(publications: Publication[]): CvPublications {
-  const papers = PAPER_GROUPS.map((group) => ({
+export function groupPapersForCv(publications: Publication[]): { key: PaperGroupKey; items: Publication[] }[] {
+  return PAPER_GROUPS.map((group) => ({
     key: group.key,
     items: publications.filter(
       (p) => p.type === 'paper' && p.region === group.region && p.refereed === group.refereed,
     ),
   })).filter((group) => group.items.length > 0);
-  return {
-    papers,
-    others: publications.filter((p) => p.type !== 'paper' && p.type !== 'app'),
-    software: publications.filter((p) => p.type === 'app'),
-  };
 }

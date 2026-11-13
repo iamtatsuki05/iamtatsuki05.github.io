@@ -161,8 +161,6 @@ export type CvPageCopy = PageCopy<{
     education: string;
     experience: string;
     publications: string;
-    others: string;
-    software: string;
     grants: string;
     awards: string;
   };
@@ -179,8 +177,6 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 学歴',
       experience: '💼 職歴',
       publications: '📚 論文',
-      others: '📝 記事・その他',
-      software: '🛠 ソフトウェア',
       grants: '💰 奨学金・助成',
       awards: '🏆 受賞',
     },
@@ -200,8 +196,6 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 Education',
       experience: '💼 Work Experience',
       publications: '📚 Publications',
-      others: '📝 Articles and Other Works',
-      software: '🛠 Software',
       grants: '💰 Scholarships and Grants',
       awards: '🏆 Awards',
     },
@@ -221,8 +215,6 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 教育经历',
       experience: '💼 工作经历',
       publications: '📚 论文',
-      others: '📝 文章及其他',
-      software: '🛠 软件',
       grants: '💰 奖学金与资助',
       awards: '🏆 获奖',
     },
@@ -242,8 +234,6 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 Formation',
       experience: '💼 Expérience professionnelle',
       publications: '📚 Publications',
-      others: '📝 Articles et autres travaux',
-      software: '🛠 Logiciels',
       grants: '💰 Bourses et financements',
       awards: '🏆 Distinctions',
     },

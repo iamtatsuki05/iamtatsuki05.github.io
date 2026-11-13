@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Publication } from '@/lib/content/publication';
-import { cvText, formatCvPeriod, groupPublicationsForCv, parseCvData, sortPeriodEntries } from '@/lib/data/cv';
+import { cvText, formatCvPeriod, groupPapersForCv, parseCvData, sortPeriodEntries } from '@/lib/data/cv';
 
 const pub = (overrides: Partial<Publication>): Publication => ({
   slug: overrides.slug ?? 'p',
@@ -51,18 +51,16 @@ education:
     expect(sorted.map((e) => e.start)).toEqual(['2024-04', '2020-04']);
   });
 
-  it('groups papers by region and review, and splits out software and other entries', () => {
-    const grouped = groupPublicationsForCv([
+  it('groups papers by region and review and leaves out everything else', () => {
+    const grouped = groupPapersForCv([
       pub({ slug: 'dom', region: 'domestic', refereed: false }),
       pub({ slug: 'intl', region: 'international', refereed: true }),
       pub({ slug: 'app', type: 'app' }),
       pub({ slug: 'post', type: 'article' }),
     ]);
-    expect(grouped.papers.map((g) => [g.key, g.items.map((p) => p.slug)])).toEqual([
+    expect(grouped.map((g) => [g.key, g.items.map((p) => p.slug)])).toEqual([
       ['international-refereed', ['intl']],
       ['domestic-nonrefereed', ['dom']],
     ]);
-    expect(grouped.software.map((p) => p.slug)).toEqual(['app']);
-    expect(grouped.others.map((p) => p.slug)).toEqual(['post']);
   });
 });

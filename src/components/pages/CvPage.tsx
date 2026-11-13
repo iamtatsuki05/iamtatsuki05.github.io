@@ -10,7 +10,7 @@ import {
   cvText,
   formatCvPeriod,
   formatYearMonth,
-  groupPublicationsForCv,
+  groupPapersForCv,
   sortDatedEntries,
   sortPeriodEntries,
 } from '@/lib/data/cv';
@@ -63,19 +63,9 @@ function PeriodSection({ title, tone, entries, locale, present }: { title: strin
   );
 }
 
-function PublicationList({ items, titleAs }: { items: Publication[]; titleAs?: 'h3' | 'h4' }) {
-  return (
-    <ul className="space-y-3">
-      {items.map((item) => (
-        <PublicationCard key={item.slug} item={item} titleAs={titleAs} />
-      ))}
-    </ul>
-  );
-}
-
 export function CvPage({ locale, cv, publications, alias, affiliation }: Props) {
   const copy = cvPageCopy[locale];
-  const { papers, others, software } = groupPublicationsForCv(publications);
+  const papers = groupPapersForCv(publications);
 
   return (
     <div className="space-y-6">
@@ -96,23 +86,13 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
           {papers.map((group) => (
             <div key={group.key} className="space-y-3" data-testid={`cv-papers-${group.key}`}>
               <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">{copy.paperGroups[group.key]}</h3>
-              <PublicationList items={group.items} titleAs="h4" />
+              <ul className="space-y-3">
+                {group.items.map((item) => (
+                  <PublicationCard key={item.slug} item={item} titleAs="h4" />
+                ))}
+              </ul>
             </div>
           ))}
-        </SectionShell>
-      ) : null}
-
-      {others.length ? (
-        <SectionShell tone="amber">
-          <SectionHeader title={copy.sections.others} tone="amber" />
-          <PublicationList items={others} />
-        </SectionShell>
-      ) : null}
-
-      {software.length ? (
-        <SectionShell tone="teal">
-          <SectionHeader title={copy.sections.software} tone="teal" />
-          <PublicationList items={software} />
         </SectionShell>
       ) : null}
 

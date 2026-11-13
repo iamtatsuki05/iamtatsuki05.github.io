@@ -760,6 +760,8 @@ test.describe('CV page', () => {
     await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 3, name: '国際会議（査読あり）' })).toBeVisible();
     await expect(page.getByRole('link', { name: /LensLapse: In-Browser Logit Lens/ })).toBeVisible();
+    await expect(page.getByText('DeNAでの2週間インターンシップ体験記', { exact: false })).toHaveCount(0);
+    await expect(page.getByText('Meal Shield')).toHaveCount(0);
     await expect(
       page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: '📄 CV' }),
     ).toHaveClass(/nav-link--active/);

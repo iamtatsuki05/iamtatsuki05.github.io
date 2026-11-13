@@ -129,22 +129,22 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
   cv: {
     ja: {
       metadataTitle: 'CV',
-      metadataDescription: '岡田 龍樹の CV です。論文や制作物などの研究・開発の実績をまとめています。',
+      metadataDescription: '岡田 龍樹の CV です。学歴、職歴、論文などをまとめています。',
       path: '/ja-JP/cv/',
     },
     en: {
       metadataTitle: 'CV',
-      metadataDescription: "Tatsuki Okada's CV, listing papers, software, and other research and development work.",
+      metadataDescription: "Tatsuki Okada's CV, listing education, work experience, papers, and more.",
       path: '/en-US/cv/',
     },
     zh: {
       metadataTitle: '简历',
-      metadataDescription: '冈田龙树的简历，整理了论文、软件等研究与开发成果。',
+      metadataDescription: '冈田龙树的简历，列出教育经历、工作经历、论文等。',
       path: '/zh-CN/cv/',
     },
     fr: {
       metadataTitle: 'CV',
-      metadataDescription: 'Le CV de Tatsuki Okada : articles scientifiques, logiciels et autres travaux de recherche et de développement.',
+      metadataDescription: 'Le CV de Tatsuki Okada : formation, expérience professionnelle, articles scientifiques et plus encore.',
       path: '/fr-FR/cv/',
     },
   },
