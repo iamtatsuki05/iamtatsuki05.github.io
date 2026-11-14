@@ -85,4 +85,8 @@ describe('Frontmatter schemas', () => {
       /Invalid frontmatter in \/content\/blogs\/x\.md/,
     );
   });
+  it('rejects pages that are not a number or a hyphenated range', () => {
+    expect(PublicationFrontmatter.safeParse({ title: 'a', type: 'app', pages: 'pp. 66-73' }).success).toBe(false);
+    expect(PublicationFrontmatter.safeParse({ title: 'a', type: 'app', pages: '66-73' }).success).toBe(true);
+  });
 });
