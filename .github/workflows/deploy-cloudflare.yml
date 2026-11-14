@@ -69,6 +69,7 @@ jobs:
           cp -R storybook-static/* out/storybook
 
       - name: Publish to Cloudflare Pages
+        id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -78,3 +79,21 @@ jobs:
             --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT }}
             --branch=${{ github.ref_name }}
             --commit-hash=${{ github.sha }}
+
+      # isitagentready.com (Cloudflare). Level 3 = robots/sitemap/Link headers + AI bot rules and Content Signals
+      # + Markdown negotiation. Level 4+ needs an API catalog, MCP/A2A card, or Agent Skills, which a content site lacks.
+      - name: Gate on isitagentready.com level
+        uses: lingzhong/agent-readiness-action@98bc36041104db6e40c2ef51f9c4022ed9a94502 # v0.1.1
+        with:
+          url: ${{ steps.deploy.outputs.deployment-url }}
+          min-level: '3'
+
+      # is-agentic.com (Vercel) has no threshold yet: report the score only. The per-deploy URL is new on every
+      # deploy, so the CLI always starts a fresh scan instead of returning a cached report.
+      - name: Report is-agentic.com score
+        continue-on-error: true
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          npx -y is-agentic@1.0.1 "$DEPLOYMENT_URL" --json > is-agentic.json
+          jq -r '"### is-agentic.com: \(.score) / 100 (\(.score_label))\n\(.report_url)\n\n" + ([(.issues // [])[] | "- \(.result) [\(.tier)] \(.name)"] | join("\n"))' is-agentic.json >> "$GITHUB_STEP_SUMMARY"

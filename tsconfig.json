@@ -31,6 +31,7 @@
   "include": [
     "src/**/*",
     "scripts/**/*",
+    "functions/**/*",
     "astro.config.mjs",
     ".astro/types.d.ts"
   ],
