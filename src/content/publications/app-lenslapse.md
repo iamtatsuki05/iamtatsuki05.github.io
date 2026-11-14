@@ -11,7 +11,7 @@ links:
   - { kind: video, url: https://www.youtube.com/watch?v=OBnvG9Ru3j8 }
   - { kind: pypi, url: https://pypi.org/project/lenslapse/ }
 tags: [app, llm, interpretability, typescript, python]
-abstract: 学習チェックポイントを切り替えながら、言語モデルの層ごとの予測がどう変わるかをブラウザ上で確認できる、オープンソースの可視化ツールです。
+abstract: An open-source visualization tool for checking in the browser how a language model's layer-wise predictions change as you switch between training checkpoints.
 headerImage: https://raw.githubusercontent.com/iamtatsuki05/lenslapse/d52257bc9134177906ae73cb66bc583563203711/docs/assets/readme-hero.png
 headerAlt: LensLapseの操作画面
 ---
