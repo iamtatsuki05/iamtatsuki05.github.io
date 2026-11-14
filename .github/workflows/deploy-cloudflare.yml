@@ -83,9 +83,12 @@ jobs:
       # The scanner follows redirects, so a deployment behind Cloudflare Access or not yet serving the Functions
       # bundle shows up only as "level 0". Require this build's own Link header on / first, without following
       # redirects, so such a failure names its cause.
+      # Preview deployments sit behind Cloudflare Access (302 to a login page), so scanners can only see the
+      # production domain. Score main deploys there; develop deploys skip the scan.
       - name: Wait for deployment to serve agent headers
+        if: github.ref == 'refs/heads/main'
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          DEPLOYMENT_URL: https://iamtatsuki05.com
         run: |
           for attempt in $(seq 1 20); do
             headers=$(curl -sS --max-time 10 -o /dev/null -D - "$DEPLOYMENT_URL/" || true)
@@ -103,24 +106,25 @@ jobs:
       # + Markdown negotiation. Level 4+ needs an API catalog, MCP/A2A card, or Agent Skills, which a content site lacks.
       - name: Gate on isitagentready.com level
         id: readiness
+        if: github.ref == 'refs/heads/main'
         uses: lingzhong/agent-readiness-action@98bc36041104db6e40c2ef51f9c4022ed9a94502 # v0.1.1
         with:
-          url: ${{ steps.deploy.outputs.deployment-url }}
+          url: https://iamtatsuki05.com
           min-level: '3'
 
       - name: Report failing isitagentready.com checks
-        if: failure() && steps.readiness.outputs.response != ''
+        if: github.ref == 'refs/heads/main' && failure() && steps.readiness.outputs.response != ''
         env:
           RESPONSE: ${{ steps.readiness.outputs.response }}
         run: |
           jq -r '"### isitagentready.com: level \(.level) (\(.levelName))\n" + ([.checks[] | to_entries[] | select(.value.status == "fail" and (.key | IN("robotsTxt", "sitemap", "linkHeaders", "robotsTxtAiRules", "contentSignals", "markdownNegotiation"))) | "- \(.key): \(.value.message)" + ([.value.evidence[]? | select(.request.url) | "\n  - \(.label) \(.request.url | sub("^https?://[^/]+"; "")) -> \(.response.status // "no response")"] | join(""))] | join("\n"))' <<<"$RESPONSE" >> "$GITHUB_STEP_SUMMARY" || printf '%s\n' "$RESPONSE" >> "$GITHUB_STEP_SUMMARY"
 
-      # is-agentic.com (Vercel) has no threshold yet: report the score only. The per-deploy URL is new on every
-      # deploy, so the CLI always starts a fresh scan instead of returning a cached report.
+      # is-agentic.com (Vercel) has no threshold yet: report the score only.
       - name: Report is-agentic.com score
+        if: github.ref == 'refs/heads/main'
         continue-on-error: true
         env:
-          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          DEPLOYMENT_URL: https://iamtatsuki05.com
         run: |
           npx -y is-agentic@1.0.1 "$DEPLOYMENT_URL" --json > is-agentic.json
           jq -r '"### is-agentic.com: \(.score) / 100 (\(.score_label))\n\(.report_url)\n\n" + ([(.issues // [])[] | "- \(.result) [\(.tier)] \(.name)"] | join("\n"))' is-agentic.json >> "$GITHUB_STEP_SUMMARY"
