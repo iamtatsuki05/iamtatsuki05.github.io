@@ -12,11 +12,14 @@ const acceptanceLabels: Record<Locale, string> = {
 
 export function PublicationRecognition({ acceptance, award, locale }: Props) {
   if (!acceptance && !award) return null;
-  const rate = acceptance
-    ? new Intl.NumberFormat(LOCALE_LABELS[locale], { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(
-        acceptance.accepted / acceptance.submitted,
-      )
-    : null;
+  const ratio = acceptance ? ('rate' in acceptance ? acceptance.rate / 100 : acceptance.accepted / acceptance.submitted) : null;
+  const rate =
+    ratio === null
+      ? null
+      : new Intl.NumberFormat(LOCALE_LABELS[locale], { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(ratio);
+  const counts = acceptance && 'accepted' in acceptance ? ` (${acceptance.accepted}/${acceptance.submitted})` : '';
+  const chipClass =
+    'rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-purple-800 dark:border-purple-300/40 dark:bg-purple-500/15 dark:text-purple-100';
 
   return (
     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
@@ -29,16 +32,22 @@ export function PublicationRecognition({ acceptance, award, locale }: Props) {
           {award}
         </span>
       ) : null}
-      {acceptance ? (
+      {acceptance?.source ? (
         <a
           href={acceptance.source}
           target="_blank"
           rel="noreferrer"
           data-testid="publication-acceptance"
-          className="rounded-full border border-purple-200 bg-purple-50 px-2 py-0.5 text-purple-800 underline-offset-2 hover:underline dark:border-purple-300/40 dark:bg-purple-500/15 dark:text-purple-100"
+          className={`${chipClass} underline-offset-2 hover:underline`}
         >
-          {acceptanceLabels[locale]} {rate} ({acceptance.accepted}/{acceptance.submitted})
+          {acceptanceLabels[locale]} {rate}
+          {counts}
         </a>
+      ) : acceptance ? (
+        <span data-testid="publication-acceptance" className={chipClass}>
+          {acceptanceLabels[locale]} {rate}
+          {counts}
+        </span>
       ) : null}
     </div>
   );

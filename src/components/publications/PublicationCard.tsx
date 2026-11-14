@@ -20,7 +20,7 @@ export type PublicationCardItem = {
   links: PublicationLink[];
   headerImage?: string;
   headerAlt?: string;
-  acceptance?: { accepted: number; submitted: number; source: string };
+  acceptance?: { accepted: number; submitted: number; source?: string } | { rate: number; source?: string };
   award?: string;
   bibtex?: string;
   venueFull?: string;

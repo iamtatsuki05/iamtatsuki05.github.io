@@ -67,8 +67,13 @@ export const PublicationFrontmatter = z.object({
   region: z.enum(['international', 'domestic']).optional(),
   refereed: z.boolean().optional(),
   acceptance: z
-    .object({ accepted: z.number().int().positive(), submitted: z.number().int().positive(), source: z.string().url() })
-    .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' })
+    .union([
+      z
+        .object({ accepted: z.number().int().positive(), submitted: z.number().int().positive(), source: z.string().url().optional() })
+        .strict()
+        .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' }),
+      z.object({ rate: z.number().gt(0).lte(100), source: z.string().url().optional() }).strict(),
+    ])
     .optional(),
   award: z.string().min(1).optional(),
   venueFull: z.string().min(1).optional(),
