@@ -329,6 +329,7 @@ export function PublicationsClient({ items, locale = 'en' }: { items: Item[]; lo
                 <PublicationCard
                   key={i.slug}
                   item={i}
+                  locale={locale}
                   query={q}
                   eagerImage={index === 0 && Boolean(i.headerImage)}
                   onOpen={openInNewTab}

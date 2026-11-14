@@ -88,7 +88,7 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
               <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">{copy.paperGroups[group.key]}</h3>
               <ul className="space-y-3">
                 {group.items.map((item) => (
-                  <PublicationCard key={item.slug} item={item} titleAs="h4" />
+                  <PublicationCard key={item.slug} item={item} locale={locale} titleAs="h4" />
                 ))}
               </ul>
             </div>

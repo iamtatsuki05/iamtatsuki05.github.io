@@ -29,6 +29,21 @@ export const BlogFrontmatter = z.object({
 });
 export type BlogFrontmatter = z.infer<typeof BlogFrontmatter>;
 
+export const PublicationLinkKind = z.enum([
+  'paper',
+  'doi',
+  'post',
+  'slides',
+  'video',
+  'code',
+  'model',
+  'data',
+  'app',
+  'project',
+  'pypi',
+]);
+export type PublicationLinkKind = z.infer<typeof PublicationLinkKind>;
+
 export const PublicationFrontmatter = z.object({
   title: z.string(),
   type: z.enum(['paper', 'article', 'talk', 'slide', 'media', 'app']),
@@ -39,7 +54,7 @@ export const PublicationFrontmatter = z.object({
   links: z
     .array(
       z.object({
-        kind: z.enum(['paper', 'doi', 'post', 'slides', 'video', 'code', 'model', 'data', 'app']),
+        kind: PublicationLinkKind,
         url: z.string(),
       }),
     )
@@ -51,6 +66,11 @@ export const PublicationFrontmatter = z.object({
   venueType: z.enum(['conference', 'journal']).optional(),
   region: z.enum(['international', 'domestic']).optional(),
   refereed: z.boolean().optional(),
+  acceptance: z
+    .object({ accepted: z.number().int().positive(), submitted: z.number().int().positive(), source: z.string().url() })
+    .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' })
+    .optional(),
+  award: z.string().min(1).optional(),
   bibtex: z.string().trim().regex(/^@\w+\{[^\s,{}]+,/, 'bibtex must start with @type{key,').optional(),
 }).superRefine((fm, ctx) => {
   if (fm.type !== 'paper') return;

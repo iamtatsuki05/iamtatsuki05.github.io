@@ -404,6 +404,13 @@ for (const { label, use } of viewports) {
       expect(await publicationItems.first().locator('a[target="_blank"]').count()).toBeGreaterThanOrEqual(1);
     });
 
+    test('shows the sourced acceptance rate on the LensLapse paper', async ({ page }) => {
+      const card = page.getByTestId('publication-card').filter({ hasText: 'LensLapse: In-Browser Logit Lens' });
+      const stat = card.getByTestId('publication-acceptance');
+      await expect(stat).toHaveText('Acceptance rate 64.7% (11/17)');
+      await expect(stat).toHaveAttribute('href', 'https://aclanthology.org/2026.aacl-demo.0.pdf');
+    });
+
     test('opens the primary link when clicking a publication card', async ({ page }) => {
       const card = page.locator('[data-testid="publication-card"]').first();
       const titleLink = card.locator('[data-testid="publication-card-link"]');

@@ -53,6 +53,18 @@ describe('Frontmatter schemas', () => {
     const parsed = PublicationFrontmatter.parse({ title: 'a', type: 'app' });
     expect(parsed.region).toBeUndefined();
   });
+  it('rejects an acceptance record that accepts more papers than were submitted', () => {
+    const result = PublicationFrontmatter.safeParse({
+      title: 'a',
+      type: 'app',
+      acceptance: { accepted: 18, submitted: 17, source: 'https://example.com/front-matter.pdf' },
+    });
+    expect(result.success).toBe(false);
+  });
+  it('requires a source for acceptance statistics', () => {
+    const result = PublicationFrontmatter.safeParse({ title: 'a', type: 'app', acceptance: { accepted: 1, submitted: 2 } });
+    expect(result.success).toBe(false);
+  });
   it('rejects the retired pdf link kind', () => {
     const result = PublicationFrontmatter.safeParse({
       title: 'p',

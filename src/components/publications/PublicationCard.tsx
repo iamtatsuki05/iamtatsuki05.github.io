@@ -1,7 +1,10 @@
 import { Fragment, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
+import { type PublicationLink, PublicationLinks } from '@/components/publications/PublicationLinks';
+import { PublicationRecognition } from '@/components/publications/PublicationRecognition';
 import { BibtexControl } from '@/components/publications/BibtexControl';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
+import type { Locale } from '@/lib/i18n';
 import { siteConfig } from '@/lib/seo/config';
 
 export type PublicationCardItem = {
@@ -13,14 +16,17 @@ export type PublicationCardItem = {
   authors?: string[];
   abstract?: string;
   tags?: string[];
-  links: { kind: string; url: string }[];
+  links: PublicationLink[];
   headerImage?: string;
   headerAlt?: string;
+  acceptance?: { accepted: number; submitted: number; source: string };
+  award?: string;
   bibtex?: string;
 };
 
 type Props = {
   item: PublicationCardItem;
+  locale: Locale;
   query?: string;
   eagerImage?: boolean;
   onOpen?: (url: string) => void;
@@ -44,7 +50,7 @@ function AuthorList({ authors }: { authors: string[] }) {
   );
 }
 
-export function PublicationCard({ item, query = '', eagerImage = false, onOpen, titleAs: Title = 'h3' }: Props) {
+export function PublicationCard({ item, locale, query = '', eagerImage = false, onOpen, titleAs: Title = 'h3' }: Props) {
   const primaryLink = item.links[0]?.url;
   // マウス操作の利便のためカード全域クリックを維持する。キーボードと支援技術には
   // タイトルの実リンクがあるため、li には role を与えずクリックのみ委譲する。
@@ -101,6 +107,7 @@ export function PublicationCard({ item, query = '', eagerImage = false, onOpen, 
           {(item.publishedAt || '').slice(0, 10)} ・{' '}
           <SearchHighlight text={item.venue || item.publisher || ''} query={query} />
         </p>
+        <PublicationRecognition acceptance={item.acceptance} award={item.award} locale={locale} />
         {item.abstract ? (
           <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
             <SearchHighlight text={item.abstract} query={query} />
@@ -115,18 +122,8 @@ export function PublicationCard({ item, query = '', eagerImage = false, onOpen, 
             ))}
           </div>
         ) : null}
-        <div className="-mx-1.5 mt-1 flex flex-wrap text-sm">
-          {item.links.map((l) => (
-            <a
-              key={l.url}
-              href={l.url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-6 items-center px-1.5 py-1 underline"
-            >
-              {l.kind}
-            </a>
-          ))}
+        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          <PublicationLinks links={item.links} />
           {item.bibtex ? <BibtexControl bibtex={item.bibtex} /> : null}
         </div>
       </div>
