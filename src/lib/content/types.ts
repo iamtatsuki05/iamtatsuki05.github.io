@@ -51,6 +51,11 @@ export const PublicationFrontmatter = z.object({
   venueType: z.enum(['conference', 'journal']).optional(),
   region: z.enum(['international', 'domestic']).optional(),
   refereed: z.boolean().optional(),
+  acceptance: z
+    .object({ accepted: z.number().int().positive(), submitted: z.number().int().positive(), source: z.string().url() })
+    .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' })
+    .optional(),
+  award: z.string().min(1).optional(),
 }).superRefine((fm, ctx) => {
   if (fm.type !== 'paper') return;
   for (const key of ['venueType', 'region', 'refereed'] as const) {

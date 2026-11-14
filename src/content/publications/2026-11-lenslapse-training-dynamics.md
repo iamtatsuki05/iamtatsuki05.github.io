@@ -6,6 +6,7 @@ venue: AACL-IJCNLP 2026 System Demonstrations
 venueType: conference
 region: international
 refereed: true
+acceptance: { accepted: 11, submitted: 17, source: https://aclanthology.org/2026.aacl-demo.0.pdf }
 authors: [Tatsuki Okada, Yusuke Sakai, Taro Watanabe]
 links:
   - { kind: paper, url: https://aclanthology.org/2026.aacl-demo.9/ }
