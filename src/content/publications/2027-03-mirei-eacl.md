@@ -6,6 +6,7 @@ venue: EACL 2027 Main Conference
 venueType: conference
 region: international
 refereed: true
+status: forthcoming
 authors: [Tatsuki Okada, Toru Sugimoto, Yusuke Sakai, Taro Watanabe]
 links:
   - { kind: model, url: https://huggingface.co/collections/iamtatsuki05/mirei }

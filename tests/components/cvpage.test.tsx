@@ -33,6 +33,27 @@ describe('CvPage', () => {
     expect(screen.queryByText('A tool')).toBeNull();
   });
 
+  it('orders sections as education, publications, awards, grants, talks, experience', () => {
+    const cv = {
+      education: [{ start: '2026-04', title: { ja: '大学院', en: 'Graduate school' } }],
+      grants: [{ start: '2026-04', title: { ja: '奨学金', en: 'Scholarship' } }],
+      awards: [{ date: '2026-03', title: { ja: '賞', en: 'Prize' } }],
+    };
+    const items: Publication[] = [
+      ...publications,
+      { slug: 'talk', title: 'Invited talk', type: 'talk', publishedAt: '2026-06', authors: [], links: [], tags: [] },
+    ];
+    render(<CvPage locale="en" cv={cv} publications={items} alias="Name" affiliation="Affiliation" />);
+    expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent?.replace(/^\P{L}+/u, ''))).toEqual([
+      'Education',
+      'Publications',
+      'Awards',
+      'Scholarships and Grants',
+      'Talks',
+      'Experience',
+    ]);
+  });
+
   it('hides sections that have no entries', () => {
     render(<CvPage locale="ja" cv={emptyCv} publications={[]} alias="氏名" affiliation="所属" />);
     expect(screen.queryByRole('heading', { level: 2, name: '🎓 学歴' })).toBeNull();

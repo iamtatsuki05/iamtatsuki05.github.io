@@ -61,6 +61,11 @@ describe('Frontmatter schemas', () => {
     });
     expect(result.success).toBe(false);
   });
+  it('rejects an equal-contribution name that is not an author', () => {
+    const fm = { title: 'a', type: 'app', authors: ['A', 'B'] };
+    expect(PublicationFrontmatter.safeParse({ ...fm, equalContribution: ['A', 'B'] }).success).toBe(true);
+    expect(PublicationFrontmatter.safeParse({ ...fm, equalContribution: ['A', 'Z'] }).success).toBe(false);
+  });
   it('accepts a rate-only acceptance without a source', () => {
     const parsed = PublicationFrontmatter.parse({ title: 'a', type: 'app', acceptance: { rate: 13.5 } });
     expect(parsed.acceptance).toEqual({ rate: 13.5 });

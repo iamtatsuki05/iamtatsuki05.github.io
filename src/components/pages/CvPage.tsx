@@ -104,16 +104,6 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
 
       <PeriodSection title={copy.sections.education} tone="blue" entries={cv.education} locale={locale} present={copy.present} />
 
-      <SectionShell tone="amber">
-        <SectionHeader title={copy.sections.experience} tone="amber" />
-        <p className="text-sm text-gray-700 dark:text-gray-300">
-          {copy.experienceLinkLead}{' '}
-          <a href={siteConfig.socials.linkedin} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
-            LinkedIn
-          </a>
-        </p>
-      </SectionShell>
-
       {papers.length ? (
         <SectionShell tone="lilac">
           <SectionHeader title={copy.sections.publications} tone="lilac" />
@@ -130,6 +120,19 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
         </SectionShell>
       ) : null}
 
+      {awards.length ? (
+        <SectionShell tone="amber">
+          <SectionHeader title={copy.sections.awards} tone="amber" />
+          <ul className="space-y-3">
+            {awards.map((award) => (
+              <AwardCard key={`${award.date}-${award.title}-${award.paper?.title ?? ''}`} award={award} paperLabel={copy.awardPaperLabel} />
+            ))}
+          </ul>
+        </SectionShell>
+      ) : null}
+
+      <PeriodSection title={copy.sections.grants} tone="teal" entries={cv.grants} locale={locale} present={copy.present} />
+
       {talks.length ? (
         <SectionShell tone="blue">
           <SectionHeader title={copy.sections.talks} tone="blue" />
@@ -141,18 +144,15 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
         </SectionShell>
       ) : null}
 
-      <PeriodSection title={copy.sections.grants} tone="teal" entries={cv.grants} locale={locale} present={copy.present} />
-
-      {awards.length ? (
-        <SectionShell tone="amber">
-          <SectionHeader title={copy.sections.awards} tone="amber" />
-          <ul className="space-y-3">
-            {awards.map((award) => (
-              <AwardCard key={`${award.date}-${award.title}-${award.paper?.title ?? ''}`} award={award} paperLabel={copy.awardPaperLabel} />
-            ))}
-          </ul>
-        </SectionShell>
-      ) : null}
+      <SectionShell tone="amber">
+        <SectionHeader title={copy.sections.experience} tone="amber" />
+        <p className="text-sm text-gray-700 dark:text-gray-300">
+          {copy.experienceLinkLead}{' '}
+          <a href={siteConfig.socials.linkedin} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
+            LinkedIn
+          </a>
+        </p>
+      </SectionShell>
     </div>
   );
 }
