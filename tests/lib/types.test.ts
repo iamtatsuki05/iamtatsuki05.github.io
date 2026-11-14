@@ -36,6 +36,12 @@ describe('Frontmatter schemas', () => {
     });
     expect(parsed.links[0].kind).toBe('paper');
   });
+  it('accepts BibTeX that starts with an entry type and key, and rejects anything else', () => {
+    const base = { title: 'p', type: 'paper', venueType: 'conference', region: 'domestic', refereed: false };
+    const parsed = PublicationFrontmatter.parse({ ...base, bibtex: '@inproceedings{okada2025nlp,\n  year = "2025"\n}\n' });
+    expect(parsed.bibtex).toBe('@inproceedings{okada2025nlp,\n  year = "2025"\n}');
+    expect(PublicationFrontmatter.safeParse({ ...base, bibtex: 'title = "x"' }).success).toBe(false);
+  });
   it('requires papers to say where they were presented and whether they were refereed', () => {
     const result = PublicationFrontmatter.safeParse({ title: 'p', type: 'paper' });
     expect(result.success).toBe(false);

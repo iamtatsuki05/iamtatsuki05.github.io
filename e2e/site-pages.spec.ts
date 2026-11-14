@@ -424,6 +424,23 @@ for (const { label, use } of viewports) {
       expect(openCalls.length).toBeGreaterThan(0);
     });
 
+    test('reveals BibTeX for a paper without opening it', async ({ page }) => {
+      const card = page.locator('[data-testid="publication-card"]', { hasText: 'LensLapse: In-Browser' });
+      const toggle = card.getByRole('button', { name: 'Show BibTeX' });
+      await toggle.click();
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      const panel = card.getByTestId('publication-bibtex-panel');
+      await expect(panel).toContainText('@inproceedings{okada-etal-2026-lenslapse,');
+      await expect(panel.getByRole('link', { name: 'Download .bib' })).toHaveAttribute(
+        'download',
+        'okada-etal-2026-lenslapse.bib',
+      );
+      const openCalls = await page.evaluate(
+        () => (window as unknown as { __publicationOpenCalls__?: string[] }).__publicationOpenCalls__ || [],
+      );
+      expect(openCalls).toEqual([]);
+    });
+
     test('keeps filter bar layout stable when opening tag filter', async ({ page }) => {
       const searchInput = page.getByRole('textbox', { name: 'Search...' });
       await expect(searchInput).toBeVisible();

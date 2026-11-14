@@ -71,6 +71,7 @@ export const PublicationFrontmatter = z.object({
     .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' })
     .optional(),
   award: z.string().min(1).optional(),
+  bibtex: z.string().trim().regex(/^@\w+\{[^\s,{}]+,/, 'bibtex must start with @type{key,').optional(),
 }).superRefine((fm, ctx) => {
   if (fm.type !== 'paper') return;
   for (const key of ['venueType', 'region', 'refereed'] as const) {

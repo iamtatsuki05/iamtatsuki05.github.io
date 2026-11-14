@@ -1,7 +1,8 @@
 import { Fragment, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
-import { PublicationRecognition } from '@/components/publications/PublicationRecognition';
 import { type PublicationLink, PublicationLinks } from '@/components/publications/PublicationLinks';
+import { PublicationRecognition } from '@/components/publications/PublicationRecognition';
+import { BibtexControl } from '@/components/publications/BibtexControl';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import type { Locale } from '@/lib/i18n';
 import { siteConfig } from '@/lib/seo/config';
@@ -20,6 +21,7 @@ export type PublicationCardItem = {
   headerAlt?: string;
   acceptance?: { accepted: number; submitted: number; source: string };
   award?: string;
+  bibtex?: string;
 };
 
 type Props = {
@@ -56,7 +58,7 @@ export function PublicationCard({ item, locale, query = '', eagerImage = false, 
     primaryLink && onOpen
       ? {
           onClick: (event: MouseEvent<HTMLLIElement>) => {
-            if ((event.target as HTMLElement).closest('a')) return;
+            if ((event.target as HTMLElement).closest('a, button, [data-card-click-ignore]')) return;
             onOpen(primaryLink);
           },
         }
@@ -120,7 +122,10 @@ export function PublicationCard({ item, locale, query = '', eagerImage = false, 
             ))}
           </div>
         ) : null}
-        <PublicationLinks links={item.links} />
+        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          <PublicationLinks links={item.links} />
+          {item.bibtex ? <BibtexControl bibtex={item.bibtex} /> : null}
+        </div>
       </div>
     </li>
   );
