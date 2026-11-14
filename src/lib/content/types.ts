@@ -71,6 +71,9 @@ export const PublicationFrontmatter = z.object({
     .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' })
     .optional(),
   award: z.string().min(1).optional(),
+  venueFull: z.string().min(1).optional(),
+  pages: z.string().regex(/^\d+(?:-\d+)?$/, 'pages must look like 66 or 66-73').optional(),
+  location: z.string().min(1).optional(),
   bibtex: z.string().trim().regex(/^@\w+\{[^\s,{}]+,/, 'bibtex must start with @type{key,').optional(),
 }).superRefine((fm, ctx) => {
   if (fm.type !== 'paper') return;

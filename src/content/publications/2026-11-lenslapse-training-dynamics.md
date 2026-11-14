@@ -3,6 +3,9 @@ title: 'LensLapse: In-Browser Logit Lens for Interactive Exploration of Language
 type: paper
 publishedAt: 2026-11
 venue: AACL-IJCNLP 2026 System Demonstrations
+venueFull: 'The 15th International Joint Conference on Natural Language Processing and the 5th Conference of the Asia-Pacific Chapter of the Association for Computational Linguistics: System Demonstrations'
+pages: 66-73
+location: Hengqin, China
 venueType: conference
 region: international
 refereed: true

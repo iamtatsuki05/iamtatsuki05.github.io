@@ -1,6 +1,7 @@
 import { Fragment, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
 import { type PublicationLink, PublicationLinks } from '@/components/publications/PublicationLinks';
+import { PublicationVenue } from '@/components/publications/PublicationVenue';
 import { PublicationRecognition } from '@/components/publications/PublicationRecognition';
 import { BibtexControl } from '@/components/publications/BibtexControl';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
@@ -22,6 +23,9 @@ export type PublicationCardItem = {
   acceptance?: { accepted: number; submitted: number; source: string };
   award?: string;
   bibtex?: string;
+  venueFull?: string;
+  pages?: string;
+  location?: string;
 };
 
 type Props = {
@@ -103,10 +107,7 @@ export function PublicationCard({ item, locale, query = '', eagerImage = false, 
           )}
         </Title>
         {item.authors?.length ? <AuthorList authors={item.authors} /> : null}
-        <p className="text-xs opacity-70">
-          {(item.publishedAt || '').slice(0, 10)} ・{' '}
-          <SearchHighlight text={item.venue || item.publisher || ''} query={query} />
-        </p>
+        <PublicationVenue {...item} locale={locale} query={query} />
         <PublicationRecognition acceptance={item.acceptance} award={item.award} locale={locale} />
         {item.abstract ? (
           <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">

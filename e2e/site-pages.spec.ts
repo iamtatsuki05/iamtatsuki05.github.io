@@ -411,6 +411,11 @@ for (const { label, use } of viewports) {
       await expect(stat).toHaveAttribute('href', 'https://aclanthology.org/2026.aacl-demo.0.pdf');
     });
 
+    test('shows the citation-style venue line on the LensLapse paper', async ({ page }) => {
+      const card = page.getByTestId('publication-card').filter({ hasText: 'LensLapse: In-Browser Logit Lens' });
+      await expect(card.getByTestId('publication-venue')).toHaveText(/\(AACL-IJCNLP 2026 System Demonstrations\), pp\. 66–73, November 2026, Hengqin, China\.$/);
+    });
+
     test('opens the primary link when clicking a publication card', async ({ page }) => {
       const card = page.locator('[data-testid="publication-card"]').first();
       const titleLink = card.locator('[data-testid="publication-card-link"]');
