@@ -10,7 +10,7 @@ links:
   - { kind: code, url: https://github.com/iamtatsuki05/lenslapse }
   - { kind: video, url: https://www.youtube.com/watch?v=OBnvG9Ru3j8 }
 tags: [LLM, interpretability, logit lens, visualization, research]
-abstract: 言語モデルの学習チェックポイント間で、層ごとの logit lens の予測が変わっていく様子をブラウザ上で対話的に探索できるシステムに関する研究です。
+abstract: A browser-based system for interactively exploring how a language model's layer-wise logit lens predictions change across training checkpoints.
 headerImage: https://raw.githubusercontent.com/iamtatsuki05/lenslapse/d52257bc9134177906ae73cb66bc583563203711/docs/assets/readme-hero.png
 headerAlt: LensLapseの操作画面
 ---
