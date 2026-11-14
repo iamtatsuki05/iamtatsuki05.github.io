@@ -11,7 +11,8 @@ const YearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM');
 const CvText = z.object({ ja: z.string(), en: z.string() });
 
 const PeriodEntry = z.object({
-  start: YearMonth,
+  // 開始年月を確認できていない在籍中の項目も載せられるよう、start は省略可にする。
+  start: YearMonth.optional(),
   end: YearMonth.optional(),
   title: CvText,
   detail: CvText.optional(),
@@ -25,9 +26,9 @@ const DatedEntry = z.object({
   url: z.url().optional(),
 });
 
-export const CvData = z.object({
+// 職歴は LinkedIn に任せるので experience は持たない。古いキーが残っていたら strictObject で落とす。
+export const CvData = z.strictObject({
   education: z.array(PeriodEntry).default([]),
-  experience: z.array(PeriodEntry).default([]),
   grants: z.array(PeriodEntry).default([]),
   awards: z.array(DatedEntry).default([]),
 });
@@ -59,19 +60,46 @@ export function formatYearMonth(value: string): string {
 }
 
 export function formatCvPeriod(entry: Pick<CvPeriodEntry, 'start' | 'end'>, presentLabel: string): string {
-  return `${formatYearMonth(entry.start)} – ${entry.end ? formatYearMonth(entry.end) : presentLabel}`;
+  const end = entry.end ? formatYearMonth(entry.end) : presentLabel;
+  return entry.start ? `${formatYearMonth(entry.start)} – ${end}` : end;
 }
 
 function byNewest<T>(key: (item: T) => string) {
   return (a: T, b: T) => key(b).localeCompare(key(a));
 }
 
+// 開始年月のない項目は在籍中とみなし、先頭に並べる。
 export function sortPeriodEntries(entries: CvPeriodEntry[]): CvPeriodEntry[] {
-  return [...entries].sort(byNewest((e) => e.start));
+  return [...entries].sort(byNewest((e) => e.start ?? '9999-99'));
 }
 
 export function sortDatedEntries(entries: CvDatedEntry[]): CvDatedEntry[] {
   return [...entries].sort(byNewest((e) => e.date));
+}
+
+export type CvAward = {
+  date: string;
+  title: string;
+  detail?: string;
+  url?: string;
+  paper?: { title: string; url?: string };
+};
+
+export function collectCvAwards(standalone: CvDatedEntry[], publications: Publication[], locale: Locale): CvAward[] {
+  const fromPapers = publications.flatMap((p): CvAward[] => {
+    if (!p.award) return [];
+    if (!p.publishedAt) throw new Error(`Publication "${p.slug}" has an award but no publishedAt to date it`);
+    return [{ date: p.publishedAt.slice(0, 7), title: p.award, paper: { title: p.title, url: p.links[0]?.url } }];
+  });
+  const fromCv = standalone.map(
+    (entry): CvAward => ({
+      date: entry.date,
+      title: cvText(entry.title, locale),
+      detail: entry.detail ? cvText(entry.detail, locale) : undefined,
+      url: entry.url,
+    }),
+  );
+  return [...fromPapers, ...fromCv].sort(byNewest((a) => a.date));
 }
 
 const PAPER_GROUPS = [

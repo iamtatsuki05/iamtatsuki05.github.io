@@ -789,6 +789,9 @@ test.describe('CV page', () => {
     await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 3, name: '国際会議（査読あり）' })).toBeVisible();
     await expect(page.getByRole('link', { name: /LensLapse: In-Browser Logit Lens/ })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '🎓 学歴' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: '奈良先端科学技術大学院大学 (NAIST)' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/iamtatsuki05');
     await expect(page.getByText('DeNAでの2週間インターンシップ体験記', { exact: false })).toHaveCount(0);
     await expect(page.getByText('Meal Shield')).toHaveCount(0);
     await expect(
@@ -800,6 +803,8 @@ test.describe('CV page', () => {
     await page.goto('/en-US/cv/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 3, name: 'Domestic Conferences (Non-refereed)' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '🎓 Education' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '💼 Experience' })).toBeVisible();
   });
 });
 
