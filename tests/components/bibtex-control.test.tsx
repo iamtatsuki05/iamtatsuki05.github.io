@@ -31,14 +31,19 @@ describe('BibtexControl on a publication card', () => {
     const onOpen = renderCard();
     const toggle = screen.getByRole('button', { name: 'BibTeXを表示' });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.getByTestId('publication-bibtex-panel')).not.toBeVisible();
+    expect(screen.queryByTestId('publication-bibtex-panel')).toBeNull();
+    expect(screen.queryByText(/okada-etal-2026-lenslapse/)).toBeNull();
 
     await user.click(toggle);
 
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    expect(toggle).toHaveAccessibleName('BibTeXを閉じる');
+    expect(toggle).toHaveAccessibleName('BibTeXを表示');
     expect(screen.getByTestId('publication-bibtex-panel')).toBeVisible();
     expect(screen.getByLabelText('BibTeX')).toHaveTextContent('okada-etal-2026-lenslapse');
+
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByTestId('publication-bibtex-panel')).toBeNull();
     expect(onOpen).not.toHaveBeenCalled();
   });
 
@@ -54,8 +59,10 @@ describe('BibtexControl on a publication card', () => {
   });
 
   it('offers a .bib download named after the citation key', async () => {
+    const user = userEvent.setup();
     renderCard();
-    const link = screen.getByRole('link', { name: '.bib をダウンロード', hidden: true });
+    await user.click(screen.getByRole('button', { name: 'BibTeXを表示' }));
+    const link = screen.getByRole('link', { name: '.bib をダウンロード' });
     expect(link).toHaveAttribute('download', 'okada-etal-2026-lenslapse.bib');
     expect(decodeURIComponent(link.getAttribute('href') ?? '')).toBe(`data:application/x-bibtex;charset=utf-8,${bibtex}`);
   });
