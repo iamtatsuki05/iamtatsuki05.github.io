@@ -1,15 +1,21 @@
-# Entries for /cv. Publications and software come from src/content/publications.
-# Dates are YYYY-MM. Omit `end` for an ongoing period. `detail` and `url` are optional.
+# Entries for /cv. Publications, talks, and paper awards come from src/content/publications.
+# Work experience is not listed here; the CV links to LinkedIn instead.
+# Dates are YYYY-MM. Omit `end` for an ongoing period. `start`, `detail`, and `url` are optional.
 #
-# education:
-#   - start: 2024-04
-#     end: 2026-03
-#     title: { ja: 学校名, en: School name }
-#     detail: { ja: 学部・研究科, en: Faculty or program }
+# grants:
+#   - start: 2026-04
+#     end: 2027-03
+#     title: { ja: 奨学金の名前, en: Scholarship name }
 # awards:
 #   - date: 2026-03
 #     title: { ja: 賞の名前, en: Award name }
-education: []
-experience: []
+#     detail: { ja: 主催, en: Organizer }
+education:
+  # Start date and degree are not on the site yet; add `start` once confirmed.
+  - title: { ja: 奈良先端科学技術大学院大学 (NAIST), en: Nara Institute of Science and Technology (NAIST) }
+    detail:
+      ja: 先端科学技術研究科 情報科学領域 自然言語処理学研究室（渡辺研究室）
+      en: Graduate School of Science and Technology, Information Science, Natural Language Processing Laboratory (Watanabe Lab)
+    url: https://www.naist.jp/
 grants: []
 awards: []
