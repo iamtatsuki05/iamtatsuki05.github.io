@@ -1,5 +1,6 @@
 import { Fragment, type MouseEvent } from 'react';
 import Image from '@/components/compat/Image';
+import { BibtexControl } from '@/components/publications/BibtexControl';
 import { SearchHighlight } from '@/components/search/SearchHighlight';
 import { siteConfig } from '@/lib/seo/config';
 
@@ -15,6 +16,7 @@ export type PublicationCardItem = {
   links: { kind: string; url: string }[];
   headerImage?: string;
   headerAlt?: string;
+  bibtex?: string;
 };
 
 type Props = {
@@ -50,7 +52,7 @@ export function PublicationCard({ item, query = '', eagerImage = false, onOpen, 
     primaryLink && onOpen
       ? {
           onClick: (event: MouseEvent<HTMLLIElement>) => {
-            if ((event.target as HTMLElement).closest('a')) return;
+            if ((event.target as HTMLElement).closest('a, button, [data-card-click-ignore]')) return;
             onOpen(primaryLink);
           },
         }
@@ -125,6 +127,7 @@ export function PublicationCard({ item, query = '', eagerImage = false, onOpen, 
               {l.kind}
             </a>
           ))}
+          {item.bibtex ? <BibtexControl bibtex={item.bibtex} /> : null}
         </div>
       </div>
     </li>

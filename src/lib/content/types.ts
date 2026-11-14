@@ -51,6 +51,7 @@ export const PublicationFrontmatter = z.object({
   venueType: z.enum(['conference', 'journal']).optional(),
   region: z.enum(['international', 'domestic']).optional(),
   refereed: z.boolean().optional(),
+  bibtex: z.string().trim().regex(/^@\w+\{[^\s,{}]+,/, 'bibtex must start with @type{key,').optional(),
 }).superRefine((fm, ctx) => {
   if (fm.type !== 'paper') return;
   for (const key of ['venueType', 'region', 'refereed'] as const) {
