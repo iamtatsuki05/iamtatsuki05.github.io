@@ -71,7 +71,7 @@ describe('PublicationsClient', () => {
     await user.click(titleLink);
     expect(openSpy).toHaveBeenCalledTimes(1);
 
-    await user.click(getByRole('link', { name: 'paper' }));
+    await user.click(getByRole('link', { name: 'Paper' }));
     expect(openSpy).toHaveBeenCalledTimes(1);
   });
 
