@@ -8,4 +8,6 @@ links:
   - { kind: code, url: https://github.com/iamtatsuki05/unlock_pdf_password }
 tags: [app, python]
 abstract: パスワード付きPDFのロックを解除するアプリ。
+headerImage: /images/publications/unlock-pdf-password.webp
+headerAlt: Unlock PDF Passwordのヘッダー画像
 ---
