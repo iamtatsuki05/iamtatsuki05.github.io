@@ -8,6 +8,7 @@ const publications: Publication[] = [
     slug: 'demo',
     title: 'Demo paper',
     type: 'paper',
+    venueType: 'conference',
     region: 'international',
     refereed: true,
     venue: 'AACL-IJCNLP 2026 System Demonstrations',
@@ -25,7 +26,7 @@ describe('CvPage', () => {
   it('lists only papers, under their group, and marks the owner in the author list', () => {
     render(<CvPage locale="en" cv={emptyCv} publications={publications} alias="Name" affiliation="Affiliation" />);
 
-    const group = screen.getByTestId('cv-papers-international-refereed');
+    const group = screen.getByTestId('cv-papers-conference-international-refereed');
     expect(within(group).getByText('International Conferences (Refereed)')).toBeInTheDocument();
     expect(within(group).getByRole('link', { name: 'Demo paper' })).toHaveAttribute('href', 'https://example.com/paper');
     expect(within(group).getByText('Tatsuki Okada').tagName).toBe('STRONG');

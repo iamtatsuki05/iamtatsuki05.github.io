@@ -51,16 +51,18 @@ education:
     expect(sorted.map((e) => e.start)).toEqual(['2024-04', '2020-04']);
   });
 
-  it('groups papers by region and review and leaves out everything else', () => {
+  it('groups papers by venue type, region, and review and leaves out everything else', () => {
     const grouped = groupPapersForCv([
-      pub({ slug: 'dom', region: 'domestic', refereed: false }),
-      pub({ slug: 'intl', region: 'international', refereed: true }),
+      pub({ slug: 'dom', venueType: 'conference', region: 'domestic', refereed: false }),
+      pub({ slug: 'intl', venueType: 'conference', region: 'international', refereed: true }),
+      pub({ slug: 'journal', venueType: 'journal', region: 'domestic', refereed: true }),
       pub({ slug: 'app', type: 'app' }),
       pub({ slug: 'post', type: 'article' }),
     ]);
     expect(grouped.map((g) => [g.key, g.items.map((p) => p.slug)])).toEqual([
-      ['international-refereed', ['intl']],
-      ['domestic-nonrefereed', ['dom']],
+      ['journal-domestic-refereed', ['journal']],
+      ['conference-international-refereed', ['intl']],
+      ['conference-domestic-nonrefereed', ['dom']],
     ]);
   });
 });

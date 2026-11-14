@@ -75,10 +75,14 @@ export function sortDatedEntries(entries: CvDatedEntry[]): CvDatedEntry[] {
 }
 
 const PAPER_GROUPS = [
-  { key: 'international-refereed', region: 'international', refereed: true },
-  { key: 'international-nonrefereed', region: 'international', refereed: false },
-  { key: 'domestic-refereed', region: 'domestic', refereed: true },
-  { key: 'domestic-nonrefereed', region: 'domestic', refereed: false },
+  { key: 'journal-international-refereed', venueType: 'journal', region: 'international', refereed: true },
+  { key: 'journal-international-nonrefereed', venueType: 'journal', region: 'international', refereed: false },
+  { key: 'journal-domestic-refereed', venueType: 'journal', region: 'domestic', refereed: true },
+  { key: 'journal-domestic-nonrefereed', venueType: 'journal', region: 'domestic', refereed: false },
+  { key: 'conference-international-refereed', venueType: 'conference', region: 'international', refereed: true },
+  { key: 'conference-international-nonrefereed', venueType: 'conference', region: 'international', refereed: false },
+  { key: 'conference-domestic-refereed', venueType: 'conference', region: 'domestic', refereed: true },
+  { key: 'conference-domestic-nonrefereed', venueType: 'conference', region: 'domestic', refereed: false },
 ] as const;
 export type PaperGroupKey = (typeof PAPER_GROUPS)[number]['key'];
 
@@ -86,7 +90,11 @@ export function groupPapersForCv(publications: Publication[]): { key: PaperGroup
   return PAPER_GROUPS.map((group) => ({
     key: group.key,
     items: publications.filter(
-      (p) => p.type === 'paper' && p.region === group.region && p.refereed === group.refereed,
+      (p) =>
+        p.type === 'paper' &&
+        p.venueType === group.venueType &&
+        p.region === group.region &&
+        p.refereed === group.refereed,
     ),
   })).filter((group) => group.items.length > 0);
 }

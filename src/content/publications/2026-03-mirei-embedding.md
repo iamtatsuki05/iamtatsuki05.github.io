@@ -3,6 +3,7 @@ title: 同一条件下における Encoder/Decoder アーキテクチャによ�
 type: paper
 publishedAt: 2026-03
 venue: 言語処理学会第32回年次大会 (NLP2026)
+venueType: conference
 region: domestic
 refereed: false
 authors: [岡田 龍樹, 杉本 徹]

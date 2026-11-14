@@ -3,6 +3,7 @@ title: 正解保証を伴う思考プロセス付き合成データ生成によ�
 type: paper
 publishedAt: 2025-03
 venue: 言語処理学会第31回年次大会 (NLP2025)
+venueType: conference
 region: domestic
 refereed: false
 authors: [岡田 龍樹, 平川 雅人, 大葉 大輔]

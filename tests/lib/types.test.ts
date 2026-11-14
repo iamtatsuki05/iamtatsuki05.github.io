@@ -16,6 +16,7 @@ describe('Frontmatter schemas', () => {
     const parsed = PublicationFrontmatter.parse({
       title: 'p',
       type: 'paper',
+      venueType: 'conference',
       region: 'international',
       refereed: true,
       publishedAt: new Date('2024-01-01'),
@@ -28,6 +29,7 @@ describe('Frontmatter schemas', () => {
     const parsed = PublicationFrontmatter.parse({
       title: 'p',
       type: 'paper',
+      venueType: 'conference',
       region: 'international',
       refereed: true,
       links: [{ kind: 'paper', url: 'https://aclanthology.org/2026.aacl-demo.9/' }],
@@ -37,6 +39,9 @@ describe('Frontmatter schemas', () => {
   it('requires papers to say where they were presented and whether they were refereed', () => {
     const result = PublicationFrontmatter.safeParse({ title: 'p', type: 'paper' });
     expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.path[0])).toEqual(['venueType', 'region', 'refereed']);
+    }
   });
   it('does not require region or refereed for non-paper entries', () => {
     const parsed = PublicationFrontmatter.parse({ title: 'a', type: 'app' });
@@ -46,6 +51,7 @@ describe('Frontmatter schemas', () => {
     const result = PublicationFrontmatter.safeParse({
       title: 'p',
       type: 'paper',
+      venueType: 'conference',
       region: 'domestic',
       refereed: false,
       links: [{ kind: 'pdf', url: 'https://example.com/paper.pdf' }],
