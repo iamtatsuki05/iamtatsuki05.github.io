@@ -404,6 +404,18 @@ for (const { label, use } of viewports) {
       expect(await publicationItems.first().locator('a[target="_blank"]').count()).toBeGreaterThanOrEqual(1);
     });
 
+    test('shows the sourced acceptance rate on the LensLapse paper', async ({ page }) => {
+      const card = page.getByTestId('publication-card').filter({ hasText: 'LensLapse: In-Browser Logit Lens' });
+      const stat = card.getByTestId('publication-acceptance');
+      await expect(stat).toHaveText('Acceptance rate 64.7% (11/17)');
+      await expect(stat).toHaveAttribute('href', 'https://aclanthology.org/2026.aacl-demo.0.pdf');
+    });
+
+    test('shows the citation-style venue line on the LensLapse paper', async ({ page }) => {
+      const card = page.getByTestId('publication-card').filter({ hasText: 'LensLapse: In-Browser Logit Lens' });
+      await expect(card.getByTestId('publication-venue')).toHaveText(/\(AACL-IJCNLP 2026 System Demonstrations\), pp\. 66–73, November 2026, Hengqin, China\.$/);
+    });
+
     test('opens the primary link when clicking a publication card', async ({ page }) => {
       const card = page.locator('[data-testid="publication-card"]').first();
       const titleLink = card.locator('[data-testid="publication-card-link"]');
@@ -415,6 +427,23 @@ for (const { label, use } of viewports) {
         () => (window as unknown as { __publicationOpenCalls__?: string[] }).__publicationOpenCalls__ || [],
       );
       expect(openCalls.length).toBeGreaterThan(0);
+    });
+
+    test('reveals BibTeX for a paper without opening it', async ({ page }) => {
+      const card = page.locator('[data-testid="publication-card"]', { hasText: 'LensLapse: In-Browser' });
+      const toggle = card.getByRole('button', { name: 'Show BibTeX' });
+      await toggle.click();
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      const panel = card.getByTestId('publication-bibtex-panel');
+      await expect(panel).toContainText('@inproceedings{okada-etal-2026-lenslapse,');
+      await expect(panel.getByRole('link', { name: 'Download .bib' })).toHaveAttribute(
+        'download',
+        'okada-etal-2026-lenslapse.bib',
+      );
+      const openCalls = await page.evaluate(
+        () => (window as unknown as { __publicationOpenCalls__?: string[] }).__publicationOpenCalls__ || [],
+      );
+      expect(openCalls).toEqual([]);
     });
 
     test('keeps filter bar layout stable when opening tag filter', async ({ page }) => {
@@ -749,6 +778,28 @@ test.describe('Default locale fallback', () => {
   test('renders Japanese hobbies page at /hobbies/', async ({ page }) => {
     await page.goto('/hobbies/');
     await expect(page.getByRole('heading', { level: 1, name: '🧸 趣味' })).toBeVisible();
+  });
+});
+
+test.describe('CV page', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('lists papers by group and highlights CV in the header nav', async ({ page }) => {
+    await page.goto('/cv/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: '国際会議（査読あり）' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /LensLapse: In-Browser Logit Lens/ })).toBeVisible();
+    await expect(page.getByText('DeNAでの2週間インターンシップ体験記', { exact: false })).toHaveCount(0);
+    await expect(page.getByText('Meal Shield')).toHaveCount(0);
+    await expect(
+      page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: '📄 CV' }),
+    ).toHaveClass(/nav-link--active/);
+  });
+
+  test('renders the English CV page', async ({ page }) => {
+    await page.goto('/en-US/cv/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Domestic Conferences (Non-refereed)' })).toBeVisible();
   });
 });
 

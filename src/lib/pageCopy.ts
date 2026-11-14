@@ -1,3 +1,4 @@
+import type { PaperGroupKey } from '@/lib/data/cv';
 import type { Locale } from '@/lib/i18n';
 import { pageMeta } from '@/lib/seo/metaConfig';
 
@@ -152,5 +153,112 @@ export const hobbiesPageCopy: Record<Locale, HobbiesPageCopy> = {
     currentFocusLabel: 'Pourquoi cela m’intéresse',
     emptyStateLabel: 'Les articles associés arrivent bientôt',
     ctaLabel: 'Voir les articles',
+  },
+};
+
+export type CvPageCopy = PageCopy<{
+  sections: {
+    education: string;
+    experience: string;
+    publications: string;
+    grants: string;
+    awards: string;
+  };
+  paperGroups: Record<PaperGroupKey, string>;
+  present: string;
+}>;
+
+export const cvPageCopy: Record<Locale, CvPageCopy> = {
+  ja: {
+    ...pageMeta.cv.ja,
+    heading: '📄 CV',
+    breadcrumb: '🏠 Home / 📄 CV',
+    sections: {
+      education: '🎓 学歴',
+      experience: '💼 職歴',
+      publications: '📚 論文',
+      grants: '💰 奨学金・助成',
+      awards: '🏆 受賞',
+    },
+    paperGroups: {
+      'journal-international-refereed': '国際論文誌（査読あり）',
+      'journal-international-nonrefereed': '国際論文誌（査読なし）',
+      'journal-domestic-refereed': '国内論文誌（査読あり）',
+      'journal-domestic-nonrefereed': '国内論文誌（査読なし）',
+      'conference-international-refereed': '国際会議（査読あり）',
+      'conference-international-nonrefereed': '国際会議（査読なし）',
+      'conference-domestic-refereed': '国内会議（査読あり）',
+      'conference-domestic-nonrefereed': '国内会議（査読なし）',
+    },
+    present: '現在',
+  },
+  en: {
+    ...pageMeta.cv.en,
+    heading: '📄 CV',
+    breadcrumb: '🏠 Home / 📄 CV',
+    sections: {
+      education: '🎓 Education',
+      experience: '💼 Work Experience',
+      publications: '📚 Publications',
+      grants: '💰 Scholarships and Grants',
+      awards: '🏆 Awards',
+    },
+    paperGroups: {
+      'journal-international-refereed': 'International Journals (Refereed)',
+      'journal-international-nonrefereed': 'International Journals (Non-refereed)',
+      'journal-domestic-refereed': 'Domestic Journals (Refereed)',
+      'journal-domestic-nonrefereed': 'Domestic Journals (Non-refereed)',
+      'conference-international-refereed': 'International Conferences (Refereed)',
+      'conference-international-nonrefereed': 'International Conferences (Non-refereed)',
+      'conference-domestic-refereed': 'Domestic Conferences (Refereed)',
+      'conference-domestic-nonrefereed': 'Domestic Conferences (Non-refereed)',
+    },
+    present: 'Present',
+  },
+  zh: {
+    ...pageMeta.cv.zh,
+    heading: '📄 简历',
+    breadcrumb: '🏠 首页 / 📄 简历',
+    sections: {
+      education: '🎓 教育经历',
+      experience: '💼 工作经历',
+      publications: '📚 论文',
+      grants: '💰 奖学金与资助',
+      awards: '🏆 获奖',
+    },
+    paperGroups: {
+      'journal-international-refereed': '国际期刊（经同行评审）',
+      'journal-international-nonrefereed': '国际期刊（未经同行评审）',
+      'journal-domestic-refereed': '国内期刊（经同行评审）',
+      'journal-domestic-nonrefereed': '国内期刊（未经同行评审）',
+      'conference-international-refereed': '国际会议（经同行评审）',
+      'conference-international-nonrefereed': '国际会议（未经同行评审）',
+      'conference-domestic-refereed': '国内会议（经同行评审）',
+      'conference-domestic-nonrefereed': '国内会议（未经同行评审）',
+    },
+    present: '至今',
+  },
+  fr: {
+    ...pageMeta.cv.fr,
+    heading: '📄 CV',
+    breadcrumb: '🏠 Accueil / 📄 CV',
+    sections: {
+      education: '🎓 Formation',
+      experience: '💼 Expérience professionnelle',
+      publications: '📚 Publications',
+      grants: '💰 Bourses et financements',
+      awards: '🏆 Distinctions',
+    },
+    paperGroups: {
+      'journal-international-refereed': 'Revues internationales (avec comité de lecture)',
+      'journal-international-nonrefereed': 'Revues internationales (sans comité de lecture)',
+      'journal-domestic-refereed': 'Revues nationales (avec comité de lecture)',
+      'journal-domestic-nonrefereed': 'Revues nationales (sans comité de lecture)',
+      'conference-international-refereed': 'Conférences internationales (avec comité de lecture)',
+      'conference-international-nonrefereed': 'Conférences internationales (sans comité de lecture)',
+      'conference-domestic-refereed': 'Conférences nationales (avec comité de lecture)',
+      'conference-domestic-nonrefereed': 'Conférences nationales (sans comité de lecture)',
+    },
+    present: 'aujourd’hui',
   },
 };

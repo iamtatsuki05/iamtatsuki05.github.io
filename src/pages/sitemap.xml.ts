@@ -22,7 +22,7 @@ const escapeXml = (value: string) =>
 export const GET: APIRoute = async () => {
   const site = getSiteUrlWithBasePath();
   const now = new Date();
-  const topLevelPages = ['/', '/links/', '/blogs/', '/hobbies/', '/publications/'];
+  const topLevelPages = ['/', '/links/', '/blogs/', '/hobbies/', '/publications/', '/cv/'];
   const localizedStaticPages = SUPPORTED_ROUTE_LOCALES.flatMap((routeLocale) => {
     const locale = resolveLocale(routeLocale);
     return topLevelPages.map((pagePath): SitemapEntry => ({
@@ -38,6 +38,7 @@ export const GET: APIRoute = async () => {
     ['/blogs/', 'weekly', 0.9],
     ['/hobbies/', 'monthly', 0.8],
     ['/publications/', 'monthly', 0.8],
+    ['/cv/', 'monthly', 0.8],
   ].map(([path, changeFrequency, priority]) => ({
     url: `${site}${path}`,
     lastModified: now,

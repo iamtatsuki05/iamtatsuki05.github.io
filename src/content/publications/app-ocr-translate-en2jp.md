@@ -8,4 +8,6 @@ links:
   - { kind: code, url: https://github.com/iamtatsuki05/ocr_and_translate_en2jp }
 tags: [app, python]
 abstract: 画像から英語テキストを抽出し、日本語へ自動翻訳するOCRアプリ。
+headerImage: /images/publications/ocr-translate-en2jp.webp
+headerAlt: OCR and Translate EN→JPのヘッダー画像
 ---

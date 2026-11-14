@@ -2,7 +2,11 @@
 title: 正解保証を伴う思考プロセス付き合成データ生成による日本語大規模言語モデルの数学推論能力向上
 type: paper
 publishedAt: 2025-03
-venue: Conference
+venue: 言語処理学会第31回年次大会 (NLP2025)
+pages: 1962-1967
+venueType: conference
+region: domestic
+refereed: false
 authors: [岡田 龍樹, 平川 雅人, 大葉 大輔]
 links:
   - { kind: paper, url: https://www.anlp.jp/proceedings/annual_meeting/2025/pdf_dir/P5-8.pdf }
@@ -11,4 +15,13 @@ tags: [LLM, dataset, synthetic, math, research]
 abstract: 日本語の数学推論能力を高めるためのデータセット構築手法に関する研究です。
 headerImage: https://huggingface.co/datasets/elyza/JaMARD/resolve/main/images/consept.jpg
 headerAlt: 概念図
+bibtex: |
+  @inproceedings{okada2025nlp,
+      title = "正解保証を伴う思考プロセス付き合成データ生成による日本語大規模言語モデルの数学推論能力向上",
+      author = "岡田, 龍樹 and 平川, 雅人 and 大葉, 大輔",
+      booktitle = "言語処理学会第31回年次大会発表論文集",
+      month = mar,
+      year = "2025",
+      url = "https://www.anlp.jp/proceedings/annual_meeting/2025/pdf_dir/P5-8.pdf"
+  }
 ---

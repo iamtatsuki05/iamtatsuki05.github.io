@@ -127,6 +127,13 @@ export function buildSiteLinksJsonLd() {
         description: '学術論文と研究成果',
         url: absoluteUrl('/publications/'),
       },
+      {
+        '@type': 'SiteNavigationElement',
+        position: 5,
+        name: 'CV',
+        description: '論文・制作物・経歴をまとめた CV',
+        url: absoluteUrl('/cv/'),
+      },
     ],
   };
 }

@@ -1,0 +1,10 @@
+---
+import CvIndexPage from '@/components/pages/CvIndexPage.astro';
+import { localeStaticPaths } from '@/lib/astro/paths';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+---
+
+<CvIndexPage routeLocale={Astro.params.locale || 'ja-JP'} />

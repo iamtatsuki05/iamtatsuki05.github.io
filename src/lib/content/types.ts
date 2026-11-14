@@ -29,6 +29,21 @@ export const BlogFrontmatter = z.object({
 });
 export type BlogFrontmatter = z.infer<typeof BlogFrontmatter>;
 
+export const PublicationLinkKind = z.enum([
+  'paper',
+  'doi',
+  'post',
+  'slides',
+  'video',
+  'code',
+  'model',
+  'data',
+  'app',
+  'project',
+  'pypi',
+]);
+export type PublicationLinkKind = z.infer<typeof PublicationLinkKind>;
+
 export const PublicationFrontmatter = z.object({
   title: z.string(),
   type: z.enum(['paper', 'article', 'talk', 'slide', 'media', 'app']),
@@ -39,7 +54,7 @@ export const PublicationFrontmatter = z.object({
   links: z
     .array(
       z.object({
-        kind: z.enum(['paper', 'doi', 'post', 'slides', 'video', 'code', 'model', 'data', 'app']),
+        kind: PublicationLinkKind,
         url: z.string(),
       }),
     )
@@ -48,5 +63,29 @@ export const PublicationFrontmatter = z.object({
   abstract: z.string().optional(),
   headerImage: z.string().optional(),
   headerAlt: z.string().optional(),
+  venueType: z.enum(['conference', 'journal']).optional(),
+  region: z.enum(['international', 'domestic']).optional(),
+  refereed: z.boolean().optional(),
+  acceptance: z
+    .union([
+      z
+        .object({ accepted: z.number().int().positive(), submitted: z.number().int().positive(), source: z.string().url().optional() })
+        .strict()
+        .refine((a) => a.accepted <= a.submitted, { message: 'acceptance.accepted cannot exceed acceptance.submitted' }),
+      z.object({ rate: z.number().gt(0).lte(100), source: z.string().url().optional() }).strict(),
+    ])
+    .optional(),
+  award: z.string().min(1).optional(),
+  venueFull: z.string().min(1).optional(),
+  pages: z.string().regex(/^\d+(?:-\d+)?$/, 'pages must look like 66 or 66-73').optional(),
+  location: z.string().min(1).optional(),
+  bibtex: z.string().trim().regex(/^@\w+\{[^\s,{}]+,/, 'bibtex must start with @type{key,').optional(),
+}).superRefine((fm, ctx) => {
+  if (fm.type !== 'paper') return;
+  for (const key of ['venueType', 'region', 'refereed'] as const) {
+    if (fm[key] === undefined) {
+      ctx.addIssue({ code: 'custom', path: [key], message: `A paper needs ${key} so the CV can list it under the right heading` });
+    }
+  }
 });
 export type PublicationFrontmatter = z.infer<typeof PublicationFrontmatter>;
