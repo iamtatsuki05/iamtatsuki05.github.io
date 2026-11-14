@@ -81,8 +81,11 @@ export function BibtexControl({ bibtex }: { bibtex: string }) {
         aria-controls={open ? panelId : undefined}
         aria-label={text.show}
         data-testid="publication-bibtex-toggle"
-        className="inline-flex min-h-6 items-center px-1.5 py-1 underline"
+        className="mt-2 inline-flex min-h-7 items-center gap-1 rounded-full border border-purple-200 bg-purple-50/80 px-2.5 py-1 text-[11px] font-semibold uppercase leading-none tracking-wider text-purple-800 shadow-sm shadow-purple-100 transition hover:-translate-y-px hover:border-amber-300 hover:bg-amber-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 aria-expanded:border-amber-300 aria-expanded:bg-amber-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:border-purple-400/40 dark:bg-purple-500/15 dark:text-purple-100 dark:shadow-none dark:hover:border-amber-300/60 dark:hover:bg-amber-300/10 dark:aria-expanded:bg-amber-300/10 dark:focus-visible:outline-amber-300"
       >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="size-3.5 shrink-0">
+          <path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1" />
+        </svg>
         BIB
       </button>
       {open ? (
