@@ -20,7 +20,7 @@ const publications: Publication[] = [
   { slug: 'tool', title: 'A tool', type: 'app', authors: [], links: [], tags: [] },
 ];
 
-const emptyCv = { education: [], experience: [], grants: [], awards: [] };
+const emptyCv = { education: [], grants: [], awards: [] };
 
 describe('CvPage', () => {
   it('lists only papers, under their group, and marks the owner in the author list', () => {
@@ -45,5 +45,32 @@ describe('CvPage', () => {
     expect(screen.getByRole('heading', { level: 2, name: '🎓 学歴' })).toBeInTheDocument();
     expect(screen.getByText('2026.04 – 現在')).toBeInTheDocument();
     expect(screen.getByText('大学院')).toBeInTheDocument();
+  });
+
+  it('points work experience to LinkedIn', () => {
+    render(<CvPage locale="en" cv={emptyCv} publications={[]} alias="Name" affiliation="Affiliation" />);
+    expect(screen.getByRole('heading', { level: 2, name: '💼 Experience' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/iamtatsuki05');
+  });
+
+  it('lists talks and awards with the awarded paper linked', () => {
+    const items: Publication[] = [
+      { ...publications[0], award: 'Best Demo Award' },
+      { slug: 'talk', title: 'Invited talk', type: 'talk', publishedAt: '2026-06', authors: [], links: [], tags: [] },
+    ];
+    const cv = { ...emptyCv, awards: [{ date: '2025-01', title: { ja: '奨励賞', en: 'Encouragement Award' } }] };
+    render(<CvPage locale="en" cv={cv} publications={items} alias="Name" affiliation="Affiliation" />);
+
+    expect(screen.getByRole('heading', { level: 2, name: '🎤 Talks' })).toBeInTheDocument();
+    expect(screen.getByText('Invited talk')).toBeInTheDocument();
+    const titles = screen.getAllByTestId('cv-entry').map((li) => within(li).getByRole('heading', { level: 3 }).textContent);
+    expect(titles).toEqual(['Best Demo Award', 'Encouragement Award']);
+    const paperAward = screen.getAllByTestId('cv-entry')[0];
+    expect(within(paperAward).getByRole('link', { name: 'Demo paper' })).toHaveAttribute('href', 'https://example.com/paper');
+  });
+
+  it('hides talks when there are none', () => {
+    render(<CvPage locale="ja" cv={emptyCv} publications={publications} alias="氏名" affiliation="所属" />);
+    expect(screen.queryByRole('heading', { level: 2, name: '🎤 発表' })).toBeNull();
   });
 });
