@@ -29,6 +29,21 @@ export const BlogFrontmatter = z.object({
 });
 export type BlogFrontmatter = z.infer<typeof BlogFrontmatter>;
 
+export const PublicationLinkKind = z.enum([
+  'paper',
+  'doi',
+  'post',
+  'slides',
+  'video',
+  'code',
+  'model',
+  'data',
+  'app',
+  'project',
+  'pypi',
+]);
+export type PublicationLinkKind = z.infer<typeof PublicationLinkKind>;
+
 export const PublicationFrontmatter = z.object({
   title: z.string(),
   type: z.enum(['paper', 'article', 'talk', 'slide', 'media', 'app']),
@@ -39,7 +54,7 @@ export const PublicationFrontmatter = z.object({
   links: z
     .array(
       z.object({
-        kind: z.enum(['paper', 'doi', 'post', 'slides', 'video', 'code', 'model', 'data', 'app']),
+        kind: PublicationLinkKind,
         url: z.string(),
       }),
     )
