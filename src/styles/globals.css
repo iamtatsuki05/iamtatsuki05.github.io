@@ -66,6 +66,11 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Unlayered like the a:hover rule above, which would otherwise underline the chip labels. */
+a.publication-link:hover {
+  text-decoration: none;
+}
+
 .prose pre {
   @apply overflow-x-auto rounded-md border border-gray-200 bg-gray-950 text-gray-100 shadow-sm dark:border-gray-700 dark:bg-[#0b1020];
   position: relative;
