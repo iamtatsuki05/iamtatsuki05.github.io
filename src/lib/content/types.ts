@@ -48,5 +48,15 @@ export const PublicationFrontmatter = z.object({
   abstract: z.string().optional(),
   headerImage: z.string().optional(),
   headerAlt: z.string().optional(),
+  venueType: z.enum(['conference', 'journal']).optional(),
+  region: z.enum(['international', 'domestic']).optional(),
+  refereed: z.boolean().optional(),
+}).superRefine((fm, ctx) => {
+  if (fm.type !== 'paper') return;
+  for (const key of ['venueType', 'region', 'refereed'] as const) {
+    if (fm[key] === undefined) {
+      ctx.addIssue({ code: 'custom', path: [key], message: `A paper needs ${key} so the CV can list it under the right heading` });
+    }
+  }
 });
 export type PublicationFrontmatter = z.infer<typeof PublicationFrontmatter>;

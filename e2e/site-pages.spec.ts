@@ -752,6 +752,28 @@ test.describe('Default locale fallback', () => {
   });
 });
 
+test.describe('CV page', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test('lists papers by group and highlights CV in the header nav', async ({ page }) => {
+    await page.goto('/cv/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: '国際会議（査読あり）' })).toBeVisible();
+    await expect(page.getByRole('link', { name: /LensLapse: In-Browser Logit Lens/ })).toBeVisible();
+    await expect(page.getByText('DeNAでの2週間インターンシップ体験記', { exact: false })).toHaveCount(0);
+    await expect(page.getByText('Meal Shield')).toHaveCount(0);
+    await expect(
+      page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: '📄 CV' }),
+    ).toHaveClass(/nav-link--active/);
+  });
+
+  test('renders the English CV page', async ({ page }) => {
+    await page.goto('/en-US/cv/', { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: 'Domestic Conferences (Non-refereed)' })).toBeVisible();
+  });
+});
+
 test.describe('Special route pages', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 

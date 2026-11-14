@@ -2,7 +2,10 @@
 title: 同一条件下における Encoder/Decoder アーキテクチャによる文埋め込みの性能分析
 type: paper
 publishedAt: 2026-03
-venue: Conference
+venue: 言語処理学会第32回年次大会 (NLP2026)
+venueType: conference
+region: domestic
+refereed: false
 authors: [岡田 龍樹, 杉本 徹]
 links:
   - { kind: paper, url: https://www.anlp.jp/proceedings/annual_meeting/2026/pdf_dir/C9-1.pdf }

@@ -74,7 +74,7 @@ function HeaderContent({ currentPath }: HeaderProps) {
       <div className="container mx-auto flex max-w-screen-2xl items-center justify-between gap-3 px-4 py-4">
         <Link
           href={localizedPath('/', locale)}
-          className="flex min-w-0 flex-1 items-center gap-3 truncate text-lg font-semibold lg:flex-none"
+          className="flex min-w-0 flex-1 items-center gap-3 truncate text-lg font-semibold xl:flex-none"
         >
           <img
             src={withBasePath('/header-icon-56.webp')}
@@ -91,13 +91,13 @@ function HeaderContent({ currentPath }: HeaderProps) {
             Tatsuki Okada
           </span>
         </Link>
-        <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-4">
+        <nav aria-label="Main navigation" className="hidden xl:flex items-center gap-4">
           <NavLinks items={navItems} activePath={activePath} localePrefix={localePrefix} />
           <LanguageSwitch currentPath={pathname} />
           <ThemeToggle />
         </nav>
 
-        <div className="lg:hidden flex items-center gap-2">
+        <div className="xl:hidden flex items-center gap-2">
           <LanguageSwitch currentPath={pathname} />
           <ThemeToggle />
           <button

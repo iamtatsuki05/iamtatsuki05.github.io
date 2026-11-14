@@ -1,7 +1,7 @@
 import type { Locale } from '@/lib/i18n';
 import { siteConfig } from './config';
 
-export type PageKey = 'home' | 'blogs' | 'links' | 'publications' | 'hobbies';
+export type PageKey = 'home' | 'blogs' | 'links' | 'publications' | 'hobbies' | 'cv';
 
 export type PageMeta = {
   metadataTitle: string;
@@ -124,6 +124,28 @@ export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
       metadataDescription:
         'Les centres d’intérêt de Tatsuki Okada et ce qui le passionne en ce moment : gadgets, NLP, chai, piano, œuvres visuelles et plus encore.',
       path: '/fr-FR/hobbies/',
+    },
+  },
+  cv: {
+    ja: {
+      metadataTitle: 'CV',
+      metadataDescription: '岡田 龍樹の CV です。学歴、職歴、論文などをまとめています。',
+      path: '/ja-JP/cv/',
+    },
+    en: {
+      metadataTitle: 'CV',
+      metadataDescription: "Tatsuki Okada's CV, listing education, work experience, papers, and more.",
+      path: '/en-US/cv/',
+    },
+    zh: {
+      metadataTitle: '简历',
+      metadataDescription: '冈田龙树的简历，列出教育经历、工作经历、论文等。',
+      path: '/zh-CN/cv/',
+    },
+    fr: {
+      metadataTitle: 'CV',
+      metadataDescription: 'Le CV de Tatsuki Okada : formation, expérience professionnelle, articles scientifiques et plus encore.',
+      path: '/fr-FR/cv/',
     },
   },
 };

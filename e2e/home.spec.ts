@@ -118,7 +118,7 @@ for (const { label, use } of viewports) {
         await expect(menu).toHaveAttribute('data-state', 'open');
 
         const menuLinks = menu.locator('nav a');
-        await expect(menuLinks).toHaveCount(5);
+        await expect(menuLinks).toHaveCount(6);
         await expect(menuLinks.nth(1)).toContainText('Links');
         const targetPath = (await menuLinks.nth(1).getAttribute('href')) || localizedPath('ja', '/links/');
         await menuLinks.nth(1).click();

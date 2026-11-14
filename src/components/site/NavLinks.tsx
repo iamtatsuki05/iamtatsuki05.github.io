@@ -21,7 +21,7 @@ export function NavLinks({ items, activePath, localePrefix, orientation = 'horiz
 
   const baseClass = isVertical
     ? 'nav-link nav-link--vertical px-3 py-2 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40'
-    : 'nav-link nav-link--horizontal px-2 py-1 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40';
+    : 'nav-link nav-link--horizontal whitespace-nowrap px-2 py-1 rounded-full border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-colors dark:hover:bg-[#120d21] dark:hover:border-amber-300/40';
 
   return (
     <nav className={clsx(isVertical ? 'flex flex-col' : 'flex items-center gap-4')}>

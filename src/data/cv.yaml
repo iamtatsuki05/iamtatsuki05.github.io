@@ -1,0 +1,15 @@
+# Entries for /cv. Publications and software come from src/content/publications.
+# Dates are YYYY-MM. Omit `end` for an ongoing period. `detail` and `url` are optional.
+#
+# education:
+#   - start: 2024-04
+#     end: 2026-03
+#     title: { ja: 学校名, en: School name }
+#     detail: { ja: 学部・研究科, en: Faculty or program }
+# awards:
+#   - date: 2026-03
+#     title: { ja: 賞の名前, en: Award name }
+education: []
+experience: []
+grants: []
+awards: []

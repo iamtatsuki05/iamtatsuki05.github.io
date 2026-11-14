@@ -18,6 +18,11 @@ describe('isTranslatablePath', () => {
     expect(isTranslatablePath('/hobbies/')).toBe(true);
   });
 
+  it('treats the CV page as translatable', () => {
+    expect(isTranslatablePath('/cv/')).toBe(true);
+    expect(isTranslatablePath('/en-US/cv/')).toBe(true);
+  });
+
   it('treats blog detail pages as translatable', () => {
     expect(isTranslatablePath('/blogs/example-post/')).toBe(true);
     expect(isTranslatablePath('/fr-FR/blogs/example-post/')).toBe(true);

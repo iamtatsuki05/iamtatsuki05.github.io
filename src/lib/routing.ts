@@ -31,7 +31,7 @@ export function isTranslatablePath(pathname: string): boolean {
   if (!pathname) return false;
   const bare = stripLocalePrefix(pathname);
   const normalized = bare.endsWith('/') ? bare : `${bare}/`;
-  if (['/', '/links/', '/hobbies/', '/publications/', '/blogs/'].includes(normalized)) {
+  if (['/', '/links/', '/hobbies/', '/publications/', '/cv/', '/blogs/'].includes(normalized)) {
     return true;
   }
   return /^\/blogs\/[^/]+\/$/i.test(normalized);

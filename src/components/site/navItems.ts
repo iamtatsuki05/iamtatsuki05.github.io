@@ -11,6 +11,7 @@ const NAV_ITEMS: NavItemDef[] = [
     href: '/publications/',
     label: { ja: '📚 Publications', en: '📚 Publications', zh: '📚 公开成果', fr: '📚 Publications' },
   },
+  { href: '/cv/', label: { ja: '📄 CV', en: '📄 CV', zh: '📄 简历', fr: '📄 CV' } },
   { href: '/blogs/', label: { ja: '📝 Blogs', en: '📝 Blogs', zh: '📝 博客', fr: '📝 Articles' } },
 ];
 

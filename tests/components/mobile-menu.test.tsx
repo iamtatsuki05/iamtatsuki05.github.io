@@ -30,7 +30,7 @@ describe('MobileMenu', () => {
 
   it('画面幅がデスクトップ幅になると、開いているメニューを閉じる', () => {
     vi.stubGlobal('matchMedia', (query: string) => ({
-      matches: query === '(min-width: 1024px)',
+      matches: query === '(min-width: 1280px)',
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     }));
