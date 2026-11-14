@@ -61,8 +61,12 @@ describe('Frontmatter schemas', () => {
     });
     expect(result.success).toBe(false);
   });
-  it('requires a source for acceptance statistics', () => {
-    const result = PublicationFrontmatter.safeParse({ title: 'a', type: 'app', acceptance: { accepted: 1, submitted: 2 } });
+  it('accepts a rate-only acceptance without a source', () => {
+    const parsed = PublicationFrontmatter.parse({ title: 'a', type: 'app', acceptance: { rate: 13.5 } });
+    expect(parsed.acceptance).toEqual({ rate: 13.5 });
+  });
+  it('rejects an acceptance rate above 100 percent', () => {
+    const result = PublicationFrontmatter.safeParse({ title: 'a', type: 'app', acceptance: { rate: 135 } });
     expect(result.success).toBe(false);
   });
   it('rejects the retired pdf link kind', () => {

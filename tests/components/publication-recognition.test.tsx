@@ -24,6 +24,13 @@ describe('PublicationCard recognition', () => {
     expect(screen.getByTestId('publication-award')).toHaveTextContent('🏆Best Demo Paper Award');
   });
 
+  it('shows a rate-only acceptance as plain text when it has no source', () => {
+    render(<PublicationCard item={{ ...base, acceptance: { rate: 13.5 } }} locale="en" />);
+    const stat = screen.getByTestId('publication-acceptance');
+    expect(stat.tagName).toBe('SPAN');
+    expect(stat).toHaveTextContent('Acceptance rate 13.5%');
+  });
+
   it('shows neither when unknown', () => {
     render(<PublicationCard item={base} locale="en" />);
     expect(screen.queryByTestId('publication-acceptance')).toBeNull();
