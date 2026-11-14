@@ -161,9 +161,12 @@ export type CvPageCopy = PageCopy<{
     education: string;
     experience: string;
     publications: string;
+    talks: string;
     grants: string;
     awards: string;
   };
+  experienceLinkLead: string;
+  awardPaperLabel: string;
   paperGroups: Record<PaperGroupKey, string>;
   present: string;
 }>;
@@ -177,9 +180,12 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 学歴',
       experience: '💼 職歴',
       publications: '📚 論文',
+      talks: '🎤 発表',
       grants: '💰 奨学金・助成',
       awards: '🏆 受賞',
     },
+    experienceLinkLead: '職歴は LinkedIn にまとめています：',
+    awardPaperLabel: '対象論文',
     paperGroups: {
       'journal-international-refereed': '国際論文誌（査読あり）',
       'journal-international-nonrefereed': '国際論文誌（査読なし）',
@@ -198,11 +204,14 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     breadcrumb: '🏠 Home / 📄 CV',
     sections: {
       education: '🎓 Education',
-      experience: '💼 Work Experience',
+      experience: '💼 Experience',
       publications: '📚 Publications',
+      talks: '🎤 Talks',
       grants: '💰 Scholarships and Grants',
       awards: '🏆 Awards',
     },
+    experienceLinkLead: 'My work experience is on LinkedIn:',
+    awardPaperLabel: 'Paper',
     paperGroups: {
       'journal-international-refereed': 'International Journals (Refereed)',
       'journal-international-nonrefereed': 'International Journals (Non-refereed)',
@@ -223,9 +232,12 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 教育经历',
       experience: '💼 工作经历',
       publications: '📚 论文',
+      talks: '🎤 报告',
       grants: '💰 奖学金与资助',
       awards: '🏆 获奖',
     },
+    experienceLinkLead: '工作经历请见 LinkedIn：',
+    awardPaperLabel: '获奖论文',
     paperGroups: {
       'journal-international-refereed': '国际期刊（经同行评审）',
       'journal-international-nonrefereed': '国际期刊（未经同行评审）',
@@ -246,9 +258,12 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
       education: '🎓 Formation',
       experience: '💼 Expérience professionnelle',
       publications: '📚 Publications',
+      talks: '🎤 Présentations',
       grants: '💰 Bourses et financements',
       awards: '🏆 Distinctions',
     },
+    experienceLinkLead: 'Mon parcours professionnel est sur LinkedIn :',
+    awardPaperLabel: 'Article',
     paperGroups: {
       'journal-international-refereed': 'Revues internationales (avec comité de lecture)',
       'journal-international-nonrefereed': 'Revues internationales (sans comité de lecture)',
