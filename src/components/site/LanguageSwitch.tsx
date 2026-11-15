@@ -1,55 +1,16 @@
-import React from 'react';
 import Link from '@/components/compat/Link';
-import { usePathname } from '@/lib/compat/navigation';
-import { LOCALE_UI_LABELS, SUPPORTED_LOCALES, type Locale } from '@/lib/i18n';
+import { LOCALE_UI_LABELS, SUPPORTED_LOCALES } from '@/lib/i18n';
 import { extractLocaleFromPath, isTranslatablePath, localizedPath, stripLocalePrefix } from '@/lib/routing';
-import { writePreferredLocale } from '@/lib/localePreference';
 
 type LanguageSwitchProps = {
   currentPath?: string;
 };
 
-export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
-  const indicatorInsetPx = 4;
-  const pathname = usePathname(currentPath) || '';
+/** Static markup; headerController positions the indicator pill and remembers the locale. */
+export function LanguageSwitch({ currentPath = '' }: LanguageSwitchProps) {
+  const pathname = currentPath;
   const currentLocale = extractLocaleFromPath(pathname) || 'ja';
   const isTranslatable = isTranslatablePath(pathname);
-  const groupRef = React.useRef<HTMLDivElement>(null);
-  const optionRefs = React.useRef<Record<Locale, HTMLSpanElement | null>>({
-    ja: null,
-    en: null,
-    zh: null,
-    fr: null,
-  });
-  const [indicatorStyle, setIndicatorStyle] = React.useState<React.CSSProperties | null>(null);
-
-  React.useEffect(() => {
-    const locale = extractLocaleFromPath(pathname);
-    if (locale) {
-      writePreferredLocale(locale);
-    }
-  }, [pathname]);
-
-  const updateIndicator = React.useCallback(() => {
-    const group = groupRef.current;
-    const activeOption = optionRefs.current[currentLocale];
-    if (!group || !activeOption) return;
-
-    const groupRect = group.getBoundingClientRect();
-    const optionRect = activeOption.getBoundingClientRect();
-    setIndicatorStyle({
-      width: `${optionRect.width}px`,
-      transform: `translateX(${optionRect.left - groupRect.left - indicatorInsetPx}px)`,
-    });
-  }, [currentLocale, indicatorInsetPx]);
-
-  React.useEffect(() => {
-    updateIndicator();
-
-    const handleResize = () => updateIndicator();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isTranslatable, pathname, updateIndicator]);
 
   const bare = stripLocalePrefix(pathname);
   const normalized = bare.endsWith('/') ? bare : `${bare}/`;
@@ -60,15 +21,14 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
   }));
 
   const baseOptionClass = 'language-switch-option inline-flex min-w-9 items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold tracking-[0.08em] no-underline hover:no-underline transition-[color,transform] duration-200 focus-ring sm:min-w-10 sm:px-2.5';
-  // globals.css の未レイヤーの `a { color: var(--link) }` が通常の utility より優先されるため important を付ける。
-  // ピルが表示される前（ハイドレーション前）に付けると、ダークでは暗い枠の上に暗い文字が乗るので待つ
-  const activeOptionClass = indicatorStyle ? 'text-[#2a143f]!' : '';
+  // The active option's color is added by headerController together with the pill: before the pill shows,
+  // a dark label would sit on the dark shell.
   const inactiveOptionClass = 'text-gray-700 hover:text-purple-600 hover:-translate-y-px dark:text-gray-200 dark:hover:text-amber-200';
   const disabledOptionClass = 'cursor-default text-gray-500 dark:text-gray-400';
 
   return (
     <div
-      ref={groupRef}
+      data-language-switch
       role="group"
       aria-label="Language switch"
       aria-disabled={isTranslatable ? undefined : true}
@@ -79,17 +39,13 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
         data-testid="language-switch-indicator"
         data-active-locale={currentLocale}
         className="pointer-events-none absolute top-1 bottom-1 left-1 rounded-full bg-gradient-to-r from-purple-400 via-purple-300 to-amber-300 shadow-[0_12px_24px_-18px_rgba(126,34,206,0.9)] transition-[transform,width,opacity] duration-300 ease-out dark:from-purple-300 dark:via-purple-200 dark:to-amber-200"
-        style={{
-          opacity: indicatorStyle ? 1 : 0,
-          width: indicatorStyle?.width,
-          transform: indicatorStyle?.transform,
-        }}
+        style={{ opacity: 0 }}
       />
       {options.map((option) => {
         const isCurrent = currentLocale === option.locale;
         const className = [
           baseOptionClass,
-          isCurrent ? activeOptionClass : inactiveOptionClass,
+          isCurrent ? '' : inactiveOptionClass,
           !isTranslatable && !isCurrent ? disabledOptionClass : '',
         ].join(' ');
 
@@ -97,9 +53,7 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
           return (
             <span
               key={option.locale}
-              ref={(node) => {
-                optionRefs.current[option.locale] = node;
-              }}
+              data-language-option={option.locale}
               className="relative z-10 flex"
             >
               <span className={className} aria-current={isCurrent ? 'true' : undefined}>
@@ -112,9 +66,7 @@ export function LanguageSwitch({ currentPath }: LanguageSwitchProps) {
         return (
           <span
             key={option.locale}
-            ref={(node) => {
-              optionRefs.current[option.locale] = node;
-            }}
+            data-language-option={option.locale}
             className="relative z-10 flex"
           >
             <Link href={option.href} className={className} aria-current={isCurrent ? 'true' : undefined}>

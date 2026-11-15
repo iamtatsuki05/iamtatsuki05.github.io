@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { waitForIslandHydration } from './helpers/hydration';
 import { localizedPath } from './helpers/paths';
 
 const viewports = [
@@ -104,7 +103,6 @@ for (const { label, use } of viewports) {
       test('opens and closes the mobile menu', async ({ page }) => {
         const menu = page.locator('#mobile-menu');
 
-        await waitForIslandHydration(page, 'Header');
         await page.getByRole('button', { name: 'Open menu' }).click();
         await expect(menu).toBeVisible();
         await expect(menu).toHaveAttribute('data-state', 'open');

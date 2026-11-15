@@ -12,12 +12,16 @@ type Props = {
   lang?: string;
   jsonLd?: unknown[];
   preloadImages?: string[];
+  /** False for pages without an exported index.md beside them, such as 404.html. */
+  hasMarkdown?: boolean;
 };
 
-const { metadata, lang = 'ja', jsonLd = [], preloadImages = [] } = Astro.props;
+const { metadata, lang = 'ja', jsonLd = [], preloadImages = [], hasMarkdown = true } = Astro.props;
 const meta = renderMetadata(metadata);
 const structuredData = [buildPersonJsonLd(), buildWebsiteJsonLd(), ...jsonLd];
 const googleAnalyticsId = getGoogleAnalyticsId();
+// generate-agent-markdown.ts writes index.md beside every exported index.html.
+const markdownHref = hasMarkdown ? `${Astro.url.pathname.replace(/\/+$/, '')}/index.md` : null;
 ---
 
 <!doctype html>
@@ -36,6 +40,7 @@ const googleAnalyticsId = getGoogleAnalyticsId();
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href={meta.canonical} />
     <link rel="alternate" type="application/rss+xml" href={absoluteUrl('/rss.xml')} />
+    {markdownHref ? <link rel="alternate" type="text/markdown" href={markdownHref} /> : null}
     {Object.entries(meta.languages).map(([hrefLang, href]) => <link rel="alternate" hreflang={hrefLang} href={href} />)}
     <link rel="icon" type="image/png" sizes="32x32" href={withBasePath('/favicon-32.png')} />
     <link rel="apple-touch-icon" href={withBasePath('/apple-icon.png')} />
@@ -85,7 +90,11 @@ const googleAnalyticsId = getGoogleAnalyticsId();
     {structuredData.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
   </head>
   <body class="min-h-screen flex flex-col">
-    <Header currentPath={Astro.url.pathname} client:load />
+    <Header currentPath={Astro.url.pathname} />
+    <script>
+      import { initHeader } from '@/components/site/headerController';
+      initHeader();
+    </script>
     <main class="container mx-auto max-w-screen-2xl px-4 pt-28 pb-8 flex-1">
       <slot />
     </main>

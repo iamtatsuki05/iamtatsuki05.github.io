@@ -9,11 +9,9 @@ const meta = {
     layout: 'fullscreen',
   },
   args: {
-    open: true,
     items: resolveNavItems('ja'),
     activePath: '/',
     localePrefix: '',
-    onClose: () => {},
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof MobileMenu>;

@@ -1,22 +1,11 @@
 
-import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { LanguageSwitch } from '@/components/site/LanguageSwitch';
-import { LOCALE_PREFERENCE_STORAGE_KEY } from '@/lib/localePreference';
-
-function setPathname(pathname: string) {
-  (globalThis as any).__NEXT_TEST_PATHNAME__ = pathname;
-}
-
-afterEach(() => {
-  window.localStorage.clear();
-  setPathname('/');
-});
 
 describe('LanguageSwitch', () => {
   it('translatable pathでは言語リンクを表示する', () => {
-    setPathname('/en-US/links/');
-    render(<LanguageSwitch />);
+    render(<LanguageSwitch currentPath="/en-US/links/" />);
 
     const jaLink = screen.getByRole('link', { name: 'JA' });
     const enLink = screen.getByRole('link', { name: 'EN' });
@@ -36,16 +25,8 @@ describe('LanguageSwitch', () => {
     expect(enLink.className).toContain('language-switch-option');
   });
 
-  it('locale付きパスでは選択中言語を保存する', async () => {
-    setPathname('/en-US/links/');
-    render(<LanguageSwitch />);
-
-    await waitFor(() => expect(window.localStorage.getItem(LOCALE_PREFERENCE_STORAGE_KEY)).toBe('en'));
-  });
-
   it('hobbies でも言語リンクを切り替えられる', () => {
-    setPathname('/en-US/hobbies/');
-    render(<LanguageSwitch />);
+    render(<LanguageSwitch currentPath="/en-US/hobbies/" />);
 
     expect(screen.getByRole('link', { name: 'JA' }).getAttribute('href')).toBe('/ja-JP/hobbies/');
     expect(screen.getByRole('link', { name: 'EN' }).getAttribute('href')).toBe('/en-US/hobbies/');
@@ -54,8 +35,7 @@ describe('LanguageSwitch', () => {
   });
 
   it('blog detail でも言語リンクを切り替えられる', () => {
-    setPathname('/ja-JP/blogs/example-post/');
-    render(<LanguageSwitch />);
+    render(<LanguageSwitch currentPath="/ja-JP/blogs/example-post/" />);
 
     expect(screen.getByRole('link', { name: 'JA' }).getAttribute('href')).toBe('/ja-JP/blogs/example-post/');
     expect(screen.getByRole('link', { name: 'EN' }).getAttribute('href')).toBe('/en-US/blogs/example-post/');
