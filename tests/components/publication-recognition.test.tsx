@@ -31,9 +31,25 @@ describe('PublicationCard recognition', () => {
     expect(stat).toHaveTextContent('Acceptance rate 13.5%');
   });
 
+  it.each([
+    ['forthcoming', 'ja', '掲載予定'],
+    ['under-review', 'en', 'Under review'],
+  ] as const)('labels a %s paper in %s', (status, locale, label) => {
+    render(<PublicationCard item={{ ...base, status }} locale={locale} />);
+    expect(screen.getByTestId('publication-status')).toHaveTextContent(label);
+  });
+
+  it('marks equal-contribution authors and explains the mark', () => {
+    render(
+      <PublicationCard item={{ ...base, authors: ['A', 'B', 'C'], equalContribution: ['A', 'B'] }} locale="en" />,
+    );
+    expect(screen.getByTestId('publication-authors')).toHaveTextContent('A*, B*, C* Equal contribution');
+  });
+
   it('shows neither when unknown', () => {
     render(<PublicationCard item={base} locale="en" />);
     expect(screen.queryByTestId('publication-acceptance')).toBeNull();
     expect(screen.queryByTestId('publication-award')).toBeNull();
+    expect(screen.queryByTestId('publication-status')).toBeNull();
   });
 });

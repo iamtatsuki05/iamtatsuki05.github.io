@@ -1,6 +1,7 @@
 # Entries for /cv. Publications, talks, and paper awards come from src/content/publications.
 # Work experience is not listed here; the CV links to LinkedIn instead.
 # Dates are YYYY-MM. Omit `end` for an ongoing period. `start`, `detail`, and `url` are optional.
+# Education and grants also accept an optional `advisor: { name: { ja, en }, url }`, where `url` is optional.
 #
 # grants:
 #   - start: 2026-04
@@ -11,11 +12,20 @@
 #     title: { ja: 賞の名前, en: Award name }
 #     detail: { ja: 主催, en: Organizer }
 education:
-  # Start date and degree are not on the site yet; add `start` once confirmed.
-  - title: { ja: 奈良先端科学技術大学院大学 (NAIST), en: Nara Institute of Science and Technology (NAIST) }
+  - start: 2026-04
+    title: { ja: 奈良先端科学技術大学院大学 (NAIST), en: Nara Institute of Science and Technology (NAIST) }
     detail:
-      ja: 先端科学技術研究科 情報科学領域 自然言語処理学研究室（渡辺研究室）
-      en: Graduate School of Science and Technology, Information Science, Natural Language Processing Laboratory (Watanabe Lab)
+      ja: 先端科学技術研究科 情報科学領域 自然言語処理学研究室（渡辺研究室） 修士課程
+      en: Graduate School of Science and Technology, Information Science, Natural Language Processing Laboratory (Watanabe Lab), Master's Program
     url: https://www.naist.jp/
+    advisor: { name: { ja: 渡辺 太郎, en: Taro Watanabe }, url: https://sites.google.com/site/tarowtnb/ }
+  - start: 2022-04
+    end: 2026-03
+    title: { ja: 芝浦工業大学, en: Shibaura Institute of Technology }
+    detail:
+      ja: 工学部 情報工学科 学士（工学）
+      en: College of Engineering, Department of Information Science and Engineering, Bachelor of Engineering
+    url: https://www.shibaura-it.ac.jp/
+    advisor: { name: { ja: 杉本 徹, en: Toru Sugimoto }, url: http://www.lang.ise.shibaura-it.ac.jp/sugimoto.html }
 grants: []
 awards: []

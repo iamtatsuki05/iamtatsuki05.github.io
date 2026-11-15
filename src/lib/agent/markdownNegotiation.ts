@@ -45,6 +45,7 @@ export function notFoundMarkdown(pathname: string): string {
     '- [Blog](/blogs/)',
     '- [Publications](/publications/)',
     '- [Sitemap](/sitemap.xml)',
+    '- [Site guide for agents](/llms.txt)',
     '',
   ].join('\n');
 }

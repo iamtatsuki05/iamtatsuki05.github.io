@@ -1,7 +1,7 @@
 import type { PublicationCardItem } from '@/components/publications/PublicationCard';
 import { LOCALE_LABELS, type Locale } from '@/lib/i18n';
 
-type Props = Pick<PublicationCardItem, 'acceptance' | 'award'> & { locale: Locale };
+type Props = Pick<PublicationCardItem, 'acceptance' | 'award' | 'status'> & { locale: Locale };
 
 const acceptanceLabels: Record<Locale, string> = {
   ja: '採択率',
@@ -10,8 +10,13 @@ const acceptanceLabels: Record<Locale, string> = {
   fr: "Taux d'acceptation",
 };
 
-export function PublicationRecognition({ acceptance, award, locale }: Props) {
-  if (!acceptance && !award) return null;
+const statusLabels: Record<NonNullable<Props['status']>, Record<Locale, string>> = {
+  forthcoming: { ja: '掲載予定', en: 'Forthcoming', zh: '即将发表', fr: 'À paraître' },
+  'under-review': { ja: '査読中', en: 'Under review', zh: '审稿中', fr: 'En cours de relecture' },
+};
+
+export function PublicationRecognition({ acceptance, award, status, locale }: Props) {
+  if (!acceptance && !award && !status) return null;
   const ratio = acceptance ? ('rate' in acceptance ? acceptance.rate / 100 : acceptance.accepted / acceptance.submitted) : null;
   const rate =
     ratio === null
@@ -23,6 +28,14 @@ export function PublicationRecognition({ acceptance, award, locale }: Props) {
 
   return (
     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
+      {status ? (
+        <span
+          data-testid="publication-status"
+          className="rounded-full border border-sky-300 bg-sky-50 px-2 py-0.5 font-semibold text-sky-800 dark:border-sky-300/50 dark:bg-sky-500/15 dark:text-sky-100"
+        >
+          {statusLabels[status][locale]}
+        </span>
+      ) : null}
       {award ? (
         <span
           data-testid="publication-award"
