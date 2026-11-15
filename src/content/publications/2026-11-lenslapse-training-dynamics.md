@@ -13,8 +13,8 @@ acceptance: { accepted: 11, submitted: 17, source: https://aclanthology.org/2026
 authors: [Tatsuki Okada, Yusuke Sakai, Taro Watanabe]
 links:
   - { kind: paper, url: https://aclanthology.org/2026.aacl-demo.9/ }
-  - { kind: project, url: https://iamtatsuki05.github.io/lenslapse/about/ }
-  - { kind: app, url: https://iamtatsuki05.github.io/lenslapse/ }
+  - { kind: project, url: https://lenslapse.iamtatsuki05.com/about/ }
+  - { kind: app, url: https://lenslapse.iamtatsuki05.com/ }
   - { kind: code, url: https://github.com/iamtatsuki05/lenslapse }
   - { kind: video, url: https://www.youtube.com/watch?v=OBnvG9Ru3j8 }
   - { kind: pypi, url: https://pypi.org/project/lenslapse/ }

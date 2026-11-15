@@ -4,8 +4,8 @@ type: app
 publishedAt: 2026-07-13
 publisher: GitHub Pages
 links:
-  - { kind: app, url: https://iamtatsuki05.github.io/lenslapse/ }
-  - { kind: project, url: https://iamtatsuki05.github.io/lenslapse/about/ }
+  - { kind: app, url: https://lenslapse.iamtatsuki05.com/ }
+  - { kind: project, url: https://lenslapse.iamtatsuki05.com/about/ }
   - { kind: paper, url: https://aclanthology.org/2026.aacl-demo.9/ }
   - { kind: code, url: https://github.com/iamtatsuki05/lenslapse }
   - { kind: video, url: https://www.youtube.com/watch?v=OBnvG9Ru3j8 }
