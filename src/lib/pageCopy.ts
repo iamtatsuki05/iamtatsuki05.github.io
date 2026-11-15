@@ -167,6 +167,7 @@ export type CvPageCopy = PageCopy<{
   };
   experienceLinkLead: string;
   awardPaperLabel: string;
+  advisorLabel: string;
   paperGroups: Record<PaperGroupKey, string>;
   present: string;
 }>;
@@ -186,6 +187,7 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     },
     experienceLinkLead: '職歴は LinkedIn にまとめています：',
     awardPaperLabel: '対象論文',
+    advisorLabel: '指導教員',
     paperGroups: {
       'journal-international-refereed': '国際論文誌（査読あり）',
       'journal-international-nonrefereed': '国際論文誌（査読なし）',
@@ -212,6 +214,7 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     },
     experienceLinkLead: 'My work experience is on LinkedIn:',
     awardPaperLabel: 'Paper',
+    advisorLabel: 'Advisor',
     paperGroups: {
       'journal-international-refereed': 'International Journals (Refereed)',
       'journal-international-nonrefereed': 'International Journals (Non-refereed)',
@@ -238,6 +241,7 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     },
     experienceLinkLead: '工作经历请见 LinkedIn：',
     awardPaperLabel: '获奖论文',
+    advisorLabel: '指导教师',
     paperGroups: {
       'journal-international-refereed': '国际期刊（经同行评审）',
       'journal-international-nonrefereed': '国际期刊（未经同行评审）',
@@ -264,6 +268,7 @@ export const cvPageCopy: Record<Locale, CvPageCopy> = {
     },
     experienceLinkLead: 'Mon parcours professionnel est sur LinkedIn :',
     awardPaperLabel: 'Article',
+    advisorLabel: 'Directeur de recherche',
     paperGroups: {
       'journal-international-refereed': 'Revues internationales (avec comité de lecture)',
       'journal-international-nonrefereed': 'Revues internationales (sans comité de lecture)',

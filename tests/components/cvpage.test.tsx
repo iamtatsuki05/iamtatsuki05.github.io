@@ -68,6 +68,14 @@ describe('CvPage', () => {
     expect(screen.getByText('大学院')).toBeInTheDocument();
   });
 
+  it('links the advisor of an education entry', () => {
+    const advisor = { name: { ja: '指導 先生', en: 'Advisor Name' }, url: 'https://example.com/advisor' };
+    const cv = { ...emptyCv, education: [{ start: '2026-04', title: { ja: '大学院', en: 'Graduate school' }, advisor }] };
+    render(<CvPage locale="en" cv={cv} publications={[]} alias="Name" affiliation="Affiliation" />);
+    expect(screen.getByText(/^Advisor:/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Advisor Name' })).toHaveAttribute('href', advisor.url);
+  });
+
   it('points work experience to LinkedIn', () => {
     render(<CvPage locale="en" cv={emptyCv} publications={[]} alias="Name" affiliation="Affiliation" />);
     expect(screen.getByRole('heading', { level: 2, name: '💼 Experience' })).toBeInTheDocument();

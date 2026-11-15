@@ -70,7 +70,14 @@ function AwardCard({ award, paperLabel }: { award: CvAward; paperLabel: string }
   );
 }
 
-function PeriodSection({ title, tone, entries, locale, present }: { title: string; tone: Tone; entries: CvPeriodEntry[]; locale: Locale; present: string }) {
+function PeriodSection({
+  title,
+  tone,
+  entries,
+  locale,
+  present,
+  advisorLabel,
+}: { title: string; tone: Tone; entries: CvPeriodEntry[]; locale: Locale; present: string; advisorLabel: string }) {
   if (!entries.length) return null;
   return (
     <SectionShell tone={tone}>
@@ -79,6 +86,11 @@ function PeriodSection({ title, tone, entries, locale, present }: { title: strin
         {sortPeriodEntries(entries).map((entry) => (
           <EntryCard key={entry.title.en} when={formatCvPeriod(entry, present)} title={cvText(entry.title, locale)} url={entry.url}>
             {entry.detail ? <Detail>{cvText(entry.detail, locale)}</Detail> : null}
+            {entry.advisor ? (
+              <Detail>
+                {advisorLabel}: <TitleLink title={cvText(entry.advisor.name, locale)} url={entry.advisor.url} />
+              </Detail>
+            ) : null}
           </EntryCard>
         ))}
       </ul>
@@ -102,7 +114,7 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
         <p className="text-sm text-gray-700 dark:text-gray-300">{renderInlineLinks(affiliation)}</p>
       </SectionShell>
 
-      <PeriodSection title={copy.sections.education} tone="blue" entries={cv.education} locale={locale} present={copy.present} />
+      <PeriodSection title={copy.sections.education} tone="blue" entries={cv.education} locale={locale} present={copy.present} advisorLabel={copy.advisorLabel} />
 
       {papers.length ? (
         <SectionShell tone="lilac">
@@ -131,7 +143,7 @@ export function CvPage({ locale, cv, publications, alias, affiliation }: Props) 
         </SectionShell>
       ) : null}
 
-      <PeriodSection title={copy.sections.grants} tone="teal" entries={cv.grants} locale={locale} present={copy.present} />
+      <PeriodSection title={copy.sections.grants} tone="teal" entries={cv.grants} locale={locale} present={copy.present} advisorLabel={copy.advisorLabel} />
 
       {talks.length ? (
         <SectionShell tone="blue">

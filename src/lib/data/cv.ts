@@ -17,6 +17,7 @@ const PeriodEntry = z.object({
   title: CvText,
   detail: CvText.optional(),
   url: z.url().optional(),
+  advisor: z.object({ name: CvText, url: z.url().optional() }).optional(),
 });
 
 const DatedEntry = z.object({

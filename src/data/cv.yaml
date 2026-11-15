@@ -17,6 +17,7 @@ education:
       ja: 先端科学技術研究科 情報科学領域 自然言語処理学研究室（渡辺研究室） 修士課程
       en: Graduate School of Science and Technology, Information Science, Natural Language Processing Laboratory (Watanabe Lab), Master's Program
     url: https://www.naist.jp/
+    advisor: { name: { ja: 渡辺 太郎, en: Taro Watanabe }, url: https://sites.google.com/site/tarowtnb/ }
   - start: 2022-04
     end: 2026-03
     title: { ja: 芝浦工業大学, en: Shibaura Institute of Technology }
@@ -24,5 +25,6 @@ education:
       ja: 工学部 情報工学科 学士（工学）
       en: College of Engineering, Department of Information Science and Engineering, Bachelor of Engineering
     url: https://www.shibaura-it.ac.jp/
+    advisor: { name: { ja: 杉本 徹, en: Toru Sugimoto }, url: http://www.lang.ise.shibaura-it.ac.jp/sugimoto.html }
 grants: []
 awards: []
