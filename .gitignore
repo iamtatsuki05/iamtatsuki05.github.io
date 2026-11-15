@@ -52,3 +52,4 @@ public/blogs/*.md
 public/blogs/*.mdx
 src/content/generated/
 .lighthouseci
+github-redirect
