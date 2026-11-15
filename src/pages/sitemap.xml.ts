@@ -3,6 +3,7 @@ import { getAllPosts } from '@/lib/content/blog';
 import { getSiteUrlWithBasePath } from '@/lib/config/env';
 import { SUPPORTED_ROUTE_LOCALES, resolveLocale } from '@/lib/i18n';
 import { localizedPath } from '@/lib/routing';
+import { canonicalPath } from '@/lib/seo';
 
 type SitemapEntry = {
   url: string;
@@ -69,6 +70,10 @@ export const GET: APIRoute = async () => {
   ).flat();
 
   const urls = [...staticPages, ...localizedStaticPages, ...defaultBlogPages, ...localizedBlogPages]
+    .filter((entry) => {
+      const path = entry.url.slice(site.length);
+      return canonicalPath(path) === path;
+    })
     .map((entry) => {
       return [
         '<url>',

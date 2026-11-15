@@ -1,5 +1,5 @@
 import { siteConfig } from './config';
-import { absoluteUrl } from './url';
+import { absoluteUrl, canonicalPath } from './url';
 
 function buildAffiliationJsonLd() {
   return {
@@ -25,6 +25,7 @@ export function buildArticleJsonLd(options: {
 }) {
   const { title, description, path, image, datePublished, dateModified, tags } = options;
   const imageUrl = image ? absoluteUrl(image) : undefined;
+  const url = absoluteUrl(canonicalPath(path));
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -32,10 +33,10 @@ export function buildArticleJsonLd(options: {
     description,
     datePublished,
     dateModified: dateModified || datePublished,
-    url: absoluteUrl(path),
+    url,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': absoluteUrl(path),
+      '@id': url,
     },
     image: imageUrl ? [imageUrl] : undefined,
     author: {
@@ -193,7 +194,7 @@ export function buildCollectionPageJsonLd(options: {
     '@type': 'CollectionPage',
     name,
     description,
-    url: absoluteUrl(path),
+    url: absoluteUrl(canonicalPath(path)),
     isPartOf: {
       '@type': 'WebSite',
       name: siteConfig.siteName.ja,

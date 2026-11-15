@@ -1,0 +1,5 @@
+# Short locale prefixes are built as duplicates of the canonical locale routes.
+/ja/* /:splat 301
+/en/* /en-US/:splat 301
+/zh/* /zh-CN/:splat 301
+/fr/* /fr-FR/:splat 301

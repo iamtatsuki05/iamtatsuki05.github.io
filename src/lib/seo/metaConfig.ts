@@ -12,22 +12,22 @@ export type PageMeta = {
 export const pageMeta: Record<PageKey, Record<Locale, PageMeta>> = {
   home: {
     ja: {
-      metadataTitle: siteConfig.defaultTitle.ja,
+      metadataTitle: `${siteConfig.siteName.ja} | ${siteConfig.defaultTitle.ja}`,
       metadataDescription: siteConfig.description.ja,
       path: '/',
     },
     en: {
-      metadataTitle: siteConfig.defaultTitle.en,
+      metadataTitle: `${siteConfig.siteName.en} | ${siteConfig.defaultTitle.en}`,
       metadataDescription: siteConfig.description.en,
       path: '/en-US/',
     },
     zh: {
-      metadataTitle: siteConfig.defaultTitle.zh,
+      metadataTitle: `${siteConfig.siteName.zh} | ${siteConfig.defaultTitle.zh}`,
       metadataDescription: siteConfig.description.zh,
       path: '/zh-CN/',
     },
     fr: {
-      metadataTitle: siteConfig.defaultTitle.fr,
+      metadataTitle: `${siteConfig.siteName.fr} | ${siteConfig.defaultTitle.fr}`,
       metadataDescription: siteConfig.description.fr,
       path: '/fr-FR/',
     },
