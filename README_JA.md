@@ -95,3 +95,4 @@ docker compose stop                   # 停止 (docker compose start で再開)
 - 作業ブランチは `develop` にマージし、その後「Sync: Develop to Main」PR で `develop` を `main` にマージします。
 - `.github/workflows/deploy-cloudflare.yml` は `main` と `develop` への push ごとに動きます。PR 用のテストワークフローを実行し、サイトと Storybook (`/storybook` で配信) をビルドして、`out/` を push されたブランチ名で Cloudflare Pages に公開します。
 - `main` のときだけ、https://iamtatsuki05.com が Markdown の `Link` ヘッダーを返すことを確かめてから、isitagentready.com のエージェント対応レベルで合否を判定します。プレビュー環境は Cloudflare Access の内側にあるため、`develop` ではこの確認を省きます。
+- `.github/workflows/deploy-github-redirect.yml` は `main` への push のたびに、https://iamtatsuki05.github.io へ転送専用のサイトを出します。`scripts/build-github-redirect.ts` が sitemap の URL ごとにページを作り、https://iamtatsuki05.com の同じパスへ転送します。

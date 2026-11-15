@@ -95,3 +95,4 @@ docker compose stop                   # stop; docker compose start to restart
 - Work happens on branches merged into `develop`. A "Sync: Develop to Main" PR then merges `develop` into `main`.
 - `.github/workflows/deploy-cloudflare.yml` runs on every push to `main` and `develop`. It runs the PR test workflow, builds the site and Storybook (served at `/storybook`), and publishes `out/` to Cloudflare Pages under the pushed branch name.
 - On `main` only, the same job checks that https://iamtatsuki05.com serves the Markdown `Link` header and then gates on the agent readiness level from isitagentready.com. Preview deployments sit behind Cloudflare Access, so `develop` skips this check.
+- `.github/workflows/deploy-github-redirect.yml` publishes a redirect-only site to https://iamtatsuki05.github.io on every push to `main`. `scripts/build-github-redirect.ts` writes one page per sitemap URL that forwards to the same path on https://iamtatsuki05.com.
