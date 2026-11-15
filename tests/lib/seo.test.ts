@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
-import { buildArticleJsonLd, buildLanguageAlternates, buildOrganizationJsonLd, buildPageMetadata, buildPersonJsonLd, siteConfig } from '@/lib/seo';
+import { buildArticleJsonLd, buildLanguageAlternates, buildLocalizedMetadata, buildOrganizationJsonLd, buildPageMetadata, buildPersonJsonLd } from '@/lib/seo';
+import { pageMeta } from '@/lib/seo/metaConfig';
 
 const ORIGINAL_SITE_URL = process.env.SITE_URL;
 
@@ -40,15 +41,24 @@ describe('buildPageMetadata', () => {
     expect(metadata.keywords).toContain('custom');
   });
 
-  it('keeps the home page title concise without repeating the site name', () => {
-    const metadata = buildPageMetadata({
-      title: siteConfig.defaultTitle.ja,
-      description: siteConfig.description.ja,
-      locale: 'ja',
-      path: '/',
-    });
+  it('puts the name first in home titles without repeating the site name', () => {
+    expect(buildLocalizedMetadata('ja-JP', pageMeta.home).title).toBe('岡田 龍樹 (Tatsuki Okada) | NLP・機械学習エンジニア');
+    expect(buildLocalizedMetadata('en-US', pageMeta.home).title).toBe(
+      'Tatsuki Okada (岡田 龍樹) | NLP & Machine Learning Engineer',
+    );
+  });
 
-    expect(metadata.title).toBe('NLP・機械学習エンジニア | 岡田 龍樹 | Tatsuki Okada');
+  it('declares the unprefixed URL as canonical for /ja-JP/ pages', () => {
+    expect(buildLocalizedMetadata('ja-JP', pageMeta.home).alternates?.canonical).toBe('https://example.com/');
+    expect(buildLocalizedMetadata('ja-JP', pageMeta.cv).alternates?.canonical).toBe('https://example.com/cv/');
+    expect(buildPageMetadata({ title: 'Post', path: '/ja-JP/blogs/post/' }).alternates?.canonical).toBe(
+      'https://example.com/blogs/post/',
+    );
+  });
+
+  it('keeps prefixed canonicals for other locales, including short legacy prefixes', () => {
+    expect(buildLocalizedMetadata('en-US', pageMeta.cv).alternates?.canonical).toBe('https://example.com/en-US/cv/');
+    expect(buildLocalizedMetadata('en', pageMeta.cv).alternates?.canonical).toBe('https://example.com/en-US/cv/');
   });
 });
 
@@ -56,7 +66,7 @@ describe('buildLanguageAlternates', () => {
   it('locale付きパスから各言語のhreflangを生成する', () => {
     const alternates = buildLanguageAlternates('/ja-JP/blogs/');
 
-    expect(alternates['ja-JP']).toBe('/ja-JP/blogs/');
+    expect(alternates['ja-JP']).toBe('/blogs/');
     expect(alternates['en-US']).toBe('/en-US/blogs/');
     expect(alternates['zh-CN']).toBe('/zh-CN/blogs/');
     expect(alternates['fr-FR']).toBe('/fr-FR/blogs/');
@@ -66,7 +76,7 @@ describe('buildLanguageAlternates', () => {
   it('blog detail paths include all hreflang variants', () => {
     const alternates = buildLanguageAlternates('/fr-FR/blogs/example-post/');
 
-    expect(alternates['ja-JP']).toBe('/ja-JP/blogs/example-post/');
+    expect(alternates['ja-JP']).toBe('/blogs/example-post/');
     expect(alternates['en-US']).toBe('/en-US/blogs/example-post/');
     expect(alternates['zh-CN']).toBe('/zh-CN/blogs/example-post/');
     expect(alternates['fr-FR']).toBe('/fr-FR/blogs/example-post/');
@@ -75,6 +85,18 @@ describe('buildLanguageAlternates', () => {
 });
 
 describe('buildArticleJsonLd', () => {
+  it('points /ja-JP/ articles at the unprefixed canonical URL', () => {
+    const article = buildArticleJsonLd({
+      title: 'Post',
+      description: 'Post',
+      path: '/ja-JP/blogs/post/',
+      datePublished: '2024-03-01T00:00:00Z',
+    });
+
+    expect(article.url).toBe('https://example.com/blogs/post/');
+    expect(article.mainEntityOfPage['@id']).toBe('https://example.com/blogs/post/');
+  });
+
   it('generates BlogPosting schema with absolute image URL', () => {
     const article = buildArticleJsonLd({
       title: 'Structured Data',
@@ -94,6 +116,10 @@ describe('buildArticleJsonLd', () => {
 });
 
 describe('structured profile metadata', () => {
+  it('lists the unspaced Japanese name as an alternate name', () => {
+    expect(buildPersonJsonLd().alternateName).toEqual(expect.arrayContaining(['岡田龍樹', '岡田 龍樹', 'Tatsuki Okada']));
+  });
+
   it('includes Bluesky in structured profile URLs', () => {
     const blueskyUrl = 'https://bsky.app/profile/iamtatsuki05.bsky.social';
 
