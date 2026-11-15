@@ -31,7 +31,6 @@
   "dependencies": {
     "@astrojs/react": "7.1.9",
     "astro": "7.4.12",
-    "babel-plugin-react-compiler": "^1.0.0",
     "clsx": "2.1.1",
     "feed": "6.0.0",
     "fuse.js": "7.5.0",
