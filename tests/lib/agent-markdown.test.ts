@@ -64,7 +64,9 @@ describe('pages middleware', () => {
     const response = await run('/nope/', 'text/markdown', {});
     expect(response.status).toBe(404);
     expect(response.headers.get('Content-Type')).toBe('text/markdown; charset=utf-8');
-    expect(await response.text()).toContain('[Sitemap](/sitemap.xml)');
+    const body = await response.text();
+    expect(body).toContain('[Sitemap](/sitemap.xml)');
+    expect(body).toContain('[Site guide for agents](/llms.txt)');
   });
 
   it('passes files through untouched', async () => {
