@@ -1,125 +1,25 @@
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import type { NavDisplayItem } from '@/components/site/navItems';
 import { NavLinks } from '@/components/site/NavLinks';
 
-const MENU_ENTER_DELAY_MS = 16;
-const MENU_ANIMATION_MS = 280;
-
 type Props = {
-  open: boolean;
-  onClose: () => void;
   items: NavDisplayItem[];
   activePath: string;
   localePrefix: string;
 };
 
-export function MobileMenu({ open, onClose, items, activePath, localePrefix }: Props) {
-  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
-  const [isRendered, setIsRendered] = useState(open);
-  const [isVisible, setIsVisible] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    setPortalRoot(document.body);
-    return () => setPortalRoot(null);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
-
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
-
-    updatePreference();
-    mediaQuery.addEventListener('change', updatePreference);
-    return () => mediaQuery.removeEventListener('change', updatePreference);
-  }, []);
-
-  useEffect(() => {
-    if (!portalRoot) return;
-
-    let enterTimer: number | undefined;
-    let exitTimer: number | undefined;
-
-    if (open) {
-      setIsRendered(true);
-      if (prefersReducedMotion) {
-        setIsVisible(true);
-      } else {
-        enterTimer = window.setTimeout(() => setIsVisible(true), MENU_ENTER_DELAY_MS);
-      }
-    } else if (isRendered) {
-      setIsVisible(false);
-      if (prefersReducedMotion) {
-        setIsRendered(false);
-      } else {
-        exitTimer = window.setTimeout(() => setIsRendered(false), MENU_ANIMATION_MS);
-      }
-    }
-
-    return () => {
-      if (enterTimer) window.clearTimeout(enterTimer);
-      if (exitTimer) window.clearTimeout(exitTimer);
-    };
-  }, [isRendered, open, portalRoot, prefersReducedMotion]);
-
-  useEffect(() => {
-    if (!isRendered) return;
-
-    const { body } = document;
-    const previousOverflow = body.style.overflow;
-    body.style.overflow = 'hidden';
-
-    return () => {
-      body.style.overflow = previousOverflow;
-    };
-  }, [isRendered]);
-
-  useEffect(() => {
-    if (!isRendered || typeof window.matchMedia !== 'function') return;
-
-    // The overlay is hidden from 1280px up, so an open menu would leave the body scroll lock behind.
-    const desktop = window.matchMedia('(min-width: 1280px)');
-    const closeOnDesktop = () => {
-      if (desktop.matches) onClose();
-    };
-    closeOnDesktop();
-    desktop.addEventListener('change', closeOnDesktop);
-    return () => desktop.removeEventListener('change', closeOnDesktop);
-  }, [isRendered, onClose]);
-
-  useEffect(() => {
-    if (!isRendered) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRendered, onClose]);
-
-  if (!isRendered || !portalRoot) return null;
-
-  const state = isVisible ? 'open' : 'closed';
-
-  return createPortal(
+/** Rendered inside a <template>; headerController clones it into <body> on open and removes it after closing. */
+export function MobileMenu({ items, activePath, localePrefix }: Props) {
+  return (
     <div
       id="mobile-menu"
       role="dialog"
       aria-modal="true"
-      aria-hidden={!open}
-      data-state={state}
+      aria-hidden="false"
+      data-state="closed"
       className="mobile-menu-overlay xl:hidden fixed inset-0 z-[100]"
-      onClick={onClose}
+      data-mobile-menu-overlay
     >
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: click handler only stops overlay-close propagation */}
-      <div
-        data-state={state}
-        className="mobile-menu-panel"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div data-state="closed" className="mobile-menu-panel" data-mobile-menu-panel>
         <div className="mobile-menu-panel__content">
           <div className="mb-5 flex items-start justify-between gap-3">
             <div className="space-y-2">
@@ -129,8 +29,9 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
               <div className="h-1.5 w-16 rounded-full bg-gradient-to-r from-purple-300 via-amber-200 to-pink-300 opacity-80 dark:from-purple-300 dark:via-amber-200 dark:to-rose-200" />
             </div>
             <button
+              type="button"
               aria-label="Close menu"
-              onClick={onClose}
+              data-mobile-menu-close
               className="mobile-menu-close focus-ring"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -145,15 +46,10 @@ export function MobileMenu({ open, onClose, items, activePath, localePrefix }: P
               activePath={activePath}
               localePrefix={localePrefix}
               orientation="vertical"
-              onNavigate={() => {
-                // Safari系で Link 遷移より先にアンマウントされると遷移が中断されるため1tick遅らせる
-                window.setTimeout(onClose, 0);
-              }}
             />
           </div>
         </div>
       </div>
-    </div>,
-    portalRoot,
+    </div>
   );
 }

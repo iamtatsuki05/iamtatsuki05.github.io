@@ -1,5 +1,4 @@
-
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { NavLinks } from '@/components/site/NavLinks';
 import { resolveNavItems } from '@/components/site/navItems';
 
@@ -18,21 +17,6 @@ describe('NavLinks', () => {
     expect(blogLink.className).toContain('border-purple-300');
     expect(blogLink.className).toContain('nav-link--horizontal');
     expect(blogLink.className).toContain('nav-link--active');
-  });
-
-  it('calls onNavigate when a link is clicked', () => {
-    const handler = vi.fn();
-    render(
-      <NavLinks
-        items={items}
-        activePath={activePath}
-        localePrefix={localePrefix}
-        onNavigate={handler}
-      />,
-    );
-
-    fireEvent.click(screen.getByText('🏠 Home'));
-    expect(handler).toHaveBeenCalledTimes(1);
   });
 
   it('renders vertical layout when orientation is vertical', () => {
