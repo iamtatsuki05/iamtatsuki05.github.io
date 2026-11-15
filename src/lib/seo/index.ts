@@ -1,6 +1,6 @@
 export type { PageMetadata } from './types';
 export { siteConfig } from './config';
-export { absoluteUrl, buildLanguageAlternates } from './url';
+export { absoluteUrl, buildLanguageAlternates, canonicalPath } from './url';
 export { buildLocalizedMetadata, buildPageMetadata } from './metadata';
 export {
   buildArticleJsonLd,

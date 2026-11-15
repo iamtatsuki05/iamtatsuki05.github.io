@@ -3,7 +3,7 @@ import { resolveLocale } from '@/lib/i18n';
 import { extractLocaleFromPath, localizedPath } from '@/lib/routing';
 import { siteConfig } from './config';
 import type { PageMetadata } from './types';
-import { absoluteUrl, buildLanguageAlternates } from './url';
+import { absoluteUrl, buildLanguageAlternates, canonicalPath } from './url';
 
 type Alternates = Record<string, string>;
 
@@ -61,7 +61,7 @@ export function buildPageMetadata({
   const base = siteConfig.siteName[locale] || siteConfig.siteName.ja;
   const finalTitle = title.includes(base) ? title : `${title} | ${base}`;
   const finalDescription = description || siteConfig.description[locale];
-  const canonicalUrl = absoluteUrl(path);
+  const canonicalUrl = absoluteUrl(canonicalPath(path));
   const ogImages = resolveImages(images);
   const mergedKeywords = Array.from(new Set([...(siteConfig.keywords[locale] || []), ...keywords]));
 

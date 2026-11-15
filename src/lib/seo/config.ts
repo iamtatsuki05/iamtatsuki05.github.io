@@ -2,12 +2,12 @@ import type { Locale } from '@/lib/i18n';
 
 export const siteConfig = {
   owner: 'Tatsuki Okada',
-  aliases: ['岡田 龍樹', 'Tatsuki Okada', 'iamtatsuki05', 'iam_tatsuki05'],
+  aliases: ['岡田 龍樹', 'Tatsuki Okada', 'iamtatsuki05', 'iam_tatsuki05', '岡田龍樹'],
   siteName: {
-    ja: '岡田 龍樹 | Tatsuki Okada',
-    en: 'Tatsuki Okada | 岡田 龍樹',
-    zh: 'Tatsuki Okada | 岡田 龍樹',
-    fr: 'Tatsuki Okada | 岡田 龍樹',
+    ja: '岡田 龍樹 (Tatsuki Okada)',
+    en: 'Tatsuki Okada (岡田 龍樹)',
+    zh: 'Tatsuki Okada (岡田 龍樹)',
+    fr: 'Tatsuki Okada (岡田 龍樹)',
   } satisfies Record<Locale, string>,
   defaultTitle: {
     ja: 'NLP・機械学習エンジニア',
