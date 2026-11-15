@@ -20,6 +20,9 @@ const QueryWrapper = ({ children, searchParams = '' }: { children: React.ReactNo
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <QueryWrapper>{children}</QueryWrapper>
 );
+const NoMatchWrapper = ({ children }: { children: React.ReactNode }) => (
+  <QueryWrapper searchParams="?tags=missing-tag">{children}</QueryWrapper>
+);
 
 describe('BlogsClient', () => {
   it('renders headings and first items', async () => {
@@ -33,9 +36,6 @@ describe('BlogsClient', () => {
   });
   it('hides the latest section when no post matches the filter', async () => {
     const { render } = await import('@testing-library/react');
-    const NoMatchWrapper = ({ children }: { children: React.ReactNode }) => (
-      <QueryWrapper searchParams="?tags=missing-tag">{children}</QueryWrapper>
-    );
     const { queryByText, getAllByText } = render(<BlogsClient posts={sample} locale="en" />, {
       wrapper: NoMatchWrapper,
     });
