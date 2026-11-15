@@ -80,7 +80,14 @@ export const PublicationFrontmatter = z.object({
   pages: z.string().regex(/^\d+(?:-\d+)?$/, 'pages must look like 66 or 66-73').optional(),
   location: z.string().min(1).optional(),
   bibtex: z.string().trim().regex(/^@\w+\{[^\s,{}]+,/, 'bibtex must start with @type{key,').optional(),
+  status: z.enum(['forthcoming', 'under-review']).optional(),
+  equalContribution: z.array(z.string()).min(2).optional(),
 }).superRefine((fm, ctx) => {
+  for (const name of fm.equalContribution ?? []) {
+    if (!fm.authors.includes(name)) {
+      ctx.addIssue({ code: 'custom', path: ['equalContribution'], message: `equalContribution names "${name}", who is not in authors` });
+    }
+  }
   if (fm.type !== 'paper') return;
   for (const key of ['venueType', 'region', 'refereed'] as const) {
     if (fm[key] === undefined) {

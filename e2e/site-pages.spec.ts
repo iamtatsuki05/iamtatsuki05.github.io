@@ -788,6 +788,7 @@ test.describe('CV page', () => {
     await page.goto('/cv/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 3, name: '国際会議（査読あり）' })).toBeVisible();
+    await expect(page.getByTestId('publication-status')).toHaveText('掲載予定');
     await expect(page.getByRole('link', { name: /LensLapse: In-Browser Logit Lens/ })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: '🎓 学歴' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 3, name: '奈良先端科学技術大学院大学 (NAIST)' })).toBeVisible();

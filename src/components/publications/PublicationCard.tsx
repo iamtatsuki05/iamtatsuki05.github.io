@@ -26,6 +26,8 @@ export type PublicationCardItem = {
   venueFull?: string;
   pages?: string;
   location?: string;
+  status?: 'forthcoming' | 'under-review';
+  equalContribution?: string[];
 };
 
 type Props = {
@@ -40,7 +42,14 @@ type Props = {
 const ownerNames = new Set<string>(siteConfig.aliases);
 const CJK = /[぀-ヿ㐀-鿿]/;
 
-function AuthorList({ authors }: { authors: string[] }) {
+const equalContributionNote: Record<Locale, string> = {
+  ja: '* 同等貢献',
+  en: '* Equal contribution',
+  zh: '* 同等贡献',
+  fr: '* Contribution égale',
+};
+
+function AuthorList({ authors, equal = [], locale }: { authors: string[]; equal?: string[]; locale: Locale }) {
   const separator = authors.every((name) => CJK.test(name)) ? '、' : ', ';
   return (
     <p className="text-sm text-gray-700 dark:text-gray-300" data-testid="publication-authors">
@@ -48,8 +57,10 @@ function AuthorList({ authors }: { authors: string[] }) {
         <Fragment key={name}>
           {index > 0 ? separator : null}
           {ownerNames.has(name) ? <strong className="font-semibold">{name}</strong> : name}
+          {equal.includes(name) ? '*' : null}
         </Fragment>
       ))}
+      {equal.length ? <span className="ml-2 text-xs opacity-70">{equalContributionNote[locale]}</span> : null}
     </p>
   );
 }
@@ -106,9 +117,9 @@ export function PublicationCard({ item, locale, query = '', eagerImage = false, 
             <SearchHighlight text={item.title} query={query} />
           )}
         </Title>
-        {item.authors?.length ? <AuthorList authors={item.authors} /> : null}
+        {item.authors?.length ? <AuthorList authors={item.authors} equal={item.equalContribution} locale={locale} /> : null}
         <PublicationVenue {...item} locale={locale} query={query} />
-        <PublicationRecognition acceptance={item.acceptance} award={item.award} locale={locale} />
+        <PublicationRecognition acceptance={item.acceptance} award={item.award} status={item.status} locale={locale} />
         {item.abstract ? (
           <p className="mt-1 text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
             <SearchHighlight text={item.abstract} query={query} />
