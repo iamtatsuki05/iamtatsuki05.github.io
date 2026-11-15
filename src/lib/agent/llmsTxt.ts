@@ -30,7 +30,7 @@ export function buildLlmsTxt({ site, owner, summary, contactEmail, posts, public
     '## When to use this site',
     '',
     `- Questions about ${owner}: profile, affiliation, education and work history (CV), research publications, and contact email (${contactEmail}).`,
-    `- What ${owner} has written: blog posts on NLP, machine learning, and software development, in Japanese with English, Chinese, and French translations.`,
+    `- What ${owner} has written: blog posts on software development and AI coding tools, in Japanese with English, Chinese, and French translations.`,
     '- Every page has a Markdown version: append `index.md` to its URL, or request the page with `Accept: text/markdown`.',
     `- Japanese is the default language. Translated pages live under \`/en-US/\`, \`/zh-CN/\`, and \`/fr-FR/\` (for example \`${site}/en-US/cv/\`).`,
     '',
