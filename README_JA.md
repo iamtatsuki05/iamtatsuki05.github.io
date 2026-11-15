@@ -1,83 +1,97 @@
-# Astro 静的サイト
+# iamtatsuki05.com
 
 [English](README.md) | [日本語](README_JA.md)
 
-## Bun の操作方法
-### setup
-1. `git clone` で取得
+Astro、React islands、Tailwind CSS で作った個人サイトです。スクリプトは Bun で実行します。`out/` に出力した静的ファイルを Cloudflare Pages に配信しています。
 
-### Bun のセットアップ
-1. 依存をインストール: `bun install`
+## セットアップ
 
-### スクリプト実行
 ```shell
-bun dev                       # http://localhost:3000 で Astro 開発
-INCLUDE_DRAFTS=false NEXT_PUBLIC_BASE_PATH='' bun run build
-bun run start                 # :3000 で out/ を配信
-bun run e2e:run              # Playwright E2E を Chromium で実行
-bun run e2e:open             # Playwright UI モードで実行
-bun run storybook             # http://localhost:6006 で Storybook
-bun run storybook:build       # storybook-static/ に静的ビルド
-# テレメトリ: 参加したくない場合は STORYBOOK_DISABLE_TELEMETRY=1 を設定
+bun install
 ```
 
-### 環境変数
+## コマンド
+
 ```shell
-NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+bun dev                  # ブログ用データを生成してから http://localhost:3000 で Astro の開発サーバーを起動
+bun run build            # ブログ用データと画像を生成し、out/ にビルドしてからエージェント向け Markdown を出力
+bun run start            # out/ を http://localhost:3000 で配信
+bun run lint             # Biome
+bun run vitest:run       # 単体テスト (tests/components, tests/lib)
+bun run e2e:run          # Playwright の E2E テストを Chromium で実行
+bun run e2e:open         # Playwright の UI モード
+bun run test             # vitest:run と e2e:run
+bun run storybook        # http://localhost:6006 で Storybook
+bun run storybook:build  # storybook-static/ に静的ビルド
+bun run translate:blogs:prompt -- --help  # ブログ翻訳をエージェントに頼むプロンプトを出力
 ```
 
-## Docker の操作方法
-### setup
-1. `git clone` で取得
+Storybook のテレメトリを止めるときは `STORYBOOK_DISABLE_TELEMETRY=1` を設定します。
 
-### docker 構成
-1. 開発（ホットリロード）: `docker compose up -d --build app`
-2. 本番プレビュー: `docker compose up -d --build preview`
+## 環境変数
 
-### コンテナへの接続/切断
-1. 接続: `docker compose exec app sh`
-2. 切断: `exit`
+すべて任意です。詳細は `src/lib/config/env.ts` を参照してください。
 
-### コンテナの開始・停止
-1. 開始: `docker compose start`
-2. 停止: `docker compose stop`
+```shell
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX  # PUBLIC_GOOGLE_ANALYTICS_ID でも可
+SITE_URL=https://iamtatsuki05.com             # 既定値は開発時 localhost:3000、それ以外は iamtatsuki05.com
+NEXT_PUBLIC_BASE_PATH=                        # PUBLIC_BASE_PATH でも可
+INCLUDE_DRAFTS=true                           # draft: true のブログ記事も含める
+```
+
+## Docker
+
+```shell
+docker compose up -d --build app      # http://localhost:3000 でホットリロード付きの開発サーバー
+docker compose up -d --build preview  # 本番ビルドを http://localhost:3001 で配信
+docker compose exec app sh            # コンテナに入る (exit で抜ける)
+docker compose stop                   # 停止 (docker compose start で再開)
+```
+
+## コンテンツ
+
+- ブログ記事: `src/content/blogs/*.md` (日本語の原文)。翻訳は `src/content/blog-translations/{en,zh,fr}/` に置きます。
+- 発表・論文: `src/content/publications/*.md`。frontmatter のスキーマは `src/lib/content/types.ts` の `PublicationFrontmatter` です。`paper` には `venueType`、`region`、`refereed` が必須です。
+- CV: `src/data/cv.yaml` (学歴、奨学金、受賞)。使えるフィールドはファイル冒頭のコメントにあります。
+- リンク集: `src/data/links.yaml`
 
 ## ディレクトリ構成
+
 ```text
-./ 
-├── Dockerfile
-├── README.md
-├── README_JA.md
-├── bunfig.toml
-├── compose.yml
-├── e2e
-├── node_modules
+.
+├── .github/workflows   # CI、バンドルサイズ、Lighthouse、Cloudflare Pages へのデプロイ
+├── .storybook
+├── e2e                 # Playwright のテスト
+├── functions           # Cloudflare Pages Functions (Markdown のコンテンツネゴシエーション)
 ├── public
-│   └── images
-├── scripts
-│   ├── ensure-favicon.ts
-│   ├── optimize-images.ts
-│   └── utils
+├── scripts             # ビルド時の生成スクリプトと静的サーバー
 ├── src
 │   ├── components
-│   ├── content
-│   │   ├── blogs
-│   │   └── publications
-│   ├── data
-│   │   └── links.yaml
+│   ├── content         # blogs, blog-translations, publications
+│   ├── data            # cv.yaml, links.yaml, 生成された画像メタデータ
+│   ├── layouts
 │   ├── lib
-│   ├── locales
-│   └── types
-├── tests
-├── package.json
-├── biome.json
+│   ├── locales         # ja, en, zh, fr
+│   ├── pages
+│   ├── stories
+│   └── styles
+├── tests               # Vitest のテスト
 ├── astro.config.mjs
-├── postcss.config.js
-├── tsconfig.json
+├── biome.json
+├── compose.yml
+├── Dockerfile
+├── package.json
+├── playwright.config.ts
 └── vitest.config.mts
 ```
 
-## 補足
-- i18n: Home/Links/Publications/Blog index は ja/en の言語ルート対応
-- SEO/フィード: ビルド時に `/sitemap.xml` `/robots.txt` `/rss.xml` を生成
-- Cloudflare Pages: `.github/workflows/deploy-cloudflare.yml` で Astro の `out/` をビルド・公開
+## ルーティングとフィード
+
+- ページは Home、Blog、Publications、CV、Hobbies、Links です。日本語はルートで配信し、各ページに ja、en、zh、fr のロケール付きルートもあります。
+- `/sitemap.xml`、`/robots.txt`、`/rss.xml` はビルド時に生成します。
+
+## デプロイ
+
+- 作業ブランチは `develop` にマージし、その後「Sync: Develop to Main」PR で `develop` を `main` にマージします。
+- `.github/workflows/deploy-cloudflare.yml` は `main` と `develop` への push ごとに動きます。PR 用のテストワークフローを実行し、サイトと Storybook (`/storybook` で配信) をビルドして、`out/` を push されたブランチ名で Cloudflare Pages に公開します。
+- `main` のときだけ、https://iamtatsuki05.com が Markdown の `Link` ヘッダーを返すことを確かめてから、isitagentready.com のエージェント対応レベルで合否を判定します。プレビュー環境は Cloudflare Access の内側にあるため、`develop` ではこの確認を省きます。

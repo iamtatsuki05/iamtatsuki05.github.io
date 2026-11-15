@@ -1,6 +1,7 @@
 # Entries for /cv. Publications, talks, and paper awards come from src/content/publications.
 # Work experience is not listed here; the CV links to LinkedIn instead.
 # Dates are YYYY-MM. Omit `end` for an ongoing period. `start`, `detail`, and `url` are optional.
+# Education and grants also accept an optional `advisor: { name: { ja, en }, url }`, where `url` is optional.
 #
 # grants:
 #   - start: 2026-04
