@@ -800,6 +800,21 @@ test.describe('CV page', () => {
     ).toHaveClass(/nav-link--active/);
   });
 
+  test('reveals BibTeX for a paper on the CV page', async ({ page }) => {
+    await page.goto('/cv/', { waitUntil: 'domcontentloaded' });
+    await waitForIslandHydration(page, 'CvPage');
+    const card = page.locator('[data-testid="publication-card"]', { hasText: 'LensLapse: In-Browser' });
+    const toggle = card.getByRole('button', { name: 'BibTeXを表示' });
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    const panel = card.getByTestId('publication-bibtex-panel');
+    await expect(panel).toContainText('@inproceedings{okada-etal-2026-lenslapse,');
+    await expect(panel.getByRole('link', { name: '.bib をダウンロード' })).toHaveAttribute(
+      'download',
+      'okada-etal-2026-lenslapse.bib',
+    );
+  });
+
   test('renders the English CV page', async ({ page }) => {
     await page.goto('/en-US/cv/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { level: 1, name: '📄 CV' })).toBeVisible();

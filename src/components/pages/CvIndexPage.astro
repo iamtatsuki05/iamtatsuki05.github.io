@@ -2,7 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { CvPage } from '@/components/pages/CvPage';
 import { getAllPublications } from '@/lib/content/publication';
-import { getCvData } from '@/lib/data/cv';
+import { getCvData } from '@/lib/data/cvLoader';
 import { dictionaries, resolveLocale } from '@/lib/i18n';
 import { localizedPath } from '@/lib/routing';
 import { absoluteUrl, buildBreadcrumbJsonLd, buildLocalizedMetadata } from '@/lib/seo';
@@ -31,5 +31,5 @@ const jsonLd = [
 ---
 
 <BaseLayout metadata={metadata} lang={htmlLangFromLocale(locale)} jsonLd={jsonLd}>
-  <CvPage locale={locale} cv={cv} publications={publications} alias={dict.alias} affiliation={dict.affiliation} />
+  <CvPage locale={locale} cv={cv} publications={publications} alias={dict.alias} affiliation={dict.affiliation} client:load />
 </BaseLayout>
