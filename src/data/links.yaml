@@ -23,15 +23,15 @@
   desc: モデル・データセット・アプリ
   iconUrl: /images/links/huggingface.svg
   category: Social
-- title: Instagram
-  url: https://www.instagram.com/iam_tatsuki05
-  desc: 写真・日常
-  iconUrl: /images/links/instagram.webp
-  category: Social
 - title: ORCID
   url: https://orcid.org/0009-0005-0916-2772
   desc: 研究者ID・業績
   iconUrl: /images/links/orcid.svg
+  category: Social
+- title: Instagram
+  url: https://www.instagram.com/iam_tatsuki05
+  desc: 写真・日常
+  iconUrl: /images/links/instagram.webp
   category: Social
 - title: Bluesky
   url: https://bsky.app/profile/iamtatsuki05.bsky.social
