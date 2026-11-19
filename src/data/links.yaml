@@ -33,3 +33,8 @@
   desc: 論文・引用
   iconUrl: /images/links/google-scholar.ico
   category: Social
+- title: ORCID
+  url: https://orcid.org/0009-0005-0916-2772
+  desc: 研究者ID・業績
+  iconUrl: /images/links/orcid.svg
+  category: Social
