@@ -323,7 +323,7 @@ for (const { label, use } of viewports) {
         const cards = firstSection.locator('li');
 
         await expect(list).toBeVisible();
-        await expect(cards).toHaveCount(6);
+        await expect(cards).toHaveCount(8);
 
         const listBox = await list.boundingBox();
         expect(listBox).not.toBeNull();
