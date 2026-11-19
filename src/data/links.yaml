@@ -1,30 +1,40 @@
-- title: GitHub
-  url: https://github.com/iamtatsuki05
-  desc: ソースコードとプロジェクト
-  iconUrl: /images/links/github.svg
-  category: Social
 - title: X (Twitter)
   url: https://x.com/iam_tatsuki05
   desc: 日々の発信
   iconUrl: /images/links/x.svg
-  category: Social
-- title: Bluesky
-  url: https://bsky.app/profile/iamtatsuki05.bsky.social
-  desc: 近況・日々の発信
-  iconUrl: /images/links/bluesky.svg
-  category: Social
-- title: Instagram
-  url: https://www.instagram.com/iam_tatsuki05
-  desc: 写真・日常
-  iconUrl: /images/links/instagram.webp
   category: Social
 - title: LinkedIn
   url: https://www.linkedin.com/in/iamtatsuki05
   desc: 職務経歴・プロフィール
   iconUrl: /images/links/linkedin.ico
   category: Social
+- title: Google Scholar
+  url: https://scholar.google.com/citations?user=mqf7zUIAAAAJ
+  desc: 論文・引用
+  iconUrl: /images/links/google-scholar.ico
+  category: Social
+- title: GitHub
+  url: https://github.com/iamtatsuki05
+  desc: ソースコードとプロジェクト
+  iconUrl: /images/links/github.svg
+  category: Social
 - title: Huggingface
   url: https://huggingface.co/iamtatsuki05
   desc: モデル・データセット・アプリ
   iconUrl: /images/links/huggingface.svg
+  category: Social
+- title: ORCID
+  url: https://orcid.org/0009-0005-0916-2772
+  desc: 研究者ID・業績
+  iconUrl: /images/links/orcid.svg
+  category: Social
+- title: Instagram
+  url: https://www.instagram.com/iam_tatsuki05
+  desc: 写真・日常
+  iconUrl: /images/links/instagram.webp
+  category: Social
+- title: Bluesky
+  url: https://bsky.app/profile/iamtatsuki05.bsky.social
+  desc: 近況・日々の発信
+  iconUrl: /images/links/bluesky.svg
   category: Social

@@ -35,6 +35,8 @@ export const siteConfig = {
     instagram: 'https://www.instagram.com/iam_tatsuki05',
     linkedin: 'https://www.linkedin.com/in/iamtatsuki05',
     huggingface: 'https://huggingface.co/iamtatsuki05',
+    googleScholar: 'https://scholar.google.com/citations?user=mqf7zUIAAAAJ',
+    orcid: 'https://orcid.org/0009-0005-0916-2772',
   },
   affiliation: {
     institution: {

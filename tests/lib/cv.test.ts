@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Publication } from '@/lib/content/publication';
-import { collectCvAwards, cvText, formatCvPeriod, groupPapersForCv, parseCvData, sortPeriodEntries } from '@/lib/data/cv';
+import { collectCvAwards, cvText, formatCvPeriod, groupPapersForCv, sortPeriodEntries } from '@/lib/data/cv';
+import { parseCvData } from '@/lib/data/cvLoader';
 
 const pub = (overrides: Partial<Publication>): Publication => ({
   slug: overrides.slug ?? 'p',
