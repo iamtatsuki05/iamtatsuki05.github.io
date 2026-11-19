@@ -28,3 +28,8 @@
   desc: モデル・データセット・アプリ
   iconUrl: /images/links/huggingface.svg
   category: Social
+- title: Google Scholar
+  url: https://scholar.google.com/citations?user=mqf7zUIAAAAJ
+  desc: 論文・引用
+  iconUrl: /images/links/google-scholar.ico
+  category: Social
