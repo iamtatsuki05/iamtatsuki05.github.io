@@ -13,7 +13,7 @@ links:
   - { kind: code, url: https://github.com/iamtatsuki05/MIREI/tree/main }
 tags: [LLM, sentence embedding, embedding, LLM2Vec, research]
 abstract: A controlled comparison of encoder and decoder sentence embedding models matched in parameter count, tokenizer, training data, and training procedure, in Japanese and English. The encoder wins under identical conditions, and the decoder advantage largely comes from transferred pre-training.
-acceptance: { accepted: 397, submitted: 2932 }
+acceptance: { accepted: 397, submitted: 2932, source: https://x.com/eaclmeeting/status/2123027289579634911 }
 headerImage: https://huggingface.co/iamtatsuki05/Sentence-ModernBERT-JP-0.5B/resolve/main/assets/concept.jpg
 headerAlt: 概念図
 ---
